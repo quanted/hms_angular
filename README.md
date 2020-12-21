@@ -1,2 +1,5 @@
 # hms_angular
-Angular 8 Web Application (Map Interface)
+Angular front end for Hydrologic Micro Services
+
+
+
