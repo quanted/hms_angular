@@ -1,1 +1,7 @@
-<p>map works!</p>
+<div class="map-container"
+     leaflet 
+     [leafletOptions]="options"
+     [leafletLayersControl]="layersControl"
+     (leafletMapReady)="onMapReady($event)"
+     (leafletMapZoomEnd)="onMapZoomEnd($event)">
+</div>
