@@ -21,7 +21,6 @@
     "@angular/router": "~10.2.0",
     "@asymmetrik/ngx-leaflet": "^8.1.0",
     "@types/leaflet": "^1.5.19",
-    "esri-leaflet": "^2.5.3",
     "leaflet": "^1.7.1",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
@@ -46,5 +45,18 @@
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
     "typescript": "~4.0.2"
-  }
+  },
+  "description": "Angular front end for Hydrologic Micro Services",
+  "main": "karma.conf.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quanted/hms_angular.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/quanted/hms_angular/issues"
+  },
+  "homepage": "https://github.com/quanted/hms_angular#readme"
 }
