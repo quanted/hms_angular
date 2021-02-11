@@ -1,6 +1,4 @@
-.map-container {
-    display: block;
-    position: absolute;
-    width: 80%;
-    height: 80%;
+#map {
+    height: 70vh;
+    width: 100%;
 }
