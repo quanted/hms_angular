@@ -1,26 +1,22 @@
 .container {
     display: grid;
     grid-template-areas: 
-        "header",
-        "navigation",
-        "content",
+        "header"
+        "navigation"
+        "content"
         "footer";
-}
-
-.header,
-.footer,
-.navigation {
-    background: #0e6993;
-    text-align: center;
-    height: 10vh;
 }
 
 .header {
     grid-area: "header";
+    background: #0e6993;
+    height: 10vh;
 }
 
 .navigation {
     grid-area: "navigation";
+    background: #0e6993;
+    height: 5vh;
 }
 
 .content {
@@ -29,4 +25,6 @@
 
 .footer {
     grid-area: "footer";
+    background: #0e6993;
+    height: 10vh;
 }

@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
+
 import * as L from 'leaflet';
+
+import { LayerService } from 'src/app/services/layer.service';
 
 @Component({
   selector: 'app-map',
@@ -32,7 +35,7 @@ export class MapComponent {
     zoom: 5,
   };
 
-  constructor() {}
+  constructor(private layerService: LayerService) {}
 
   ngOnInit() {
     if(!this.map) {
