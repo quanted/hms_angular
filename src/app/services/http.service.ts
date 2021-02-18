@@ -17,8 +17,8 @@ export class HttpService<T> {
   constructor(
       private cookieService: CookieService,
       private httpClient: HttpClient,
-      private url: string,
-      private endpoint: string
+      public url: string,
+      public endpoint: string
   ) {
     this.headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -27,47 +27,28 @@ export class HttpService<T> {
   }
 
   /**
-   * POST method to create a new object of a given type.
-   * @param object - The model object being created and returned.
+   * POST method for submitting a single object to an endpoint and retrieving the result.
+   * @param object - Input object for post request.
    */
-  create(object: T): Observable<T> {
+  post(object: T): Observable<T> {
     return this.httpClient
         .post<T>(`${this.url}/${this.endpoint}`, object, {headers: this.headers});
   }
 
   /**
-   * GET method for retrieving a list of objects from an endpoint.
+   * GET method for retrieving a single object from an endpoint.
+   * @param object - Input object for request.
    */
-  getAll(): Observable<T[]> {
+  submit(object: T): Observable<T> {
     return this.httpClient
-        .get<T[]>(`${this.url}/${this.endpoint}`, {headers: this.headers});
+        .get<T>(`${this.url}/${this.endpoint}/${object}`, {headers: this.headers});
   }
 
   /**
    * GET method for retrieving a single object from an endpoint.
-   * @param id - The ID of the object to get.
    */
-  get(id: number): Observable<T> {
+  info(): Observable<T> {
     return this.httpClient
-        .get<T>(`${this.url}/${this.endpoint}/${id}`, {headers: this.headers});
-  }
-
-  /**
-   * PUT method to update an object of a given type.
-   * @param id - The ID of the object being updated.
-   * @param object - The model object being created and returned.
-   */
-  update(id: number, object: T): Observable<T> {
-    return this.httpClient
-        .put<T>(`${this.url}/${this.endpoint}/${id}`, object, {headers: this.headers});
-  }
-
-  /**
-   * DELETE method to delete an object of a given type.
-   * @param id - The ID of the object being deleted.
-   */
-  delete(id: number): Observable<T> {
-    return this.httpClient
-        .delete<T>(`${this.url}/${this.endpoint}/${id}`, {headers: this.headers});
+        .get<T>(`${this.url}/${this.endpoint}`, {headers: this.headers});
   }
 }
