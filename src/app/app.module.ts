@@ -8,6 +8,9 @@ import { MapComponent } from './components/map/map.component';
 import { NavigationComponent } from './components/navigation/navigation.component';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
+import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
+import {HttpErrorInterceptor} from './interceptors/http-error.interceptor';
+import {CookieService} from 'ngx-cookie-service';
 
 
 @NgModule({
@@ -20,9 +23,17 @@ import { FooterComponent } from './components/footer/footer.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
+    HttpClientModule,
+    AppRoutingModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptor,
+      multi: true
+    },
+    CookieService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
