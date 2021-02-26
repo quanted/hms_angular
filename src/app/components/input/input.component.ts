@@ -84,41 +84,42 @@ export class InputComponent implements OnInit {
 
 
   constructor(private fb: FormBuilder) { }
+  
   items = null;
+  
   ngOnInit(): void {
     this.inputForm = this.fb.group({
-    module: [null, Validators.required],
-    // aoI: [null, Validators.required],
-    startDate: [null, Validators.required],
-    endDate: [null, Validators.required],
-    catchmentID: [null, Validators.required],
-    // stationID: [null, Validators.required],
-    // lat: [null, Validators.required],
-    // lng: [null, Validators.required],
-    timeZone: [null, Validators.required],
-    temporalResolution: [null, Validators.required],
-    dataFormat: [null, Validators.required],
+      module: [null, Validators.required],
+      aoI: [null, Validators.required],
+      lat: ["33.925575", Validators.required],
+      lng: ["83.356893", Validators.required],
+      catchmentID: ["22076143", Validators.required],
+      stationID: ["GHCND:USW00013874", Validators.required],
+      source: [null, Validators.required],
+      startDate: ["2015-01-01", Validators.required],
+      timeZone: [null, Validators.required],
+      endDate: ["2015-01-31", Validators.required],
+      outputFormat: [null, Validators.required],
+      temporalResolution: [null, Validators.required],
     })
+  }
 
+  showParameters() {
+    this.items = this.inputForm.value
+
+    // parameters = null;
+
+    // items = parameters;
+    
+    //   this.inputForm.get("name").value,
+    // start: this.sourceForm.get("sourceType").value,
+    // intensity: this.sourceForm.get("intensity").value,
+    // distance: this.sourceForm.get("distance").value,
+    // lat: this.sourceForm.get("lat").value,
+    // lng: this.sourceForm.get("lng").value,
 
     }
-
-    showParameters() {
-      this.items = this.inputForm.value
-
-      // parameters = null;
-
-      // items = parameters;
-      
-      //   this.inputForm.get("name").value,
-      // start: this.sourceForm.get("sourceType").value,
-      // intensity: this.sourceForm.get("intensity").value,
-      // distance: this.sourceForm.get("distance").value,
-      // lat: this.sourceForm.get("lat").value,
-      // lng: this.sourceForm.get("lng").value,
-
-      }
-    }
+  }
   
 
 

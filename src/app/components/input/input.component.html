@@ -1,103 +1,138 @@
-<form class="input-form" [formGroup] = inputForm>
-    <table class="input-form-table" cellspacing="0"><tr>
-    <td><mat-form-field appearance="outline">
-        <mat-label>Select a Module: </mat-label>
-        <mat-select [(ngModel)]="selectedModule" name="modules" formControlName="module">
-          <mat-option *ngFor="let module of modules" [value]="module.value">
-            {{module.viewValue}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      </td>
-      <td>
-      <mat-form-field appearance="outline">
-        <mat-label>Area of Interest: </mat-label>
-        <mat-select [(ngModel)]="selectedAoI" name="interestArea" formControlName="aoI">
-          <mat-option *ngFor="let interestArea of interestAreas" [value]="interestArea.value">
-            {{interestArea.viewValue}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      </td></tr></table>
-    <table class="input-form-table" cellspacing="0"><tr>
-      <td><mat-form-field class="input-form-table" appearance="outline">
-        <mat-label>Latitude: </mat-label>
-        <input matInput formControlName="lat" placeholder="33.925575">
-      </mat-form-field></td>
-      <td><mat-form-field class="input-form-table" appearance="outline">
-        <mat-label>Longitude: </mat-label>
-        <input matInput formControlName="lng" placeholder="83.356893">
-      </mat-form-field></td>
-    </tr><tr>
-      <td><mat-form-field class="input-form-table" appearance="outline">
-        <mat-label>COMID</mat-label>
-        <input matInput formControlName="catchmentID" placeholder="22076143">
-      </mat-form-field></td>
-      <td><mat-form-field class="input-form-table" appearance="outline">
-        <mat-label>Ncei StationID</mat-label>
-        <input matInput formControlName="stationID" placeholder="GHCND:USW00013874">
-      </mat-form-field></td>
+<form class="input-form" [formGroup]="inputForm">
+    <table class="input-form-table" cellspacing="0">
+      <tr>
+        <td>
+          <mat-form-field appearance="outline">
+            <mat-label>Select a Module: </mat-label>
+            <mat-select [(ngModel)]="selectedModule" name="modules" formControlName="module">
+              <mat-option *ngFor="let module of modules" [value]="module.value">
+                {{module.viewValue}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </td>
+        <td>
+          <mat-form-field appearance="outline">
+            <mat-label>Area of Interest: </mat-label>
+            <mat-select [(ngModel)]="selectedAoI" name="interestArea" formControlName="aoI">
+              <mat-option *ngFor="let interestArea of interestAreas" [value]="interestArea.value">
+                {{interestArea.viewValue}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </td>
       </tr>
     </table>
 
+    <table class="input-form-table" cellspacing="0">
+      <tr>
+        <td>
+          <mat-form-field class="input-form-table" appearance="outline">
+            <mat-label>Latitude: </mat-label>
+            <input matInput formControlName="lat">
+          </mat-form-field>
+        </td>
+        <td>
+          <mat-form-field class="input-form-table" appearance="outline">
+            <mat-label>Longitude: </mat-label>
+            <input matInput formControlName="lng">
+          </mat-form-field>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <mat-form-field class="input-form-table" appearance="outline">
+            <mat-label>COMID</mat-label>
+            <input matInput formControlName="catchmentID">
+          </mat-form-field>
+        </td>
+        <td>
+          <mat-form-field class="input-form-table" appearance="outline">
+            <mat-label>Ncei StationID</mat-label>
+            <input matInput formControlName="stationID">
+          </mat-form-field>
+        </td>
+      </tr>
+    </table>
 
-    <table class="input-form-table" cellspacing="0"><tr>
-        <td><mat-form-field appearance="outline">
+    <table class="input-form-table" cellspacing="0">
+      <tr>
+        <td>
+          <mat-form-field appearance="outline">
             <mat-label>Source: </mat-label>
-            <mat-select [(ngModel)]="selectedSource" formControlName="source" name="source">
+            <mat-select [(ngModel)]="selectedSource" formControlName="source">
               <mat-option *ngFor="let source of sources" [value]="source.value">
                 {{source.viewValue}}
               </mat-option>
             </mat-select>
-          </mat-form-field></td>
-        <td><mat-form-field class="input-form-table" appearance="outline">
-          <mat-label>Start Date: </mat-label>
-          <input matInput formControlName="startDate" placeholder="2015-01-01">
-        </mat-form-field></td>
-        </tr>
+          </mat-form-field>
+        </td>
+        <td>
+          <mat-form-field class="input-form-table" appearance="outline">
+            <mat-label>Start Date: </mat-label>
+            <input matInput formControlName="startDate">
+          </mat-form-field>
+        </td>
+      </tr>
     </table>
 
-    <table class="input-form-table" cellspacing="0"><tr>
-        <td><mat-form-field appearance="outline">
+    <table class="input-form-table" cellspacing="0">
+      <tr>
+        <td>
+          <mat-form-field appearance="outline">
             <mat-label>Time Zone: </mat-label>
-            <mat-select [(ngModel)]="selectedTimeZone" formControlName="timeZone" name="timeZone">
+            <mat-select [(ngModel)]="selectedTimeZone" formControlName="timeZone">
               <mat-option *ngFor="let timeZone of timeZones" [value]="timeZone.value">
                 {{timeZone.viewValue}}
               </mat-option>
             </mat-select>
-          </mat-form-field></td>
-        <td><mat-form-field class="input-form-table" appearance="outline">
-          <mat-label>End Date</mat-label>
-          <input matInput formControlName="endDate" placeholder="2015-01-31">
-        </mat-form-field></td>
-        </tr>
+          </mat-form-field>
+        </td>
+        <td>
+          <mat-form-field class="input-form-table" appearance="outline">
+            <mat-label>End Date</mat-label>
+            <input matInput formControlName="endDate">
+          </mat-form-field>
+        </td>
+      </tr>
     </table>
 
-    <table class="input-form-table" cellspacing="0"><tr>
-        <td><mat-form-field appearance="outline">
+    <table class="input-form-table" cellspacing="0">
+      <tr>
+        <td>
+          <mat-form-field appearance="outline">
             <mat-label>Output Data Format: </mat-label>
-            <mat-select [(ngModel)]="selectedDataFormat" formControlName="outputData" name="outputDataFormat">
+            <mat-select [(ngModel)]="selectedDataFormat" formControlName="outputFormat">
               <mat-option *ngFor="let outputDataFormat of outputDataFormats" [value]="outputDataFormat.value">
                 {{outputDataFormat.viewValue}}
               </mat-option>
             </mat-select>
-          </mat-form-field></td>
-        <td><mat-form-field appearance="outline">
+          </mat-form-field>
+        </td>
+        <td>
+          <mat-form-field appearance="outline">
             <mat-label>Temporal Resolution: </mat-label>
-            <mat-select [(ngModel)]="selectedResolution" formControlName="temporalResolution" name="temporalResolution">
+            <mat-select [(ngModel)]="selectedResolution" formControlName="temporalResolution">
               <mat-option *ngFor="let temporalResolution of temporalResolutions" [value]="temporalResolution.value">
                 {{temporalResolution.viewValue}}
               </mat-option>
             </mat-select>
-          </mat-form-field></td>
-        </tr>
+          </mat-form-field>
+        </td>
+      </tr>
     </table>
 
-    <table class="input-form-table" cellspacing="0"><tr>
-      <td><button mat-raised-button color="primary">Build Parameters</button></td>
-      <td><cdk-virtual-scroll-viewport itemSize="50" class="parameter-viewport">
-        <div *cdkVirtualFor="let item of items" class="parameter-item">{{item}}</div>
-      </cdk-virtual-scroll-viewport></td>
-    </tr></table>
+    <table class="input-form-table" cellspacing="0">
+      <tr>
+        <td>
+          <button mat-raised-button color="primary">Build Parameters</button>
+        </td>
+        <td>
+          <cdk-virtual-scroll-viewport itemSize="50" class="parameter-viewport">
+            <div *cdkVirtualFor="let item of items" class="parameter-item">{{item}}</div>
+          </cdk-virtual-scroll-viewport>
+        </td>
+      </tr>
+    </table>
   </form>
   
