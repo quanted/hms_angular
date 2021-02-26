@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
-
-
 interface Module {
   value: string;
   viewValue: string;
@@ -42,13 +40,6 @@ interface TemporalResolution {
 export class InputComponent implements OnInit {
   inputForm: FormGroup;
 
-  selectedModule: string;
-  selectedAoI: string;
-  selectedSource: string;
-  selectedTimeZone: string;
-  selectedResolution: string;
-  selectedDataFormat: string;
-
   modules: Module[] = [
     {value: 'Precipitation', viewValue: 'Precipitation'},
     {value: 'Air_Temperature', viewValue: 'Air Temperature'},
@@ -85,8 +76,6 @@ export class InputComponent implements OnInit {
 
   constructor(private fb: FormBuilder) { }
   
-  items = null;
-  
   ngOnInit(): void {
     this.inputForm = this.fb.group({
       module: [null, Validators.required],
@@ -101,25 +90,18 @@ export class InputComponent implements OnInit {
       endDate: ["2015-01-31", Validators.required],
       outputFormat: [null, Validators.required],
       temporalResolution: [null, Validators.required],
+      output: [null],
     })
   }
 
-  showParameters() {
-    this.items = this.inputForm.value
+  getValues(): void {
+    const tempValues = this.inputForm.value;
+    console.log('inputForm.value: ', tempValues);
 
-    // parameters = null;
-
-    // items = parameters;
-    
-    //   this.inputForm.get("name").value,
-    // start: this.sourceForm.get("sourceType").value,
-    // intensity: this.sourceForm.get("intensity").value,
-    // distance: this.sourceForm.get("distance").value,
-    // lat: this.sourceForm.get("lat").value,
-    // lng: this.sourceForm.get("lng").value,
-
+    if (this.inputForm.valid) {
+      this.inputForm.get('output').setValue(JSON.stringify(tempValues));
+    } else {
+      this.inputForm.get('output').setValue("invalid form!");
     }
   }
-  
-
-
+}
