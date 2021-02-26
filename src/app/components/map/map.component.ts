@@ -1,6 +1,8 @@
+import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 
 import * as L from 'leaflet';
+import * as ESRI from 'esri-leaflet';
 
 import { LayerService } from 'src/app/services/layer.service';
 
@@ -11,24 +13,40 @@ import { LayerService } from 'src/app/services/layer.service';
 })
 
 export class MapComponent {
-  /* STORET webservices */
-  url_stations_base = 'https://www.waterqualitydata.us/data/Station/search?';
-
-  /* NHD+ */
-  // catchments
-  url_NP21_catchments = "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/Catchments_NP21_Simplified/MapServer/0";
-  // HUC
-  url_NP21_allLayers = "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/layers;f=pjson";
-  url_NP21_huc12 = "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/0";
-  url_NP21_huc10 = "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/1";
-  url_NP21_huc8 = "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/2";
-  url_NP21_huc6 = "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/3";
-  url_NP21_huc4 = "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/4";
-  url_NP21_huc2 = "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/5";
-  // flowlines
-  url_NP21_flowlines = "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/NHDSnapshot_NP21/MapServer/0";
-  // water monitoring locations
-  url_NP21_monitor_locations = "https://watersgeo.epa.gov/arcgis.rest/services/NHDPlus_NP21/STORET_NP21/MapServer/0";
+  layers_URLS = [
+    { 
+      name: "catchments", 
+      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/Catchments_NP21_Simplified/MapServer/0"
+    },
+    { 
+      name: 'huc12',
+      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/0"
+    },
+    { 
+      name: 'huc10', 
+      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/1"
+    },
+    { 
+      name: 'huc8', 
+      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/2"
+    },
+    { 
+      name: 'huc6', 
+      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/3"
+    },
+    { 
+      name: 'huc4', 
+      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/4"
+    },
+    { 
+      name: 'huc2', 
+      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/5"
+    },
+    { 
+      name: 'flowlines', 
+      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/NHDSnapshot_NP21/MapServer/0"
+    },
+  ]
 
   map: L.Map;
 
@@ -62,26 +80,49 @@ export class MapComponent {
   //   "Roads": roadsLayer
   };
 
-  constructor(private layerService: LayerService) {}
+  constructor(
+    private layerService: LayerService, 
+    private http: HttpClient
+    ) {}
 
   ngOnInit() {
     if(!this.map) {
       this.map = L.map("map", {
         center: [37.31, -92.1],  // US geographical center
-        zoom: 5,
+        zoom: 8,
       });
       this.map.on("click", ($event) => {
         this.handleClick($event);
       });
+      this.map.on('zoomend', ($event) => {
+        this.handleZoom($event);
+      });
       this.openStreetMap.addTo(this.map);
-      
-      L.control.layers(this.baseLayers, this.overlays).addTo(this.map);
-      L.control.scale().addTo(this.map);
     }
+    for (let url of this.layers_URLS) {
+          let layer = ESRI.featureLayer({
+            url: url.url,
+          });
+          layer.setStyle({
+            color: "red",
+            weight: 1,
+            fillOpacity: 0,
+          });
+          this.overlays[url.name] = layer;
+    }
+    this.overlays['huc8'].addTo(this.map);
+      
+    L.control.layers(this.baseLayers, this.overlays).addTo(this.map);
+    L.control.scale().addTo(this.map);
   }
 
   handleClick($event) {
     console.log($event);
+  }
+
+  handleZoom($event) {
+    let zoom = this.map.getZoom();
+    console.log('zoom: ', zoom);
   }
 }
 

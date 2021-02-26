@@ -1,0 +1,23 @@
+.content {
+    display: flex;
+}
+
+img {
+    margin: 1rem;
+}
+
+#name {
+    margin: 0px;
+    padding: 0px;
+    font-size: 1rem;
+    font-family: sans-serif;
+    color: white;
+    margin-left: 2rem;
+    align-self: center;
+}
+
+.big {
+    font-size: 2rem;
+    margin-right: 1rem;
+    text-shadow: 2px 2px #C0C0C0;
+}
