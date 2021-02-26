@@ -5,24 +5,21 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {CookieService} from 'ngx-cookie-service';
 
 @Injectable({
     providedIn: 'root'
 })
-export class HttpService<T> {
+export class HmsService<T> {
 
   private readonly headers: HttpHeaders;
 
   constructor(
-      private cookieService: CookieService,
       private httpClient: HttpClient,
       public url: string,
       public endpoint: string
   ) {
     this.headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Token ${this.cookieService.get('TOKEN')}`
+      'Content-Type': 'application/json'
     });
   }
 

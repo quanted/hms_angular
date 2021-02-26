@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { RequestService } from './http.service';
+import { RequestService } from './hms.service';
 
 describe('RequestService', () => {
   let service: RequestService;

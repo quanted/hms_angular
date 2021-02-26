@@ -50,8 +50,7 @@ import { InputComponent } from './components/input/input.component';
       provide: HTTP_INTERCEPTORS,
       useClass: HttpErrorInterceptor,
       multi: true
-    },
-    CookieService
+    }
   ],
   bootstrap: [AppComponent]
 })
