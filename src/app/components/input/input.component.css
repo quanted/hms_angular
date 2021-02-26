@@ -1,0 +1,23 @@
+.input-form {
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+  }
+  
+  .input-form-table {
+    width: 100%;
+  }
+  
+  td {
+    padding-right: 8px;
+  }
+
+.parameter-viewport {
+  height: 200px;
+  width: 200px;
+  border: 1px solid black;
+}
+
+.parameter-item {
+  height: 50px;
+}
