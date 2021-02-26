@@ -18,30 +18,30 @@ export class MapComponent {
       name: "catchments", 
       url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/Catchments_NP21_Simplified/MapServer/0"
     },
-    { 
-      name: 'huc12',
-      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/0"
-    },
-    { 
-      name: 'huc10', 
-      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/1"
-    },
+    // { 
+    //   name: 'huc12',
+    //   url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/0"
+    // },
+    // { 
+    //   name: 'huc10', 
+    //   url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/1"
+    // },
     { 
       name: 'huc8', 
       url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/2"
     },
-    { 
-      name: 'huc6', 
-      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/3"
-    },
-    { 
-      name: 'huc4', 
-      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/4"
-    },
-    { 
-      name: 'huc2', 
-      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/5"
-    },
+    // { 
+    //   name: 'huc6', 
+    //   url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/3"
+    // },
+    // { 
+    //   name: 'huc4', 
+    //   url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/4"
+    // },
+    // { 
+    //   name: 'huc2', 
+    //   url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/5"
+    // },
     { 
       name: 'flowlines', 
       url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/NHDSnapshot_NP21/MapServer/0"
@@ -89,7 +89,7 @@ export class MapComponent {
     if(!this.map) {
       this.map = L.map("map", {
         center: [37.31, -92.1],  // US geographical center
-        zoom: 8,
+        zoom: 12,
       });
       this.map.on("click", ($event) => {
         this.handleClick($event);
