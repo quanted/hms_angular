@@ -125,7 +125,9 @@ export class MapComponent {
     if ($event.mapCoords) {
       this.map.setZoom(8);
       this.map.flyTo($event.mapCoords);
-    };
+    } else {
+      console.log('inputForm.value: ', $event);
+    }
   }
 
   handleZoom($event) {

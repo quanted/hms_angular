@@ -50,7 +50,7 @@ export class InputComponent implements OnInit {
   ngOnInit(): void {
     this.inputForm = this.fb.group({
       module: [null, Validators.required],
-      aoI: [null, Validators.required],
+      AoI: [null, Validators.required],
       lat: [null, Validators.required],
       lng: [null, Validators.required],
       catchmentID: ["22076143", Validators.required],
@@ -73,15 +73,17 @@ export class InputComponent implements OnInit {
 
   submit(): void {
     if (this.inputForm.valid) {
-      this.inputForm.get('output').setValue(JSON.stringify(this.inputForm.value));
-      this.requestSent.emit(this.inputForm.value);
+      this.addOutput("Valid input form, sending form to map...");
+      this.addOutput(JSON.stringify(this.inputForm.value));
+      const { module, AoI, lat, lng, catchmentID, stationID, source, startDate, timeZone, endDate, outputFormat, temporalResolution } = this.inputForm.value;
+      const request = { module, AoI, lat, lng, catchmentID, stationID, source, startDate, timeZone, endDate, outputFormat, temporalResolution };
+      this.requestSent.emit(request);
     } else {
       if (this.inputForm.get('lat').value && this.inputForm.get('lng').value) {  
         const lat = this.inputForm.get('lat').value;
         const lng = this.inputForm.get('lng').value;
 
         this.addOutput('Flying to [' + lat + ', ' + lng + ']...');
-
         this.requestSent.emit({ mapCoords: {
           lat, lng
         }});
