@@ -61,8 +61,11 @@ export class InputComponent implements OnInit {
       endDate: [null, Validators.required],
       outputFormat: [null, Validators.required],
       temporalResolution: [null, Validators.required],
-      output: ["Enter coordinates to goto location...."],
+      output: [""],
     })
+
+    this.addOutput("Enter coordinates to goto location....");
+    this.addOutput("Or click the map to select coordinates.");
   }
 
   mapClick($event) {

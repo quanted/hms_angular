@@ -27,6 +27,7 @@
 .text-area {
   color: lime;
   background-color: rgb(44, 44, 44);
+  padding-left: .5rem;
 }
 
 mat-form-field {
