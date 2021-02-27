@@ -1,6 +1,6 @@
 <form class="input-form" [formGroup]="inputForm">
 
-  <div class="panel row">
+  <div class="panel row margin-top">
     <mat-form-field appearance="outline">
       <mat-label>Select a Module: </mat-label>
       <mat-select formControlName="module">
@@ -94,7 +94,7 @@
     </mat-form-field>
   </div>
   
-  <div class="output row">
+  <div class="output row margin-bottom">
     <div>
       <textarea class="text-area" 
               matInput
@@ -108,5 +108,5 @@
     </div>
   </div>
 
-  <button mat-flat-button color="primary" (click)="submit()">Submit request</button>
+  <button mat-flat-button color="primary" (click)="submit()" class="submit-button margin-top">Submit request</button>
 </form>
