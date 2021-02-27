@@ -5,6 +5,8 @@
         "navigation"
         "content"
         "footer";
+
+    background-color: #0e6993;
 }
 
 .header {
@@ -21,6 +23,7 @@
 
 .content {
     grid-area: "content";
+    border: 1px solid green;
 }
 
 .footer {

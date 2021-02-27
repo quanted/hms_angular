@@ -1,4 +1,13 @@
-#map {
-    height: 75vh;
-    width: 100%;
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(100, 1fr);
+    gap: 0px;
+}
+
+.form-container {
+    grid-column: 1/36;
+}
+
+.map-container {
+    grid-column: 36/102;
 }

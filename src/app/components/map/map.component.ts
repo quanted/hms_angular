@@ -1,10 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 
 import * as L from 'leaflet';
 import * as ESRI from 'esri-leaflet';
-
-import { LayerService } from 'src/app/services/layer.service';
+import { InputComponent } from '../input/input.component';
 
 @Component({
   selector: 'app-map',
@@ -13,6 +12,9 @@ import { LayerService } from 'src/app/services/layer.service';
 })
 
 export class MapComponent {
+  @ViewChild(InputComponent, { static: false })
+  private inputComponent: InputComponent;
+
   layers_URLS = [
     { 
       name: "catchments", 
@@ -81,11 +83,21 @@ export class MapComponent {
   };
 
   constructor(
-    private layerService: LayerService, 
     private http: HttpClient
-    ) {}
+  ) {}
 
   ngOnInit() {
+    for (let url of this.layers_URLS) {
+          let layer = ESRI.featureLayer({
+            url: url.url,
+          });
+          layer.setStyle({
+            color: "red",
+            weight: 1,
+            fillOpacity: 0,
+          });
+          this.overlays[url.name] = layer;
+    }
     if(!this.map) {
       this.map = L.map("map", {
         center: [37.31, -92.1],  // US geographical center
@@ -99,25 +111,17 @@ export class MapComponent {
       });
       this.openStreetMap.addTo(this.map);
     }
-    for (let url of this.layers_URLS) {
-          let layer = ESRI.featureLayer({
-            url: url.url,
-          });
-          layer.setStyle({
-            color: "red",
-            weight: 1,
-            fillOpacity: 0,
-          });
-          this.overlays[url.name] = layer;
-    }
     this.overlays['huc8'].addTo(this.map);
       
     L.control.layers(this.baseLayers, this.overlays).addTo(this.map);
     L.control.scale().addTo(this.map);
   }
 
+  ngAfterInit() {
+  }
+
   handleClick($event) {
-    console.log($event);
+    this.inputComponent.mapClick($event);
   }
 
   handleZoom($event) {

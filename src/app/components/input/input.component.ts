@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Observable, Subscription } from 'rxjs';
 
 interface Module {
   value: string;
@@ -38,8 +39,6 @@ interface TemporalResolution {
   styleUrls: ['./input.component.css']
 })
 export class InputComponent implements OnInit {
-  inputForm: FormGroup;
-
   modules: Module[] = [
     {value: 'Precipitation', viewValue: 'Precipitation'},
     {value: 'Air_Temperature', viewValue: 'Air Temperature'},
@@ -73,6 +72,7 @@ export class InputComponent implements OnInit {
     {value: 'monthly', viewValue: 'Monthly'}
   ];
 
+  inputForm: FormGroup;
 
   constructor(private fb: FormBuilder) { }
   
@@ -92,6 +92,11 @@ export class InputComponent implements OnInit {
       temporalResolution: [null, Validators.required],
       output: [null],
     })
+  }
+
+  mapClick($event) {
+    this.inputForm.get('lat').setValue($event.latlng.lat);
+    this.inputForm.get('lng').setValue($event.latlng.lng);
   }
 
   getValues(): void {

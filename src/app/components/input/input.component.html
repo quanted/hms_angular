@@ -1,135 +1,113 @@
 <form class="input-form" [formGroup]="inputForm">
-    <table class="input-form-table" cellspacing="0">
-      <tr>
-        <td>
-          <mat-form-field appearance="outline">
-            <mat-label>Select a Module: </mat-label>
-            <mat-select formControlName="module">
-              <mat-option *ngFor="let module of modules" [value]="module.value">
-                {{module.viewValue}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </td>
-        <td>
-          <mat-form-field appearance="outline">
-            <mat-label>Area of Interest: </mat-label>
-            <mat-select formControlName="aoI">
-              <mat-option *ngFor="let interestArea of interestAreas" [value]="interestArea.value">
-                {{interestArea.viewValue}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </td>
-      </tr>
-    </table>
 
-    <table class="input-form-table" cellspacing="0">
-      <tr>
-        <td>
-          <mat-form-field class="input-form-table" appearance="outline">
-            <mat-label>Latitude: </mat-label>
-            <input matInput formControlName="lat">
-          </mat-form-field>
-        </td>
-        <td>
-          <mat-form-field class="input-form-table" appearance="outline">
-            <mat-label>Longitude: </mat-label>
-            <input matInput formControlName="lng">
-          </mat-form-field>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <mat-form-field class="input-form-table" appearance="outline">
-            <mat-label>COMID</mat-label>
-            <input matInput formControlName="catchmentID">
-          </mat-form-field>
-        </td>
-        <td>
-          <mat-form-field class="input-form-table" appearance="outline">
-            <mat-label>Ncei StationID</mat-label>
-            <input matInput formControlName="stationID">
-          </mat-form-field>
-        </td>
-      </tr>
-    </table>
+  <div class="panel-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Select a Module: </mat-label>
+      <mat-select formControlName="module">
+        <mat-option *ngFor="let module of modules" [value]="module.value">
+          {{module.viewValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Area of Interest: </mat-label>
+      <mat-select formControlName="aoI">
+        <mat-option *ngFor="let interestArea of interestAreas" [value]="interestArea.value">
+          {{interestArea.viewValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
 
-    <table class="input-form-table" cellspacing="0">
-      <tr>
-        <td>
-          <mat-form-field appearance="outline">
-            <mat-label>Source: </mat-label>
-            <mat-select formControlName="source">
-              <mat-option *ngFor="let source of sources" [value]="source.value">
-                {{source.viewValue}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </td>
-        <td>
-          <mat-form-field class="input-form-table" appearance="outline">
-            <mat-label>Start Date: </mat-label>
-            <input matInput formControlName="startDate">
-          </mat-form-field>
-        </td>
-      </tr>
-    </table>
+  <div class="panel-row">
+    <mat-form-field class="input-form-table" appearance="outline">
+      <mat-label>Latitude: </mat-label>
+      <input matInput formControlName="lat">
+    </mat-form-field>
+    <mat-form-field class="input-form-table" appearance="outline">
+      <mat-label>Longitude: </mat-label>
+      <input matInput formControlName="lng">
+    </mat-form-field>
+  </div>
 
-    <table class="input-form-table" cellspacing="0">
-      <tr>
-        <td>
-          <mat-form-field appearance="outline">
-            <mat-label>Time Zone: </mat-label>
-            <mat-select formControlName="timeZone">
-              <mat-option *ngFor="let timeZone of timeZones" [value]="timeZone.value">
-                {{timeZone.viewValue}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </td>
-        <td>
-          <mat-form-field class="input-form-table" appearance="outline">
-            <mat-label>End Date</mat-label>
-            <input matInput formControlName="endDate">
-          </mat-form-field>
-        </td>
-      </tr>
-    </table>
+  <div class="panel-row">
+    <mat-form-field class="input-form-table" appearance="outline">
+      <mat-label>COMID</mat-label>
+      <input matInput formControlName="catchmentID">
+    </mat-form-field>
+    <mat-form-field class="input-form-table" appearance="outline">
+      <mat-label>Ncei StationID</mat-label>
+      <input matInput formControlName="stationID">
+    </mat-form-field>
+  </div>
 
-    <table class="input-form-table" cellspacing="0">
-      <tr>
-        <td>
-          <mat-form-field appearance="outline">
-            <mat-label>Output Data Format: </mat-label>
-            <mat-select formControlName="outputFormat">
-              <mat-option *ngFor="let outputDataFormat of outputDataFormats" [value]="outputDataFormat.value">
-                {{outputDataFormat.viewValue}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </td>
-        <td>
-          <mat-form-field appearance="outline">
-            <mat-label>Temporal Resolution: </mat-label>
-              <mat-select formControlName="temporalResolution">
-              <mat-option *ngFor="let temporalResolution of temporalResolutions" [value]="temporalResolution.value">
-                {{temporalResolution.viewValue}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </td>
-      </tr>
-    </table>
+  <div class="panel-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Source: </mat-label>
+      <mat-select formControlName="source">
+        <mat-option *ngFor="let source of sources" [value]="source.value">
+          {{source.viewValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Time Zone: </mat-label>
+      <mat-select formControlName="timeZone">
+        <mat-option *ngFor="let timeZone of timeZones" [value]="timeZone.value">
+          {{timeZone.viewValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
 
-    <table class="input-form-table" cellspacing="0">
-      <tr>
-        <td>
-          <button mat-raised-button color="primary" (click)="getValues()">Build Parameters</button> 
-        </td>
-        <td>
-          <textarea formControlName="output" cols="40" rows="8"></textarea>
-        </td>
-      </tr>
-    </table>
-  </form>
+  <div class="calendar-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Enter a date range</mat-label>
+      <mat-date-range-input [rangePicker]="picker">
+        <input matStartDate formControlName="startDate">
+        <input matEndDate formControlName="endDate">
+      </mat-date-range-input>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-date-range-picker #picker></mat-date-range-picker>
+    
+      <mat-error *ngIf="inputForm.controls.startDate.hasError('matStartDateInvalid')">Invalid start date</mat-error>
+      <mat-error *ngIf="inputForm.controls.endDate.hasError('matEndDateInvalid')">Invalid end date</mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="panel-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Output Data Format: </mat-label>
+      <mat-select formControlName="outputFormat">
+        <mat-option *ngFor="let outputDataFormat of outputDataFormats" [value]="outputDataFormat.value">
+          {{outputDataFormat.viewValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Temporal Resolution: </mat-label>
+        <mat-select formControlName="temporalResolution">
+        <mat-option *ngFor="let temporalResolution of temporalResolutions" [value]="temporalResolution.value">
+          {{temporalResolution.viewValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="output-row">
+    <div class="submit-button">
+      <button mat-flat-button (click)="getValues()">Submit form</button>
+    </div>
+    <div>
+      <textarea class="text-area" 
+              matInput
+              cdkTextareaAutosize
+              #autosize="cdkTextareaAutosize"
+              cdkAutosizeMinRows="5"
+              cdkAutosizeMaxRows="5"
+              cols="32"
+              formControlName="output" >
+      </textarea>
+    </div>
+  </div>
+</form>

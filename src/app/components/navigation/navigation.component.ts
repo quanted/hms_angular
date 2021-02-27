@@ -8,13 +8,16 @@ import { Router } from '@angular/router';
 })
 export class NavigationComponent implements OnInit {
 
-  constructor( private router: Router) { }
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
   }
 
-  inputFormClick() {
-    console.log("This works!");
+  gotoMap(): void {
+    this.router.navigateByUrl("");
+  }
+
+  gotoInput() {
     this.router.navigateByUrl("inputform");
   }
 }
