@@ -122,16 +122,15 @@ export class MapComponent {
   }
 
   requestSent($event): void {
-    console.log("map::request-event-received: ", $event);
     if ($event.mapCoords) {
-      this.map.flyTo($event.mapCoords);
       this.map.setZoom(8);
+      this.map.flyTo($event.mapCoords);
     };
   }
 
   handleZoom($event) {
+    // console.log('zoom: ', $event);
     let zoom = this.map.getZoom();
-    console.log('zoom: ', zoom);
   }
 }
 
