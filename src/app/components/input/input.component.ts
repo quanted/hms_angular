@@ -70,7 +70,12 @@ export class InputComponent implements OnInit {
     this.inputForm.get('lng').setValue($event.latlng.lng);
   }
 
-  getValues(): void {
-    this.requestSent.emit(this.inputForm.value);
+  submit(): void {
+    if (this.inputForm.valid) {
+      this.inputForm.get('output').setValue(JSON.stringify(this.inputForm.value));
+      this.requestSent.emit(this.inputForm.value);
+    } else {
+      this.inputForm.get('output').setValue('Invalid form! Please complete the required fields');
+    }
   }
 }

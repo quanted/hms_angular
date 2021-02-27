@@ -1,6 +1,6 @@
 <form class="input-form" [formGroup]="inputForm">
 
-  <div class="panel-row">
+  <div class="panel row">
     <mat-form-field appearance="outline">
       <mat-label>Select a Module: </mat-label>
       <mat-select formControlName="module">
@@ -19,7 +19,7 @@
     </mat-form-field>
   </div>
 
-  <div class="panel-row">
+  <div class="panel row">
     <mat-form-field class="input-form-table" appearance="outline">
       <mat-label>Latitude: </mat-label>
       <input matInput formControlName="lat">
@@ -30,7 +30,7 @@
     </mat-form-field>
   </div>
 
-  <div class="panel-row">
+  <div class="panel row">
     <mat-form-field class="input-form-table" appearance="outline">
       <mat-label>COMID</mat-label>
       <input matInput formControlName="catchmentID">
@@ -41,7 +41,7 @@
     </mat-form-field>
   </div>
 
-  <div class="panel-row">
+  <div class="panel row">
     <mat-form-field appearance="outline">
       <mat-label>Source: </mat-label>
       <mat-select formControlName="source">
@@ -60,7 +60,7 @@
     </mat-form-field>
   </div>
 
-  <div class="calendar-row">
+  <div class="calendar row">
     <mat-form-field appearance="outline">
       <mat-label>Enter a date range</mat-label>
       <mat-date-range-input [rangePicker]="picker">
@@ -75,7 +75,7 @@
     </mat-form-field>
   </div>
 
-  <div class="panel-row">
+  <div class="panel row">
     <mat-form-field appearance="outline">
       <mat-label>Output Data Format: </mat-label>
       <mat-select formControlName="outputFormat">
@@ -93,11 +93,8 @@
       </mat-select>
     </mat-form-field>
   </div>
-
-  <div class="output-row">
-    <div class="submit-button">
-      <button mat-flat-button (click)="getValues()">Submit form</button>
-    </div>
+  
+  <div class="output row">
     <div>
       <textarea class="text-area" 
               matInput
@@ -105,9 +102,11 @@
               #autosize="cdkTextareaAutosize"
               cdkAutosizeMinRows="5"
               cdkAutosizeMaxRows="5"
-              cols="32"
+              cols="46"
               formControlName="output" >
       </textarea>
     </div>
   </div>
+
+  <button mat-flat-button color="primary" (click)="submit()">Submit request</button>
 </form>

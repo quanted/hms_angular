@@ -4,22 +4,25 @@
   height: 100%;
 }
 
-.panel-row, 
-.calendar-row,
-.output-row {
+.row {
+  width: 100%;
+  height: 3rem;
+}
+
+.panel, 
+.calendar,
+.output {
   display: grid;
   max-width: 100%;
   place-items: center;
-  height: 5rem;
 }
 
-.panel-row {
+.panel {
   grid-template-columns: 1fr 1fr;
 }
 
-.output-row {
-  grid-template-columns: 1fr 3fr;
-  margin-bottom: 3rem;
+.output {
+  margin-bottom: 2rem;
 }
 
 .submit-button {
@@ -28,5 +31,5 @@
 }
 
 .text-area {
-  outline: 1px solid black;
+  background-color: lightgoldenrodyellow;
 }
