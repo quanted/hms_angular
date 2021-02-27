@@ -1,6 +1,6 @@
 <form class="input-form" [formGroup]="inputForm">
 
-  <div class="panel row margin-top">
+  <div class="panel row">
     <mat-form-field appearance="outline">
       <mat-label>Select a Module: </mat-label>
       <mat-select formControlName="module">
@@ -93,20 +93,21 @@
       </mat-select>
     </mat-form-field>
   </div>
-  
-  <div class="output row margin-bottom">
-    <div>
-      <textarea class="text-area" 
-              matInput
-              cdkTextareaAutosize
-              #autosize="cdkTextareaAutosize"
-              cdkAutosizeMinRows="5"
-              cdkAutosizeMaxRows="5"
-              cols="46"
-              formControlName="output" >
-      </textarea>
-    </div>
+
+  <div class="output row">
+    <textarea class="text-area" 
+            matInput
+            cdkTextareaAutosize
+            #autosize="cdkTextareaAutosize"
+            cdkAutosizeMinRows="6"
+            cdkAutosizeMaxRows="6"
+            cols="46"
+            formControlName="output" >
+    </textarea>
   </div>
 
-  <button mat-flat-button color="primary" (click)="submit()" class="submit-button margin-top">Submit request</button>
+  <div class="button row">
+    <button mat-flat-button color="primary" (click)="submit()" class="button">Submit request</button>
+  </div>
+  
 </form>
