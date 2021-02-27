@@ -1,37 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Observable, Subscription } from 'rxjs';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-interface Module {
-  value: string;
-  viewValue: string;
-}
-
-interface AoI {
-  value: string;
-  viewValue: string;
-}
-
-interface Source {
-  value: string;
-  viewValue: string;
-}
-
-interface TimeZone {
-  value: string;
-  viewValue: string;
-}
-
-interface OutputDataFormat {
-  value: string;
-  viewValue: string;
-}
-
-interface TemporalResolution {
-  value: string;
-  viewValue: string;
-}
-
+import { Module, AoI, Source, TimeZone, OutputDataFormat, TemporalResolution } from '../../models/forms.model' ;
 
 @Component({
   selector: 'app-input',
@@ -75,6 +45,7 @@ export class InputComponent implements OnInit {
   inputForm: FormGroup;
 
   constructor(private fb: FormBuilder) { }
+  @Output() requestSent: EventEmitter<any> = new EventEmitter<any>();
   
   ngOnInit(): void {
     this.inputForm = this.fb.group({
@@ -100,13 +71,6 @@ export class InputComponent implements OnInit {
   }
 
   getValues(): void {
-    const tempValues = this.inputForm.value;
-    console.log('inputForm.value: ', tempValues);
-
-    if (this.inputForm.valid) {
-      this.inputForm.get('output').setValue(JSON.stringify(tempValues));
-    } else {
-      this.inputForm.get('output').setValue("invalid form!");
-    }
+    this.requestSent.emit(this.inputForm.value);
   }
 }

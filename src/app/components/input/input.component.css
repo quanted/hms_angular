@@ -1,8 +1,5 @@
 .input-form {
-  width: 36fr;
-  min-width: 420px;
   display: grid;
-  padding-top: 1.5rem;
   background-color: lightsteelblue;
   height: 100%;
 }
@@ -31,9 +28,5 @@
 }
 
 .text-area {
-  border: 1px solid black;
-}
-
-.outline {
-  border: 1px solid blue;
+  outline: 1px solid black;
 }

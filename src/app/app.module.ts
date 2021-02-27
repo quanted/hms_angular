@@ -25,6 +25,7 @@ import { FooterComponent } from './components/footer/footer.component';
 import { InputComponent } from './components/input/input.component';
 
 import { CookieService } from 'ngx-cookie-service';
+import { MainComponent } from './components/main/main.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { CookieService } from 'ngx-cookie-service';
     NavigationComponent,
     HeaderComponent,
     FooterComponent,
-    InputComponent
+    InputComponent,
+    MainComponent
   ],
   imports: [
     BrowserModule,

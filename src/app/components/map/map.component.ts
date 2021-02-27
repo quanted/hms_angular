@@ -1,9 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 
 import * as L from 'leaflet';
 import * as ESRI from 'esri-leaflet';
-import { InputComponent } from '../input/input.component';
 
 @Component({
   selector: 'app-map',
@@ -12,8 +11,7 @@ import { InputComponent } from '../input/input.component';
 })
 
 export class MapComponent {
-  @ViewChild(InputComponent, { static: false })
-  private inputComponent: InputComponent;
+  @Output() mapClick: EventEmitter<any> = new EventEmitter<any>();
 
   layers_URLS = [
     { 
@@ -121,7 +119,11 @@ export class MapComponent {
   }
 
   handleClick($event) {
-    this.inputComponent.mapClick($event);
+    this.mapClick.emit($event);
+  }
+
+  requestSent($event): void {
+    console.log("map::request-event-received: ", $event);
   }
 
   handleZoom($event) {
