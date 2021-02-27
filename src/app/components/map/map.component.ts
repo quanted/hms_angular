@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, EventEmitter, Output } from '@angular/core';
 
 import * as L from 'leaflet';
@@ -15,35 +14,59 @@ export class MapComponent {
 
   layers_URLS = [
     { 
-      name: 'flowlines', 
-      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/NHDSnapshot_NP21/MapServer/0"
+      name: 'flowlines',
+      color: 'blue',
+      weight: 1,
+      fillOpacity: 0,
+      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/NHDSnapshot_NP21/MapServer/0",
     },
     { 
       name: "catchments", 
+      color: 'green',
+      weight: 1,
+      fillOpacity: 0,
       url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/Catchments_NP21_Simplified/MapServer/0"
     },
     { 
       name: 'huc12',
+      color: 'red',
+      weight: 1,
+      fillOpacity: 0,
       url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/0"
     },
     { 
       name: 'huc10', 
+      color: 'red',
+      weight: 1,
+      fillOpacity: 0,
       url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/1"
     },
     { 
       name: 'huc8', 
+      color: 'red',
+      weight: 1,
+      fillOpacity: 0,
       url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/2"
     },
     { 
       name: 'huc6', 
+      color: 'red',
+      weight: 1,
+      fillOpacity: 0,
       url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/3"
     },
     { 
       name: 'huc4', 
+      color: 'red',
+      weight: 1,
+      fillOpacity: 0,
       url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/4"
     },
     { 
       name: 'huc2', 
+      color: 'red',
+      weight: 1,
+      fillOpacity: 0,
       url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/5"
     },
   ]
@@ -64,6 +87,11 @@ export class MapComponent {
     }
   );
 
+  emptyBasemap = L.tileLayer('',
+  {
+    attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+  });
+
   // flag = L.icon({
   //   iconUrl: "../assets/images/icon_flag.png",
   //   iconSize: [32, 32], // size of the icon
@@ -72,7 +100,8 @@ export class MapComponent {
 
   baseLayers = {
     "Open Street Map": this.openStreetMap,
-    "Open Topo Map": this.openTopoMap
+    "Open Topo Map": this.openTopoMap,
+    "No basemap": this.emptyBasemap,
   };
 
   overlays = {
@@ -81,7 +110,6 @@ export class MapComponent {
   };
 
   constructor(
-    private http: HttpClient
   ) {}
 
   ngOnInit() {
@@ -90,9 +118,9 @@ export class MapComponent {
             url: url.url,
           });
           layer.setStyle({
-            color: "red",
-            weight: 1,
-            fillOpacity: 0,
+            color: url.color,
+            weight: url.weight,
+            fillOpacity: url.fillOpacity,
           });
           this.overlays[url.name] = layer;
     }
