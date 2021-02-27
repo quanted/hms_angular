@@ -30,8 +30,9 @@
 }
 
 .text-area {
-  background-color: lightgoldenrodyellow;
-  border: 1pd solid lightgray;
+  color: lime;
+  background-color: rgb(44, 44, 44);
+  border: 1pd solid rgb(150, 150, 150);
   border-radius: 5px;
 }
 
