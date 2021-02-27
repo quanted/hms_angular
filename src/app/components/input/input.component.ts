@@ -51,8 +51,8 @@ export class InputComponent implements OnInit {
     this.inputForm = this.fb.group({
       module: [null, Validators.required],
       aoI: [null, Validators.required],
-      lat: ["33.925575", Validators.required],
-      lng: ["83.356893", Validators.required],
+      lat: [null, Validators.required],
+      lng: [null, Validators.required],
       catchmentID: ["22076143", Validators.required],
       stationID: ["GHCND:USW00013874", Validators.required],
       source: [null, Validators.required],
@@ -61,11 +61,12 @@ export class InputComponent implements OnInit {
       endDate: [null, Validators.required],
       outputFormat: [null, Validators.required],
       temporalResolution: [null, Validators.required],
-      output: [null],
+      output: ["Enter coordinates to goto location...."],
     })
   }
 
   mapClick($event) {
+    this.addOutput('Map clicked at [' + $event.latlng.lat + ', ' + $event.latlng.lng + ']');
     this.inputForm.get('lat').setValue($event.latlng.lat);
     this.inputForm.get('lng').setValue($event.latlng.lng);
   }
@@ -75,7 +76,24 @@ export class InputComponent implements OnInit {
       this.inputForm.get('output').setValue(JSON.stringify(this.inputForm.value));
       this.requestSent.emit(this.inputForm.value);
     } else {
-      this.inputForm.get('output').setValue('Invalid form! Please complete the required fields');
+      if (this.inputForm.get('lat').value && this.inputForm.get('lng').value) {  
+        const lat = this.inputForm.get('lat').value;
+        const lng = this.inputForm.get('lng').value;
+
+        this.addOutput('Flying to [' + lat + ', ' + lng + ']...');
+
+        this.requestSent.emit({ mapCoords: {
+          lat, lng
+        }});
+      } else {
+        this.addOutput('Invalid form! Please complete the required fields');
+      }
     }
+  }
+
+  addOutput(message): void {
+    this.inputForm.get('output').setValue(this.inputForm.get('output').value + "\n" + message);
+    const outputArea = document.getElementById('output');
+    outputArea.scrollTop = outputArea.scrollHeight;
   }
 }
