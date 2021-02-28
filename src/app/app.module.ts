@@ -27,6 +27,7 @@ import { InputComponent } from './components/input/input.component';
 
 import { CookieService } from 'ngx-cookie-service';
 import { MainComponent } from './components/main/main.component';
+import { MapControlComponent } from './components/map/map-control/map-control.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { MainComponent } from './components/main/main.component';
     HeaderComponent,
     FooterComponent,
     InputComponent,
-    MainComponent
+    MainComponent,
+    MapControlComponent
   ],
   imports: [
     BrowserModule,

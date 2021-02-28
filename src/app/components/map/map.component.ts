@@ -11,9 +11,37 @@ import * as ESRI from 'esri-leaflet';
 
 export class MapComponent {
   @Output() mapClick: EventEmitter<any> = new EventEmitter<any>();
+  @Output() layerUpdate: EventEmitter<any> = new EventEmitter<any>();
+
+  defaultBasemap = 'Open Street Map';
+  basemaps = [
+    {
+      name: 'Open Street Map',
+      layer: L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+          attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        })
+    },
+    {
+      name: 'Open Topo Map',
+      layer: L.tileLayer(
+        'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', 
+        {
+          attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+        })
+    },
+    {
+      name: 'No basemap',
+      layer: L.tileLayer('',
+        {
+          attribution: '(<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+        })
+    }
+  ]
 
   defaultFeatureLayer = 'huc8';
-  features_URLS = [
+  features = [
     { 
       name: 'flowlines',
       color: '#00FFFF',
@@ -72,33 +100,6 @@ export class MapComponent {
     },
   ]
 
-  defaultBasemap = 'Open Street Map';
-  basemaps = [
-    {
-      name: 'Open Street Map',
-      layer: L.tileLayer(
-        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        {
-          attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-        })
-    },
-    {
-      name: 'Open Topo Map',
-      layer: L.tileLayer(
-        'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', 
-        {
-          attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
-        })
-    },
-    {
-      name: 'No basemap',
-      layer: L.tileLayer('',
-        {
-          attribution: '(<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
-        })
-    }
-  ]
-
   map: L.Map;
 
   // flag = L.icon({
@@ -107,69 +108,145 @@ export class MapComponent {
   //   iconAnchor: [16, 16], // point of the icon which will correspond to marker's location
   // });
 
-  featureLayers = {
-  //   "Marker": marker,
-  //   "Roads": roadsLayer
-  };
+  basemapLayers = [
+    // "Map Name": L.tileLayer,
+  ]
 
-  basemapLayers = {
-    // "Map Name": "map layer",
-  }
+  featureLayers = [
+    // "Marker": ESRI.featureLayer,
+  ];
 
   constructor(
   ) {}
 
   ngOnInit() {
+    // setup map
     if(!this.map) {
       this.map = L.map("map", {
         center: [37.31, -92.1],  // US geographical center
         zoom: 8,
         minZoom: 5,
       });
-      this.map.on("click", ($event) => {
-        this.handleClick($event);
+      this.map.on("click", (mapClickEvent) => {
+        this.handleClick(mapClickEvent);
       });
-      this.map.on('zoomend', ($event) => {
-        this.handleZoom($event);
+      this.map.on('zoomend', (mapZoomEvent) => {
+        this.handleZoom(mapZoomEvent);
       });
     }
+
+    // setup tile maps
     for (let basemap of this.basemaps) {
-      this.basemapLayers[basemap.name] = basemap.layer;
+      this.basemapLayers.push({
+        type: 'basemap',
+        name: basemap.name,
+        layer: basemap.layer,
+        show: false,
+      });
     }
-    this.basemapLayers[this.defaultBasemap].addTo(this.map);
-    for (let url of this.features_URLS) {
-          let layer = ESRI.featureLayer({
-            url: url.url,
-          });
-          layer.setStyle({
-            color: url.color,
-            weight: url.weight,
-            fillOpacity: url.fillOpacity,
-          });
-          this.featureLayers[url.name] = layer;
+    
+    // setup feature layers
+    for (let url of this.features) {
+      let layer = ESRI.featureLayer({
+        url: url.url,
+      });
+      layer.setStyle({
+        color: url.color,
+        weight: url.weight,
+        fillOpacity: url.fillOpacity,
+      });
+      this.featureLayers.push({
+        type: 'feature',
+        name: url.name,
+        layer: layer,
+        show: false,
+      });
     }
-    this.featureLayers[this.defaultFeatureLayer].addTo(this.map);
-      
-    L.control.layers(this.basemapLayers, this.featureLayers, {
-      collapsed: false,
-    }).addTo(this.map);
-    L.control.scale().addTo(this.map);
+    this.addDefaultLayers();
   }
 
-  handleClick($event) {
-    this.mapClick.emit($event);
+  addDefaultLayers(): void {
+    for (let map of this.basemapLayers) {
+      if (map.name == this.defaultBasemap) {
+        this.map.addLayer(map.layer);
+        map.show = true;
+      }
+    }
+    for (let feature of this.featureLayers) {
+      if (feature.name == this.defaultFeatureLayer) {
+        this.map.addLayer(feature.layer);
+        feature.show = true;
+      }
+    }
   }
 
-  requestSent($event): void {
-    if ($event.mapCoords) {
+  toggleLayer(type, name): void {
+    switch(type) {
+      case 'basemap':
+        for (let map of this.basemapLayers) {
+          if (map.name == name) {
+            map.show = !map.show;
+          }
+          if (map.show) {
+            this.map.addLayer(map.layer);
+          } else {
+            this.map.removeLayer(map.layer);
+          }
+        }
+        break;
+      case 'feature':
+        for (let feature of this.featureLayers) {
+          if (feature.name == name) {
+            feature.show = !feature.show;
+          }
+          if (feature.show) {
+            this.map.addLayer(feature.layer);
+          } else {
+            this.map.removeLayer(feature.layer);
+          }
+        }
+        break;
+      default:
+        console.log('UNKNOWN MAP_LAYER_TYPE: ', type);
+      }
+    this.layerUpdate.emit({ basemaps: this.basemapLayers, features: this.featureLayers });
+  }
+
+  // handles map interactions
+  handleClick(mapClickEvent) {
+    // input form is listening for this
+    // it uses this event to populate the lat/lng form controls
+    this.mapClick.emit(mapClickEvent);
+  }
+
+  // control clicked message from map-control
+  controlClicked(mapControlEvent): void {
+    switch(mapControlEvent.type) {
+      case 'toggle':
+        this.toggleLayer(mapControlEvent.layerType, mapControlEvent.name);
+        break;
+      case 'refresh':
+        this.layerUpdate.emit({ basemaps: this.basemapLayers, features: this.featureLayers });
+        break;
+      default:
+        console.log('UNKNOWN MAP_CONTROL_EVENT_TYPE: ', mapControlEvent.type);
+    }
+  }
+
+  // this is an incoming message from the input form
+  requestSent(requestFromInputForm): void {
+    // requestFromInputForm.mapCoords === true
+    // there will be an incomplete form,
+    // but it will include a lat/lng pair
+    if (requestFromInputForm.mapCoords) {
       this.map.setZoom(8);
-      this.map.flyTo($event.mapCoords);
+      this.map.flyTo(requestFromInputForm.mapCoords);
     } else {
-      console.log('inputForm.value: ', $event);
+      console.log('inputForm.value: ', requestFromInputForm);
     }
   }
 
-  handleZoom($event) {
+  handleZoom(mapZoomEvent) {
     let zoom = this.map.getZoom();
     console.log('zoom: ', zoom);
   }

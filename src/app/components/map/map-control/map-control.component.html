@@ -1,0 +1,19 @@
+<div class="grid-container">
+    <div class="item">
+        <div *ngFor="let map of basemaps" class="button" (click)="controlClick(map)">
+            {{ map.name }}
+        </div>      
+    </div>
+    
+    <div class="item">
+        <div *ngFor="let feature of features" class="button" (click)="controlClick(feature)">
+            {{ feature.name }}
+        </div>
+    </div>
+    
+    <div class="item">
+        <div class="button" (click)="controlClick('refresh')">
+            Refresh Map Layers
+        </div>
+    </div>
+</div>

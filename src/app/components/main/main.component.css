@@ -10,10 +10,6 @@ app-header {
     grid-column: 1 / 4;
 }
 
-app-input {
-    grid-column: 1 / 2;
-}
-
 app-map {
     background: rgb(186, 248, 245);
     grid-column: 2 / 3;

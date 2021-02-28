@@ -1,6 +1,7 @@
 <body>
     <app-header></app-header>
     <app-input (requestSent)="requestSent($event)"></app-input>
-    <app-map (mapClick)="mapClick($event)"></app-map>
+    <app-map (mapClick)="mapClick($event)" (layerUpdate)="layerUpdate($event)"></app-map>
+    <app-map-control (controlClicked)="controlClicked($event)"></app-map-control>
     <app-footer></app-footer>
 </body>

@@ -1,0 +1,24 @@
+.grid-container {
+    display: grid;
+    background-color: rgb(44, 44, 44);
+    height: 100%;
+    width: 180px;
+    text-align: center;
+}
+
+.item {
+    background: lightsteelblue;
+    border-bottom: 1px solid black;
+}
+
+.item:last-of-type {
+    border: none;
+}
+
+.button {
+    width: 100%;
+}
+
+.button:hover {
+    background: gray;
+}
