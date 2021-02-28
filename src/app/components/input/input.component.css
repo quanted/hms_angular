@@ -28,6 +28,12 @@
   color: lime;
   background-color: rgb(44, 44, 44);
   padding-left: .5rem;
+  
+}
+
+.output {
+  height: 100%;
+  background-color: rgb(44, 44, 44);
 }
 
 mat-form-field {
@@ -40,7 +46,33 @@ mat-form-field.mat-form-field {
   padding-bottom: 2rem;
 }
 
-button {
+.button {
   border-radius: 0px;
-  border: 1px solid black;
+  width: 100%;
+  background-color: rgb(255, 255, 255);
+}
+.button:hover {
+  background-color: rgb(156, 156, 156);
+}
+
+.buttons > .button:first-of-type {
+  background-color: lightgreen;
+}
+.buttons > .button:first-of-type:hover {
+  background-color: rgb(98, 165, 98);
+}
+
+.buttons > .button:last-of-type {
+  background-color: rgb(241, 203, 76);
+}
+.buttons > .button:last-of-type:hover {
+  background-color: rgb(168, 141, 52);
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+  margin: 0px;
+  padding: 0px;
+  height: 100%;
 }

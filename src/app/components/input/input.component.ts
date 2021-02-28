@@ -75,6 +75,14 @@ export class InputComponent implements OnInit {
     this.inputForm.get('lng').setValue($event.latlng.lng);
   }
 
+  reset(): void {
+
+  }
+
+  flyTo(): void {
+    
+  }
+
   submit(): void {
     if (this.inputForm.valid) {
       this.addOutput("Valid input form, sending form to map...");

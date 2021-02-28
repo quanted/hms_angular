@@ -94,6 +94,15 @@
     </mat-form-field>
   </div>
 
+  <!-- <textarea class="text-area" id="output"
+            matInput
+            cdkTextareaAutosize
+            #autosize="cdkTextareaAutosize"
+            cdkAutosizeMinRows="6"
+            cdkAutosizeMaxRows="6"
+            cols="46"
+            formControlName="output" >
+  </textarea> -->
   <div class="output row">
     <textarea class="text-area" id="output"
             matInput
@@ -107,9 +116,9 @@
   </div>
 
   <div class="buttons row">
-    <button mat-flat-button color="primary" (click)="submit()" class="button">Reset</button>
-    <button mat-flat-button color="primary" (click)="submit()" class="button">Fly to</button>
-    <button mat-flat-button color="primary" (click)="submit()" class="button">{{ buttonState }}</button>
+    <button mat-flat-button (click)="reset()" class="button">Reset</button>
+    <button mat-flat-button (click)="flyTo()" class="button">Fly to</button>
+    <button mat-flat-button (click)="submit()" class="button">{{ buttonState }}</button>
   </div>
   
 </form>
