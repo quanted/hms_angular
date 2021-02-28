@@ -1,6 +1,5 @@
 .grid-container {
     display: grid;
-    background-color: rgb(44, 44, 44);
     height: 100%;
     width: 140px;
     text-align: center;
@@ -8,7 +7,7 @@
 
 .item {
     background: lightsteelblue;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid rgb(150, 150, 150);
     padding: 5px;
     padding-top: 0px;
 }
@@ -19,15 +18,16 @@
 
 .button {
     width: 100%;
-    background: gray;
     margin-top: 5px;
     padding: 1px;
     font-size: .75rem;
+    outline: 1px solid rgb(150, 150, 150);
 }
 
 .button:hover {
-    background: rgba(114, 114, 114, .5);
+    background: rgba(146, 146, 146, 0.5);
     cursor: pointer;
+    outline: 2px solid green;
 }
 
 .active {
