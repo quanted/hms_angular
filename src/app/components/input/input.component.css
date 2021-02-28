@@ -42,4 +42,5 @@ mat-form-field.mat-form-field {
 
 button {
   border-radius: 0px;
+  border: 1px solid black;
 }

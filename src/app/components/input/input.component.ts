@@ -46,6 +46,7 @@ export class InputComponent implements OnInit {
 
   constructor(private fb: FormBuilder) { }
   @Output() requestSent: EventEmitter<any> = new EventEmitter<any>();
+  buttonState = "Form incomplete"
   
   ngOnInit(): void {
     this.inputForm = this.fb.group({
@@ -53,8 +54,8 @@ export class InputComponent implements OnInit {
       AoI: [null, Validators.required],
       lat: [null, Validators.required],
       lng: [null, Validators.required],
-      catchmentID: ["22076143", Validators.required],
-      stationID: ["GHCND:USW00013874", Validators.required],
+      catchmentID: [null, Validators.required],
+      stationID: [null, Validators.required],
       source: [null, Validators.required],
       startDate: [null, Validators.required],
       timeZone: [null, Validators.required],

@@ -106,8 +106,10 @@
     </textarea>
   </div>
 
-  <div class="button row">
-    <button mat-flat-button color="primary" (click)="submit()" class="button">Submit request</button>
+  <div class="buttons row">
+    <button mat-flat-button color="primary" (click)="submit()" class="button">Reset</button>
+    <button mat-flat-button color="primary" (click)="submit()" class="button">Fly to</button>
+    <button mat-flat-button color="primary" (click)="submit()" class="button">{{ buttonState }}</button>
   </div>
   
 </form>

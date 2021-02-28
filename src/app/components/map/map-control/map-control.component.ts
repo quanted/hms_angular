@@ -1,4 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { LayerService } from 'src/app/services/layer.service';
 
 @Component({
   selector: 'app-map-control',
@@ -9,26 +10,35 @@ export class MapControlComponent implements OnInit {
   basemaps = [];
   features = [];
 
-  constructor() { }
+  constructor(
+    private layerService: LayerService,
+  ) {}
   @Output() controlClicked: EventEmitter<any> = new EventEmitter<any>();
   
   ngOnInit(): void {
+    this.basemaps = this.layerService.getBasemapLayers();
+    this.features = this.layerService.getFeatureLayers();
   }
 
-  controlClick(buttonClick): void {
-    let message;
-    if (buttonClick == 'refresh') {
-      message = {
-        type: 'refresh'
-      };
-    } else {
-      message = {
-        type: 'toggle',
-        name: buttonClick.name,
-        layerType: buttonClick.type
-      };
+  issueCommand(command, controlButton?): void {
+    let commandMessage;
+    switch(command) {
+      case 'refresh':
+        commandMessage = {
+          command: command
+        }
+        break;
+      case 'toggle':
+        commandMessage = {
+          command: command,
+          name: controlButton.name,
+          layerType: controlButton.type
+        }
+        break;
+      default:
+        console.log('UNKNOWN COMMAND.TYPE ', commandMessage);
     }
-    this.controlClicked.emit(message);
+    this.controlClicked.emit(commandMessage);
   }
 
   layerUpdate(layers): void {

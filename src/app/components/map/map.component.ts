@@ -3,6 +3,8 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import * as L from 'leaflet';
 import * as ESRI from 'esri-leaflet';
 
+import { LayerService } from 'src/app/services/layer.service';
+
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
@@ -12,93 +14,6 @@ import * as ESRI from 'esri-leaflet';
 export class MapComponent {
   @Output() mapClick: EventEmitter<any> = new EventEmitter<any>();
   @Output() layerUpdate: EventEmitter<any> = new EventEmitter<any>();
-
-  defaultBasemap = 'Open Street Map';
-  basemaps = [
-    {
-      name: 'Open Street Map',
-      layer: L.tileLayer(
-        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        {
-          attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-        })
-    },
-    {
-      name: 'Open Topo Map',
-      layer: L.tileLayer(
-        'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', 
-        {
-          attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
-        })
-    },
-    {
-      name: 'No basemap',
-      layer: L.tileLayer('',
-        {
-          attribution: '(<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
-        })
-    }
-  ]
-
-  defaultFeatureLayer = 'huc8';
-  features = [
-    { 
-      name: 'flowlines',
-      color: '#00FFFF',
-      weight: 1,
-      fillOpacity: 0,
-      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/NHDSnapshot_NP21/MapServer/0",
-    },
-    { 
-      name: "catchments", 
-      color: 'green',
-      weight: 1,
-      fillOpacity: 0,
-      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/Catchments_NP21_Simplified/MapServer/0"
-    },
-    { 
-      name: 'huc12',
-      color: '#0026FF',
-      weight: 1,
-      fillOpacity: 0,
-      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/0"
-    },
-    { 
-      name: 'huc10', 
-      color: '#4800FF',
-      weight: 1,
-      fillOpacity: 0,
-      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/1"
-    },
-    { 
-      name: 'huc8', 
-      color: '#B200FF',
-      weight: 2,
-      fillOpacity: 0,
-      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/2"
-    },
-    { 
-      name: 'huc6', 
-      color: '#FF00DC',
-      weight: 4,
-      fillOpacity: 0,
-      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/3"
-    },
-    { 
-      name: 'huc4', 
-      color: '#FF006E',
-      weight: 6,
-      fillOpacity: 0,
-      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/4"
-    },
-    { 
-      name: 'huc2', 
-      color: '#FF0000',
-      weight: 8,
-      fillOpacity: 0,
-      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/5"
-    },
-  ]
 
   map: L.Map;
 
@@ -116,15 +31,19 @@ export class MapComponent {
     // "Marker": ESRI.featureLayer,
   ];
 
+  defaultBasemap = 'Open Street Map';
+  defaultFeatureLayer = 'huc8';
+
   constructor(
+    private layerService: LayerService,
   ) {}
 
   ngOnInit() {
     // setup map
     if(!this.map) {
       this.map = L.map("map", {
-        center: [37.31, -92.1],  // US geographical center
-        zoom: 8,
+        center: [38.5, -96],  // US geographical center
+        zoom: 5,
         minZoom: 5,
       });
       this.map.on("click", (mapClickEvent) => {
@@ -134,32 +53,12 @@ export class MapComponent {
         this.handleZoom(mapZoomEvent);
       });
     }
-    // setup tile maps
-    for (let basemap of this.basemaps) {
-      this.basemapLayers.push({
-        type: 'basemap',
-        name: basemap.name,
-        layer: basemap.layer,
-        show: false,
-      });
-    }
-    // setup feature layers
-    for (let url of this.features) {
-      let layer = ESRI.featureLayer({
-        url: url.url,
-      });
-      layer.setStyle({
-        color: url.color,
-        weight: url.weight,
-        fillOpacity: url.fillOpacity,
-      });
-      this.featureLayers.push({
-        type: 'feature',
-        name: url.name,
-        layer: layer,
-        show: false,
-      });
-    }
+    this.setupLayers();
+  }
+
+  setupLayers() {
+    this.basemapLayers = this.layerService.getBasemapLayers();
+    this.featureLayers = this.layerService.getFeatureLayers();
     this.addDefaultLayers();
   }
 
@@ -170,15 +69,11 @@ export class MapComponent {
         map.show = true;
       }
     }
-    for (let feature of this.featureLayers) {
-      if (feature.name == this.defaultFeatureLayer) {
-        this.map.addLayer(feature.layer);
-        feature.show = true;
-      }
-    }
   }
 
   toggleLayer(type, name): void {
+    console.log(type);
+    console.log(name);
     switch(type) {
       case 'basemap':
         for (let map of this.basemapLayers) {
@@ -216,16 +111,16 @@ export class MapComponent {
     this.mapClick.emit(mapClickEvent);
   }
   // control clicked message from map-control
-  controlClicked(mapControlEvent): void {
-    switch(mapControlEvent.type) {
+  controlClicked(commandMessage): void {
+    switch(commandMessage.command) {
       case 'toggle':
-        this.toggleLayer(mapControlEvent.layerType, mapControlEvent.name);
+        this.toggleLayer(commandMessage.layerType, commandMessage.name);
         break;
       case 'refresh':
         this.layerUpdate.emit({ basemaps: this.basemapLayers, features: this.featureLayers });
         break;
       default:
-        console.log('UNKNOWN MAP_CONTROL_EVENT_TYPE: ', mapControlEvent.type);
+        console.log('UNKNOWN COMMAND_TYPE: ', commandMessage.command);
     }
   }
   // this is an incoming message from the input form
@@ -234,7 +129,7 @@ export class MapComponent {
     // there will be an incomplete form,
     // but it will include a lat/lng pair
     if (requestFromInputForm.mapCoords) {
-      this.map.setZoom(8);
+      this.map.setZoom(5);
       this.map.flyTo(requestFromInputForm.mapCoords);
     } else {
       console.log('inputForm.value: ', requestFromInputForm);
