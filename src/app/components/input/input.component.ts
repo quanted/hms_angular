@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { Module, AoI, Source, TimeZone, OutputDataFormat, TemporalResolution } from '../../models/forms.model' ;
 
@@ -44,7 +45,10 @@ export class InputComponent implements OnInit {
 
   inputForm: FormGroup;
 
-  constructor(private fb: FormBuilder) { }
+  constructor(
+    private fb: FormBuilder,
+    private router: Router
+  ) { }
   @Output() requestSent: EventEmitter<any> = new EventEmitter<any>();
   buttonState = "Form incomplete"
   
@@ -62,11 +66,10 @@ export class InputComponent implements OnInit {
       endDate: [null, Validators.required],
       outputFormat: [null, Validators.required],
       temporalResolution: [null, Validators.required],
-      output: [""],
-    })
-
-    this.addOutput("Enter coordinates to goto location....");
-    this.addOutput("Or click the map to select coordinates.");
+      output: [''],
+    });
+    this.addOutput('Welcome to HMS web...');
+    this.addOutput('Click the map to enter coords.');
   }
 
   mapClick($event) {
@@ -76,11 +79,22 @@ export class InputComponent implements OnInit {
   }
 
   reset(): void {
-
+    this.inputForm.reset();
+    this.addOutput('Form reset');
   }
 
   flyTo(): void {
-    
+    if (this.inputForm.get('lat').value && this.inputForm.get('lng').value) {  
+      const lat = this.inputForm.get('lat').value;
+      const lng = this.inputForm.get('lng').value;
+
+      this.addOutput('Flying to [' + lat + ', ' + lng + ']...');
+      this.requestSent.emit({ mapCoords: {
+        lat, lng
+      }});
+    } else {
+      this.addOutput('Invalid coords! Click the map to enter coords, or enter them manually.');
+    }
   }
 
   submit(): void {
@@ -91,22 +105,17 @@ export class InputComponent implements OnInit {
       const request = { module, AoI, lat, lng, catchmentID, stationID, source, startDate, timeZone, endDate, outputFormat, temporalResolution };
       this.requestSent.emit(request);
     } else {
-      if (this.inputForm.get('lat').value && this.inputForm.get('lng').value) {  
-        const lat = this.inputForm.get('lat').value;
-        const lng = this.inputForm.get('lng').value;
-
-        this.addOutput('Flying to [' + lat + ', ' + lng + ']...');
-        this.requestSent.emit({ mapCoords: {
-          lat, lng
-        }});
-      } else {
-        this.addOutput('Invalid form! Please complete the required fields');
-      }
+      this.addOutput('Invalid form! Please complete the required fields.');
     }
   }
 
   addOutput(message): void {
-    this.inputForm.get('output').setValue(this.inputForm.get('output').value + "\n" + message);
+    let outputText = this.inputForm.get('output').value;
+    if(!outputText) {
+      outputText = '';
+    }
+    this.inputForm.get('output').setValue(outputText + "\n" + message);
+    // stay on the bottom of text area
     const outputArea = document.getElementById('output');
     outputArea.scrollTop = outputArea.scrollHeight;
   }
