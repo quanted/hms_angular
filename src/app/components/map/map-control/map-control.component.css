@@ -2,13 +2,15 @@
     display: grid;
     background-color: rgb(44, 44, 44);
     height: 100%;
-    width: 180px;
+    width: 140px;
     text-align: center;
 }
 
 .item {
     background: lightsteelblue;
     border-bottom: 1px solid black;
+    padding: 5px;
+    padding-top: 0px;
 }
 
 .item:last-of-type {
@@ -17,8 +19,18 @@
 
 .button {
     width: 100%;
+    background: gray;
+    margin-top: 5px;
+    padding: 1px;
+    font-size: .75rem;
 }
 
 .button:hover {
-    background: gray;
+    background: rgba(114, 114, 114, .5);
+    cursor: pointer;
+}
+
+.active {
+    background: rgb(250, 146, 146);
+    outline: 2px solid green;
 }

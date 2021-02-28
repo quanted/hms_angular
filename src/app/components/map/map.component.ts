@@ -134,7 +134,6 @@ export class MapComponent {
         this.handleZoom(mapZoomEvent);
       });
     }
-
     // setup tile maps
     for (let basemap of this.basemaps) {
       this.basemapLayers.push({
@@ -144,7 +143,6 @@ export class MapComponent {
         show: false,
       });
     }
-    
     // setup feature layers
     for (let url of this.features) {
       let layer = ESRI.featureLayer({
@@ -184,13 +182,13 @@ export class MapComponent {
     switch(type) {
       case 'basemap':
         for (let map of this.basemapLayers) {
-          if (map.name == name) {
-            map.show = !map.show;
-          }
           if (map.show) {
-            this.map.addLayer(map.layer);
-          } else {
+            map.show = false;
             this.map.removeLayer(map.layer);
+          }
+          if (map.name == name) {
+            map.show = true;
+            this.map.addLayer(map.layer);
           }
         }
         break;
@@ -211,14 +209,12 @@ export class MapComponent {
       }
     this.layerUpdate.emit({ basemaps: this.basemapLayers, features: this.featureLayers });
   }
-
   // handles map interactions
   handleClick(mapClickEvent) {
     // input form is listening for this
     // it uses this event to populate the lat/lng form controls
     this.mapClick.emit(mapClickEvent);
   }
-
   // control clicked message from map-control
   controlClicked(mapControlEvent): void {
     switch(mapControlEvent.type) {
@@ -232,7 +228,6 @@ export class MapComponent {
         console.log('UNKNOWN MAP_CONTROL_EVENT_TYPE: ', mapControlEvent.type);
     }
   }
-
   // this is an incoming message from the input form
   requestSent(requestFromInputForm): void {
     // requestFromInputForm.mapCoords === true
@@ -251,4 +246,3 @@ export class MapComponent {
     console.log('zoom: ', zoom);
   }
 }
-

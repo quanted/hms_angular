@@ -32,9 +32,7 @@ export class MapControlComponent implements OnInit {
   }
 
   layerUpdate(layers): void {
-    console.log(layers);
     this.basemaps = layers.basemaps;
     this.features = layers.features;
   }
-
 }

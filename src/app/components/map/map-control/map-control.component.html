@@ -1,12 +1,12 @@
 <div class="grid-container">
     <div class="item">
-        <div *ngFor="let map of basemaps" class="button" (click)="controlClick(map)">
+        <div *ngFor="let map of basemaps" class="button" [class.active]=map.show (click)="controlClick(map)" readonly>
             {{ map.name }}
         </div>      
     </div>
     
     <div class="item">
-        <div *ngFor="let feature of features" class="button" (click)="controlClick(feature)">
+        <div *ngFor="let feature of features" class="button" [class.active]=feature.show (click)="controlClick(feature)" readonly>
             {{ feature.name }}
         </div>
     </div>
