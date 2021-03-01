@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 
 import { Module, AoI, Source, TimeZone, OutputDataFormat, TemporalResolution } from '../../models/forms.model' ;
 
+import { InputService } from "../../services/input.service"
+
 @Component({
   selector: 'app-input',
   templateUrl: './input.component.html',
@@ -47,7 +49,8 @@ export class InputComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private inputService: InputService
   ) { }
   @Output() requestSent: EventEmitter<any> = new EventEmitter<any>();
   buttonState = "Form incomplete"
@@ -103,9 +106,23 @@ export class InputComponent implements OnInit {
       this.addOutput(JSON.stringify(this.inputForm.value));
       const { module, AoI, lat, lng, catchmentID, stationID, source, startDate, timeZone, endDate, outputFormat, temporalResolution } = this.inputForm.value;
       const request = { module, AoI, lat, lng, catchmentID, stationID, source, startDate, timeZone, endDate, outputFormat, temporalResolution };
+      this.sendRequest(request)
       this.requestSent.emit(request);
     } else {
       this.addOutput('Invalid form! Please complete the required fields.');
+    }
+  }
+
+  sendRequest(request) {
+    if (this.inputForm.valid) {
+      this.inputService
+        .getData(request)
+        .subscribe((result) => {
+          console.log(result);
+        });
+    } else {
+      // this needs some error messaging
+      return;
     }
   }
 

@@ -1,0 +1,26 @@
+{
+    "base_url" : "https://ceamdev.ceeopdev.net/hms/rest/api/",
+
+    "staging_url" : "https://ceamstg.ceeopdev.net/hms/rest/api/",
+
+    "precipitation_url" : "meteorology/precipitation/",
+
+    "temperature_url" : "hydrology/temperature/",
+
+    "relative_humidity_url" : "meteorology/humidity/",
+
+    "dew_point_url" : "meteorology/dewpoint/",
+
+    "solar_radiation_url" : "meteorology/radiation/",
+
+    "wind_url" : "meteorology/wind/",
+
+    "surface_runoff_url" : "hydrology/surfacerunoff/",
+
+    "subsurface_flow_url" : "hydrology/subsurfaceflow/",
+
+    "soil_moisture_url" : "hydrology/soilmoisture/",
+
+    "evapotranspiration_url" : "hydrology/evapotranspiration/"
+}
+
