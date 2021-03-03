@@ -8,27 +8,27 @@ import { timeout, catchError, tap } from "rxjs/operators";
 const base_url = "https://ceamdev.ceeopdev.net/hms/rest/api/"
 
 // Staging Server
-//baseURL = "https://ceamstg.ceeopdev.net/hms/rest/api/"
+//baseURL = "https://ceamstg.ceeopdev.net/hms/rest/api/";
 
-const precipitation_url = "meteorology/precipitation/"
+const precipitation_url = "meteorology/precipitation/";
 
-const temperature_url = "hydrology/temperature/"
+const temperature_url = "hydrology/temperature/";
 
-const relative_humidity_url = "meteorology/humidity/"
+const relative_humidity_url = "meteorology/humidity/";
 
-const dew_point_url = "meteorology/dewpoint/"
+const dew_point_url = "meteorology/dewpoint/";
 
-const solar_radiation_url = "meteorology/radiation/"
+const solar_radiation_url = "meteorology/radiation/";
 
-const wind_url = "meteorology/wind/"
+const wind_url = "meteorology/wind/";
 
-const surface_runoff_url = "hydrology/surfacerunoff/"
+const surface_runoff_url = "hydrology/surfacerunoff/";
 
-const subsurface_flow_url = "hydrology/subsurfaceflow/"
+const subsurface_flow_url = "hydrology/subsurfaceflow/";
 
-const soil_moisture_url = "hydrology/soilmoisture/"
+const soil_moisture_url = "hydrology/soilmoisture/";
 
-const evapotranspiration_url = "hydrology/evapotranspiration/"
+const evapotranspiration_url = "hydrology/evapotranspiration/";
 
 
 
@@ -38,34 +38,38 @@ const evapotranspiration_url = "hydrology/evapotranspiration/"
 export class InputService {
   
   constructor(private http: HttpClient) { }
-  getData(serializedInput): Observable<any> {
+  getData(inputModule, serializedInput): Observable<any> {
     console.log(serializedInput);
-    let moduleURL = null;
+    let moduleURL = precipitation_url;
     const options = {
       headers: new HttpHeaders({
         // Authorization: "Bearer " + this.auth.getAuthToken(),
+      
+        "accept" :" */*",
         "Content-Type": "application/json",
+        "Access-Control-Allow-Origin":  "*",
       }),
     };
 
 
-    if (serializedInput.module == "precipitation") {
+    if (inputModule == "precipitation") {
       moduleURL = precipitation_url;
     }
-    if (serializedInput.module == "temperature") {
+    if (inputModule == "temperature") {
       moduleURL = temperature_url;
     }
-    if (serializedInput.module == "relative_humidity") {
+    if (inputModule == "relative_humidity") {
       moduleURL = relative_humidity_url;
     }
     else {
       console.log("Please select a valid module")
     }
 
-
-    const newInput = { ... serializedInput };
+    console.log(serializedInput);
+    const postInput = { ... serializedInput };
+    
     return this.http
-      .post( base_url + moduleURL, newInput )
+      .post( base_url + moduleURL, postInput, options)
       .pipe(
         timeout(5000),
         tap((response: any) => {

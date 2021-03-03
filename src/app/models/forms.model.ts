@@ -18,7 +18,7 @@ interface TimeZone {
     viewValue: string;
 }
 
-interface OutputDataFormat {
+interface DataValueFormat {
     value: string;
     viewValue: string;
 }
@@ -33,6 +33,6 @@ export {
     AoI,
     Source,
     TimeZone,
-    OutputDataFormat,
+    DataValueFormat,
     TemporalResolution
 }

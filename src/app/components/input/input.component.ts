@@ -2,7 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { Module, AoI, Source, TimeZone, OutputDataFormat, TemporalResolution } from '../../models/forms.model' ;
+import { Module, AoI, Source, TimeZone, DataValueFormat, TemporalResolution } from '../../models/forms.model' ;
 
 import { InputService } from "../../services/input.service"
 
@@ -30,7 +30,7 @@ export class InputComponent implements OnInit {
     {value: 'trmm', viewValue: 'TRMM'}
   ];
 
-  outputDataFormats: OutputDataFormat[] = [
+  dataValueFormats: DataValueFormat[] = [
     {value: 'E', viewValue: 'E'},
   ];
 
@@ -61,13 +61,13 @@ export class InputComponent implements OnInit {
       AoI: [null, Validators.required],
       lat: [null, Validators.required],
       lng: [null, Validators.required],
-      catchmentID: [null, Validators.required],
-      stationID: [null, Validators.required],
+      catchmentID: [null],
+      stationID: [null],
       source: [null, Validators.required],
       startDate: [null, Validators.required],
       timeZone: [null, Validators.required],
       endDate: [null, Validators.required],
-      outputFormat: [null, Validators.required],
+      dataValueFormat: [null, Validators.required],
       temporalResolution: [null, Validators.required],
       output: [''],
     });
@@ -104,24 +104,40 @@ export class InputComponent implements OnInit {
     if (this.inputForm.valid) {
       this.addOutput("Valid input form, sending form to map...");
       this.addOutput(JSON.stringify(this.inputForm.value));
-      const { module, AoI, lat, lng, catchmentID, stationID, source, startDate, timeZone, endDate, outputFormat, temporalResolution } = this.inputForm.value;
-      const request = { module, AoI, lat, lng, catchmentID, stationID, source, startDate, timeZone, endDate, outputFormat, temporalResolution };
-      this.sendRequest(request)
+      const { module, AoI, lat, lng, catchmentID, stationID, source, startDate, timezone, endDate, dataValueFormat, temporalResolution } = this.inputForm.value;
+      const dateTimeFormat = "yyyy-MM-dd HH"
+      const dateTimeSpan = { startDate, endDate, dateTimeFormat };
+      // Change the description below. Temporarily set to 'null' to get lat/lng.
+      const description = null;
+      const comID = null;
+      const hucID = null;
+      const latitude = lat;
+      const longitude = lng;
+      const geometryMetadata = null;
+      const timeLocalized = null;
+      const units = "metric";
+      const outputFormat = "json";
+      const baseURL = null; 
+      const inputTimeSeries = null;
+      const point = { latitude, longitude }
+      const geometry = { description, comID, hucID, stationID, point, geometryMetadata }
+      const request = { source, dateTimeSpan, geometry, dataValueFormat, temporalResolution, timeLocalized, outputFormat, units, baseURL, inputTimeSeries };
+      this.sendRequest(module, request)
       this.requestSent.emit(request);
     } else {
       this.addOutput('Invalid form! Please complete the required fields.');
     }
   }
 
-  sendRequest(request) {
+  sendRequest(module, request) {
     if (this.inputForm.valid) {
       this.inputService
-        .getData(request)
+        .getData(module, request)
         .subscribe((result) => {
           console.log(result);
         });
     } else {
-      // this needs some error messaging
+      alert("Form is invalid")
       return;
     }
   }
