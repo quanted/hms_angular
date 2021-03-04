@@ -78,9 +78,9 @@
   <div class="panel row">
     <mat-form-field appearance="outline">
       <mat-label>Output Data Format: </mat-label>
-      <mat-select formControlName="outputFormat">
-        <mat-option *ngFor="let outputDataFormat of outputDataFormats" [value]="outputDataFormat.value">
-          {{outputDataFormat.viewValue}}
+      <mat-select formControlName="dataValueFormat">
+        <mat-option *ngFor="let dataValueFormat of dataValueFormats" [value]="dataValueFormat.value">
+          {{dataValueFormat.viewValue}}
         </mat-option>
       </mat-select>
     </mat-form-field>
