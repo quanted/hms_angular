@@ -57,18 +57,18 @@ export class InputComponent implements OnInit {
   
   ngOnInit(): void {
     this.inputForm = this.fb.group({
-      module: [null, Validators.required],
-      AoI: [null, Validators.required],
-      lat: [null, Validators.required],
-      lng: [null, Validators.required],
+      module: [null],
+      AoI: [null],
+      lat: [null],
+      lng: [null],
       catchmentID: [null],
       stationID: [null],
-      source: [null, Validators.required],
-      startDate: [null, Validators.required],
-      timeZone: [null, Validators.required],
-      endDate: [null, Validators.required],
-      dataValueFormat: [null, Validators.required],
-      temporalResolution: [null, Validators.required],
+      source: [null],
+      startDate: [null],
+      timeZone: [null],
+      endDate: [null],
+      dataValueFormat: [null],
+      temporalResolution: [null],
       output: [''],
     });
     this.addOutput('Welcome to HMS web...');
@@ -122,7 +122,8 @@ export class InputComponent implements OnInit {
       const point = { latitude, longitude }
       const geometry = { description, comID, hucID, stationID, point, geometryMetadata }
       const request = { source, dateTimeSpan, geometry, dataValueFormat, temporalResolution, timeLocalized, outputFormat, units, baseURL, inputTimeSeries };
-      this.sendRequest(module, request)
+      const finalizedRequest = JSON.stringify(request);
+      this.sendRequest(module, finalizedRequest)
       this.requestSent.emit(request);
     } else {
       this.addOutput('Invalid form! Please complete the required fields.');
@@ -131,6 +132,7 @@ export class InputComponent implements OnInit {
 
   sendRequest(module, request) {
     if (this.inputForm.valid) {
+      console.log(module,request)
       this.inputService
         .getData(module, request)
         .subscribe((result) => {

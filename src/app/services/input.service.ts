@@ -43,14 +43,15 @@ export class InputService {
     let moduleURL = precipitation_url;
     const options = {
       headers: new HttpHeaders({
-        // Authorization: "Bearer " + this.auth.getAuthToken(),
-      
-        "accept" :" */*",
+        "Access-Control-Allow-Origin" : "http://localhost:5000/",
+        "Access-Control-Allow-Headers" : "Content-type, Authorization",
+        "Access-Control-Allow-Methods": "POST",
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin":  "*",
+        "Access-Control-Allow-Credentials": "true",
+        "accept" : "*/*"
+        
       }),
     };
-
 
     if (inputModule == "precipitation") {
       moduleURL = precipitation_url;
@@ -67,11 +68,16 @@ export class InputService {
 
     console.log(serializedInput);
     const postInput = { ... serializedInput };
+
+    const requesttoSend = 
+    `{​\"source\":\"nldas\",\"dateTimeSpan\":{​\"startDate\":\"2015-01-01T00:00:00\",\"endDate\":\"2015-01-08T00:00:00\",\"dateTimeFormat\":\"yyyy-MM-dd HH\"}​,\"geometry\":{​\"description\":null,\"comID\":0,\"hucID\":null,\"stationID\":null,\"point\":{​\"latitude\":33.925673,\"longitude\":-83.355723}​,\"geometryMetadata\":null,\"timezone\":null}​,\"dataValueFormat\":\"E3\",\"temporalResolution\":\"default\",\"timeLocalized\":false,\"units\":\"metric\",\"outputFormat\":\"json\",\"baseURL\":null,\"inputTimeSeries\":null}​`
+
+
     
     return this.http
-      .post( base_url + moduleURL, postInput, options)
+      .post( "https://ceamdev.ceeopdev.net/hms/rest/api/" + "meteorology/precipitation/", requesttoSend, options)
       .pipe(
-        timeout(5000),
+        timeout(20000),
         tap((response: any) => {
           console.log("response from HMS: " + response);
         }),
