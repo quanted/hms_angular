@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 
-import {Observable, of} from 'rxjs';
+import {Observable, of, throwError} from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 @Injectable({
@@ -45,7 +45,7 @@ export class HmsService {
   //       .get<T>(`${this.url}/${this.endpoint}`, {headers: this.headers});
   // }
 
-  //test request
+  //test requests
   testGet(): Observable<any> {
     return this.http.get('https://ceamdev.ceeopdev.net/hms/rest/api/water-quality/solar/run')
     .pipe(
@@ -53,5 +53,16 @@ export class HmsService {
         return of({ error: `Failed to fetch dataset solar data!\n`, err });
       })
     );
+  }
+
+  testPost(request): Observable<any> {
+    if (request) {
+      return this.http.post('https://ceamdev.ceeopdev.net/hms/rest/api/hydrology/streamflow', JSON.stringify(request))
+      .pipe(
+        catchError((err) => {
+          return of({ error: `Failed to fetch dataset solar data!\n`, err });
+        })
+      );
+    } else return throwError({ error: "empty request!" });
   }
 }

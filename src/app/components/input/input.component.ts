@@ -103,10 +103,6 @@ export class InputComponent implements OnInit {
   }
 
   submit(): void {
-    this.hms.testGet().subscribe((response) => {
-      this.addOutput("request sent to, https://ceamdev.ceeopdev.net/hms/rest/api/water-quality/solar/run");
-      this.addOutput(JSON.stringify(response));
-    })
     // if (this.inputForm.valid) {
     //   this.addOutput("Valid input form, sending form to map...");
     //   this.addOutput(JSON.stringify(this.inputForm.value));
@@ -159,5 +155,49 @@ export class InputComponent implements OnInit {
     // stay on the bottom of text area
     const outputArea = document.getElementById('output');
     outputArea.scrollTop = outputArea.scrollHeight;
+  }
+  
+  testGet(): void {
+    this.hms.testGet().subscribe((response) => {
+      this.addOutput("request sent to, https://ceamdev.ceeopdev.net/hms/rest/api/water-quality/solar/run");
+      this.addOutput(JSON.stringify(response));
+    })
+  }
+
+  testPostRequest = {
+    "source": "nwis",
+    "dateTimeSpan": {
+      "startDate": "2015-01-01T00:00:00",
+      "endDate": "2015-12-31T00:00:00",
+      "dateTimeFormat": "yyyy-MM-dd HH"
+    },
+    "geometry": {
+      "description": null,
+      "comID": 0,
+      "hucID": null,
+      "stationID": null,
+      "point": null,
+      "geometryMetadata": {
+        "gaugestation": "02191300"
+      },
+      "timezone": null
+    },
+    "dataValueFormat": "E3",
+    "temporalResolution": "hourly",
+    "timeLocalized": false,
+    "units": "metric",
+    "outputFormat": "json",
+    "baseURL": null,
+    "inputTimeSeries": null
+  }
+  
+  testPost(): void {
+    this.hms.testPost(this.testPostRequest).subscribe((response) => { 
+      if (!response.error) {
+        this.addOutput(JSON.stringify(response));
+      } else {
+        console.log(response.error);
+      }
+    })
   }
 }
