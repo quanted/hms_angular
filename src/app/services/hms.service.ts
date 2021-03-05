@@ -1,22 +1,18 @@
-/**
- * Generic http service for HMS components.
- */
-
 import {Injectable} from '@angular/core';
+
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Observable} from 'rxjs';
+
+import {Observable, of} from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
 })
-export class HmsService<T> {
-
-  private readonly headers: HttpHeaders;
+export class HmsService {
+  headers: HttpHeaders;
 
   constructor(
-      private httpClient: HttpClient,
-      public url: string,
-      public endpoint: string
+      private http: HttpClient,
   ) {
     this.headers = new HttpHeaders({
       'Content-Type': 'application/json'
@@ -27,25 +23,35 @@ export class HmsService<T> {
    * POST method for submitting a single object to an endpoint and retrieving the result.
    * @param object - Input object for post request.
    */
-  post(object: T): Observable<T> {
-    return this.httpClient
-        .post<T>(`${this.url}/${this.endpoint}`, object, {headers: this.headers});
-  }
+  // post(object): Observable<any> {
+  //   return this.http
+  //       .post<T>(`${this.url}/${this.endpoint}`, object, this.headers);
+  // }
 
   /**
    * GET method for retrieving a single object from an endpoint.
    * @param object - Input object for request.
    */
-  submit(object: T): Observable<T> {
-    return this.httpClient
-        .get<T>(`${this.url}/${this.endpoint}/${object}`, {headers: this.headers});
-  }
+  // submit(object): Observable<any> {
+  //   return this.http
+  //       .get<T>(`${this.url}/${this.endpoint}/${object}`, {headers: this.headers});
+  // }
 
   /**
    * GET method for retrieving a single object from an endpoint.
    */
-  info(): Observable<T> {
-    return this.httpClient
-        .get<T>(`${this.url}/${this.endpoint}`, {headers: this.headers});
+  // info(): Observable<any> {
+  //   return this.http
+  //       .get<T>(`${this.url}/${this.endpoint}`, {headers: this.headers});
+  // }
+
+  //test request
+  testGet(): Observable<any> {
+    return this.http.get('https://ceamdev.ceeopdev.net/hms/rest/api/water-quality/solar/run')
+    .pipe(
+      catchError((err) => {
+        return of({ error: `Failed to fetch dataset solar data!\n`, err });
+      })
+    );
   }
 }

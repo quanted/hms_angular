@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { HmsService } from 'src/app/services/hms.service';
 
 import { Module, AoI, Source, TimeZone, DataValueFormat, TemporalResolution } from '../../models/forms.model' ;
 
@@ -50,7 +51,8 @@ export class InputComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private inputService: InputService
+    private inputService: InputService,
+    private hms: HmsService
   ) { }
   @Output() requestSent: EventEmitter<any> = new EventEmitter<any>();
   buttonState = "Form incomplete"
@@ -101,33 +103,37 @@ export class InputComponent implements OnInit {
   }
 
   submit(): void {
-    if (this.inputForm.valid) {
-      this.addOutput("Valid input form, sending form to map...");
-      this.addOutput(JSON.stringify(this.inputForm.value));
-      const { module, AoI, lat, lng, catchmentID, stationID, source, startDate, timezone, endDate, dataValueFormat, temporalResolution } = this.inputForm.value;
-      const dateTimeFormat = "yyyy-MM-dd HH"
-      const dateTimeSpan = { startDate, endDate, dateTimeFormat };
-      // Change the description below. Temporarily set to 'null' to get lat/lng.
-      const description = null;
-      const comID = null;
-      const hucID = null;
-      const latitude = lat;
-      const longitude = lng;
-      const geometryMetadata = null;
-      const timeLocalized = null;
-      const units = "metric";
-      const outputFormat = "json";
-      const baseURL = null; 
-      const inputTimeSeries = null;
-      const point = { latitude, longitude }
-      const geometry = { description, comID, hucID, stationID, point, geometryMetadata }
-      const request = { source, dateTimeSpan, geometry, dataValueFormat, temporalResolution, timeLocalized, outputFormat, units, baseURL, inputTimeSeries };
-      const finalizedRequest = JSON.stringify(request);
-      this.sendRequest(module, finalizedRequest)
-      this.requestSent.emit(request);
-    } else {
-      this.addOutput('Invalid form! Please complete the required fields.');
-    }
+    this.hms.testGet().subscribe((response) => {
+      this.addOutput("request sent to, https://ceamdev.ceeopdev.net/hms/rest/api/water-quality/solar/run");
+      this.addOutput(JSON.stringify(response));
+    })
+    // if (this.inputForm.valid) {
+    //   this.addOutput("Valid input form, sending form to map...");
+    //   this.addOutput(JSON.stringify(this.inputForm.value));
+    //   const { module, AoI, lat, lng, catchmentID, stationID, source, startDate, timezone, endDate, dataValueFormat, temporalResolution } = this.inputForm.value;
+    //   const dateTimeFormat = "yyyy-MM-dd HH"
+    //   const dateTimeSpan = { startDate, endDate, dateTimeFormat };
+    //   // Change the description below. Temporarily set to 'null' to get lat/lng.
+    //   const description = null;
+    //   const comID = null;
+    //   const hucID = null;
+    //   const latitude = lat;
+    //   const longitude = lng;
+    //   const geometryMetadata = null;
+    //   const timeLocalized = null;
+    //   const units = "metric";
+    //   const outputFormat = "json";
+    //   const baseURL = null; 
+    //   const inputTimeSeries = null;
+    //   const point = { latitude, longitude }
+    //   const geometry = { description, comID, hucID, stationID, point, geometryMetadata }
+    //   const request = { source, dateTimeSpan, geometry, dataValueFormat, temporalResolution, timeLocalized, outputFormat, units, baseURL, inputTimeSeries };
+    //   const finalizedRequest = JSON.stringify(request);
+    //   this.sendRequest(module, finalizedRequest)
+    //   this.requestSent.emit(request);
+    // } else {
+    //   this.addOutput('Invalid form! Please complete the required fields.');
+    // }
   }
 
   sendRequest(module, request) {
