@@ -1,0 +1,9 @@
+<div class="container">
+    <ng-container *ngIf="open">
+        <mat-icon (click)="closePanel()" title="collapse panel">chevron_right</mat-icon>
+        <app-map-control></app-map-control>
+    </ng-container>
+    <ng-container *ngIf="!open">
+        <mat-icon (click)="openPanel()" title="expand panel">chevron_left</mat-icon>
+    </ng-container>
+</div>

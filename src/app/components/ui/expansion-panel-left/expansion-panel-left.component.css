@@ -1,0 +1,11 @@
+mat-icon:hover {
+    cursor: pointer;
+    background-color: #bbbbbb;
+}
+
+.container {
+    background: lightsteelblue;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100%;
+}

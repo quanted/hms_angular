@@ -3,7 +3,6 @@ body {
     grid-template: auto 1fr auto / auto 1fr auto;
     background-color: lightgray;
     font-family: Roboto, "Helvetica Neue", sans-serif;
-    height: 100vh;
 }
 
 app-header {

@@ -1,0 +1,20 @@
+<div class="container">
+    <ng-container *ngIf="open">
+        <div>
+            <button mat-flat-button (click)="show('about')">About</button>
+            <button mat-button (click)="show('workflows')">Work Flows</button>
+            <button mat-button (click)="show('meteorology')">Meteorology</button>
+            <button mat-button (click)="show('hydrology')">Hydrology</button>
+            <mat-icon (click)="closePanel()" title="collapse panel">chevron_left</mat-icon>
+        </div>
+        <ng-container *ngIf="activePanel == 'about'">
+            <app-about></app-about>
+        </ng-container>
+        <ng-container *ngIf="activePanel == 'hydrology'">
+            <app-input></app-input>
+        </ng-container>
+    </ng-container>
+    <ng-container *ngIf="!open">
+        <mat-icon (click)="openPanel()" title="expand panel">chevron_right</mat-icon>
+    </ng-container>
+</div>

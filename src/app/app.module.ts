@@ -15,12 +15,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 
 import { AppComponent } from './app.component';
 import { MapComponent } from './components/map/map.component';
-import { NavigationComponent } from './components/navigation/navigation.component';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { InputComponent } from './components/input/input.component';
@@ -28,17 +28,22 @@ import { InputComponent } from './components/input/input.component';
 import { CookieService } from 'ngx-cookie-service';
 import { MainComponent } from './components/main/main.component';
 import { MapControlComponent } from './components/map/map-control/map-control.component';
+import { AboutComponent } from './components/about/about.component';
+import { ExpansionPanelRightComponent } from './components/ui/expansion-panel-right/expansion-panel-right.component';
+import { ExpansionPanelLeftComponent } from './components/ui/expansion-panel-left/expansion-panel-left.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MapComponent,
-    NavigationComponent,
     HeaderComponent,
     FooterComponent,
     InputComponent,
     MainComponent,
-    MapControlComponent
+    MapControlComponent,
+    AboutComponent,
+    ExpansionPanelRightComponent,
+    ExpansionPanelLeftComponent
   ],
   imports: [
     BrowserModule,
@@ -52,6 +57,7 @@ import { MapControlComponent } from './components/map/map-control/map-control.co
     MatDatepickerModule,
     MatNativeDateModule,
     MatSnackBarModule,
+    MatIconModule,
     FormsModule,
     ReactiveFormsModule,
     ScrollingModule

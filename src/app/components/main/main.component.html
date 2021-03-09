@@ -1,7 +1,7 @@
 <body>
     <app-header></app-header>
-    <app-input (requestSent)="requestSent($event)"></app-input>
-    <app-map (mapClick)="mapClick($event)" (layerUpdate)="layerUpdate($event)"></app-map>
-    <app-map-control (controlClicked)="controlClicked($event)"></app-map-control>
+    <app-expansion-panel-left [open]="true"></app-expansion-panel-left>
+    <app-map></app-map>
+    <app-expansion-panel-right [open]="true"></app-expansion-panel-right>
     <app-footer></app-footer>
 </body>

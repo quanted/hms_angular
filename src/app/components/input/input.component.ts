@@ -58,6 +58,10 @@ export class InputComponent implements OnInit {
   buttonState = "Form incomplete"
   
   ngOnInit(): void {
+    this.hms.getSwagger().subscribe((response) => {
+      console.log('response: ', response);
+    })
+    
     this.inputForm = this.fb.group({
       module: [null],
       AoI: [null],
@@ -75,6 +79,15 @@ export class InputComponent implements OnInit {
     });
     this.addOutput('Welcome to HMS web...');
     this.addOutput('Click the map to enter coords.');
+
+    // this sets the input panel buttons to random hue and each button to a random lightness :)
+    const buttons = document.getElementsByTagName('button');
+    const h = Math.floor(Math.random() * 360);      // [0, 360]
+    for (let i = 0; i < buttons.length; i++) {
+      const l = Math.floor(Math.random() * 80) + 10;  // [10, 90]
+      const hsl = `hsl(${h}, 100%, ${l}%)`;
+      buttons[i].style.backgroundColor = hsl;
+    }
   }
 
   mapClick($event) {

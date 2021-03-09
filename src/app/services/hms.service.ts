@@ -14,9 +14,6 @@ export class HmsService {
   constructor(
       private http: HttpClient,
   ) {
-    this.headers = new HttpHeaders({
-      'Content-Type': 'application/json'
-    });
   }
 
   /**
@@ -44,6 +41,9 @@ export class HmsService {
   //   return this.http
   //       .get<T>(`${this.url}/${this.endpoint}`, {headers: this.headers});
   // }
+  getSwagger(): Observable<any>{
+    return this.http.get("https://ceamdev.ceeopdev.net/hms/api_doc/swagger/");
+  }
 
   //test requests
   testGet(): Observable<any> {
