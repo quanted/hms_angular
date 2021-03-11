@@ -31,6 +31,7 @@ import { MapControlComponent } from './components/map/map-control/map-control.co
 import { AboutComponent } from './components/about/about.component';
 import { ExpansionPanelRightComponent } from './components/ui/expansion-panel-right/expansion-panel-right.component';
 import { ExpansionPanelLeftComponent } from './components/ui/expansion-panel-left/expansion-panel-left.component';
+import { HttpHeadersInterceptor } from './interceptors/http-headers.interceptor';
 
 @NgModule({
   declarations: [
@@ -67,6 +68,11 @@ import { ExpansionPanelLeftComponent } from './components/ui/expansion-panel-lef
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpErrorInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpHeadersInterceptor,
       multi: true
     }
   ],
