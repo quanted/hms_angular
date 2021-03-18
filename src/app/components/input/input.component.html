@@ -4,8 +4,8 @@
     <mat-form-field appearance="outline">
       <mat-label>Select a Module: </mat-label>
       <mat-select formControlName="module">
-        <mat-option *ngFor="let module of modules" [value]="module.value">
-          {{module.viewValue}}
+        <mat-option *ngFor="let module of modules" [value]="module">
+          {{module}}
         </mat-option>
       </mat-select>
     </mat-form-field>
