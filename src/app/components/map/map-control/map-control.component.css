@@ -1,0 +1,36 @@
+.grid-container {
+    display: grid;
+    height: 100%;
+    width: 140px;
+    text-align: center;
+}
+
+.item {
+    background: lightsteelblue;
+    border-bottom: 1px solid rgb(150, 150, 150);
+    padding: 5px;
+    padding-top: 0px;
+}
+
+.item:last-of-type {
+    border: none;
+}
+
+.button {
+    width: 100%;
+    margin-top: 5px;
+    padding: 1px;
+    font-size: .75rem;
+    outline: 1px solid rgb(150, 150, 150);
+}
+
+.button:hover {
+    background: rgba(146, 146, 146, 0.5);
+    cursor: pointer;
+    outline: 2px solid green;
+}
+
+.active {
+    background: rgb(250, 146, 146);
+    outline: 2px solid green;
+}

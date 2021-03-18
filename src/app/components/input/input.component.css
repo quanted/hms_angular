@@ -1,23 +1,78 @@
 .input-form {
-    min-width: 150px;
-    max-width: 500px;
-    width: 100%;
-  }
-  
-  .input-form-table {
-    width: 100%;
-  }
-  
-  td {
-    padding-right: 8px;
-  }
-
-.parameter-viewport {
-  height: 200px;
-  width: 200px;
-  border: 1px solid black;
+  display: grid;
+  background-color: lightsteelblue;
+  height: 100%;
 }
 
-.parameter-item {
-  height: 50px;
+.row {
+  width: 100%;
+}
+
+.margin-top {
+  margin-top: 1rem;
+}
+
+.panel, 
+.calendar,
+.button,
+.output {
+  display: grid;
+  place-items: center;
+}
+
+.panel {
+  grid-template-columns: 1fr 1fr;
+}
+
+.text-area {
+  color: lime;
+  background-color: rgb(44, 44, 44);
+  padding-left: .5rem;
+  
+}
+
+.output {
+  height: 100%;
+  background-color: rgb(44, 44, 44);
+}
+
+mat-form-field {
+  width: 90%;
+}
+
+mat-form-field.mat-form-field {
+  font-size: 12px;
+  height: 1rem;
+  padding-bottom: 2rem;
+}
+
+.button {
+  border-radius: 0px;
+  width: 100%;
+  background-color: rgb(255, 255, 255);
+}
+.button:hover {
+  background-color: rgb(156, 156, 156);
+}
+
+.buttons > .button:first-of-type {
+  background-color: lightgreen;
+}
+.buttons > .button:first-of-type:hover {
+  background-color: rgb(98, 165, 98);
+}
+
+.buttons > .button:last-of-type {
+  background-color: rgb(241, 203, 76);
+}
+.buttons > .button:last-of-type:hover {
+  background-color: rgb(168, 141, 52);
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+  margin: 0px;
+  padding: 0px;
+  height: 100%;
 }

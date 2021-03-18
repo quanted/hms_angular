@@ -1,51 +1,42 @@
-/**
- * Generic http service for HMS components.
- */
+import { Injectable } from '@angular/core';
 
-import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
+import { Observable, of, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
 })
-export class HmsService<T> {
-
-  private readonly headers: HttpHeaders;
+export class HmsService {
+  headers: HttpHeaders;
 
   constructor(
-      private httpClient: HttpClient,
-      public url: string,
-      public endpoint: string
-  ) {
-    this.headers = new HttpHeaders({
-      'Content-Type': 'application/json'
-    });
+      private http: HttpClient,
+  ) {}
+
+  getSwagger(): Observable<any>{
+    return this.http.get("https://ceamdev.ceeopdev.net/hms/api_doc/swagger/");
   }
 
-  /**
-   * POST method for submitting a single object to an endpoint and retrieving the result.
-   * @param object - Input object for post request.
-   */
-  post(object: T): Observable<T> {
-    return this.httpClient
-        .post<T>(`${this.url}/${this.endpoint}`, object, {headers: this.headers});
+  // test requests ---------------------------------------------------------------------------
+  testGet(): Observable<any> {
+    return this.http.get('https://ceamdev.ceeopdev.net/hms/rest/api/water-quality/solar/run')
+    .pipe(
+      catchError((err) => {
+        return of({ error: `Failed to fetch dataset solar data!\n`, err });
+      })
+    );
   }
 
-  /**
-   * GET method for retrieving a single object from an endpoint.
-   * @param object - Input object for request.
-   */
-  submit(object: T): Observable<T> {
-    return this.httpClient
-        .get<T>(`${this.url}/${this.endpoint}/${object}`, {headers: this.headers});
-  }
-
-  /**
-   * GET method for retrieving a single object from an endpoint.
-   */
-  info(): Observable<T> {
-    return this.httpClient
-        .get<T>(`${this.url}/${this.endpoint}`, {headers: this.headers});
+  testPost(request): Observable<any> {
+    if (request) {
+      return this.http.post('https://ceamdev.ceeopdev.net/hms/rest/api/hydrology/streamflow', JSON.stringify(request))
+      .pipe(
+        catchError((err) => {
+          return of({ error: `Failed to fetch streamflow data!\n`, err });
+        })
+      );
+    } else return throwError({ error: "empty request!" });
   }
 }
