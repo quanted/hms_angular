@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HmsService } from 'src/app/services/hms.service';
 
@@ -13,17 +13,18 @@ import { InputService } from "../../services/input.service"
   styleUrls: ['./input.component.css']
 })
 export class InputComponent implements OnInit {
-  modules: Module[] = [
-    {value: 'Precipitation', viewValue: 'Precipitation'},
-    {value: 'Air_Temperature', viewValue: 'Air Temperature'},
-    {value: 'Relative_Humidity', viewValue: 'Relative Humidity'}
-  ];
+  // modules: Module[] = [
+  //   {value: 'Precipitation', viewValue: 'Precipitation'},
+  //   {value: 'Air_Temperature', viewValue: 'Air Temperature'},
+  //   {value: 'Relative_Humidity', viewValue: 'Relative Humidity'}
+  // ];
+    modules: String[] = [];
 
-  interestAreas: AoI[] = [
-    {value: 'comid', viewValue: 'COMID'},
-    {value: 'lat/lon', viewValue: 'Lat/Lon'},
-    {value: 'stationID', viewValue: 'Ncei Station ID'}
-  ];
+    interestAreas: AoI[] = [
+      {value: 'comid', viewValue: 'COMID'},
+      {value: 'lat/lon', viewValue: 'Lat/Lon'},
+      {value: 'stationID', viewValue: 'Ncei Station ID'}
+    ];
 
   sources: Source[] = [
     {value: 'nldas', viewValue: 'NLDAS'},
@@ -52,7 +53,7 @@ export class InputComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private inputService: InputService,
-    private hms: HmsService
+    private hms: HmsService,
   ) { }
   @Output() requestSent: EventEmitter<any> = new EventEmitter<any>();
   buttonState = "Form incomplete"
@@ -60,21 +61,37 @@ export class InputComponent implements OnInit {
   ngOnInit(): void {
     this.hms.getSwagger().subscribe((response) => {
       console.log('response: ', response);
+
+      // This will get the available hydrology modules
+      const re = new RegExp('^/(api)+/(hydrology)+/[^/]+$');
+
+        let hydrologyInputs = Object.keys(response.paths)
+      console.log(hydrologyInputs);
+
+      hydrologyInputs.forEach(element => {
+        let hydrologyUrl = element.match(re);
+        if (hydrologyUrl) {
+          console.log(hydrologyUrl)
+          let urlvalues = (response.paths[hydrologyUrl.input].post.tags[0]).split(/(?=[A-Z])/)
+          let hydrologyModules = urlvalues.splice(2,urlvalues.length).join(" ");
+          this.modules.push(hydrologyModules);
+        }
+      });
     })
     
     this.inputForm = this.fb.group({
-      module: [null],
+      module: [null, Validators.required],
       AoI: [null],
-      lat: [null],
-      lng: [null],
+      lat: [null, Validators.required],
+      lng: [null, Validators.required],
       catchmentID: [null],
       stationID: [null],
-      source: [null],
+      source: [null, Validators.required],
       startDate: [null],
       timeZone: [null],
       endDate: [null],
-      dataValueFormat: [null],
-      temporalResolution: [null],
+      dataValueFormat: [null, Validators.required],
+      temporalResolution: [null, Validators.required],
       output: [''],
     });
     this.addOutput('Welcome to HMS web...');
@@ -115,49 +132,18 @@ export class InputComponent implements OnInit {
     }
   }
 
-  submit(): void {
-    // if (this.inputForm.valid) {
-    //   this.addOutput("Valid input form, sending form to map...");
-    //   this.addOutput(JSON.stringify(this.inputForm.value));
-    //   const { module, AoI, lat, lng, catchmentID, stationID, source, startDate, timezone, endDate, dataValueFormat, temporalResolution } = this.inputForm.value;
-    //   const dateTimeFormat = "yyyy-MM-dd HH"
-    //   const dateTimeSpan = { startDate, endDate, dateTimeFormat };
-    //   // Change the description below. Temporarily set to 'null' to get lat/lng.
-    //   const description = null;
-    //   const comID = null;
-    //   const hucID = null;
-    //   const latitude = lat;
-    //   const longitude = lng;
-    //   const geometryMetadata = null;
-    //   const timeLocalized = null;
-    //   const units = "metric";
-    //   const outputFormat = "json";
-    //   const baseURL = null; 
-    //   const inputTimeSeries = null;
-    //   const point = { latitude, longitude }
-    //   const geometry = { description, comID, hucID, stationID, point, geometryMetadata }
-    //   const request = { source, dateTimeSpan, geometry, dataValueFormat, temporalResolution, timeLocalized, outputFormat, units, baseURL, inputTimeSeries };
-    //   const finalizedRequest = JSON.stringify(request);
-    //   this.sendRequest(module, finalizedRequest)
-    //   this.requestSent.emit(request);
-    // } else {
-    //   this.addOutput('Invalid form! Please complete the required fields.');
-    // }
-  }
 
-  sendRequest(module, request) {
-    if (this.inputForm.valid) {
-      console.log(module,request)
-      this.inputService
-        .getData(module, request)
-        .subscribe((result) => {
-          console.log(result);
-        });
-    } else {
-      alert("Form is invalid")
-      return;
-    }
-  }
+//   buildPostRequest(inputList) {
+//     if (this.inputForm.valid) {
+//       try {
+//       return 
+      
+//     } catch {
+//       alert("Could not create the request.")
+//       return;
+//     }
+//   }
+// }
 
   addOutput(message): void {
     let outputText = this.inputForm.get('output').value;
