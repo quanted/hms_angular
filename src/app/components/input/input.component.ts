@@ -101,7 +101,7 @@ export class InputComponent implements OnInit {
     const buttons = document.getElementsByTagName('button');
     const h = Math.floor(Math.random() * 360);      // [0, 360]
     for (let i = 0; i < buttons.length; i++) {
-      const l = Math.floor(Math.random() * 80) + 10;  // [10, 90]
+      const l = Math.floor(Math.random() * 60) + 20;  // [20, 80]
       const hsl = `hsl(${h}, 100%, ${l}%)`;
       buttons[i].style.backgroundColor = hsl;
     }

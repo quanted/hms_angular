@@ -111,18 +111,18 @@ export class LayerService {
       });
     }
     // setup feature layers
-    for (let url of this.features) {
+    for (let feature of this.features) {
       let layer = ESRI.featureLayer({
-        url: url.url,
+        url: feature.url,
       });
       layer.setStyle({
-        color: url.color,
-        weight: url.weight,
-        fillOpacity: url.fillOpacity,
+        color: feature.color,
+        weight: feature.weight,
+        fillOpacity: feature.fillOpacity,
       });
       this.featureLayers.push({
         type: 'feature',
-        name: url.name,
+        name: feature.name,
         layer: layer,
         show: false,
       });
