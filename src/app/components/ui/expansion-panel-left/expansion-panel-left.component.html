@@ -10,6 +10,9 @@
         <ng-container *ngIf="activePanel == 'about'">
             <app-about></app-about>
         </ng-container>
+        <ng-container *ngIf="activePanel == 'meteorology'">
+            <app-input></app-input>
+        </ng-container>
         <ng-container *ngIf="activePanel == 'hydrology'">
             <app-input></app-input>
         </ng-container>
