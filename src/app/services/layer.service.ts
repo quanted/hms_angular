@@ -40,6 +40,7 @@ export class LayerService {
       style: {
         color: '#00FFFF',
         weight: 1,
+        fillColor: '#00FFFF',
         fillOpacity: 0
       }
     },
@@ -47,8 +48,9 @@ export class LayerService {
       name: "catchments",
       url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/Catchments_NP21_Simplified/MapServer/0",
       style: {
-        color: 'green',
+        color: '#008009',
         weight: 1,
+        fillColor: '#008009',
         fillOpacity: 0
       }
     },
@@ -58,6 +60,7 @@ export class LayerService {
       style: {
         color: '#0026FF',
         weight: 1,
+        fillColor: '#0026FF',
         fillOpacity: 0
       }
     },
@@ -67,6 +70,7 @@ export class LayerService {
       style: {
         color: '#4800FF',
         weight: 1,
+        fillColor: '#4800FF',
         fillOpacity: 0
       }
     },
@@ -76,6 +80,7 @@ export class LayerService {
       style: {
         color: '#B200FF',
         weight: 2,
+        fillColor: '#B200FF',
         fillOpacity: 0
       }
     },
@@ -85,6 +90,7 @@ export class LayerService {
       style: {
         color: '#FF00DC',
         weight: 4,
+        fillColor: '#FF00DC',
         fillOpacity: 0
       }
     },
@@ -94,6 +100,7 @@ export class LayerService {
       style: {
         color: '#FF006E',
         weight: 6,
+        fillColor: '#FF006E',
         fillOpacity: 0
       }
     },
@@ -103,6 +110,7 @@ export class LayerService {
       style: {
         color: '#FF0000',
         weight: 8,
+        fillColor: '#FF0000',
         fillOpacity: 0
       }
     },
@@ -129,6 +137,7 @@ export class LayerService {
       layer.setStyle({
         color: feature.style.color,
         weight: feature.style.weight,
+        fillColor: feature.style.fillColor,
         fillOpacity: feature.style.fillOpacity,
       });
       this.featureLayers.push({

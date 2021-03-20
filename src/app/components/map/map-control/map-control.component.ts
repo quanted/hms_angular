@@ -17,6 +17,7 @@ export class MapControlComponent implements OnInit {
   styleForm = this.fb.group({
     color: [null],
     weight: [null],
+    fillColor: [null],
     fillOpacity: [null]
   });
 
@@ -38,6 +39,7 @@ export class MapControlComponent implements OnInit {
         this.selectedFeature = {...controlButton};
         this.styleForm.get('color').setValue(this.selectedFeature.layer.options.style.color);
         this.styleForm.get('weight').setValue(this.selectedFeature.layer.options.style.weight);
+        this.styleForm.get('fillColor').setValue(this.selectedFeature.layer.options.style.fillColor);
         this.styleForm.get('fillOpacity').setValue(this.selectedFeature.layer.options.style.fillOpacity);
         break;
       case 'refresh':
@@ -61,6 +63,7 @@ export class MapControlComponent implements OnInit {
           style: {
             color: this.styleForm.get('color').value,
             weight: this.styleForm.get('weight').value,
+            fillColor: this.styleForm.get('fillColor').value,
             fillOpacity: this.styleForm.get('fillOpacity').value
           }
         }
