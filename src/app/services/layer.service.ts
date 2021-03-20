@@ -92,13 +92,8 @@ export class LayerService {
     },
   ]
 
-  basemapLayers = [
-    // "Map Name": L.tileLayer,
-  ]
-
-  featureLayers = [
-    // "Marker": ESRI.featureLayer,
-  ];
+  basemapLayers = [/* "Map Name": L.tileLayer, */]
+  featureLayers = [/* "Marker": ESRI.featureLayer, */];
   
   constructor() { 
     // setup tile maps

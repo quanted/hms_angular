@@ -1,5 +1,7 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { LayerService } from 'src/app/services/layer.service';
+
+import { MapService } from 'src/app/services/map.service';
 
 @Component({
   selector: 'app-map-control',
@@ -7,17 +9,18 @@ import { LayerService } from 'src/app/services/layer.service';
   styleUrls: ['./map-control.component.css']
 })
 export class MapControlComponent implements OnInit {
-  basemaps = [];
+  basemaps =[];
   features = [];
 
   constructor(
-    private layerService: LayerService,
+    private map: MapService,
+    private layers: LayerService
   ) {}
-  @Output() controlClicked: EventEmitter<any> = new EventEmitter<any>();
   
   ngOnInit(): void {
-    this.basemaps = this.layerService.getBasemapLayers();
-    this.features = this.layerService.getFeatureLayers();
+    const layers = this.map.getLayers();
+    this.basemaps = layers.basemaps;
+    this.features = layers.features;
   }
 
   issueCommand(command, controlButton?): void {
@@ -38,11 +41,6 @@ export class MapControlComponent implements OnInit {
       default:
         console.log('UNKNOWN COMMAND.TYPE ', commandMessage);
     }
-    this.controlClicked.emit(commandMessage);
-  }
-
-  layerUpdate(layers): void {
-    this.basemaps = layers.basemaps;
-    this.features = layers.features;
+    this.map.controlCommand(commandMessage);
   }
 }

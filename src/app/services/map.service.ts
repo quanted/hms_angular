@@ -7,13 +7,9 @@ import { LayerService } from 'src/app/services/layer.service';
 @Injectable({
   providedIn: 'root'
 })
-export class MapService {basemapLayers = [
-    // "Map Name": L.tileLayer,
-  ]
-
-  featureLayers = [
-    // "Marker": ESRI.featureLayer,
-  ];
+export class MapService {
+  basemapLayers = [/* "Map Name": L.tileLayer, */]
+  featureLayers = [/* "Marker": ESRI.featureLayer, */];
 
   defaultBasemap = 'Open Street Map';
   defaultFeatureLayer = 'huc8';
@@ -49,7 +45,6 @@ export class MapService {basemapLayers = [
       });
     }
     this.setupLayers();
-
   }
 
   setupLayers() {
@@ -67,9 +62,14 @@ export class MapService {basemapLayers = [
     }
   }
 
+  getLayers() {
+    return {
+      basemaps: this.basemapLayers,
+      features: this.featureLayers
+    }
+  }
+
   toggleLayer(type, name): void {
-    console.log(type);
-    console.log(name);
     switch(type) {
       case 'basemap':
         for (let map of this.basemapLayers) {
@@ -98,6 +98,18 @@ export class MapService {basemapLayers = [
       default:
         console.log('UNKNOWN MAP_LAYER_TYPE: ', type);
       }
+  }
+
+  controlCommand(command): void {
+    switch(command.command) {
+      case 'toggle':
+        this.toggleLayer(command.layerType, command.name);
+        break;
+      case 'refresh':
+        break;
+      default:
+        console.log('UNKNOWN CONTROL_COMMAND: ', command)
+    }
   }
 
   handleClick(mapClickEvent): void {
