@@ -36,59 +36,75 @@ export class LayerService {
   features = [
     { 
       name: 'flowlines',
-      color: '#00FFFF',
-      weight: 1,
-      fillOpacity: 0,
       url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/NHDSnapshot_NP21/MapServer/0",
+      style: {
+        color: '#00FFFF',
+        weight: 1,
+        fillOpacity: 0
+      }
     },
     { 
-      name: "catchments", 
-      color: 'green',
-      weight: 1,
-      fillOpacity: 0,
-      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/Catchments_NP21_Simplified/MapServer/0"
+      name: "catchments",
+      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/Catchments_NP21_Simplified/MapServer/0",
+      style: {
+        color: 'green',
+        weight: 1,
+        fillOpacity: 0
+      }
     },
     { 
       name: 'huc12',
-      color: '#0026FF',
-      weight: 1,
-      fillOpacity: 0,
-      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/0"
+      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/0",
+      style: {
+        color: '#0026FF',
+        weight: 1,
+        fillOpacity: 0
+      }
     },
     { 
-      name: 'huc10', 
-      color: '#4800FF',
-      weight: 1,
-      fillOpacity: 0,
-      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/1"
+      name: 'huc10',
+      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/1",
+      style: {
+        color: '#4800FF',
+        weight: 1,
+        fillOpacity: 0
+      }
     },
     { 
-      name: 'huc8', 
-      color: '#B200FF',
-      weight: 2,
-      fillOpacity: 0,
-      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/2"
+      name: 'huc8',
+      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/2",
+      style: {
+        color: '#B200FF',
+        weight: 2,
+        fillOpacity: 0
+      }
     },
     { 
-      name: 'huc6', 
-      color: '#FF00DC',
-      weight: 4,
-      fillOpacity: 0,
-      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/3"
+      name: 'huc6',
+      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/3",
+      style: {
+        color: '#FF00DC',
+        weight: 4,
+        fillOpacity: 0
+      }
     },
     { 
-      name: 'huc4', 
-      color: '#FF006E',
-      weight: 6,
-      fillOpacity: 0,
-      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/4"
+      name: 'huc4',
+      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/4",
+      style: {
+        color: '#FF006E',
+        weight: 6,
+        fillOpacity: 0
+      }
     },
     { 
-      name: 'huc2', 
-      color: '#FF0000',
-      weight: 8,
-      fillOpacity: 0,
-      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/5"
+      name: 'huc2',
+      url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/5",
+      style: {
+        color: '#FF0000',
+        weight: 8,
+        fillOpacity: 0
+      }
     },
   ]
 
@@ -111,9 +127,9 @@ export class LayerService {
         url: feature.url,
       });
       layer.setStyle({
-        color: feature.color,
-        weight: feature.weight,
-        fillOpacity: feature.fillOpacity,
+        color: feature.style.color,
+        weight: feature.style.weight,
+        fillOpacity: feature.style.fillOpacity,
       });
       this.featureLayers.push({
         type: 'feature',
@@ -121,6 +137,14 @@ export class LayerService {
         layer: layer,
         show: false,
       });
+    }
+  }
+
+  updateFeatureStyle(featureName, style): void {
+    for (let feature of this.featureLayers) {
+      if (feature.name == featureName) {
+        feature.layer.setStyle(style);
+      }
     }
   }
 

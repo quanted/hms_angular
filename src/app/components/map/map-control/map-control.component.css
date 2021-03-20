@@ -1,36 +1,56 @@
 .grid-container {
     display: grid;
     height: 100%;
-    width: 140px;
-    text-align: center;
+    min-width: 150px;
+    background-color: lightsteelblue;
 }
 
 .item {
-    background: lightsteelblue;
-    border-bottom: 1px solid rgb(150, 150, 150);
-    padding: 5px;
-    padding-top: 0px;
+    margin: 5px;
+    margin-top: 0;
 }
 
-.item:last-of-type {
-    border: none;
+.feature-buttons {
+    display: grid;
+    grid-template-columns: auto 2rem;
+    column-gap: .125rem;
 }
 
 .button {
-    width: 100%;
-    margin-top: 5px;
-    padding: 1px;
     font-size: .75rem;
-    outline: 1px solid rgb(150, 150, 150);
+    display: grid;
+    place-items: center;
+    height: 30px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    background-color: steelblue;
 }
 
 .button:hover {
     background: rgba(146, 146, 146, 0.5);
     cursor: pointer;
-    outline: 2px solid green;
 }
 
 .active {
-    background: rgb(250, 146, 146);
-    outline: 2px solid green;
+    background-color: rgb(250, 146, 146);
+}
+
+#basemaps,
+#features,
+#editor {
+    margin: .25rem;
+    margin-top: 0;
+    padding: .25rem;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+#editor-form {
+    display: grid;
+    place-items: center;
+    row-gap: .25rem;
+}
+
+#editor-form > .button {
+    width: 100%;
 }

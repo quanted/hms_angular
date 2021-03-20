@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { LayerService } from 'src/app/services/layer.service';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { MapService } from 'src/app/services/map.service';
 
@@ -12,9 +12,17 @@ export class MapControlComponent implements OnInit {
   basemaps =[];
   features = [];
 
+  selectedFeature;
+
+  styleForm = this.fb.group({
+    color: [null],
+    weight: [null],
+    fillOpacity: [null]
+  });
+
   constructor(
     private map: MapService,
-    private layers: LayerService
+    private fb: FormBuilder
   ) {}
   
   ngOnInit(): void {
@@ -26,10 +34,17 @@ export class MapControlComponent implements OnInit {
   issueCommand(command, controlButton?): void {
     let commandMessage;
     switch(command) {
+      case 'editor':
+        this.selectedFeature = {...controlButton};
+        this.styleForm.get('color').setValue(this.selectedFeature.layer.options.style.color);
+        this.styleForm.get('weight').setValue(this.selectedFeature.layer.options.style.weight);
+        this.styleForm.get('fillOpacity').setValue(this.selectedFeature.layer.options.style.fillOpacity);
+        break;
       case 'refresh':
         commandMessage = {
           command: command
         }
+        this.map.controlCommand(commandMessage);
         break;
       case 'toggle':
         commandMessage = {
@@ -37,10 +52,22 @@ export class MapControlComponent implements OnInit {
           name: controlButton.name,
           layerType: controlButton.type
         }
+        this.map.controlCommand(commandMessage);
+        break;
+      case 'update-style':
+        commandMessage = {
+          command: command,
+          name: this.selectedFeature.name,
+          style: {
+            color: this.styleForm.get('color').value,
+            weight: this.styleForm.get('weight').value,
+            fillOpacity: this.styleForm.get('fillOpacity').value
+          }
+        }
+        this.map.controlCommand(commandMessage);
         break;
       default:
         console.log('UNKNOWN COMMAND.TYPE ', commandMessage);
     }
-    this.map.controlCommand(commandMessage);
   }
 }

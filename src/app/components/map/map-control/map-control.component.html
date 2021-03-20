@@ -1,19 +1,61 @@
 <div class="grid-container">
-    <div class="item">
+    <div class="item" id="basemaps">
         <div *ngFor="let map of basemaps" class="button" [class.active]=map.show (click)="issueCommand('toggle', map)" readonly>
             {{ map.name }}
         </div>      
     </div>
     
-    <div class="item">
-        <div *ngFor="let feature of features" class="button" [class.active]=feature.show (click)="issueCommand('toggle', feature)" readonly>
-            {{ feature.name }}
+    <div class="item" id="features">
+        <div *ngFor="let feature of features" class="feature-buttons">
+            <div class="button" [class.active]=feature.show (click)="issueCommand('toggle', feature)" readonly>
+                {{ feature.name }}
+            </div>
+            <div class="button" (click)="issueCommand('editor', feature)">
+                <mat-icon>edit</mat-icon>
+            </div>
         </div>
     </div>
     
-    <div class="item">
-        <div class="button" (click)="issueCommand('refresh')">
-            Update Layer Info
-        </div>
+    <div class="item" id="editor">
+        <form id="editor-form" *ngIf="selectedFeature" [formGroup]="styleForm">
+            <div>
+                {{ selectedFeature.name }}
+            </div>
+            <div>
+                <input type="color" formControlName="color"/>
+            </div>
+            <div>
+                Line weight: <select formControlName="weight">
+                    <option value="1">1px</option>
+                    <option value="2">2px</option>
+                    <option value="3">3px</option>
+                    <option value="4">4px</option>
+                    <option value="5">5px</option>
+                    <option value="6">6px</option>
+                    <option value="7">7px</option>
+                    <option value="8">8px</option>
+                    <option value="9">9px</option>
+                    <option value="10">10px</option>
+                </select>
+            </div>
+            <div>
+                Fill opacity: <select formControlName="fillOpacity">
+                    <option value="0">no fill</option>
+                    <option value=".1">10%</option>
+                    <option value=".2">20%</option>
+                    <option value=".3">30$</option>
+                    <option value=".4">40%</option>
+                    <option value=".5">50%</option>
+                    <option value=".6">60%</option>
+                    <option value=".7">70%</option>
+                    <option value=".8">80%</option>
+                    <option value=".9">90%</option>
+                    <option value="1">100%</option>
+                </select>
+            </div>
+            <div class="button" (click)="issueCommand('update-style')">
+                Update Style
+            </div>
+        </form>
     </div>
 </div>

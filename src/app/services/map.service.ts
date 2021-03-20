@@ -12,7 +12,6 @@ export class MapService {
   featureLayers = [/* "Marker": ESRI.featureLayer, */];
 
   defaultBasemap = 'Open Street Map';
-  defaultFeatureLayer = 'huc8';
 
   map: L.Map;
 
@@ -34,7 +33,7 @@ export class MapService {
     if(!this.map) {
       this.map = L.map("map", {
         center: [38.5, -96],  // US geographical center
-        zoom: 5,
+        zoom: 10,
         minZoom: 5,
       });
       this.map.on("click", (mapClickEvent) => {
@@ -49,11 +48,11 @@ export class MapService {
 
   setupLayers() {
     this.basemapLayers = this.layerService.getBasemapLayers();
+    this.addDefaultBasemap();
     this.featureLayers = this.layerService.getFeatureLayers();
-    this.addDefaultLayers();
   }
 
-  addDefaultLayers(): void {
+  addDefaultBasemap(): void {
     for (let map of this.basemapLayers) {
       if (map.name == this.defaultBasemap) {
         this.map.addLayer(map.layer);
@@ -97,13 +96,20 @@ export class MapService {
         break;
       default:
         console.log('UNKNOWN MAP_LAYER_TYPE: ', type);
-      }
+    }
+  }
+
+  updateStyle(command) {
+    this.layerService.updateFeatureStyle(command.name, command.style);
   }
 
   controlCommand(command): void {
     switch(command.command) {
       case 'toggle':
         this.toggleLayer(command.layerType, command.name);
+        break;
+      case 'update-style':
+        this.updateStyle(command);
         break;
       case 'refresh':
         break;
@@ -113,7 +119,7 @@ export class MapService {
   }
 
   handleClick(mapClickEvent): void {
-
+    console.log('mapClickEvent: ', mapClickEvent);
   }
 
   handleZoom(mapZoomEvent) {
