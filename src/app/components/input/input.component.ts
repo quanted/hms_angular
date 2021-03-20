@@ -3,6 +3,8 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HmsService } from 'src/app/services/hms.service';
 
+import { ExpansionPanelLeftComponent } from '../../../app/components/ui/expansion-panel-left/expansion-panel-left.component'
+
 import { Module, AoI, Source, TimeZone, DataValueFormat, TemporalResolution } from '../../models/forms.model' ;
 
 import { InputService } from "../../services/input.service"
@@ -54,6 +56,7 @@ export class InputComponent implements OnInit {
     private router: Router,
     private inputService: InputService,
     private hms: HmsService,
+    private panel: ExpansionPanelLeftComponent
   ) { }
   @Output() requestSent: EventEmitter<any> = new EventEmitter<any>();
   buttonState = "Form incomplete"
@@ -62,19 +65,19 @@ export class InputComponent implements OnInit {
     this.hms.getSwagger().subscribe((response) => {
       console.log('response: ', response);
 
-      // This will get the available hydrology modules
-      const re = new RegExp('^/(api)+/(hydrology)+/[^/]+$');
+      // This will get the available modules based on current panel
+      const category = this.panel.activePanel
+      const re = new RegExp('^/(api)+/('+ category + ')+/[^/]+$');
 
-        let hydrologyInputs = Object.keys(response.paths)
-      console.log(hydrologyInputs);
-
-      hydrologyInputs.forEach(element => {
-        let hydrologyUrl = element.match(re);
-        if (hydrologyUrl) {
-          console.log(hydrologyUrl)
-          let urlvalues = (response.paths[hydrologyUrl.input].post.tags[0]).split(/(?=[A-Z])/)
-          let hydrologyModules = urlvalues.splice(2,urlvalues.length).join(" ");
-          this.modules.push(hydrologyModules);
+      let moduleUrlList = Object.keys(response.paths);
+      
+      // This is extracting the module names from the tags
+      moduleUrlList.forEach(url => {
+        let moduleUrl = url.match(re);
+        if (moduleUrl) {
+          let words = (response.paths[moduleUrl.input].post.tags[0]).split(/(?=[A-Z])/);
+          let availableModuleNames = words.splice(2,words.length).join(" ");
+          this.modules.push(availableModuleNames);
         }
       });
     })
