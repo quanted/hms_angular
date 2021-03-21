@@ -39,6 +39,9 @@ export class MapService {
       this.map.on("click", (mapClickEvent) => {
         this.handleClick(mapClickEvent);
       });
+      this.map.on("drag", (mapDragEvent) => {
+        this.handleDrag(mapDragEvent);
+      });
       this.map.on('zoomend', (mapZoomEvent) => {
         this.handleZoom(mapZoomEvent);
       });
@@ -120,6 +123,10 @@ export class MapService {
 
   handleClick(mapClickEvent): void {
     console.log('mapClickEvent: ', mapClickEvent);
+  }
+
+  handleDrag(mapDragEvent): void {
+    console.log('mapDragEvent: ', mapDragEvent);
   }
 
   handleZoom(mapZoomEvent) {

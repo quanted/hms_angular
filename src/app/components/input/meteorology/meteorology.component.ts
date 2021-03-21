@@ -25,35 +25,15 @@ export class MeteorologyComponent implements OnInit {
     ) {}
 
   ngOnInit(): void {
+    const api = this.hms.getApi();
+    this.apiv = api.apiv;
+    this.apiEndpointList = api.apiEndpointList;
+    this.schemas = api.schemas;
+
     this.currentEndpoint = null;
     this.metForm = this.fb.group({
       endpointSelect: [null],
     });
-    // this.hms.getSwagger().subscribe((response) => {
-    //   console.log('response: ', response);
-    //   this.buildForm(response);
-    // })
-
-    this.buildEndpointList(this.hms.getOfflineSwagger());
-  }
-
-  buildEndpointList(swagger): void {
-    this.apiv = swagger.openapi;
-    this.schemas = swagger.components.schemas;
-
-    this.apiEndpointList = [];
-    for (let apiPath of Object.keys(swagger.paths)) {
-      // TODO this needs a lot of work to properly build a list of endpoints and parameters
-      let requestType = swagger.paths[apiPath].hasOwnProperty('post')? 'post' : swagger.paths[apiPath].hasOwnProperty('get')? 'get' : 'null';
-      let request = swagger.paths[apiPath];
-      this.apiEndpointList.push({
-        endpoint: apiPath,
-        urlParts: apiPath.split('/').slice(1), 
-        type: requestType,
-        summary: request[requestType].summary,
-        request: request[requestType]?.requestBody?.content['application/json']?.example
-      });
-    }
   }
 
   updateForm(): void {

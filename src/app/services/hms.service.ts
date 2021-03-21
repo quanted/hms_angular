@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 import { Observable, of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -9,11 +8,20 @@ import { catchError } from 'rxjs/operators';
     providedIn: 'root'
 })
 export class HmsService {
-  headers: HttpHeaders;
+  api = {
+    apiv: '',
+    apiEndpointList:[],
+    schemas: []
+  }
 
-  constructor(
-      private http: HttpClient,
-  ) {}
+  constructor(private http: HttpClient) {
+    this.getSwagger().subscribe(swagger => {
+      if(swagger) {
+        this.swagger = swagger;
+      }
+    });
+    this.buildEndpointList(this.swagger);
+  }
 
   getSwagger(): Observable<any>{
     return this.http.get("https://ceamdev.ceeopdev.net/hms/api_doc/swagger/")
@@ -24,8 +32,27 @@ export class HmsService {
     );
   }
 
-  getOfflineSwagger() {
-    return this.swagger;
+  buildEndpointList(swagger): void {
+    this.api.apiv = swagger.openapi;
+    this.api.schemas = swagger.components.schemas;
+
+    this.api.apiEndpointList = [];
+    for (let apiPath of Object.keys(swagger.paths)) {
+      // TODO this needs a lot of work to properly build a list of endpoints and parameters
+      let requestType = swagger.paths[apiPath].hasOwnProperty('post')? 'post' : swagger.paths[apiPath].hasOwnProperty('get')? 'get' : 'null';
+      let request = swagger.paths[apiPath];
+      this.api.apiEndpointList.push({
+        endpoint: apiPath,
+        urlParts: apiPath.split('/').slice(1), 
+        type: requestType,
+        summary: request[requestType].summary,
+        request: request[requestType]?.requestBody?.content['application/json']?.example
+      });
+    }
+  }
+
+  getApi() {
+    return this.api;
   }
 
   submit(form) {
