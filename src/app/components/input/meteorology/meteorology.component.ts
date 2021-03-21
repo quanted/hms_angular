@@ -74,10 +74,12 @@ export class MeteorologyComponent implements OnInit {
     }
     this.endpointForm = this.fb.group(formInputs);
     this.currentEndpoint = endpoint;
-    console.log('form: ', this.endpointForm.value);
   }
 
   submitForm(): void {
-    this.hms.submit(this.endpointForm.value);
+    this.hms.submit({
+      endpoint: this.currentEndpoint.endpoint,
+      args: this.endpointForm.value
+    });
   }
 }

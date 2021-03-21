@@ -1,17 +1,31 @@
 .container-col-1 {
     display: grid;
-    grid-template-rows: 1fr auto;
-    row-gap: 1rem;
-    background-color: hotpink;
+    grid-template-rows: auto 1fr;
     height: 100%;
 }
 
 #form {
-    background-color: lightseagreen;
+    margin: 1rem;
+    text-align: center;
+}
+
+#endpointForm {
+    margin: 1rem;
+    margin-top: 0;
+    display: grid;
+    row-gap: .25rem;
+}
+
+#summary {
+    margin-bottom: .5rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
 }
 
 .control {
     display: grid;
     place-items: center;
-    background-color: lightyellow;
 }
