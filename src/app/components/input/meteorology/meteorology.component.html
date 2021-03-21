@@ -1,1 +1,20 @@
-<p>meteorology works!</p>
+<div class="container-col-1">
+    <div id=form [formGroup]="metForm">
+        v{{ apiv }}<select formControlName="endpointSelect" (change)="selectEndpoint()">
+            <option [value]='null' selected>Select an endpoint</option>
+            <option *ngFor="let endpoint of apiEndpointList">{{ endpoint.endpoint }}</option>
+        </select>
+        <div *ngIf="currentEndpoint" >
+            <div>{{ currentEndpoint.request?.summary || 'this endpoint has no summary' }}</div>
+            <form [formGroup]="endpointForm">
+                <div *ngFor="let input of inputs" >
+                    <label for="{{input}}">{{input}}</label>
+                    <input formControlName="{{input}}" type="text">
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="control">
+        <button mat-flat-button (click)="submitForm()">submit form</button>
+    </div>
+</div>

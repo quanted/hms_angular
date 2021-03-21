@@ -16,7 +16,12 @@ export class HmsService {
   ) {}
 
   getSwagger(): Observable<any>{
-    return this.http.get("https://ceamdev.ceeopdev.net/hms/api_doc/swagger/");
+    return this.http.get("https://ceamdev.ceeopdev.net/hms/api_doc/swagger/")
+    .pipe(
+      catchError((err) => {
+        return of({ error: `Failed to fetch swagger data!\n`, err });
+      })
+    );
   }
 
   getOfflineSwagger() {

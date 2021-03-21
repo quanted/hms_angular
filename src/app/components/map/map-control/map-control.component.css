@@ -1,8 +1,9 @@
 .grid-container {
     display: grid;
     height: 100%;
-    min-width: 150px;
+    min-width: 160px;
     background-color: lightsteelblue;
+    grid-template-rows: auto 1fr auto;
 }
 
 .item {
@@ -14,6 +15,7 @@
     display: grid;
     grid-template-columns: auto 2rem;
     column-gap: .125rem;
+    margin-bottom: .125rem;
 }
 
 .button {
@@ -21,7 +23,6 @@
     display: grid;
     place-items: center;
     height: 30px;
-    margin-bottom: 5px;
     border-radius: 5px;
     background-color: steelblue;
 }
@@ -38,11 +39,14 @@
 #basemaps,
 #features,
 #editor {
-    margin: .25rem;
-    margin-top: 0;
     padding: .25rem;
     border: 1px solid black;
     border-radius: 5px;
+}
+
+#basemaps {
+    display: grid;
+    row-gap: .125rem;
 }
 
 #editor-form {

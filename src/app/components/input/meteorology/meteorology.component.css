@@ -1,0 +1,17 @@
+.container-col-1 {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    row-gap: 1rem;
+    background-color: hotpink;
+    height: 100%;
+}
+
+#form {
+    background-color: lightseagreen;
+}
+
+.control {
+    display: grid;
+    place-items: center;
+    background-color: lightyellow;
+}
