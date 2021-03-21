@@ -63,23 +63,23 @@ export class InputComponent implements OnInit {
   
   ngOnInit(): void {
     this.hms.getSwagger().subscribe((response) => {
-      console.log('response: ', response);
+      // console.log('response: ', response);
 
-      // This will get the available modules based on current panel
-      const category = this.panel.activePanel
-      const re = new RegExp('^/(api)+/('+ category + ')+/[^/]+$');
+      // // This will get the available modules based on current panel
+      // const category = this.panel.activePanel
+      // const re = new RegExp('^/(api)+/('+ category + ')+/[^/]+$');
 
-      let moduleUrlList = Object.keys(response.paths);
+      // let moduleUrlList = Object.keys(response.paths);
       
-      // This is extracting the module names from the tags
-      moduleUrlList.forEach(url => {
-        let moduleUrl = url.match(re);
-        if (moduleUrl) {
-          let words = (response.paths[moduleUrl.input].post.tags[0]).split(/(?=[A-Z])/);
-          let availableModuleNames = words.splice(2,words.length).join(" ");
-          this.modules.push(availableModuleNames);
-        }
-      });
+      // // This is extracting the module names from the tags
+      // moduleUrlList.forEach(url => {
+      //   let moduleUrl = url.match(re);
+      //   if (moduleUrl) {
+      //     let words = (response.paths[moduleUrl.input].post.tags[0]).split(/(?=[A-Z])/);
+      //     let availableModuleNames = words.splice(2,words.length).join(" ");
+      //     this.modules.push(availableModuleNames);
+      //   }
+      // });
     })
     
     this.inputForm = this.fb.group({

@@ -7,15 +7,15 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class ExpansionPanelLeftComponent implements OnInit {
   @Input() open: boolean;
-  activePanel = 'about';
+  welcome = false;
 
   constructor() { }
 
   ngOnInit(): void {
   }
 
-  show(panel): void {
-    this.activePanel = panel;
+  accept(): void {
+    this.welcome = true;
   }
 
   openPanel(): void {

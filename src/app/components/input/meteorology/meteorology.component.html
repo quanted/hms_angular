@@ -1,23 +1,25 @@
 <div class="container-col-1">
-    <div id=form [formGroup]="metForm">
-        <select>
-            <option>v{{ apiv }}</option>
-        </select>
-        <select formControlName="endpointSelect" (change)="updateForm()">
-            <option [value]='null' selected>Select an endpoint</option>
-            <option *ngFor="let endpoint of apiEndpointList">{{ endpoint.endpoint }}</option>
-        </select>
-    </div>
-    <div *ngIf="currentEndpoint" >
-        <form [formGroup]="endpointForm" id="endpointForm">
-            <div id="summary">{{ currentEndpoint.request?.summary || 'this endpoint has no summary' }}</div>
-            <div *ngFor="let input of inputs" class="form-row">
-                <label for="{{input}}">{{input}}</label>
-                <input formControlName="{{input}}" type="text">
-            </div>
-        </form>
-        <div class="control">
-            <button mat-flat-button (click)="submitForm()">submit form</button>
+    <div class="grid-item">
+        <div id=form [formGroup]="metForm">
+            <select>
+                <option>v{{ apiv }}</option>
+            </select>
+            <select formControlName="endpointSelect" (change)="updateForm()">
+                <option [value]='null' selected>Select an endpoint</option>
+                <option *ngFor="let endpoint of apiEndpointList">{{ endpoint.endpoint }}</option>
+            </select>
+        </div>
+        <div *ngIf="currentEndpoint" >
+            <form [formGroup]="endpointForm" id="endpointForm">
+                <div id="summary">{{ currentEndpoint.request?.summary || 'this endpoint has no summary' }}</div>
+                <div *ngFor="let input of inputs" class="form-row">
+                    <label for="{{input}}">{{input}}</label>
+                    <input formControlName="{{input}}" type="text">
+                </div>
+                <div class="control">
+                    <button mat-flat-button (click)="submitForm()">submit form</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

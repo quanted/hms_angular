@@ -58,3 +58,18 @@
 #editor-form > .button {
     width: 100%;
 }
+
+.editor-row {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    place-items: center;
+}
+
+.editor-item {
+    display: grid;
+    place-items: center;
+}
+
+select {
+    width: 4rem;
+}

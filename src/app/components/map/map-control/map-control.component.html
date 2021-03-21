@@ -21,40 +21,50 @@
             <div>
                 {{ selectedFeature.name }}
             </div>
-            <div>
-                Line <input type="color" formControlName="color"/>
+            <div class="editor-row">
+                <div class="editor-item">
+                    <input type="color" formControlName="color"/>
+                </div>
+                <div class="editor-item">
+                    <mat-icon>line_weight</mat-icon> 
+                </div>
+                <div class="editor-item">
+                    <select formControlName="weight">
+                        <option value="1">1px</option>
+                        <option value="2">2px</option>
+                        <option value="3">3px</option>
+                        <option value="4">4px</option>
+                        <option value="5">5px</option>
+                        <option value="6">6px</option>
+                        <option value="7">7px</option>
+                        <option value="8">8px</option>
+                        <option value="9">9px</option>
+                        <option value="10">10px</option>
+                    </select>
+                </div>
             </div>
-            <div>
-                <mat-icon>line_weight</mat-icon> <select formControlName="weight">
-                    <option value="1">1px</option>
-                    <option value="2">2px</option>
-                    <option value="3">3px</option>
-                    <option value="4">4px</option>
-                    <option value="5">5px</option>
-                    <option value="6">6px</option>
-                    <option value="7">7px</option>
-                    <option value="8">8px</option>
-                    <option value="9">9px</option>
-                    <option value="10">10px</option>
-                </select>
-            </div>
-            <div>
-                Fill <input type="color" formControlName="fillColor"/>
-            </div>
-            <div>
-                <mat-icon>opacity</mat-icon> <select formControlName="fillOpacity">
-                    <option value="0">no fill</option>
-                    <option value=".1">10%</option>
-                    <option value=".2">20%</option>
-                    <option value=".3">30%</option>
-                    <option value=".4">40%</option>
-                    <option value=".5">50%</option>
-                    <option value=".6">60%</option>
-                    <option value=".7">70%</option>
-                    <option value=".8">80%</option>
-                    <option value=".9">90%</option>
-                    <option value="1">100%</option>
-                </select>
+            <div class="editor-row">
+                <div class="editor-item">
+                    <input type="color" formControlName="fillColor"/>
+                </div>
+                <div class="editor-item">
+                    <mat-icon>opacity</mat-icon> 
+                </div>
+                <div class="editor-item">
+                    <select formControlName="fillOpacity">
+                        <option value="0">no fill</option>
+                        <option value=".1">10%</option>
+                        <option value=".2">20%</option>
+                        <option value=".3">30%</option>
+                        <option value=".4">40%</option>
+                        <option value=".5">50%</option>
+                        <option value=".6">60%</option>
+                        <option value=".7">70%</option>
+                        <option value=".8">80%</option>
+                        <option value=".9">90%</option>
+                        <option value="1">100%</option>
+                    </select>
+                </div>
             </div>
             <div class="button" (click)="issueCommand('update-style')">
                 Update Style

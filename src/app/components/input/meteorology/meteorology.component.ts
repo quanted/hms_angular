@@ -63,8 +63,7 @@ export class MeteorologyComponent implements OnInit {
         if (this.metForm.get('endpointSelect').value == ept.endpoint) {
           endpoint = ept;
           const example = endpoint.request?.requestBody?.content['application/json']?.example;
-          const exampleKeys = Object.keys(example);
-          for (let key of exampleKeys) {
+          for (let key of Object.keys(example)) {
             this.inputs.push(key);
             formInputs[key] = [null] 
           }
@@ -73,6 +72,7 @@ export class MeteorologyComponent implements OnInit {
     }
     this.endpointForm = this.fb.group(formInputs);
     this.currentEndpoint = endpoint !== 'null'? endpoint : null;
+    console.log('schemas: ', this.schemas);
   }
 
   submitForm(): void {
