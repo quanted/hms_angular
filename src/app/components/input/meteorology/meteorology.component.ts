@@ -54,26 +54,25 @@ export class MeteorologyComponent implements OnInit {
     }
   }
 
-  selectEndpoint(): void {
-    for (let endpoint of this.apiEndpointList) {
-      if (this.metForm.get('endpointSelect').value == endpoint.endpoint) {
-        this.updateForm(endpoint);
+  updateForm(): void {
+    let endpoint = this.metForm.get('endpointSelect').value;
+    this.inputs = [];
+    const formInputs = {};
+    if (endpoint !== 'null') {
+      for (let ept of this.apiEndpointList) {
+        if (this.metForm.get('endpointSelect').value == ept.endpoint) {
+          endpoint = ept;
+          const example = endpoint.request?.requestBody?.content['application/json']?.example;
+          const exampleKeys = Object.keys(example);
+          for (let key of exampleKeys) {
+            this.inputs.push(key);
+            formInputs[key] = [null] 
+          }
+        }
       }
     }
-  }
-
-  updateForm(endpoint): void {
-    const example = endpoint.request?.requestBody?.content['application/json']?.example;
-    this.inputs = [];
-
-    const formInputs = {};
-    const exampleKeys = Object.keys(example);
-    for (let key of exampleKeys) {
-      this.inputs.push(key);
-      formInputs[key] = [null] 
-    }
     this.endpointForm = this.fb.group(formInputs);
-    this.currentEndpoint = endpoint;
+    this.currentEndpoint = endpoint !== 'null'? endpoint : null;
   }
 
   submitForm(): void {

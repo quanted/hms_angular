@@ -1,6 +1,9 @@
 <div class="container-col-1">
     <div id=form [formGroup]="metForm">
-        v{{ apiv }}<select formControlName="endpointSelect" (change)="selectEndpoint()">
+        <select>
+            <option>v{{ apiv }}</option>
+        </select>
+        <select formControlName="endpointSelect" (change)="updateForm()">
             <option [value]='null' selected>Select an endpoint</option>
             <option *ngFor="let endpoint of apiEndpointList">{{ endpoint.endpoint }}</option>
         </select>
