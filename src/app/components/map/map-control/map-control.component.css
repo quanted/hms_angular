@@ -1,21 +1,17 @@
 .grid-container {
     display: grid;
     height: 100%;
-    min-width: 160px;
+    min-width: 180px;
     background-color: lightsteelblue;
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: auto 1fr;
 }
 
 .item {
     margin: 5px;
     margin-top: 0;
-}
-
-.feature-buttons {
-    display: grid;
-    grid-template-columns: auto 2rem;
-    column-gap: .125rem;
-    margin-bottom: .125rem;
+    padding: .25rem;
+    border: 1px solid black;
+    border-radius: 5px;
 }
 
 .button {
@@ -24,7 +20,12 @@
     place-items: center;
     height: 30px;
     border-radius: 5px;
+    margin-bottom: .125rem;
     background-color: steelblue;
+}
+
+.button:last-of-type {
+    margin-bottom: 0;
 }
 
 .button:hover {
@@ -34,42 +35,4 @@
 
 .active {
     background-color: rgb(250, 146, 146);
-}
-
-#basemaps,
-#features,
-#editor {
-    padding: .25rem;
-    border: 1px solid black;
-    border-radius: 5px;
-}
-
-#basemaps {
-    display: grid;
-    row-gap: .125rem;
-}
-
-#editor-form {
-    display: grid;
-    place-items: center;
-    row-gap: .25rem;
-}
-
-#editor-form > .button {
-    width: 100%;
-}
-
-.editor-row {
-    display: grid;
-    grid-template-columns: auto auto 1fr;
-    place-items: center;
-}
-
-.editor-item {
-    display: grid;
-    place-items: center;
-}
-
-select {
-    width: 4rem;
 }

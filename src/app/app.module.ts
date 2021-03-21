@@ -33,6 +33,7 @@ import { ExpansionPanelRightComponent } from './components/ui/expansion-panel-ri
 import { ExpansionPanelLeftComponent } from './components/ui/expansion-panel-left/expansion-panel-left.component';
 import { HttpHeadersInterceptor } from './interceptors/http-headers.interceptor';
 import { MeteorologyComponent } from './components/input/meteorology/meteorology.component';
+import { LayerControlComponent } from './components/map/layer-control/layer-control.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { MeteorologyComponent } from './components/input/meteorology/meteorology
     AboutComponent,
     ExpansionPanelRightComponent,
     ExpansionPanelLeftComponent,
-    MeteorologyComponent
+    MeteorologyComponent,
+    LayerControlComponent
   ],
   imports: [
     BrowserModule,

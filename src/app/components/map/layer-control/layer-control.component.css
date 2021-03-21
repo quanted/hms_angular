@@ -1,0 +1,54 @@
+#layer-control {
+    display: grid;
+    grid-template-rows: 1fr auto;
+}
+
+#layer-select {
+    display: grid;
+    grid-template-columns: auto 2rem;
+    column-gap: .125rem;
+}
+
+.button {
+    font-size: .75rem;
+    display: grid;
+    place-items: center;
+    height: 30px;
+    border-radius: 5px;
+    margin-bottom: .125rem;
+    background-color: steelblue;
+}
+
+.button:hover {
+    background: rgba(146, 146, 146, 0.5);
+    cursor: pointer;
+}
+
+.active {
+    background-color: rgb(250, 146, 146);
+}
+
+#editor-form {
+    display: grid;
+    place-items: center;
+    row-gap: .25rem;
+}
+
+#editor-form > .button {
+    width: 100%;
+}
+
+.editor-row {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    place-items: center;
+}
+
+.editor-item {
+    display: grid;
+    place-items: center;
+}
+
+select {
+    width: 4rem;
+}

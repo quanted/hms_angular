@@ -1,74 +1,11 @@
 <div class="grid-container">
-    <div class="item" id="basemaps">
+    <div class="item">
         <div *ngFor="let map of basemaps" class="button" [class.active]=map.show (click)="issueCommand('toggle', map)" readonly>
             {{ map.name }}
         </div>      
     </div>
     
-    <div class="item" id="features">
-        <div *ngFor="let feature of features" class="feature-buttons">
-            <div class="button" [class.active]=feature.show (click)="issueCommand('toggle', feature)" readonly>
-                {{ feature.name }}
-            </div>
-            <div class="button" (click)="issueCommand('editor', feature)">
-                <mat-icon>settings</mat-icon>
-            </div>
-        </div>
-    </div>
-    
-    <div class="item" id="editor">
-        <form id="editor-form" *ngIf="selectedFeature" [formGroup]="styleForm">
-            <div>
-                {{ selectedFeature.name }}
-            </div>
-            <div class="editor-row">
-                <div class="editor-item">
-                    <input type="color" formControlName="color"/>
-                </div>
-                <div class="editor-item">
-                    <mat-icon>line_weight</mat-icon> 
-                </div>
-                <div class="editor-item">
-                    <select formControlName="weight">
-                        <option value="1">1px</option>
-                        <option value="2">2px</option>
-                        <option value="3">3px</option>
-                        <option value="4">4px</option>
-                        <option value="5">5px</option>
-                        <option value="6">6px</option>
-                        <option value="7">7px</option>
-                        <option value="8">8px</option>
-                        <option value="9">9px</option>
-                        <option value="10">10px</option>
-                    </select>
-                </div>
-            </div>
-            <div class="editor-row">
-                <div class="editor-item">
-                    <input type="color" formControlName="fillColor"/>
-                </div>
-                <div class="editor-item">
-                    <mat-icon>opacity</mat-icon> 
-                </div>
-                <div class="editor-item">
-                    <select formControlName="fillOpacity">
-                        <option value="0">no fill</option>
-                        <option value=".1">10%</option>
-                        <option value=".2">20%</option>
-                        <option value=".3">30%</option>
-                        <option value=".4">40%</option>
-                        <option value=".5">50%</option>
-                        <option value=".6">60%</option>
-                        <option value=".7">70%</option>
-                        <option value=".8">80%</option>
-                        <option value=".9">90%</option>
-                        <option value="1">100%</option>
-                    </select>
-                </div>
-            </div>
-            <div class="button" (click)="issueCommand('update-style')">
-                Update Style
-            </div>
-        </form>
+    <div class="item">
+        <app-layer-control *ngFor="let feature of features" [feature]="feature"></app-layer-control>
     </div>
 </div>
