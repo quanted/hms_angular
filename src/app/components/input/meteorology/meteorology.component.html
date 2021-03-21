@@ -11,8 +11,8 @@
         </div>
         <div *ngIf="currentEndpoint" >
             <form [formGroup]="endpointForm" id="endpointForm">
-                <div id="summary">{{ currentEndpoint.request?.summary || 'this endpoint has no summary' }}</div>
-                <div *ngFor="let input of inputs" class="form-row">
+                <div id="summary">{{ currentEndpoint.summary || 'this endpoint has no summary' }}</div>
+                <div *ngFor="let input of formInputs" class="form-row">
                     <label for="{{input}}">{{input}}</label>
                     <input formControlName="{{input}}" type="text">
                 </div>
