@@ -23,7 +23,7 @@ import { AppComponent } from './app.component';
 import { MapComponent } from './components/map/map.component';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
-import { InputComponent } from './components/input/input.component';
+import { InputComponent } from './components/input/input/input.component';
 
 import { CookieService } from 'ngx-cookie-service';
 import { MainComponent } from './components/main/main.component';
@@ -32,7 +32,6 @@ import { AboutComponent } from './components/about/about.component';
 import { ExpansionPanelRightComponent } from './components/ui/expansion-panel-right/expansion-panel-right.component';
 import { ExpansionPanelLeftComponent } from './components/ui/expansion-panel-left/expansion-panel-left.component';
 import { HttpHeadersInterceptor } from './interceptors/http-headers.interceptor';
-import { MeteorologyComponent } from './components/input/meteorology/meteorology.component';
 import { LayerControlComponent } from './components/map/layer-control/layer-control.component';
 
 @NgModule({
@@ -41,13 +40,12 @@ import { LayerControlComponent } from './components/map/layer-control/layer-cont
     MapComponent,
     HeaderComponent,
     FooterComponent,
-    InputComponent,
     MainComponent,
     MapControlComponent,
     AboutComponent,
-    ExpansionPanelRightComponent,
     ExpansionPanelLeftComponent,
-    MeteorologyComponent,
+    InputComponent,
+    ExpansionPanelRightComponent,
     LayerControlComponent
   ],
   imports: [

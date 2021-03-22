@@ -4,11 +4,11 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { HmsService } from 'src/app/services/hms.service';
 
 @Component({
-  selector: 'app-meteorology',
-  templateUrl: './meteorology.component.html',
-  styleUrls: ['./meteorology.component.css']
+  selector: 'app-input',
+  templateUrl: './input.component.html',
+  styleUrls: ['./input.component.css']
 })
-export class MeteorologyComponent implements OnInit {
+export class InputComponent implements OnInit {
   metForm: FormGroup;
   endpointForm: FormGroup;
 
@@ -63,5 +63,14 @@ export class MeteorologyComponent implements OnInit {
       endpoint: this.currentEndpoint.endpoint,
       args: this.endpointForm.value
     });
+  }
+
+  mapClick($event) {
+  }
+
+  reset(): void {
+  }
+
+  flyTo(): void {
   }
 }
