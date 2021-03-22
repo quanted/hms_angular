@@ -11,7 +11,7 @@ import { HmsService } from 'src/app/services/hms.service';
 export class InputComponent implements OnInit {
   coordsForm: FormGroup;
   sourceForm: FormGroup;
-  metForm: FormGroup;
+  apiForm: FormGroup;
   endpointForm: FormGroup;
 
   apiVersion;
@@ -32,7 +32,8 @@ export class InputComponent implements OnInit {
       lng: [null]
     });
     this.sourceForm = this.fb.group({
-      source: [null]
+      source: [null],
+      within: ['1']
     })
 
     const api = this.hms.getApi();
@@ -41,19 +42,19 @@ export class InputComponent implements OnInit {
     this.schemas = api.schemas;
 
     this.currentEndpoint = null;
-    this.metForm = this.fb.group({
+    this.apiForm = this.fb.group({
       endpointSelect: [null],
     });
   }
 
   updateForm(): void {
-    let endpoint = this.metForm.get('endpointSelect').value;
+    let endpoint = this.apiForm.get('endpointSelect').value;
     this.formInputs = [];
     const formBuilderInputs = {};
     if (endpoint !== 'null') {
       // TODO this will also need a bunch of attention once a more complex endpoint list arrives
       for (let apiEndpoint of this.apiEndpointList) {
-        if (this.metForm.get('endpointSelect').value == apiEndpoint.endpoint) {
+        if (this.apiForm.get('endpointSelect').value == apiEndpoint.endpoint) {
           endpoint = apiEndpoint;
           for (let key of Object.keys(endpoint.request)) {
             this.formInputs.push(key);
@@ -63,6 +64,8 @@ export class InputComponent implements OnInit {
       }
     }
     this.endpointForm = this.fb.group(formBuilderInputs);
+    this.endpointForm.setValue(endpoint.request);
+    
     this.currentEndpoint = endpoint !== 'null'? endpoint : null;
     console.log('endpoint: ', endpoint);
     console.log('schemas: ', this.schemas);

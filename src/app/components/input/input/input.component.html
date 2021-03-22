@@ -1,19 +1,27 @@
 <div class="container-col-1">
-    <div class="grid-item" id="coords">
+    <div class="container-item">
         <div id="coords-form" [formGroup]="coordsForm">
             <div>Lat <input type="number" formControlName="lat"/></div>
             <div>Lng <input type="number" formControlName="lng"/></div>
         </div>
     </div>
-    <div class="grid-item" id="source">
-        <div [formGroup]="sourceForm">
-            Source <select type="text" formControlName="source">
-                <option value="null">Choose a source</option>
-            </select>
+    <div class="container-item">
+        <div id="source-form" [formGroup]="sourceForm">
+            <div>
+                Source <select type="text" formControlName="source">
+                        <option value="null">Choose a source</option>
+                    </select>
+                within <input type="number" formControlName="within" min="1"> 
+                <select>
+                    <option>Km</option>
+                    <option>Meters</option>
+                    <option>Miles</option>
+                </select>
+            </div>
         </div>
     </div>
-    <div class="grid-item" id=endpoints>
-        <div id="endpoint-select" [formGroup]="metForm">
+    <div class="container-item">
+        <div id="api-form" [formGroup]="apiForm">
             <select>
                 <option>{{ apiVersion }}</option>
             </select>
@@ -23,7 +31,7 @@
             </select>
         </div>
     </div>
-    <div *ngIf="currentEndpoint" class="grid-item">
+    <div *ngIf="currentEndpoint" class="container-item">
         <form id="endpoint-form" [formGroup]="endpointForm">
             <div id="summary">{{ currentEndpoint.summary || 'this endpoint has no summary' }}</div>
             <div *ngFor="let input of formInputs" class="form-row">
@@ -31,8 +39,8 @@
                 <input formControlName="{{input}}" type="text">
             </div>
             <div class="controls">
-                <button mat-flat-button (click)="reset()">Clear form</button>
-                <button mat-flat-button (click)="submitForm()">submit form</button>
+                <div class="button" (click)="reset()">Clear form</div>
+                <div class="button" (click)="submitForm()">submit form</div>
             </div>
         </form>
     </div>

@@ -3,9 +3,9 @@
     width: 425px;
 }
 
-.grid-item {
+.container-item {
     display: grid;
-    grid-template-rows: auto auto;
+    place-items: center;
     margin: 5px;
     margin-top: 0;
     padding: .5rem;
@@ -14,22 +14,23 @@
     background-color: lightgoldenrodyellow;
 }
 
-#coords,
-#source,
-#endpoints {
+#coords-form,
+#source-form {
     display: grid;
     place-items: center;
 }
 
 #coords-form {
-    display: grid;
     grid-template-columns: auto auto;
     column-gap: 1rem;
 }
 
-#endpoint-select {
-    display: grid;
-    grid-template-columns: auto 1fr;
+#coords-form input[type='number'] {
+    width: 20ch;
+}
+
+#source-form input[type='number'] {
+    width: 10ch;
 }
 
 #endpoint-form {
@@ -53,6 +54,18 @@
     grid-template-columns: 1fr 1fr;
 }
 
-input[type='number'] {
-    width: 20ch;
+.button {
+    font-size: .75rem;
+    display: grid;
+    place-items: center;
+    height: 30px;
+    border-radius: 5px;
+    margin-bottom: .125rem;
+    color: lightgoldenrodyellow;
+    background-color: steelblue;
+}
+
+.button:hover {
+    background: rgba(146, 146, 146, 0.5);
+    cursor: pointer;
 }

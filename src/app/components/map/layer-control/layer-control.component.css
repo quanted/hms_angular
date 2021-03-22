@@ -42,11 +42,12 @@
     height: 1.5rem;
     padding: 0 .5rem;
     margin-bottom: .25rem;
-    background-color: lightsteelblue;
+    color: lightgoldenrodyellow;
+    background-color: steelblue;
 }
 
 #editor-form > .button:hover {
-    background-color: steelblue;
+    background-color: lightsteelblue;
 }
 
 .editor-row {
@@ -62,8 +63,4 @@
 
 select {
     width: 4rem;
-}
-
-input[type='color']:hover {
-
 }
