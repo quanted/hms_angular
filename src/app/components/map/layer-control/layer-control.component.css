@@ -39,8 +39,8 @@
 }
 
 #editor-form > .button {
-    width: 80%;
     height: 1.5rem;
+    padding: 0 .5rem;
     margin-bottom: .25rem;
     background-color: lightsteelblue;
 }
@@ -62,4 +62,8 @@
 
 select {
     width: 4rem;
+}
+
+input[type='color']:hover {
+
 }

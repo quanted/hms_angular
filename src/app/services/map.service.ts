@@ -122,15 +122,15 @@ export class MapService {
   }
 
   handleClick(mapClickEvent): void {
-    console.log('mapClickEvent: ', mapClickEvent);
+    // console.log('mapClickEvent: ', mapClickEvent);
   }
 
   handleDrag(mapDragEvent): void {
-    console.log('mapDragEvent: ', mapDragEvent);
+    // console.log('mapDragEvent: ', mapDragEvent);
   }
 
   handleZoom(mapZoomEvent) {
     let zoom = this.map.getZoom();
-    console.log('zoom: ', zoom);
+    // console.log('zoom: ', zoom);
   }
 }

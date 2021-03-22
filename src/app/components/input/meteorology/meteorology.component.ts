@@ -12,7 +12,7 @@ export class MeteorologyComponent implements OnInit {
   metForm: FormGroup;
   endpointForm: FormGroup;
 
-  apiv;
+  apiVersion;
   apiEndpointList = [];
   schemas;
 
@@ -26,7 +26,7 @@ export class MeteorologyComponent implements OnInit {
 
   ngOnInit(): void {
     const api = this.hms.getApi();
-    this.apiv = api.apiv;
+    this.apiVersion = api.version;
     this.apiEndpointList = api.apiEndpointList;
     this.schemas = api.schemas;
 
