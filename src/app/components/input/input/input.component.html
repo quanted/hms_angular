@@ -1,6 +1,19 @@
 <div class="container-col-1">
-    <div class="grid-item">
-        <div id=form [formGroup]="metForm">
+    <div class="grid-item" id="coords">
+        <div id="coords-form" [formGroup]="coordsForm">
+            <div>Lat <input type="number" formControlName="lat"/></div>
+            <div>Lng <input type="number" formControlName="lng"/></div>
+        </div>
+    </div>
+    <div class="grid-item" id="source">
+        <div [formGroup]="sourceForm">
+            Source <select type="text" formControlName="source">
+                <option value="null">Choose a source</option>
+            </select>
+        </div>
+    </div>
+    <div class="grid-item" id=endpoints>
+        <div id="endpoint-select" [formGroup]="metForm">
             <select>
                 <option>{{ apiVersion }}</option>
             </select>
@@ -11,13 +24,14 @@
         </div>
     </div>
     <div *ngIf="currentEndpoint" class="grid-item">
-        <form [formGroup]="endpointForm" id="endpointForm">
+        <form id="endpoint-form" [formGroup]="endpointForm">
             <div id="summary">{{ currentEndpoint.summary || 'this endpoint has no summary' }}</div>
             <div *ngFor="let input of formInputs" class="form-row">
                 <label for="{{input}}">{{input}}</label>
                 <input formControlName="{{input}}" type="text">
             </div>
-            <div class="control">
+            <div class="controls">
+                <button mat-flat-button (click)="reset()">Clear form</button>
                 <button mat-flat-button (click)="submitForm()">submit form</button>
             </div>
         </form>

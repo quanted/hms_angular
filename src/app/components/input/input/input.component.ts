@@ -9,6 +9,8 @@ import { HmsService } from 'src/app/services/hms.service';
   styleUrls: ['./input.component.css']
 })
 export class InputComponent implements OnInit {
+  coordsForm: FormGroup;
+  sourceForm: FormGroup;
   metForm: FormGroup;
   endpointForm: FormGroup;
 
@@ -25,6 +27,14 @@ export class InputComponent implements OnInit {
     ) {}
 
   ngOnInit(): void {
+    this.coordsForm = this.fb.group({
+      lat: [null],
+      lng: [null]
+    });
+    this.sourceForm = this.fb.group({
+      source: [null]
+    })
+
     const api = this.hms.getApi();
     this.apiVersion = api.version;
     this.apiEndpointList = api.apiEndpointList;
@@ -69,6 +79,7 @@ export class InputComponent implements OnInit {
   }
 
   reset(): void {
+    this.endpointForm.reset();
   }
 
   flyTo(): void {
