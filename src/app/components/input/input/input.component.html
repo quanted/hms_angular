@@ -20,12 +20,15 @@
             </div>
         </div>
     </div>
-    <div class="container-item">
+    <div class="container-item" *ngIf="loadingApi">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+    <div class="container-item" *ngIf="!loadingApi">
         <div id="api-form" [formGroup]="apiForm">
             <select>
                 <option>{{ apiVersion }}</option>
             </select>
-            <select formControlName="endpointSelect" (change)="updateForm()">
+            <select formControlName="endpointSelect" (change)="updateEndpointForm()">
                 <option [value]='null' selected>Select an endpoint</option>
                 <option *ngFor="let endpoint of apiEndpointList">{{ endpoint.endpoint }}</option>
             </select>

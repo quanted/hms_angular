@@ -14,6 +14,7 @@ export class InputComponent implements OnInit {
   apiForm: FormGroup;
   endpointForm: FormGroup;
 
+  loadingApi = false;
   apiVersion;
   apiEndpointList = [];
   schemas;
@@ -35,23 +36,25 @@ export class InputComponent implements OnInit {
       source: [null],
       within: ['1']
     })
-
-    const api = this.hms.getApi();
-    this.apiVersion = api.version;
-    this.apiEndpointList = api.apiEndpointList;
-    this.schemas = api.schemas;
-
-    this.currentEndpoint = null;
     this.apiForm = this.fb.group({
       endpointSelect: [null],
     });
+
+    this.loadingApi = true;
+    this.hms.getApi().subscribe(api => {
+      this.apiVersion = api.version;
+      this.apiEndpointList = api.apiEndpointList;
+      this.schemas = api.schemas;
+      this.loadingApi = false;
+      this.updateEndpointForm();
+    });
   }
 
-  updateForm(): void {
+  updateEndpointForm(): void {
     let endpoint = this.apiForm.get('endpointSelect').value;
     this.formInputs = [];
     const formBuilderInputs = {};
-    if (endpoint !== 'null') {
+    if (endpoint !== null && endpoint !== 'null') {
       // TODO this will also need a bunch of attention once a more complex endpoint list arrives
       for (let apiEndpoint of this.apiEndpointList) {
         if (this.apiForm.get('endpointSelect').value == apiEndpoint.endpoint) {
@@ -62,13 +65,10 @@ export class InputComponent implements OnInit {
           }
         }
       }
+      this.endpointForm = this.fb.group(formBuilderInputs);
+      this.endpointForm.setValue(endpoint.request);
     }
-    this.endpointForm = this.fb.group(formBuilderInputs);
-    this.endpointForm.setValue(endpoint.request);
-    
     this.currentEndpoint = endpoint !== 'null'? endpoint : null;
-    console.log('endpoint: ', endpoint);
-    console.log('schemas: ', this.schemas);
   }
 
   submitForm(): void {
@@ -76,9 +76,6 @@ export class InputComponent implements OnInit {
       endpoint: this.currentEndpoint.endpoint,
       args: this.endpointForm.value
     });
-  }
-
-  mapClick($event) {
   }
 
   reset(): void {

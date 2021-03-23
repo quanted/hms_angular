@@ -25,9 +25,6 @@ export class MapService {
     private layerService: LayerService,
   ) {}
 
-  ngOnInit() {
-  }
-
   initMap(): void {
     // setup map
     if(!this.map) {
@@ -122,7 +119,7 @@ export class MapService {
   }
 
   handleClick(mapClickEvent): void {
-    // console.log('mapClickEvent: ', mapClickEvent);
+    console.log('mapClickEvent: ', mapClickEvent);
   }
 
   handleDrag(mapDragEvent): void {
@@ -131,6 +128,10 @@ export class MapService {
 
   handleZoom(mapZoomEvent) {
     let zoom = this.map.getZoom();
-    // console.log('zoom: ', zoom);
+    console.log('zoom: ', zoom);
+  }
+
+  mouseEventToLatLng(event) {
+    return this.map.mouseEventToLatLng(event);
   }
 }

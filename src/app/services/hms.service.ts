@@ -2,47 +2,47 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable, of, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map, tap, timeout } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
 })
 export class HmsService {
-  private api = {
-    version: '',
-    apiEndpointList: [],
-    schemas: []
-  }
-
   constructor(private http: HttpClient) {
-    this.getSwagger().subscribe(swagger => {
-      if(swagger) {
-        this.swagger = swagger;
-        this.buildEndpointList(this.swagger);
-      }
-    });
-    this.buildEndpointList(this.swagger);
   }
 
-  private getSwagger(): Observable<any>{
+  getApi(): Observable<any>{
     return this.http.get("https://ceamdev.ceeopdev.net/hms/api_doc/swagger/")
     .pipe(
+      map((swagger: any) => {
+        return this.buildEndpointList(swagger);
+      }),
+      timeout(5000),
       catchError((err) => {
-        return of({ error: `Failed to fetch swagger data!\n`, err });
+        // server error so build list with cached swagger
+        if (err.name == 'TimeoutError') {
+          return of(this.buildEndpointList(this.swagger));
+        }
+        return of({ error: err });
       })
     );
   }
 
-  private buildEndpointList(swagger): void {
-    this.api.version = swagger.info.version;
-    this.api.schemas = swagger.components.schemas;
+  buildEndpointList(swagger) {
+    let api = {
+      version: '',
+      apiEndpointList: [],
+      schemas: []
+    }
+    api.version = swagger.info.version;
+    api.schemas = swagger.components.schemas;
 
-    this.api.apiEndpointList = [];
+    api.apiEndpointList = [];
     for (let apiPath of Object.keys(swagger.paths)) {
       // TODO this needs a lot of work to properly build a list of endpoints and parameters
       let requestType = swagger.paths[apiPath].hasOwnProperty('post')? 'post' : swagger.paths[apiPath].hasOwnProperty('get')? 'get' : 'null';
       let request = swagger.paths[apiPath];
-      this.api.apiEndpointList.push({
+      api.apiEndpointList.push({
         endpoint: apiPath,
         urlParts: apiPath.split('/').slice(1), 
         type: requestType,
@@ -50,10 +50,7 @@ export class HmsService {
         request: request[requestType]?.requestBody?.content['application/json']?.example
       });
     }
-  }
-
-  getApi() {
-    return this.api;
+    return api;
   }
 
   submit(form) {

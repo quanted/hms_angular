@@ -15,6 +15,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ScrollingModule } from '@angular/cdk/scrolling';
@@ -60,6 +61,7 @@ import { LayerControlComponent } from './components/map/layer-control/layer-cont
     MatDatepickerModule,
     MatNativeDateModule,
     MatSnackBarModule,
+    MatProgressBarModule,
     MatIconModule,
     FormsModule,
     ReactiveFormsModule,
