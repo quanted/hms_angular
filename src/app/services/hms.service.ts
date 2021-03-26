@@ -55,18 +55,15 @@ export class HmsService {
     return api;
   }
 
-  submit(form): Observable<any> {
-    console.log('submit: ', form);
-    const type = form.type;
-    const args = form.args;
-    const endpoint = form.endpoint;
-    switch(type) {
+  submit(request): Observable<any> {
+    console.log('submit: ', request);
+    switch(request.type) {
       case 'get':
-        return this.http.get(environment.apiURL + endpoint);
+        return this.http.get(environment.apiURL + request.endpoint);
       case 'post':
-        return this.http.post(environment.apiURL + endpoint + '/', JSON.stringify(args));
+        return this.http.post(environment.apiURL + request.endpoint + '/', JSON.stringify(request.args));
       default:
-        return of({ error: `invalid request type: ${type}` });
+        return of({ error: `invalid request type: ${request.endpoint}` });
     }
   }
   
