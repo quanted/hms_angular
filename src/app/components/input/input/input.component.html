@@ -43,7 +43,10 @@
             </div>
             <div class="controls">
                 <div class="button" (click)="reset()">Clear form</div>
-                <div class="button" (click)="submitForm()">submit form</div>
+                <div> 
+                    <div *ngIf="!waiting" class="button" (click)="submitForm()">submit form</div>
+                    <div *ngIf="waiting" class="button"><mat-progress-bar mode="indeterminate"></mat-progress-bar></div>
+                </div>
             </div>
         </form>
     </div>

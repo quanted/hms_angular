@@ -22,6 +22,8 @@ export class InputComponent implements OnInit {
   currentEndpoint;
   formInputs = [];
 
+  waiting = false;
+
   constructor(
     private hms: HmsService,
     private fb: FormBuilder
@@ -72,12 +74,14 @@ export class InputComponent implements OnInit {
   }
 
   submitForm(): void {
+    this.waiting = true;
     this.hms.submit({
       type: this.currentEndpoint.type,
       endpoint: this.currentEndpoint.endpoint,
       args: this.endpointForm.value
     }).subscribe(response => {
       console.log('response: ', response);
+      this.waiting = false;
     });
   }
 
