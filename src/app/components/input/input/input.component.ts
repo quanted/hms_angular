@@ -73,8 +73,11 @@ export class InputComponent implements OnInit {
 
   submitForm(): void {
     this.hms.submit({
+      type: this.currentEndpoint.type,
       endpoint: this.currentEndpoint.endpoint,
       args: this.endpointForm.value
+    }).subscribe(response => {
+      console.log('response: ', response);
     });
   }
 
