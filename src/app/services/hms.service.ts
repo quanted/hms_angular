@@ -29,7 +29,7 @@ export class HmsService {
   }
 
   buildEndpointList(swagger) {
-    let api = {
+    const api = {
       version: '',
       apiEndpointList: [],
       schemas: []

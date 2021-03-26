@@ -130,8 +130,4 @@ export class MapService {
     let zoom = this.map.getZoom();
     console.log('zoom: ', zoom);
   }
-
-  mouseEventToLatLng(event) {
-    return this.map.mouseEventToLatLng(event);
-  }
 }
