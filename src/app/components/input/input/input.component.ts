@@ -23,6 +23,9 @@ export class InputComponent implements OnInit {
   formInputs = [];
 
   waiting = false;
+  dataReceived = false; 
+  exploreOutput = false;
+  items = [];
 
   constructor(
     private hms: HmsService,
@@ -82,13 +85,21 @@ export class InputComponent implements OnInit {
     }).subscribe(response => {
       console.log('response: ', response);
       this.waiting = false;
+      this.dataReceived = true;
+      this.items.push(JSON.stringify(response));
     });
   }
 
+
   reset(): void {
     this.endpointForm.reset();
+    this.dataReceived = false;
   }
 
   flyTo(): void {
+  }
+
+  showOutput(): void {
+    this.exploreOutput = true;
   }
 }

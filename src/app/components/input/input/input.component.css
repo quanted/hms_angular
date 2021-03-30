@@ -38,6 +38,7 @@
     row-gap: .5rem;
 }
 
+
 #parameter-form {
     display: grid;
 }
@@ -71,3 +72,19 @@
 mat-progress-bar {
     width: 95%;
 }
+
+.data-output-options {
+    display: inline;
+}
+
+.output-viewport {
+  height: 200px;
+  width: 200px;
+  border: 1px solid black;
+}
+
+.output-item {
+  height: 50px;
+}
+
+
