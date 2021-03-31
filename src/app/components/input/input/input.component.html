@@ -70,8 +70,11 @@
         </div>
     </div>
     <div *ngIf="exploreOutput" class="container-item">
-        <cdk-virtual-scroll-viewport itemSize="500" class="output-viewport">
-          <div *cdkVirtualFor="let items of items" class="output-item">{{items}}</div>
-        </cdk-virtual-scroll-viewport>
+        <!-- <cdk-virtual-scroll-viewport itemSize="500" class="output-viewport">
+          <div *ngFor="let items of items" class="output-item">{{ items | json }}</div>
+        </cdk-virtual-scroll-viewport> -->
+        <div class="output-viewport2">
+            <div *ngFor="let item of items">{{ item }}</div>
+        </div>
     </div>
 </div>

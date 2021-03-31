@@ -78,13 +78,21 @@ mat-progress-bar {
 }
 
 .output-viewport {
-  height: 200px;
-  width: 200px;
-  border: 1px solid black;
+    height: 200px;
+    width: 200px;
+    border: 1px solid black;
 }
 
 .output-item {
-  height: 50px;
+    height: 50px;
+}
+
+.output-viewport2 {
+    height: 200px; /* this has to be set or the container goes as tall as it needs to be to fit the content, will fix later */
+    width: 100%;
+    border: 1px solid black;
+    word-wrap: break-word;
+    overflow-y: auto;
 }
 
 
