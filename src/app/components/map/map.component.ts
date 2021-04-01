@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { MapService } from 'src/app/services/map.service';
 
 @Component({
@@ -10,7 +10,13 @@ import { MapService } from 'src/app/services/map.service';
 export class MapComponent {
   constructor(private mapService: MapService){}
   
+  @Output() updateCoords = new EventEmitter();
   ngOnInit() {
     this.mapService.initMap();
+  }
+
+  logClick(event): void {
+    const coords = this.mapService.getMapEvent(event);
+    this.updateCoords.emit(coords);
   }
 }

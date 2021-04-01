@@ -119,7 +119,11 @@ export class MapService {
   }
 
   handleClick(mapClickEvent): void {
-    console.log('mapClickEvent: ', mapClickEvent);
+    // console.log('mapClickEvent: ', mapClickEvent);
+  }
+
+  getMapEvent(event) {
+    return this.map.mouseEventToLatLng(event);
   }
 
   handleDrag(mapDragEvent): void {

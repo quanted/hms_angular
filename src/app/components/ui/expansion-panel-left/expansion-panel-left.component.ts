@@ -1,4 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { InputComponent } from '../../input/input/input.component';
 
 @Component({
   selector: 'app-expansion-panel-left',
@@ -7,6 +8,8 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class ExpansionPanelLeftComponent implements OnInit {
   @Input() open: boolean;
+
+  @ViewChild(InputComponent) input;
   welcome = false;
 
   constructor() { }
@@ -16,6 +19,12 @@ export class ExpansionPanelLeftComponent implements OnInit {
 
   accept(): void {
     this.welcome = true;
+  }
+
+  updateCoords(coords): void {
+    if (this.input) {
+      this.input.updateCoords(coords);
+    }
   }
 
   openPanel(): void {

@@ -52,19 +52,19 @@
     </div>
     <div *ngIf="dataReceived" class="container-item">
         <div class="data-output-options">
-            <button (click)="showOutput()" mat-icon-button aria-label="View server output">
+            <button (click)="showOutput()" mat-icon-button aria-label="View server output" title="show data">
                 <mat-icon>preview</mat-icon>
             </button>
-            <button mat-icon-button aria-label="Explore the data">
+            <button mat-icon-button aria-label="Explore the data" title="data table">
                 <mat-icon>table_view</mat-icon>
             </button>
-            <button mat-icon-button aria-label="Explore the data">
+            <button mat-icon-button aria-label="Explore the data" title="data analytics">
                 <mat-icon>analytics</mat-icon>
             </button>
-            <button mat-icon-button aria-label="Save the data">
+            <button mat-icon-button aria-label="Save the data" title="save data">
                 <mat-icon>save_alt</mat-icon>
             </button>
-            <button mat-icon-button aria-label="Share the data">
+            <button mat-icon-button aria-label="Share the data" title="share data">
                 <mat-icon>share</mat-icon>
             </button>
         </div>

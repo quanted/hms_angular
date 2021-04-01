@@ -55,6 +55,10 @@ export class InputComponent implements OnInit {
     });
   }
 
+  updateCoords(coords): void {
+    this.coordsForm.setValue(coords);
+  }
+
   updateEndpointForm(): void {
     let endpoint = this.apiForm.get('endpointSelect').value;
     this.formInputs = [];
