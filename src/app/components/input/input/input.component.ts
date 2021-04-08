@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+
+import { TableComponent } from '../../output/table/table.component'
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { HmsService } from 'src/app/services/hms.service';
@@ -25,10 +27,12 @@ export class InputComponent implements OnInit {
   waiting = false;
   dataReceived = false; 
   exploreOutput = false;
-  items = [];
+  exploreTable = false;
+  dataItems = [];
 
   constructor(
     private hms: HmsService,
+    private table: TableComponent,
     private fb: FormBuilder
     ) {}
 
@@ -90,7 +94,12 @@ export class InputComponent implements OnInit {
       console.log('response: ', response);
       this.waiting = false;
       this.dataReceived = true;
-      this.items.push(JSON.stringify(response));
+      if (this.dataItems) {
+        this.dataItems.pop()
+      }
+      this.dataItems.push(JSON.stringify(response));
+      // Trying to fix the function below
+      this.table.items.push(response)
     });
   }
 
@@ -104,6 +113,13 @@ export class InputComponent implements OnInit {
   }
 
   showOutput(): void {
-    this.exploreOutput = true;
+      this.exploreOutput = true;
+      this.exploreTable = false;
+  }
+
+  showTable(): void {
+      this.exploreOutput = false;
+      this.exploreTable = true;
+      
   }
 }

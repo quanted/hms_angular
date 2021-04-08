@@ -18,6 +18,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 
@@ -35,6 +36,9 @@ import { ExpansionPanelRightComponent } from './components/ui/expansion-panel-ri
 import { ExpansionPanelLeftComponent } from './components/ui/expansion-panel-left/expansion-panel-left.component';
 import { HttpHeadersInterceptor } from './interceptors/http-headers.interceptor';
 import { LayerControlComponent } from './components/map/layer-control/layer-control.component';
+import { TableComponent } from './components/output/table/table.component';
+import { GraphComponent } from './components/output/graph/graph.component';
+import { KeysPipe } from './components/output/table/keys.pipe';
 
 @NgModule({
   declarations: [
@@ -48,7 +52,10 @@ import { LayerControlComponent } from './components/map/layer-control/layer-cont
     ExpansionPanelLeftComponent,
     InputComponent,
     ExpansionPanelRightComponent,
-    LayerControlComponent
+    LayerControlComponent,
+    TableComponent,
+    GraphComponent,
+    KeysPipe
   ],
   imports: [
     BrowserModule,
@@ -65,6 +72,7 @@ import { LayerControlComponent } from './components/map/layer-control/layer-cont
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatIconModule,
+    MatTableModule,
     FormsModule,
     ReactiveFormsModule,
     ScrollingModule
@@ -81,7 +89,7 @@ import { LayerControlComponent } from './components/map/layer-control/layer-cont
       useClass: HttpHeadersInterceptor,
       multi: true
     }
-  ],
+  , KeysPipe, TableComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
