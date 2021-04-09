@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
-import { TableComponent } from '../../output/table/table.component'
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { HmsService } from 'src/app/services/hms.service';
+import { SessionService } from 'src/app/services/session.service';
 
 @Component({
   selector: 'app-input',
@@ -30,11 +30,15 @@ export class InputComponent implements OnInit {
   exploreTable = false;
   dataItems = [];
 
+  requestResponse;
+
   constructor(
     private hms: HmsService,
-    private table: TableComponent,
-    private fb: FormBuilder
-    ) {}
+    private fb: FormBuilder,
+    private session: SessionService
+  ) {}
+
+    
 
   ngOnInit(): void {
     this.coordsForm = this.fb.group({
@@ -91,15 +95,9 @@ export class InputComponent implements OnInit {
       endpoint: this.currentEndpoint.endpoint,
       args: this.endpointForm.value
     }).subscribe(response => {
-      console.log('response: ', response);
       this.waiting = false;
       this.dataReceived = true;
-      if (this.dataItems) {
-        this.dataItems.pop()
-      }
-      this.dataItems.push(JSON.stringify(response));
-      // Trying to fix the function below
-      this.table.items.push(response)
+      this.session.updateData(response);
     });
   }
 
@@ -120,6 +118,5 @@ export class InputComponent implements OnInit {
   showTable(): void {
       this.exploreOutput = false;
       this.exploreTable = true;
-      
   }
 }
