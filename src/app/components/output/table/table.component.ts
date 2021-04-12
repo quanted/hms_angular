@@ -26,11 +26,16 @@ export class TableComponent implements OnInit {
 
     for (let key of metaKeys) {
       if (key.startsWith('column')) {
-        this.columnNames.push(metadata[key]);
+        if (metaKeys.includes('units')){
+        this.columnNames.push(metadata[key] + " " + metadata[key + "_units"])
+        } else {
+        this.columnNames.push(metadata[key])
       }
     }
+  }
 
     console.log('names: ', this.columnNames);
+
 
     const keys = Object.keys(this.items['data']);
     const data = [];
