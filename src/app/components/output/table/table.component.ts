@@ -24,18 +24,28 @@ export class TableComponent implements OnInit {
     const metadata = this.items['metadata'];
     const metaKeys = Object.keys(metadata);
 
+    const columns = [];
+
+    /*
+      columns: [["name", "unit", "whatever"], ["name2", "blah"]]
+    */
     for (let key of metaKeys) {
-      if (key.startsWith('column')) {
-        if (metaKeys.includes('units')){
-        this.columnNames.push(metadata[key] + " " + metadata[key + "_units"])
-        } else {
-        this.columnNames.push(metadata[key])
+      for (let i = 1; i < metaKeys.length; i++){
+        if (key.startsWith('column_' + i)) {
+          if (columns['column_' + i] === undefined) {
+            columns['column_' + i] = metadata[key];
+          } else {
+            columns['column_' + i] += " (" + metadata[key] + ")";
+            console.log(columns);
+          }
+        }
       }
     }
-  }
+    for (let key of Object.keys(columns)) {
+      this.columnNames.push(columns[key]);
+    }
 
-    console.log('names: ', this.columnNames);
-
+    console.log("Column Names:" + this.columnNames)
 
     const keys = Object.keys(this.items['data']);
     const data = [];
