@@ -25,7 +25,8 @@ export class TableComponent implements OnInit {
     const metaKeys = Object.keys(metadata);
 
     const columns = [];
-
+    const columnArray = [];
+    let sortedArray = [];
     /*
       columns: [["name", "unit", "whatever"], ["name2", "blah"]]
     */
@@ -34,16 +35,30 @@ export class TableComponent implements OnInit {
         if (key.startsWith('column_' + i)) {
           if (columns['column_' + i] === undefined) {
             columns['column_' + i] = metadata[key];
+            columnArray.push(['column_' + i, metadata[key]]);
+            sortedArray = columnArray.sort( function(a,b) {
+              if (a[0] < b[0]) return -1;
+              if (a[0] > b[0]) return 1;
+              return 0
+            });
           } else {
-            columns['column_' + i] += " (" + metadata[key] + ")";
-            console.log(columns);
+            columnArray[i - 1][1] = columns['column_' + i] + " (" + metadata[key] + ")";
           }
-        }
-      }
     }
-    for (let key of Object.keys(columns)) {
-      this.columnNames.push(columns[key]);
-    }
+  }
+}
+
+    console.log(sortedArray);
+    
+    // for (let key of Object.keys(columns)) {
+    //   this.columnNames.push(sortedArray);
+    // }
+
+    sortedArray.forEach(value => {
+      this.columnNames.push(value[1])
+    });
+
+
 
     console.log("Column Names:" + this.columnNames)
 
