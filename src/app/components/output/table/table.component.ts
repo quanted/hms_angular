@@ -50,11 +50,16 @@ export class TableComponent implements OnInit {
 
     /* building the data array */
     for (let i = 0; i < dataKeys.length; i ++) {
+      // a record is a row of data
       const record = [];
+      // the first column name corresponds to the key so add it to the row first
       record.push(dataKeys[i]);
+      // then lop through the actual data and push it into the row
+      // we're using the key at index i to get the data from the data object
       for (let j = 0; j < data[dataKeys[i]].length; j++) {
         record.push(data[dataKeys[i]][j]);
       }
+      // add the record we just built to columnData
       this.columnData.push(record);
     }
   }
