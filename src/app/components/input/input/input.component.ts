@@ -78,7 +78,7 @@ export class InputComponent implements OnInit {
           endpoint = apiEndpoint;
           for (let key of Object.keys(endpoint.request)) {
             this.formInputs.push(key);
-            formBuilderInputs[key] = [null]
+            formBuilderInputs[key] = [null];
           }
         }
       }
