@@ -58,7 +58,7 @@
             <button (click)="showTable()" mat-icon-button aria-label="Explore the data" title="Click to show the data table">
                 <mat-icon>table_chart</mat-icon>
             </button>
-            <button mat-icon-button aria-label="Explore the data" title="Click to view the graph">
+            <button (click)="showGraph()" mat-icon-button aria-label="Explore the data" title="Click to view the graph">
                 <mat-icon>analytics</mat-icon>
             </button>
             <button mat-icon-button aria-label="Save the data" title="Click to save the data">
@@ -79,6 +79,9 @@
     </div>
     <div *ngIf="exploreTable" class="container-item">
         <app-table></app-table>
+    </div>
+    <div *ngIf="exploreGraph" class="container-item">
+        <app-graph></app-graph>
     </div>
 
 

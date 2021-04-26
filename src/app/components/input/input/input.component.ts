@@ -28,6 +28,7 @@ export class InputComponent implements OnInit {
   dataReceived = false; 
   exploreOutput = false;
   exploreTable = false;
+  exploreGraph = false;
   dataItems = [];
 
   requestResponse;
@@ -111,12 +112,20 @@ export class InputComponent implements OnInit {
   }
 
   showOutput(): void {
-      this.exploreOutput = true;
-      this.exploreTable = false;
+    this.exploreOutput = true;
+    this.exploreTable = false;
+    this.exploreGraph = false;
   }
 
   showTable(): void {
-      this.exploreOutput = false;
-      this.exploreTable = true;
+    this.exploreOutput = false;
+    this.exploreTable = true;
+    this.exploreGraph = false;
   }
+
+  showGraph(): void {
+    this.exploreOutput = false;
+    this.exploreTable = false;
+    this.exploreGraph = true; 
+}
 }
