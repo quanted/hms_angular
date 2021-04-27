@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
-import {scaleLinear} from "d3-scale";
 import * as d3 from 'd3';
 
 import { SessionService } from 'src/app/services/session.service';
@@ -23,11 +22,18 @@ export class GraphComponent implements OnInit {
   width: number;
   height: number;
 
-  
+  dataKeys: any;
+
+
 
   ngOnInit(): void {
     const items = this.session.getData()
     this.data = items['data']
+    if (this.data) {
+      this.dataKeys = Object.keys(this.data);
+      this.initChart();
+      this.createChart();
+    }
   }
 
   private initChart(): void {
@@ -65,36 +71,55 @@ export class GraphComponent implements OnInit {
       .attr('y', 0 - (this.margin.bottom / 2))
       .attr('text-anchor', 'middle')
       .style('font-size', '16px')
-      .text('elastic-net neg_mean_absolute_error');
+      .text('HMS Data');
 
-    // Add X axis
-    const x = d3.scaleLinear()
-      .domain([1, this.data[0].length])
+         // Add X axis
+    const xScale = d3.scaleLinear()
+      .domain([0, this.dataKeys.length ])
       .range([ 0, this.contentWidth ]);
+      /*
     this.g.append('g')
       .attr('class', 'x axis')
       .attr('transform', 'translate(' + 0 + ',' + this.contentHeight + ')')
       .call(d3.axisBottom(x)); // Create an axis component with d3.axisBottom
+      */
+    const xAxisGenerator = d3.axisBottom(xScale);
+    const xAxis =  this.g.append("g")
+              .attr('class', 'x axis')
+              .attr('transform', 'translate(' + 0 + ',' + this.contentHeight + ')')
+              .call(xAxisGenerator);
+    xAxisGenerator.tickFormat((d,i) => { 
+      console.log(this.dataKeys[i])
+      return this.dataKeys[i]
+    });
 
     // Add Y axis
     const y = d3.scaleLinear()
-      .domain([Math.min(...this.data[1]),
-        Math.max(...this.data[1]) + 1])
+      .domain([Math.min(this.dataKeys),
+        Math.max(this.dataKeys) + 1])
       .range([this.contentHeight, 0]);
     this.g.append('g')
       .attr('class', 'y axis')
       // .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')')
       .call(d3.axisLeft(y)); // Create an axis component with d3.axisLeft
 
+    // Get y data
+    let yData = this.dataKeys.forEach(key => {
+        console.log(this.data[key][0]);
+        return this.data[key][0];
+    });
+
     // Add y data
     let index = 0;
     const lines = this.g.append('path')
-      .datum(this.data[1])
+      .datum(yData)
       .attr('fill', 'none')
       .attr('stroke', 'steelblue')
       .attr('stroke-width', 1.5)
       .attr('d', d3.line()
-        .x(() => x(index += 1))
+        .x((d) => {
+          return xScale(d)
+        })
         .y((d) => {
           return y(Number(d));
         })
