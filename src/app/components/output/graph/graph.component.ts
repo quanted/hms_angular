@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import * as d3 from 'd3';
 
 import { SessionService } from 'src/app/services/session.service';
@@ -15,9 +15,14 @@ export class GraphComponent implements OnInit {
 
   data = {};
   dataKeys: string[];
-  dataArray: [];
 
   chartData = [];
+
+  width = 192;
+  height = 500;
+
+  scaleX;
+  scaleY;
 
   ngOnInit(): void {
     this.data = this.session.getData()['data'];
@@ -36,33 +41,31 @@ export class GraphComponent implements OnInit {
     // {x: 5, y: 99.47}, ...]
 
     this.dataKeys.forEach((key) => {
-      this.chartData.push({ x: this.dataKeys.indexOf(key), y: this.data[key][0]})
+      this.chartData.push({ date: this.dataKeys.indexOf(key), value: this.data[key][0]})
     })
     console.log('chartData: ', this.chartData);
+    this.scaleX = d3.scaleLinear().domain(d3.extent(this.chartData, d =>  d.date)).range([0, this.width])
+    this.scaleY = d3.scaleLinear().domain(d3.extent(this.chartData, d =>  d.value)).range([0, this.height])
 
     // then build string array for labels, figure out if you want by hour/day/month/year based on the size of the data
   }
 
   private createChart(): void {
     d3.select('svg')
-    .attr("width", 400)
-    .attr("height", 300)
-    .style("display", "block")
-    .append("path")
-      .datum(this.chartData)
-      .attr("fill", "none")
-      .attr("stroke", "steelblue")
-      .attr("stroke-width", 1.5)
-      .attr("d", d3.line()
-      .x((d) => { return d['x'] })
-      .y((d) => { return d['y'] })
+      .style("background", "lightgray")
+      .attr("width", this.width)
+      .attr("height", this.height)
+      .style("display", "block")
+      .append("path")
+        .datum(this.chartData)
+        .attr("fill", "none")
+        .attr("stroke", "steelblue")
+        .attr("stroke-width", 1.5)
+        .attr("d", d3.line()
+        .x((d) => { return d['date'] })
+        .y((d) => { return d['value'] })
+        // .x((d) => { return this.scaleX(d['date']) })
+        // .y((d) => { return this.scaleY(d['value']) })
       )
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (this.data) {
-      this.initChart();
-      this.createChart();
-    }
   }
 }
