@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import * as d3 from 'd3';
-
 import { SessionService } from 'src/app/services/session.service';
 
 @Component({
@@ -13,13 +12,18 @@ export class GraphComponent implements OnInit {
     private session: SessionService
     ) {}
 
+  svg: any;
+  g: any;
+  tooltip: any;
+  margin: { top: number; right: number; bottom: number; left: number; };
+  padding: { top: number; right: number; bottom: number; left: number; };
+  contentWidth: number;
+  contentHeight: number;
   data = {};
   dataKeys: string[];
-
   chartData = [];
-
-  width = 192;
-  height = 500;
+  width;
+  height;
 
   scaleX;
   scaleY;
@@ -32,6 +36,31 @@ export class GraphComponent implements OnInit {
   }
 
   private initChart(): void {
+    // const element = this.chartContainer.nativeElement;
+
+    this.svg = d3.select('svg');
+
+    this.margin = {
+      top: this.svg.style('margin-top').replace('px', ''),
+      right: this.svg.style('margin-right').replace('px', ''),
+      bottom: this.svg.style('margin-bottom').replace('px', ''),
+      left: this.svg.style('margin-left').replace('px', '')
+    };
+
+    this.padding = {
+      top: this.svg.style('padding-top').replace('px', ''),
+      right: this.svg.style('padding-right').replace('px', ''),
+      bottom: this.svg.style('padding-bottom').replace('px', ''),
+      left: this.svg.style('padding-left').replace('px', '')
+    };
+
+    this.width = this.svg.style('width').replace('px', '');
+    this.height = this.svg.style('height').replace('px', '');
+
+    this.contentWidth = this.width - this.margin.left - this.margin.right - this.padding.left - this.padding.right;
+    this.contentHeight = this.height - this.margin.top - this.margin.bottom;
+
+    this.svg.append('g').attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
     // transform data array to form d3 expects 
     // [{x: 0, y: 93.24},
     // {x: 1, y: 95.35},
@@ -41,11 +70,26 @@ export class GraphComponent implements OnInit {
     // {x: 5, y: 99.47}, ...]
 
     this.dataKeys.forEach((key) => {
-      this.chartData.push({ date: this.dataKeys.indexOf(key), value: this.data[key][0]})
+      const newValue = this.data[key][0].split('E')[0];
+      this.chartData.push({ date: key, value: newValue});
     })
+    
     console.log('chartData: ', this.chartData);
-    this.scaleX = d3.scaleLinear().domain(d3.extent(this.chartData, d =>  d.date)).range([0, this.width])
-    this.scaleY = d3.scaleLinear().domain(d3.extent(this.chartData, d =>  d.value)).range([0, this.height])
+    this.scaleX = d3.scalePoint()
+        .domain(this.dataKeys)
+        .range([0, this.contentWidth]);
+    this.svg.append('g')
+        .attr('class', 'x axis')
+        .attr('transform', 'translate(' + 0 + ',' + this.contentHeight + ')')
+        .call(d3.axisBottom(this.scaleX)); // Create an axis component with d3.axisBottom
+
+    this.scaleY = d3.scaleLinear()
+        .domain(d3.extent(this.chartData, d =>  d.value))
+        .range([this.contentHeight, 0]);
+    this.svg.append('g')
+        .attr('class', 'y axis')
+        // .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')')
+        .call(d3.axisLeft(this.scaleY)); // Create an axis component with d3.axisLeft
 
     // then build string array for labels, figure out if you want by hour/day/month/year based on the size of the data
   }
@@ -62,10 +106,11 @@ export class GraphComponent implements OnInit {
         .attr("stroke", "steelblue")
         .attr("stroke-width", 1.5)
         .attr("d", d3.line()
-        .x((d) => { return d['date'] })
-        .y((d) => { return d['value'] })
-        // .x((d) => { return this.scaleX(d['date']) })
-        // .y((d) => { return this.scaleY(d['value']) })
-      )
+        .x((d) => {
+          console.log(this.scaleX(d['date']));
+          return this.scaleX(d['date']);
+        })
+        .y((d) => { return this.scaleY(d['value']) })
+      );
   }
 }
