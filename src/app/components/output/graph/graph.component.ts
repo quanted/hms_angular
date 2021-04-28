@@ -15,7 +15,7 @@ export class GraphComponent implements OnInit {
   svg: any;
   g: any;
   tooltip: any;
-  margin: { top: number; right: number; bottom: number; left: number; };
+  margin = { top: 30, right: 30, bottom: 30, left: 30 };
   padding: { top: number; right: number; bottom: number; left: number; };
   contentWidth: number;
   contentHeight: number;
@@ -40,12 +40,12 @@ export class GraphComponent implements OnInit {
 
     this.svg = d3.select('svg');
 
-    this.margin = {
-      top: this.svg.style('margin-top').replace('px', ''),
-      right: this.svg.style('margin-right').replace('px', ''),
-      bottom: this.svg.style('margin-bottom').replace('px', ''),
-      left: this.svg.style('margin-left').replace('px', '')
-    };
+    // this.margin = {
+    //   top: this.svg.style('margin-top').replace('px', ''),
+    //   right: this.svg.style('margin-right').replace('px', ''),
+    //   bottom: this.svg.style('margin-bottom').replace('px', ''),
+    //   left: this.svg.style('margin-left').replace('px', '')
+    // };
 
     this.padding = {
       top: this.svg.style('padding-top').replace('px', ''),
@@ -54,11 +54,12 @@ export class GraphComponent implements OnInit {
       left: this.svg.style('padding-left').replace('px', '')
     };
 
-    this.width = this.svg.style('width').replace('px', '');
-    this.height = this.svg.style('height').replace('px', '');
-
-    this.contentWidth = this.width - this.margin.left - this.margin.right - this.padding.left - this.padding.right;
-    this.contentHeight = this.height - this.margin.top - this.margin.bottom;
+    // this.width = this.svg.style('width').replace('px', '');
+    // this.height = this.svg.style('height').replace('px', '');
+    this.width = 400;
+    this.height = 500;
+    // this.contentWidth = this.width - this.margin.left - this.margin.right - this.padding.left - this.padding.right;
+    // this.contentHeight = this.height - this.margin.top - this.margin.bottom;
 
     this.svg.append('g').attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
     // transform data array to form d3 expects 
@@ -77,18 +78,20 @@ export class GraphComponent implements OnInit {
     console.log('chartData: ', this.chartData);
     this.scaleX = d3.scalePoint()
         .domain(this.dataKeys)
-        .range([0, this.contentWidth]);
+        .range([this.margin.left, this.width - this.margin.right]);
+
     this.svg.append('g')
         .attr('class', 'x axis')
-        .attr('transform', 'translate(' + 0 + ',' + this.contentHeight + ')')
+        .attr('transform', 'translate(' + 0 + ',' + (this.height - this.margin.bottom) + ')')
         .call(d3.axisBottom(this.scaleX)); // Create an axis component with d3.axisBottom
 
     this.scaleY = d3.scaleLinear()
         .domain(d3.extent(this.chartData, d =>  d.value))
-        .range([this.contentHeight, 0]);
+        .range([this.height - this.margin.bottom, 0 + this.margin.top]);
+
     this.svg.append('g')
         .attr('class', 'y axis')
-        // .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')')
+        .attr('transform', 'translate(' + this.margin.left + ', 0)')
         .call(d3.axisLeft(this.scaleY)); // Create an axis component with d3.axisLeft
 
     // then build string array for labels, figure out if you want by hour/day/month/year based on the size of the data
@@ -107,7 +110,7 @@ export class GraphComponent implements OnInit {
         .attr("stroke-width", 1.5)
         .attr("d", d3.line()
         .x((d) => {
-          console.log(this.scaleX(d['date']));
+          // console.log(this.scaleX(d['date']));
           return this.scaleX(d['date']);
         })
         .y((d) => { return this.scaleY(d['value']) })
