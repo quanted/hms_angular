@@ -81,7 +81,6 @@ export class GraphComponent implements OnInit {
       }
     })
     
-    console.log('chartData: ', this.chartData);
     this.scaleX = d3.scaleLinear()
         .domain([0, this.chartData.length])
         .range([this.margin.left, this.width - this.margin.right]);

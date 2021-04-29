@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
 import { SessionService } from 'src/app/services/session.service';
 
 @Component({
@@ -13,6 +14,8 @@ export class TableComponent implements OnInit {
 
   columnNames = [];
   columnData = [];
+
+  dataSource = new MatTableDataSource();
 
   ngOnInit(): void {
     const items = this.session.getData();
@@ -48,19 +51,22 @@ export class TableComponent implements OnInit {
       col = metaKeys[key];
     }
 
-    /* building the data array */
-    for (let i = 0; i < dataKeys.length; i ++) {
-      // a record is a row of data
-      const record = [];
-      // the first column name corresponds to the key so add it to the row first
-      record.push(dataKeys[i]);
-      // then lop through the actual data and push it into the row
-      // we're using the key at index i to get the data from the data object
-      for (let j = 0; j < data[dataKeys[i]].length; j++) {
-        record.push(data[dataKeys[i]][j]);
+    /* building the data array for material, it expects:
+        columnNames = ["key1", "key2", ...]
+        columnData = [
+          { key1: value, key2: value, ... },
+          { key1: value, key2: value, ... },
+          { key1: value, key2: value, ... },
+          { key1: value, key2: value, ... }
+        ] */
+    for (let key of dataKeys) {
+      const record = {};
+      record[this.columnNames[0]] = key;
+      for (let i = 0; i < data[key].length; i++) {
+        record[this.columnNames[i + 1]] = data[key][i];
       }
-      // add the record we just built to columnData
       this.columnData.push(record);
     }
+    this.dataSource.data = this.columnData;
   }
 }
