@@ -73,14 +73,17 @@ export class GraphComponent implements OnInit {
     // {x: 5, y: 99.47}, ...]
 
     this.dataKeys.forEach((key) => {
-      const newValue = this.data[key][0].split('E')[0];
-      this.chartData.push({ date: key, value: newValue});
-      this.chartData2.push({ date: key, value: parseFloat(newValue) + (Math.random() * 10 - 5) })
+      const newValue = this.data[key][0] //.split('E')[0];
+      this.chartData.push({ date: this.dataKeys.indexOf(key), value: newValue});
+      if (this.data[key][1]) {
+        const value = this.data[key][1]
+        this.chartData2.push({ date: this.dataKeys.indexOf(key), value: value});
+      }
     })
     
     console.log('chartData: ', this.chartData);
-    this.scaleX = d3.scalePoint()
-        .domain(this.dataKeys)
+    this.scaleX = d3.scaleLinear()
+        .domain([0, this.chartData.length])
         .range([this.margin.left, this.width - this.margin.right]);
 
     this.svg.append('g')
@@ -113,47 +116,52 @@ export class GraphComponent implements OnInit {
         .attr("stroke-width", 1.5)
         .attr("d", d3.line()
         .x((d) => {
-          // console.log(this.scaleX(d['date']));
           return this.scaleX(d['date']);
         })
-        .y((d) => { return this.scaleY(d['value']) })
+        .y((d) => {
+          return this.scaleY(d['value'])
+        })
       );
-    d3.select('svg').append("path")
-      .datum(this.chartData2)
-      .attr("fill", "none")
-      .attr("stroke", "green")
-      .attr("stroke-width", 1.5)
-      .attr("d", d3.line()
-      .x((d) => {
-        // console.log(this.scaleX(d['date']));
-        return this.scaleX(d['date']);
-      })
-      .y((d) => { return this.scaleY(d['value']) })
-    );
+      // d3.select('svg')
+      //   .append("path")
+      //     .datum(this.chartData2)
+      //     .attr("fill", "none")
+      //     .attr("stroke", "green")
+      //     .attr("stroke-width", 1.5)
+      //     .attr("d", d3.line()
+      //     .x((d) => {
+      //       return this.scaleX(d['date']);
+      //     })
+      //     .y((d) => {
+      //       return this.scaleY(d['value'])
+      //     })
+      // );
     
-    // const tooltip = this.svg.append("g");
-    // this.svg.on("touchmove mousemove", function(event) {
-    //   tooltip
-    //       .attr("transform", `translate(${this.scaleX(event[0])},${this.scaleY(event[1])})`)
-    //       .call(this.callout, `${this.scaleX(event[0])},${this.scaleY(event[1])}`);
-    // });
-    // this.svg.on("touchend mouseleave", () => tooltip.call(this.callout, null));
+    const tooltip = this.svg.append("g");
+    this.svg.on("touchmove mousemove", (event) => {
+      const {date, value} = this.bisect(d3.pointer(event, this)[0]);
+
+      tooltip
+          .attr("transform", `translate(${this.scaleX(date)},${this.scaleY(value)})`)
+          .call(this.callout, `${this.dataKeys[date]}, ${value}`);
+    });
+    this.svg.on("touchend mouseleave", () => tooltip.call(this.callout, null));
   }
 
   callout(g, value) {
     if (!value) return g.style("display", "none");
-  
+
     g
-        .style("display", null)
-        .style("pointer-events", "none")
-        .style("font", "10px sans-serif");
-  
+      .style("display", null)
+      .style("pointer-events", "none")
+      .style("font", "10px sans-serif");
+
     const path = g.selectAll("path")
       .data([null])
       .join("path")
         .attr("fill", "white")
         .attr("stroke", "black");
-  
+
     const text = g.selectAll("text")
       .data([null])
       .join("text")
@@ -165,10 +173,19 @@ export class GraphComponent implements OnInit {
           .attr("y", (d, i) => `${i * 1.1}em`)
           .style("font-weight", (_, i) => i ? null : "bold")
           .text(d => d));
-  
+
     const {x, y, width: w, height: h} = text.node().getBBox();
-  
+
     text.attr("transform", `translate(${-w / 2},${15 - y})`);
     path.attr("d", `M${-w / 2 - 10},5H-5l5,-5l5,5H${w / 2 + 10}v${h + 20}h-${w + 20}z`);
+  }
+
+  bisect(mx) {
+    const bisect = d3.bisector(d => d['date']).left;
+    const date = this.scaleX.invert(mx);
+    const index = bisect(this.chartData, date, 1);
+    const a = this.chartData[index - 1];
+    const b = this.chartData[index];
+    return b && (date - a.date > b.date - date) ? b : a;
   }
 }
