@@ -22,6 +22,8 @@ export class GraphComponent implements OnInit {
   data = {};
   dataKeys: string[];
   chartData = [];
+  chartData2 = [];
+
   width;
   height;
 
@@ -73,6 +75,7 @@ export class GraphComponent implements OnInit {
     this.dataKeys.forEach((key) => {
       const newValue = this.data[key][0].split('E')[0];
       this.chartData.push({ date: key, value: newValue});
+      this.chartData2.push({ date: key, value: parseFloat(newValue) + (Math.random() * 10 - 5) })
     })
     
     console.log('chartData: ', this.chartData);
@@ -106,7 +109,7 @@ export class GraphComponent implements OnInit {
       .append("path")
         .datum(this.chartData)
         .attr("fill", "none")
-        .attr("stroke", "steelblue")
+        .attr("stroke", "magenta")
         .attr("stroke-width", 1.5)
         .attr("d", d3.line()
         .x((d) => {
@@ -115,5 +118,57 @@ export class GraphComponent implements OnInit {
         })
         .y((d) => { return this.scaleY(d['value']) })
       );
+    d3.select('svg').append("path")
+      .datum(this.chartData2)
+      .attr("fill", "none")
+      .attr("stroke", "green")
+      .attr("stroke-width", 1.5)
+      .attr("d", d3.line()
+      .x((d) => {
+        // console.log(this.scaleX(d['date']));
+        return this.scaleX(d['date']);
+      })
+      .y((d) => { return this.scaleY(d['value']) })
+    );
+    
+    // const tooltip = this.svg.append("g");
+    // this.svg.on("touchmove mousemove", function(event) {
+    //   tooltip
+    //       .attr("transform", `translate(${this.scaleX(event[0])},${this.scaleY(event[1])})`)
+    //       .call(this.callout, `${this.scaleX(event[0])},${this.scaleY(event[1])}`);
+    // });
+    // this.svg.on("touchend mouseleave", () => tooltip.call(this.callout, null));
+  }
+
+  callout(g, value) {
+    if (!value) return g.style("display", "none");
+  
+    g
+        .style("display", null)
+        .style("pointer-events", "none")
+        .style("font", "10px sans-serif");
+  
+    const path = g.selectAll("path")
+      .data([null])
+      .join("path")
+        .attr("fill", "white")
+        .attr("stroke", "black");
+  
+    const text = g.selectAll("text")
+      .data([null])
+      .join("text")
+      .call(text => text
+        .selectAll("tspan")
+        .data((value + "").split(/\n/))
+        .join("tspan")
+          .attr("x", 0)
+          .attr("y", (d, i) => `${i * 1.1}em`)
+          .style("font-weight", (_, i) => i ? null : "bold")
+          .text(d => d));
+  
+    const {x, y, width: w, height: h} = text.node().getBBox();
+  
+    text.attr("transform", `translate(${-w / 2},${15 - y})`);
+    path.attr("d", `M${-w / 2 - 10},5H-5l5,-5l5,5H${w / 2 + 10}v${h + 20}h-${w + 20}z`);
   }
 }
