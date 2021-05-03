@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
 import { SessionService } from 'src/app/services/session.service';
 
 @Component({
@@ -16,6 +17,8 @@ export class TableComponent implements OnInit {
   columnData = [];
 
   dataSource = new MatTableDataSource();
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   ngOnInit(): void {
     const items = this.session.getData();
@@ -68,5 +71,9 @@ export class TableComponent implements OnInit {
       this.columnData.push(record);
     }
     this.dataSource.data = this.columnData;
+  }
+
+  ngAfterViewInit(){
+    this.dataSource.paginator = this.paginator;
   }
 }
