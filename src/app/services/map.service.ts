@@ -159,7 +159,7 @@ export class MapService {
       if (this.catchmentLayer !== null) {
         this.map.removeLayer(this.catchmentLayer);
       }
-      this.catchmentLayer = L.geoJSON(JSON.parse(data)).addTo(this.map);
+      this.catchmentLayer = L.geoJSON(data).addTo(this.map);
     });
     if (this.searchStartStream !== null) {
       this.map.removeLayer(this.searchStartStream);
