@@ -1,17 +1,15 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
-import { SessionService } from 'src/app/services/session.service';
+import { Component, OnInit, AfterViewInit, ViewChild } from "@angular/core";
+import { MatTableDataSource } from "@angular/material/table";
+import { MatPaginator } from "@angular/material/paginator";
+import { SessionService } from "src/app/services/session.service";
 
 @Component({
-  selector: 'app-table',
-  templateUrl: './table.component.html',
-  styleUrls: ['./table.component.css']
+  selector: "app-table",
+  templateUrl: "./table.component.html",
+  styleUrls: ["./table.component.css"],
 })
 export class TableComponent implements OnInit {
-  constructor(
-    private session: SessionService
-  ) { }
+  constructor(private session: SessionService) {}
 
   columnNames = [];
   columnData = [];
@@ -22,9 +20,9 @@ export class TableComponent implements OnInit {
 
   ngOnInit(): void {
     const items = this.session.getData();
-    const metadata = items['metadata'];
+    const metadata = items["metadata"];
     const metaKeys = Object.keys(metadata);
-    const data = items['data'];
+    const data = items["data"];
     const dataKeys = Object.keys(data);
 
     /* Building the column names array */
@@ -73,7 +71,7 @@ export class TableComponent implements OnInit {
     this.dataSource.data = this.columnData;
   }
 
-  ngAfterViewInit(){
+  ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
   }
 }

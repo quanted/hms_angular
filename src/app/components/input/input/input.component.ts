@@ -25,13 +25,8 @@ export class InputComponent implements OnInit {
   formInputs = [];
 
   waiting = false;
-  dataReceived = false; 
-  exploreOutput = false;
-  exploreTable = false;
-  exploreGraph = false;
-  dataItems = [];
 
-  requestResponse;
+  responseList = [];
 
   constructor(
     private hms: HmsService,
@@ -97,35 +92,13 @@ export class InputComponent implements OnInit {
       args: this.endpointForm.value
     }).subscribe(response => {
       this.waiting = false;
-      this.dataReceived = true;
-      this.session.updateData(response);
+      this.session.updateData(this.currentEndpoint.endpoint, response);
+      this.responseList = this.session.getResponseList();
+      console.log('list: ', this.responseList);
     });
   }
 
-
-  reset(): void {
-    this.endpointForm.reset();
-    this.dataReceived = false;
+  gotoData(endpoint) {
+    console.log('click! ', endpoint);
   }
-
-  flyTo(): void {
-  }
-
-  showOutput(): void {
-    this.exploreOutput = true;
-    this.exploreTable = false;
-    this.exploreGraph = false;
-  }
-
-  showTable(): void {
-    this.exploreOutput = false;
-    this.exploreTable = true;
-    this.exploreGraph = false;
-  }
-
-  showGraph(): void {
-    this.exploreOutput = false;
-    this.exploreTable = false;
-    this.exploreGraph = true; 
-}
 }

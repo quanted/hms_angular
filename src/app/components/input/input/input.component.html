@@ -50,39 +50,9 @@
             </div>
         </form>
     </div>
-    <div *ngIf="dataReceived" class="container-item">
-        <div class="data-output-options">
-            <button (click)="showOutput()" mat-icon-button aria-label="View server output" title="Click to show the server output">
-                <mat-icon>preview</mat-icon>
-            </button>
-            <button (click)="showTable()" mat-icon-button aria-label="Explore the data" title="Click to show the data table">
-                <mat-icon>table_chart</mat-icon>
-            </button>
-            <button (click)="showGraph()" mat-icon-button aria-label="Explore the data" title="Click to view the graph">
-                <mat-icon>analytics</mat-icon>
-            </button>
-            <button mat-icon-button aria-label="Save the data" title="Click to save the data">
-                <mat-icon>save_alt</mat-icon>
-            </button>
-            <button mat-icon-button aria-label="Share the data" title="Click to share the data">
-                <mat-icon>share</mat-icon>
-            </button>
+    <div class="container-item">
+        <div style="width: 100%;" *ngFor="let response of responseList" class="button" (click)="gotoData(response.endpoint)">
+            {{ response.endpoint }}{{ response.dataSource }}{{ response.dataset }}<mat-icon>delete</mat-icon>
         </div>
     </div>
-    <div *ngIf="exploreOutput" class="container-item">
-        <!-- <cdk-virtual-scroll-viewport itemSize="500" class="output-viewport">
-          <div *ngFor="let items of dataItems" class="output-item">{{ items | json }}</div>
-        </cdk-virtual-scroll-viewport> -->
-        <div class="output-viewport2">
-            <div *ngFor="let item of dataItems">{{ item }}</div>
-        </div>
-    </div>
-    <div *ngIf="exploreTable" class="container-item">
-        <app-table></app-table>
-    </div>
-    <div *ngIf="exploreGraph" class="container-item">
-        <app-graph></app-graph>
-    </div>
-
-
 </div>
