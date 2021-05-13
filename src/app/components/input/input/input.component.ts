@@ -22,6 +22,9 @@ export class InputComponent implements OnInit {
   schemas;
 
   currentEndpoint;
+  customRequest = false;
+  selectedFile;
+  uploadedFile;
   formInputs = [];
 
   waiting = false;
@@ -84,8 +87,27 @@ export class InputComponent implements OnInit {
     this.currentEndpoint = endpoint !== 'null'? endpoint : null;
   }
 
+  // Uploading a file
+  onFileChanged(event) {
+    this.selectedFile = event.target.files[0];
+    const fileReader = new FileReader();
+    fileReader.readAsText(this.selectedFile, "UTF-8");
+    fileReader.onload = () => {
+      this.uploadedFile = JSON.parse(<string>fileReader.result)
+      console.log(this.uploadedFile);
+      this.customRequest = true;
+    }
+    fileReader.onerror = (error) => {
+      console.log(error);
+    }
+  }
+
   submitForm(): void {
     this.waiting = true;
+    if (this.customRequest == true){
+      this.endpointForm.setValue(this.uploadedFile);
+      console.log(this.endpointForm)
+    }
     this.hms.submit({
       type: this.currentEndpoint.type,
       endpoint: this.currentEndpoint.endpoint,

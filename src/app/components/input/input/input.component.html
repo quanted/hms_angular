@@ -1,5 +1,12 @@
 <div class="container-col-1">
     <div class="container-item">
+        <input
+        style="display: none"
+        type="file" (change)="onFileChanged($event)"
+        #fileInput>
+        <div class="button" (click)="fileInput.click()">Select File</div>
+    </div>
+    <div class="container-item">
         <div id="coords-form" [formGroup]="coordsForm">
             <div>Lat <input type="number" formControlName="lat"/></div>
             <div>Lng <input type="number" formControlName="lng"/></div>
