@@ -68,6 +68,7 @@
         </form>
     </div>
     <div class="container-item">
+        <div>HMS data</div>
         <div style="width: 100%;" *ngFor="let response of responseList" class="button" (click)="gotoData(response.endpoint)">
             {{ response.endpoint }}{{ response.dataSource }}{{ response.dataset }}<mat-icon>delete</mat-icon>
         </div>
