@@ -30,7 +30,6 @@
             <option [value]='null' selected>Select Aquatox module</option>
             <option *ngFor="let module of atxModules">{{ module }}</option>
         </select>
-        <div class="button">Upload base Json</div>
         <div id="simulation-globals">
             <div class="form-row">
                 <div>Site name: <input type="text"></div>
@@ -45,7 +44,7 @@
 
     <div class="container-item" id="segment-form">
         <div>Segment alt loadings</div>
-        <div class="button">Upload segment loadings</div>
+        <app-comid-select-input></app-comid-select-input>
     </div>
 
     <div class="container-item" *ngIf="loadingApi">
