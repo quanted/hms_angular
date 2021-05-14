@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from "@angular/core";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatPaginator } from "@angular/material/paginator";
-import { SessionService } from "src/app/services/session.service";
+import { SimulationService } from "src/app/services/simulation.service";
 
 @Component({
   selector: "app-table",
@@ -9,7 +9,7 @@ import { SessionService } from "src/app/services/session.service";
   styleUrls: ["./table.component.css"],
 })
 export class TableComponent implements OnInit {
-  constructor(private session: SessionService) {}
+  constructor(private simulation: SimulationService) {}
 
   columnNames = [];
   columnData = [];
@@ -19,7 +19,7 @@ export class TableComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   ngOnInit(): void {
-    const items = this.session.getData();
+    const items = this.simulation.getData();
     const metadata = items["metadata"];
     const metaKeys = Object.keys(metadata);
     const data = items["data"];

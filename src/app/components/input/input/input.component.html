@@ -1,11 +1,13 @@
 <div class="container-col-1">
     <div class="container-item">
+        Area of Interest
         <div id="coords-form" [formGroup]="coordsForm">
             <div>Lat <input type="number" formControlName="lat"/></div>
             <div>Lng <input type="number" formControlName="lng"/></div>
         </div>
+        <div class="button" (click)="getStream()">Get stream</div>
     </div>
-    <div class="container-item">
+    <!-- <div class="container-item">
         <div id="source-form" [formGroup]="sourceForm">
             <div>
                 Source <select type="text" formControlName="source">
@@ -19,11 +21,26 @@
                 </select>
             </div>
         </div>
+    </div> -->
+
+    <div class="container-item" [formGroup]="moduleForm">
+        <div>Simulation Globals</div>
+        <select formControlName="moduleSelect" (change)="updateSelectedModule()">
+            <option [value]='null' selected>Select Aquatox module</option>
+            <option *ngFor="let module of atxModules">{{ module }}</option>
+        </select>
+        <div id="simulation-globals"></div>
     </div>
+
+    <div class="container-item" id="segment-form">
+        <div>Segment alt loadings</div>
+    </div>
+
     <div class="container-item" *ngIf="loadingApi">
         <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     </div>
     <div class="container-item" *ngIf="!loadingApi">
+        <div>HMS data requests</div>
         <div id="api-form" [formGroup]="apiForm">
             <select>
                 <option>{{ apiVersion }}</option>

@@ -1,21 +1,20 @@
-import { Component, Output, EventEmitter } from '@angular/core';
-import { MapService } from 'src/app/services/map.service';
+import { Component, Output, EventEmitter } from "@angular/core";
+import { MapService } from "src/app/services/map.service";
 
 @Component({
-  selector: 'app-map',
-  templateUrl: './map.component.html',
-  styleUrls: ['./map.component.css']
+  selector: "app-map",
+  templateUrl: "./map.component.html",
+  styleUrls: ["./map.component.css"],
 })
-
 export class MapComponent {
-  constructor(private mapService: MapService){}
-  
+  constructor(private mapService: MapService) {}
+
   @Output() updateCoords = new EventEmitter();
   ngOnInit() {
     this.mapService.initMap();
   }
 
-  logClick(event): void {
+  mapClick(event): void {
     const coords = this.mapService.getMapEvent(event);
     this.updateCoords.emit(coords);
   }

@@ -1,0 +1,19 @@
+body {
+    display: grid;
+    grid-template: auto 1fr auto / auto 1fr auto;
+    background-color: #2f7b9e;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+app-header {
+    grid-column: 1 / 4;
+}
+
+app-map {
+    grid-column: 2 / 3;
+}
+
+app-footer {
+    text-align: center;
+    grid-column: 1 / 4;
+}

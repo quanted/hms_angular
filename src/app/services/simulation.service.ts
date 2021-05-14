@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
-export class SessionService {
-  constructor() { }
+export class SimulationService {
+  constructor() {}
 
   sessionData = [];
 
@@ -21,12 +21,12 @@ export class SessionService {
     const endpoints = Object.keys(this.sessionData);
     for (let endpoint of endpoints) {
       let d = this.sessionData[endpoint];
-      console.log('d: ', d);
+      console.log("d: ", d);
       responseList.push({
         endpoint,
         dataSource: d.dataSource,
-        dataset: d.dataset
-      })
+        dataset: d.dataset,
+      });
     }
     return responseList;
   }

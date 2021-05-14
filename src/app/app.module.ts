@@ -40,6 +40,7 @@ import { LayerControlComponent } from './components/map/layer-control/layer-cont
 import { TableComponent } from './components/output/table/table.component';
 import { GraphComponent } from './components/output/graph/graph.component';
 import { KeysPipe } from './components/output/table/keys.pipe';
+import { LandingComponent } from './components/landing/landing.component';
 
 @NgModule({
   declarations: [
@@ -56,7 +57,8 @@ import { KeysPipe } from './components/output/table/keys.pipe';
     LayerControlComponent,
     TableComponent,
     GraphComponent,
-    KeysPipe
+    KeysPipe,
+    LandingComponent
   ],
   imports: [
     BrowserModule,

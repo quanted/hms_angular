@@ -1,12 +1,28 @@
 .container {
-    width: 400px;
     padding-left: 1rem;
     padding-right: 1rem;
     overflow-y: scroll;
     height: 750px;
+    background-color: lightgoldenrodyellow;
 }
 
 .container > h2 {
     margin: 0;
     padding-top: .5rem;
+}
+
+.button {
+    font-size: .75rem;
+    display: grid;
+    place-items: center;
+    height: 30px;
+    border-radius: 5px;
+    margin-bottom: .125rem;
+    color: lightgoldenrodyellow;
+    background-color: steelblue;
+}
+
+.button:hover {
+    background: rgba(146, 146, 146, 0.5);
+    cursor: pointer;
 }

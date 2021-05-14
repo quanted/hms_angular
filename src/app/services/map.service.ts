@@ -32,6 +32,11 @@ export class MapService {
   searchStartStream: L.GeoJSON = null;
   stationLayer: L.GeoJSON = null;
 
+  currentHuc = {
+    HUC_12: "",
+    HUC_12_NAME: "",
+  };
+
   // flag = L.icon({
   //   iconUrl: "../assets/images/icon_flag.png",
   //   iconSize: [32, 32], // size of the icon
@@ -52,7 +57,7 @@ export class MapService {
         this.handleClick(mapClickEvent);
       });
       this.map.on("mousemove", (mapMoveEvent) => {
-        this.handleMove(mapMoveEvent);
+        // this.handleMove(mapMoveEvent);
       });
       this.map.on("drag", (mapDragEvent) => {
         this.handleDrag(mapDragEvent);
@@ -145,6 +150,9 @@ export class MapService {
       if (this.hucLayer !== null) {
         this.map.removeLayer(this.hucLayer);
       }
+      // console.log("huc_data: ", data);
+      this.currentHuc["HUC_12"] = data.features[0].properties.HUC_12;
+      this.currentHuc["HUC_12_NAME"] = data.features[0].properties.HU_12_NAME;
       this.hucLayer = L.geoJSON(data, {
         style: {
           color: "#0000ff",
@@ -152,31 +160,38 @@ export class MapService {
           fillColor: "#0000ff",
           fillOpacity: 0.25,
         },
-      }).addTo(this.map);
-    });
-    this.getCatchmentData(
-      mapClickEvent.latlng.lat,
-      mapClickEvent.latlng.lng
-    ).subscribe((data) => {
-      if (this.catchmentLayer !== null) {
-        this.map.removeLayer(this.catchmentLayer);
+      });
+      this.hucLayer
+        .bindTooltip(
+          `HUC: ${data.features[0].properties.HUC_12}
+          ${data.features[0].properties.HU_12_NAME}`
+        )
+        .setZIndex(3)
+        .addTo(this.map);
+      this.getCatchmentData(
+        mapClickEvent.latlng.lat,
+        mapClickEvent.latlng.lng
+      ).subscribe((data) => {
+        if (this.catchmentLayer !== null) {
+          this.map.removeLayer(this.catchmentLayer);
+        }
+        this.catchmentLayer = L.geoJSON(data).setZIndex(2).addTo(this.map);
+      });
+      if (this.searchStartStream !== null) {
+        this.map.removeLayer(this.searchStartStream);
       }
-      this.catchmentLayer = L.geoJSON(data).addTo(this.map);
-    });
-    if (this.searchStartStream !== null) {
-      this.map.removeLayer(this.searchStartStream);
-    }
-    if (this.streamLayer !== null) {
-      this.map.removeLayer(this.streamLayer);
-    }
-    if (this.stationLayer !== null) {
-      this.map.removeLayer(this.stationLayer);
-    }
-    this.getStreamStart(
-      mapClickEvent.latlng.lat,
-      mapClickEvent.latlng.lng
-    ).subscribe((response) => {
-      this.getStreamSegments(null, response);
+      if (this.streamLayer !== null) {
+        this.map.removeLayer(this.streamLayer);
+      }
+      if (this.stationLayer !== null) {
+        this.map.removeLayer(this.stationLayer);
+      }
+      this.getStreamStart(
+        mapClickEvent.latlng.lat,
+        mapClickEvent.latlng.lng
+      ).subscribe((response) => {
+        this.getStreamSegments(null, response);
+      });
     });
   }
 
@@ -206,9 +221,11 @@ export class MapService {
           color: "#FF0000",
           weight: 2,
           fillColor: "#FF0000",
-          fillOpacity: 0,
+          fillOpacity: 0.25,
         },
-      }).addTo(this.map);
+      })
+        .setZIndex(4)
+        .addTo(this.map);
     });
   }
 
@@ -350,24 +367,39 @@ export class MapService {
   }
 
   buildStreamLayer(data) {
+    // console.log("current: ", this.currentHuc);
     let fl = data.output.flowlines_traversed;
-    let streamColor = "#00F0F0";
     let startColor = "#FF0000";
 
     this.searchStartStream = L.geoJSON(fl[0].shape, {
       style: {
         color: startColor,
-        weight: 2,
+        weight: 4,
       },
-    }).addTo(this.map);
+    })
+      .bindTooltip(`comID: ${fl[0].comid}`)
+      .setZIndex(1)
+      .addTo(this.map);
 
     this.streamLayer = L.geoJSON().addTo(this.map);
     for (let i in fl) {
-      let tmp_feature = L.geoJSON(fl[i].shape);
-      this.streamLayer.addLayer(tmp_feature).setStyle({
+      let streamColor = "#00F0F0";
+      let tmp_feature = L.geoJSON(fl[i].shape).bindTooltip(
+        `comID: ${fl[i].comid}`
+      );
+      tmp_feature.on("mouseover", () => {
+        // console.log(`comID: ${fl[i].comid}`);
+      });
+      if (this.currentHuc.HUC_12 === fl[i].wbd_huc12) {
+        streamColor = "#00F0F0";
+      } else {
+        streamColor = "#FF00FF";
+      }
+      tmp_feature.setStyle({
         color: streamColor,
         weight: 4,
       });
+      this.streamLayer.addLayer(tmp_feature).setZIndex(2);
     }
 
     // build station layer
@@ -384,25 +416,25 @@ export class MapService {
     }
 
     // Bring search start segment to front
-    this.searchStartStream.bringToFront();
+    // this.searchStartStream.bringToFront();
 
-    // centers map on result
-    this.map.fitBounds(this.streamLayer.getBounds(), {
-      maxZoom: 13,
-    });
+    // centers map on result - TODO: except it doesn't sometimes
+    // this.map.fitBounds(this.streamLayer.getBounds(), {
+    //   maxZoom: 13,
+    // });
   }
 
   /* from https://github.com/Esri/esri-leaflet/blob/master/src/Request.js */
   serialize(params) {
-    var data = "";
+    let data = "";
 
     params.f = params.f || "json";
 
-    for (var key in params) {
+    for (let key in params) {
       if (params.hasOwnProperty(key)) {
-        var param = params[key];
-        var type = Object.prototype.toString.call(param);
-        var value;
+        const param = params[key];
+        const type = Object.prototype.toString.call(param);
+        let value;
 
         if (data.length) {
           data += "&";

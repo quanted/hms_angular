@@ -1,13 +1,7 @@
 <div class="container">
     <ng-container *ngIf="open">
         <mat-icon (click)="closePanel()" title="collapse panel">chevron_left</mat-icon>
-        <ng-container *ngIf="!welcome">
-            <app-about></app-about>
-            <button type="button" (click)="accept()">Okay</button>
-        </ng-container>
-        <ng-container *ngIf="welcome">
-            <app-input></app-input>
-        </ng-container>
+        <app-input></app-input>
     </ng-container>
     <ng-container *ngIf="!open">
         <mat-icon (click)="openPanel()" title="expand panel">chevron_right</mat-icon>
