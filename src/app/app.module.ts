@@ -17,7 +17,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -41,6 +41,7 @@ import { TableComponent } from './components/output/table/table.component';
 import { GraphComponent } from './components/output/graph/graph.component';
 import { KeysPipe } from './components/output/table/keys.pipe';
 import { LandingComponent } from './components/landing/landing.component';
+import { ComidSelectInputComponent } from './components/input/comid-select-input/comid-select-input.component';
 
 @NgModule({
   declarations: [
@@ -58,7 +59,8 @@ import { LandingComponent } from './components/landing/landing.component';
     TableComponent,
     GraphComponent,
     KeysPipe,
-    LandingComponent
+    LandingComponent,
+    ComidSelectInputComponent
   ],
   imports: [
     BrowserModule,
@@ -80,7 +82,6 @@ import { LandingComponent } from './components/landing/landing.component';
     FormsModule,
     ReactiveFormsModule,
     ScrollingModule
-    
   ],
   providers: [
     {
