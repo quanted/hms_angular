@@ -5,6 +5,7 @@
             <div>Lat <input type="number" formControlName="lat"/></div>
             <div>Lng <input type="number" formControlName="lng"/></div>
         </div>
+
         <div class="button" (click)="getStream()">Get stream</div>
     </div>
     <!-- <div class="container-item">
@@ -29,11 +30,22 @@
             <option [value]='null' selected>Select Aquatox module</option>
             <option *ngFor="let module of atxModules">{{ module }}</option>
         </select>
-        <div id="simulation-globals"></div>
+        <div class="button">Upload base Json</div>
+        <div id="simulation-globals">
+            <div class="form-row">
+                <div>Site name: <input type="text"></div>
+                <div>Site comment: <input type="text"></div>
+            </div>
+            <div class="form-row">
+                <div>First day: <input type="text"></div>
+                <div>Last day: <input type="text"></div>
+            </div>
+        </div>
     </div>
 
     <div class="container-item" id="segment-form">
         <div>Segment alt loadings</div>
+        <div class="button">Upload segment loadings</div>
     </div>
 
     <div class="container-item" *ngIf="loadingApi">
@@ -42,9 +54,6 @@
     <div class="container-item" *ngIf="!loadingApi">
         <div>HMS data requests</div>
         <div id="api-form" [formGroup]="apiForm">
-            <select>
-                <option>{{ apiVersion }}</option>
-            </select>
             <select formControlName="endpointSelect" (change)="updateEndpointForm()">
                 <option [value]='null' selected>Select an endpoint</option>
                 <option *ngFor="let endpoint of apiEndpointList">{{ endpoint.endpoint }}</option>
@@ -69,6 +78,7 @@
     </div>
     <div class="container-item">
         <div>HMS data</div>
+        <div *ngIf="!responseList.length">No HMS data</div>
         <div style="width: 100%;" *ngFor="let response of responseList" class="button" (click)="gotoData(response.endpoint)">
             {{ response.endpoint }}{{ response.dataSource }}{{ response.dataset }}<mat-icon>delete</mat-icon>
         </div>
