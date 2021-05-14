@@ -36,6 +36,9 @@ export class InputComponent implements OnInit {
   schemas;
 
   currentEndpoint;
+  customRequest = false;
+  selectedFile;
+  uploadedFile;
   formInputs = [];
 
   waiting = false;
@@ -108,6 +111,21 @@ export class InputComponent implements OnInit {
       this.endpointForm.setValue(endpoint.request);
     }
     this.currentEndpoint = endpoint !== "null" ? endpoint : null;
+  }
+
+  // Uploading a file
+  onFileChanged(event) {
+    this.selectedFile = event.target.files[0];
+    const fileReader = new FileReader();
+    fileReader.readAsText(this.selectedFile, "UTF-8");
+    fileReader.onload = () => {
+      this.uploadedFile = JSON.parse(<string>fileReader.result);
+      console.log(this.uploadedFile);
+      this.customRequest = true;
+    };
+    fileReader.onerror = (error) => {
+      console.log(error);
+    };
   }
 
   submitForm(): void {
