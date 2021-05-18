@@ -12,16 +12,16 @@ export class ComidSelectInputComponent implements OnInit {
 
   inputFormGroup: FormGroup;
   svIndex = []; /* Get from service */
+  useConstLoadings = true;
 
   constructor(
       private fb: FormBuilder,
       private simulation: SimulationService,
-      private mapService: MapService
+      public mapService: MapService
   ) { }
 
   ngOnInit(): void {
     this.inputFormGroup = this.fb.group({
-      useConst: [''],
       constLoading: [''],
       loadingMulti: [''],
       altLoadings: ['']

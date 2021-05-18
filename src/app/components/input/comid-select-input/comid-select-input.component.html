@@ -1,13 +1,13 @@
-<h4>Comid: *get selected comid from service*</h4>
-<form class="form-row">
+<h4>Comid: {{mapService.selectedComid}}</h4>
+<form class="form-row" [formGroup]="inputFormGroup">
     <label>SV Index</label>
     <select></select>
     <label>Use Constant Loading?</label>
-    <input formControlName="useConst" type="checkbox">
-    <label>Constant Loading</label>
-    <input formControlName="constLoading" type="text">
+    <input type="checkbox" (change)="useConstLoadings = !useConstLoadings" checked>
+    <label *ngIf="useConstLoadings">Constant Loading</label>
+    <input *ngIf="useConstLoadings" formControlName="constLoading" type="text">
+    <label *ngIf="!useConstLoadings">Upload Alternate Loadings</label>
+    <input *ngIf="!useConstLoadings" formControlName="altLoadings" type="file">
     <label>Loading Multiplier</label>
     <input formControlName="loadingMulti" type="text">
-    <label>Upload Alternate Loadings</label>
-    <input formControlName="altLoadings" type="file">
 </form>
