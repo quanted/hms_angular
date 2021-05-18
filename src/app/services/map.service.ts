@@ -32,6 +32,10 @@ export class MapService {
   searchStartStream: L.GeoJSON = null;
   stationLayer: L.GeoJSON = null;
 
+  // State variables for handling comid click
+  comidClicked = false;
+  selectedComid = null;
+
   currentHuc = {
     HUC_12: "",
     HUC_12_NAME: "",
@@ -387,9 +391,14 @@ export class MapService {
       let tmp_feature = L.geoJSON(fl[i].shape).bindTooltip(
         `comID: ${fl[i].comid}`
       );
-      tmp_feature.on("mouseover", () => {
-        // console.log(`comID: ${fl[i].comid}`);
+
+      // Add click event listener to each stream layer for
+      // displaying comid select input UI.
+      tmp_feature.on('click', () => {
+        this.selectedComid = fl[i].comid;
+        this.comidClicked = !this.comidClicked;
       });
+
       if (this.currentHuc.HUC_12 === fl[i].wbd_huc12) {
         streamColor = "#00F0F0";
       } else {
