@@ -42,8 +42,7 @@
         </div>
     </div>
 
-    <div class="container-item" id="segment-form">
-        <div>Segment alt loadings</div>
+    <div *ngIf="mapService.comidClicked" class="container-item" id="segment-form">
         <app-comid-select-input></app-comid-select-input>
     </div>
 

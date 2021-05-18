@@ -49,7 +49,7 @@ export class InputComponent implements OnInit {
     private hms: HmsService,
     private fb: FormBuilder,
     private simulation: SimulationService,
-    private mapService: MapService
+    public mapService: MapService
   ) {}
 
   ngOnInit(): void {
