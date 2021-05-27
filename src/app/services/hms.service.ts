@@ -10,6 +10,18 @@ import { environment } from "../../environments/environment";
   providedIn: "root",
 })
 export class HmsService {
+  atxModules = [
+    "animals",
+    "bioaccumulation",
+    "chemicals",
+    "diagenesis",
+    "ecotoxicology",
+    "nutrients",
+    "organicmatter",
+    "plants",
+    "streamhydrology",
+  ];
+
   constructor(private http: HttpClient) {}
 
   getApi(): Observable<any> {
@@ -26,6 +38,10 @@ export class HmsService {
         return of({ error: err });
       })
     );
+  }
+
+  getATXModules() {
+    return this.atxModules;
   }
 
   buildEndpointList(swagger) {
@@ -1090,16 +1106,7 @@ export class HmsService {
                     "max wavelength": 330,
                     longitude: "83.2",
                     "latitude(s)": [
-                      40,
-                      -99,
-                      -99,
-                      -99,
-                      -99,
-                      -99,
-                      -99,
-                      -99,
-                      -99,
-                      -99,
+                      40, -99, -99, -99, -99, -99, -99, -99, -99, -99,
                     ],
                     "season(s)": ["Spring", " ", " ", " "],
                     "atmospheric ozone layer": 0.3,
@@ -1185,16 +1192,7 @@ export class HmsService {
                     "max wavelength": 330,
                     longitude: "83.2",
                     "latitude(s)": [
-                      40,
-                      -99,
-                      -99,
-                      -99,
-                      -99,
-                      -99,
-                      -99,
-                      -99,
-                      -99,
-                      -99,
+                      40, -99, -99, -99, -99, -99, -99, -99, -99, -99,
                     ],
                     "season(s)": ["Spring", " ", " ", " "],
                     "atmospheric ozone layer": 0.3,
@@ -1280,16 +1278,7 @@ export class HmsService {
                     "max wavelength": 330,
                     longitude: "83.2",
                     "latitude(s)": [
-                      40,
-                      -99,
-                      -99,
-                      -99,
-                      -99,
-                      -99,
-                      -99,
-                      -99,
-                      -99,
-                      -99,
+                      40, -99, -99, -99, -99, -99, -99, -99, -99, -99,
                     ],
                     "season(s)": ["Spring", " ", " ", " "],
                     "atmospheric ozone layer": 0.3,

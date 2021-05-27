@@ -1,14 +1,30 @@
 import { Injectable } from "@angular/core";
 
+import { BehaviorSubject } from "rxjs";
+
+import { HmsService } from "./hms.service";
+
 @Injectable({
   providedIn: "root",
 })
 export class SimulationService {
-  constructor() {}
-
-  sessionData = [];
-
+  baseJsons = [];
   baseJson = {};
+
+  simData = {};
+  simDataSubject: BehaviorSubject<any>;
+
+  selectedCoords;
+  selectedPourPoint;
+  selectedHUC;
+  selectedComId;
+
+  // list of data returned from hms requests
+  hmsRequestedData = [];
+
+  constructor(private hms: HmsService) {
+    this.simDataSubject = new BehaviorSubject(this.simData);
+  }
 
   // example API (tenative):
   // POST ["/hms/api/workflow/"]
@@ -25,19 +41,29 @@ export class SimulationService {
   // 	}
   // }
 
+  updateSimData(key, data): void {
+    this.simData[key] = data;
+    this.simDataSubject.next(this.simData);
+  }
+
+  // returns a Subject that component subscribes to
+  getInterfaceData(): BehaviorSubject<any> {
+    return this.simDataSubject;
+  }
+
   updateData(endpoint, data): void {
-    this.sessionData[endpoint] = data;
+    this.hmsRequestedData[endpoint] = data;
   }
 
   getData(): any {
-    return this.sessionData;
+    return this.hmsRequestedData;
   }
 
   getResponseList() {
     const responseList = [];
-    const endpoints = Object.keys(this.sessionData);
+    const endpoints = Object.keys(this.hmsRequestedData);
     for (let endpoint of endpoints) {
-      let d = this.sessionData[endpoint];
+      let d = this.hmsRequestedData[endpoint];
       console.log("d: ", d);
       responseList.push({
         endpoint,
@@ -46,5 +72,16 @@ export class SimulationService {
       });
     }
     return responseList;
+  }
+
+  selectATXModule(module): void {
+    this.baseJson = null;
+    for (let json of this.baseJsons) {
+      if (json.name == module.toLowerCase()) {
+        this.baseJson = json.AQTSim;
+      }
+      if (this.baseJson) break;
+    }
+    console.log(`${module} AQTsim: `, this.baseJson);
   }
 }

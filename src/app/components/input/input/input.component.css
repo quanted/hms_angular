@@ -1,6 +1,10 @@
 .container-col-1 {
-    height: 100%;
     width: 425px;
+}
+
+.scroll-pane {
+    overflow-y: auto;
+    height: 791px;
 }
 
 .container-item {
@@ -23,14 +27,6 @@
 #coords-form {
     grid-template-columns: auto auto;
     column-gap: 1rem;
-}
-
-#coords-form input[type='number'] {
-    width: 20ch;
-}
-
-#source-form input[type='number'] {
-    width: 10ch;
 }
 
 #endpoint-form {

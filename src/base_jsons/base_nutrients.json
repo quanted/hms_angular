@@ -1,4 +1,4 @@
-{"base_json": {"$type": "AQTSim", "AQTSeg":{
+{"$type": "AQTSim", "AQTSeg":{
     "$type": "AQUATOXSegment",
     "Location": {
       "$type": "TAQTSite",
@@ -29331,4 +29331,5 @@
     "CalcVelocity": true,
     "DynVelocity": null,
     "MeanDischarge": 0
-  }}}
+  }
+}

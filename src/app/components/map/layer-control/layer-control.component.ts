@@ -1,12 +1,12 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { Component, OnInit, Input } from "@angular/core";
+import { FormBuilder } from "@angular/forms";
 
-import { MapService } from 'src/app/services/map.service';
+import { LayerService } from "src/app/services/layer.service";
 
 @Component({
-  selector: 'app-layer-control',
-  templateUrl: './layer-control.component.html',
-  styleUrls: ['./layer-control.component.css']
+  selector: "app-layer-control",
+  templateUrl: "./layer-control.component.html",
+  styleUrls: ["./layer-control.component.css"],
 })
 export class LayerControlComponent implements OnInit {
   @Input() feature;
@@ -17,45 +17,26 @@ export class LayerControlComponent implements OnInit {
     color: [null],
     weight: [null],
     fillColor: [null],
-    fillOpacity: [null]
+    fillOpacity: [null],
   });
 
-  constructor(
-    private fb: FormBuilder,
-    private map: MapService
-  ) { }
+  constructor(private fb: FormBuilder, private layerService: LayerService) {}
 
   ngOnInit(): void {
     this.styleForm.setValue(this.feature.layer.options.style);
   }
-  
-  issueCommand(command): void {
-    let commandMessage;
-    switch(command) {
-      case 'toggle':
-        commandMessage = {
-          command: command,
-          name: this.feature.name,
-          layerType: this.feature.type
-        }
-        this.map.controlCommand(commandMessage);
-        break;
-      case 'update-style':
-        commandMessage = {
-          command: command,
-          name: this.feature.name,
-          style: {
-            color: this.styleForm.get('color').value,
-            weight: this.styleForm.get('weight').value,
-            fillColor: this.styleForm.get('fillColor').value,
-            fillOpacity: this.styleForm.get('fillOpacity').value
-          }
-        }
-        this.map.controlCommand(commandMessage);
-        break;
-      default:
-        console.log('UNKNOWN COMMAND.TYPE ', command);
-    }
+
+  toggleLayer(): void {
+    this.layerService.toggleLayer(this.feature.type, this.feature.name);
+  }
+
+  updateStyle(): void {
+    this.layerService.updateStyle(this.feature.name, {
+      color: this.styleForm.get("color").value,
+      weight: this.styleForm.get("weight").value,
+      fillColor: this.styleForm.get("fillColor").value,
+      fillOpacity: this.styleForm.get("fillOpacity").value,
+    });
   }
 
   toggleControl(): void {

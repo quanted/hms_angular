@@ -13,13 +13,13 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.screenWidth = window.innerWidth;
     this.screenHeight = window.innerHeight;
-    console.log(`size: ${this.screenWidth}, ${this.screenHeight}`);
+    // console.log(`size: ${this.screenWidth}, ${this.screenHeight}`);
   }
 
   @HostListener("window:resize", ["$event"])
   onResize(event) {
     this.screenWidth = window.innerWidth;
     this.screenHeight = window.innerHeight;
-    console.log(`size: ${this.screenWidth}, ${this.screenHeight}`);
+    // console.log(`size: ${this.screenWidth}, ${this.screenHeight}`);
   }
 }

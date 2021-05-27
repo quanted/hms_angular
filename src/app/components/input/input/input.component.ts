@@ -12,28 +12,25 @@ import { SimulationService } from "src/app/services/simulation.service";
   styleUrls: ["./input.component.css"],
 })
 export class InputComponent implements OnInit {
-  coordsForm: FormGroup;
+  aoiForm: FormGroup;
   sourceForm: FormGroup;
   moduleForm: FormGroup;
   apiForm: FormGroup;
   endpointForm: FormGroup;
 
-  atxModules = [
-    "ANIMALS",
-    "BIOACCUMULATION",
-    "CHEMICALS",
-    "DIAGENESIS",
-    "ECOTOXICOLOGY",
-    "NUTRIENTS",
-    "ORGANICMATTER",
-    "PLANTS",
-    "STREAMHYDROLOGY",
-  ];
+  hucId;
+  hucName;
+  hucMeta;
+  pourComId;
+  pourComName;
+  pourComMeta;
 
   loadingApi = false;
   apiVersion;
   apiEndpointList = [];
   schemas;
+
+  atxModules;
 
   currentEndpoint;
   customRequest = false;
@@ -53,7 +50,17 @@ export class InputComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.coordsForm = this.fb.group({
+    this.loadingApi = true;
+    this.hms.getApi().subscribe((api) => {
+      this.apiVersion = api.version;
+      this.apiEndpointList = api.apiEndpointList;
+      this.schemas = api.schemas;
+      this.loadingApi = false;
+      this.atxModules = this.hms.getATXModules();
+      this.updateEndpointForm();
+    });
+
+    this.aoiForm = this.fb.group({
       lat: [null],
       lng: [null],
     });
@@ -67,30 +74,53 @@ export class InputComponent implements OnInit {
     this.apiForm = this.fb.group({
       endpointSelect: [null],
     });
-
-    this.loadingApi = true;
-    this.hms.getApi().subscribe((api) => {
-      this.apiVersion = api.version;
-      this.apiEndpointList = api.apiEndpointList;
-      this.schemas = api.schemas;
-      this.loadingApi = false;
-      this.updateEndpointForm();
+    this.simulation.getInterfaceData().subscribe((d) => {
+      this.updateInterface(d);
     });
   }
 
-  updateCoords(coords): void {
-    this.coordsForm.setValue(coords);
+  updateInterface(data): void {
+    for (let key of Object.keys(data)) {
+      switch (key) {
+        case "coords":
+          this.aoiForm.setValue(data[key]);
+          break;
+        case "huc":
+          this.updateHucInput(data[key].features[0]);
+          break;
+        case "pour":
+          this.updatePourInput(data[key]);
+          break;
+        default:
+        // console.log("unknown key: ", key);
+      }
+    }
   }
 
-  getStream(): void {
-    this.mapService
-      .getStreamStart(this.coordsForm.value.lat, this.coordsForm.value.lng)
-      .subscribe();
+  updateCoordsInput(coords): void {
+    this.aoiForm.setValue(coords);
   }
 
-  updateSelectedModule(): void {
-    console.log("update module!");
+  updateHucInput(huc): void {
+    // console.log("huc: ", huc);
+    this.hucId = huc.properties.HUC_12;
+    this.hucName = huc.properties.HU_12_NAME;
+    this.hucMeta = huc.properties.AREA_ACRES;
   }
+
+  updatePourInput(pour): void {
+    console.log("pour: ", pour);
+  }
+
+  updateSegmentInput(segment): void {
+    console.log("segment: ", segment);
+  }
+
+  selectModule(): void {
+    this.simulation.selectATXModule(this.moduleForm.get("moduleSelect").value);
+  }
+
+  getStreamNetwork(): void {}
 
   updateEndpointForm(): void {
     let endpoint = this.apiForm.get("endpointSelect").value;
@@ -113,22 +143,7 @@ export class InputComponent implements OnInit {
     this.currentEndpoint = endpoint !== "null" ? endpoint : null;
   }
 
-  // Uploading a file
-  onFileChanged(event) {
-    this.selectedFile = event.target.files[0];
-    const fileReader = new FileReader();
-    fileReader.readAsText(this.selectedFile, "UTF-8");
-    fileReader.onload = () => {
-      this.uploadedFile = JSON.parse(<string>fileReader.result);
-      console.log(this.uploadedFile);
-      this.customRequest = true;
-    };
-    fileReader.onerror = (error) => {
-      console.log(error);
-    };
-  }
-
-  submitForm(): void {
+  submitHMSDataRequest(): void {
     this.waiting = true;
     this.hms
       .submit({
@@ -144,6 +159,7 @@ export class InputComponent implements OnInit {
       });
   }
 
+  // navigate to data browsing page loading the selected dataset
   gotoData(endpoint) {
     console.log("click! ", endpoint);
   }

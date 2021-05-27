@@ -1,6 +1,6 @@
 <div class="grid-container">
     <div class="item">
-        <div *ngFor="let map of basemaps" class="button" [class.active]=map.show (click)="issueCommand('toggle', map)" readonly>
+        <div *ngFor="let map of basemaps" class="button" [class.active]=map.show (click)="toggleBasemap(map)">
             {{ map.name }}
         </div>      
     </div>

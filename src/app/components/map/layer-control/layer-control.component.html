@@ -1,6 +1,6 @@
 <div id="layer-control">
     <div id="layer-select">
-        <div class="button" [class.active]=feature.show (click)="issueCommand('toggle')" readonly>
+        <div class="button" [class.active]=feature.show (click)="toggleLayer()" readonly>
             {{ feature.name }}
         </div>
         <div class="button" (click)="toggleControl()">
@@ -12,13 +12,13 @@
         <form id="editor-form" *ngIf="feature" [formGroup]="styleForm">
             <div class="editor-row">
                 <div class="editor-item">
-                    <input type="color" formControlName="color" (change)="issueCommand('update-style')"/>
+                    <input type="color" formControlName="color" (change)="updateStyle()"/>
                 </div>
                 <div class="editor-item">
                     <mat-icon>line_weight</mat-icon> 
                 </div>
                 <div class="editor-item">
-                    <select formControlName="weight" (change)="issueCommand('update-style')">
+                    <select formControlName="weight" (change)="updateStyle()">
                         <option value="1">1px</option>
                         <option value="2">2px</option>
                         <option value="3">3px</option>
@@ -34,13 +34,13 @@
             </div>
             <div class="editor-row">
                 <div class="editor-item">
-                    <input type="color" formControlName="fillColor" (change)="issueCommand('update-style')"/>
+                    <input type="color" formControlName="fillColor" (change)="updateStyle()"/>
                 </div>
                 <div class="editor-item">
                     <mat-icon>opacity</mat-icon> 
                 </div>
                 <div class="editor-item">
-                    <select formControlName="fillOpacity" (change)="issueCommand('update-style')">
+                    <select formControlName="fillOpacity" (change)="updateStyle()">
                         <option value="0">no fill</option>
                         <option value=".1">10%</option>
                         <option value=".2">20%</option>

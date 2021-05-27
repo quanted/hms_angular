@@ -12,6 +12,6 @@ export class AboutComponent implements OnInit {
   ngOnInit(): void {}
 
   gotoMain(): void {
-    this.router.navigateByUrl("main");
+    this.router.navigateByUrl("home");
   }
 }

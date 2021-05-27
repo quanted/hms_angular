@@ -13,9 +13,4 @@ export class MapComponent {
   ngOnInit() {
     this.mapService.initMap();
   }
-
-  mapClick(event): void {
-    const coords = this.mapService.getMapEvent(event);
-    this.updateCoords.emit(coords);
-  }
 }
