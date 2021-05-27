@@ -13,6 +13,8 @@ export class ComidSelectInputComponent implements OnInit {
   svIndex = []; /* Get from service */
   useConstLoadings = true;
 
+  selectedComId = null;
+
   constructor(
     private fb: FormBuilder,
     private simulation: SimulationService,
@@ -20,10 +22,24 @@ export class ComidSelectInputComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.simulation.interfaceData().subscribe((data) => {
+      for (let key of Object.keys(data)) {
+        switch (key) {
+          case "selectedComId":
+            this.updateComId(data[key]);
+        }
+      }
+    });
+
     this.inputFormGroup = this.fb.group({
       constLoading: [""],
       loadingMulti: [""],
       altLoadings: [""],
     });
+  }
+
+  updateComId(data): void {
+    console.log("selectedComId: ", data);
+    this.selectedComId = data.comid;
   }
 }

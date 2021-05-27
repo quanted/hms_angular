@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 
-import { Observable, Subject, of, throwError } from "rxjs";
-import { catchError, map, tap, timeout } from "rxjs/operators";
+import { Observable, of } from "rxjs";
+import { catchError, map, timeout } from "rxjs/operators";
 
 import * as L from "leaflet";
 
@@ -61,7 +61,7 @@ export class MapService {
       this.getHuc(mapClickEvent.latlng);
     }
     if (this.hucSelected && !this.pourSelected) {
-      this.getPourPoint(mapClickEvent.latlng);
+      this.getClosestComId(mapClickEvent.latlng);
     }
   }
 
@@ -152,19 +152,45 @@ export class MapService {
     );
   }
 
-  getPourPoint(latlng): void {
-    this.getPourPointData(latlng.lat, latlng.lng).subscribe((data) => {
+  getCatchment(): void {}
+
+  getCatchmentData(lat, lng): Observable<any> {
+    // COMID Request
+    let url =
+      "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/Catchments_NP21_Simplified/MapServer/0/query?where=&text=&objectIds=&time=&geometry=%7B%22x%22+%3A+" +
+      lng +
+      "%2C+%22y%22+%3A+" +
+      lat +
+      "%2C+%22spatialReference%22+%3A+%7B%22wkid%22+%3A+4326%7D%7D&geometryType=esriGeometryPoint&inSR=&spatialRel=esriSpatialRelWithin&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=%7B%22wkt%22+%3A+%22GEOGCS%5B%5C%22GCS_WGS_1984%5C%22%2CDATUM%5B%5C%22D_WGS_1984%5C%22%2C+SPHEROID%5B%5C%22WGS_1984%5C%22%2C6378137%2C298.257223563%5D%5D%2CPRIMEM%5B%5C%22Greenwich%5C%22%2C0%5D%2C+UNIT%5B%5C%22Degree%5C%22%2C0.017453292519943295%5D%5D%22%7D&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentsOnly=false&datumTransformation=&parameterValues=&rangeValues=&f=geojson";
+    return this.http.get(url).pipe(
+      map((data: any) => {
+        return data;
+      }),
+      timeout(5000),
+      catchError((err) => {
+        if (err.name == "TimeoutError") {
+          return of(err);
+        }
+        return of({ error: err });
+      })
+    );
+  }
+
+  getClosestComId(latlng): void {
+    this.getPointIndexingService(latlng.lat, latlng.lng).subscribe((data) => {
       if (data) {
-        this.simulation.updateSimData("pour", data);
+        this.simulation.updateSimData("pour", {
+          comid: data.output.ary_flowlines[0].comid,
+        });
         this.pourSelected = {
           pour: data,
         };
-        this.layerService.addFeature(data);
+        this.getStreamNetwork(data);
       }
     });
   }
 
-  getPourPointData(lat, lng): Observable<any> {
+  getPointIndexingService(lat, lng): Observable<any> {
     let data = {
       pGeometry: "POINT(" + lng + " " + lat + ")",
       pGeometryMod: "WKT,SRSNAME=urn:ogc:def:crs:OGC::CRS84",
@@ -191,35 +217,7 @@ export class MapService {
     );
   }
 
-  getCatchment(): void {}
-
-  getCatchmentData(lat, lng): Observable<any> {
-    // COMID Request
-    let url =
-      "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/Catchments_NP21_Simplified/MapServer/0/query?where=&text=&objectIds=&time=&geometry=%7B%22x%22+%3A+" +
-      lng +
-      "%2C+%22y%22+%3A+" +
-      lat +
-      "%2C+%22spatialReference%22+%3A+%7B%22wkid%22+%3A+4326%7D%7D&geometryType=esriGeometryPoint&inSR=&spatialRel=esriSpatialRelWithin&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=%7B%22wkt%22+%3A+%22GEOGCS%5B%5C%22GCS_WGS_1984%5C%22%2CDATUM%5B%5C%22D_WGS_1984%5C%22%2C+SPHEROID%5B%5C%22WGS_1984%5C%22%2C6378137%2C298.257223563%5D%5D%2CPRIMEM%5B%5C%22Greenwich%5C%22%2C0%5D%2C+UNIT%5B%5C%22Degree%5C%22%2C0.017453292519943295%5D%5D%22%7D&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentsOnly=false&datumTransformation=&parameterValues=&rangeValues=&f=geojson";
-    return this.http.get(url).pipe(
-      map((data: any) => {
-        return data;
-      }),
-      timeout(5000),
-      catchError((err) => {
-        if (err.name == "TimeoutError") {
-          return of(err);
-        }
-        return of({ error: err });
-      })
-    );
-  }
-
-  getStreamNetwork(err, response): void {
-    if (err) {
-      console.log("ERROR: " + err);
-    }
-
+  getStreamNetwork(response): void {
     let srv_rez = response.output;
     let comid = srv_rez.ary_flowlines[0].comid;
     let measure = srv_rez.ary_flowlines[0].fmeasure;

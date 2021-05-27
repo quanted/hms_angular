@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 
 import * as L from "leaflet";
 import * as ESRI from "esri-leaflet";
+import { SimulationService } from "./simulation.service";
 
 @Injectable({
   providedIn: "root",
@@ -124,15 +125,12 @@ export class LayerService {
   map;
   defaultBasemap = "Open Street Map";
 
-  hoverLayer: L.GeoJSON = null;
-  hucLayer: L.GeoJSON = null;
-  catchmentLayer: L.GeoJSON = null;
   snapline: L.GeoJSON = null;
   streamLayer: L.GeoJSON = null;
   searchStartStream: L.GeoJSON = null;
   stationLayer: L.GeoJSON = null;
 
-  constructor() {
+  constructor(private simulation: SimulationService) {
     // setup default tile maps
     for (let basemap of this.basemaps) {
       this.basemapLayers.push({
@@ -201,44 +199,47 @@ export class LayerService {
   }
 
   buildStreamLayer(data) {
-    // let fl = data.output.flowlines_traversed;
-    // let startColor = "#FF0000";
+    const startColor = "#FF0000";
+    const inHucColor = "#00F0F0";
+    const outHucColor = "#FF00FF";
 
-    // this.searchStartStream = L.geoJSON(fl[0].shape, {
-    //   style: {
-    //     color: startColor,
-    //     weight: 4,
-    //   },
-    // })
-    //   .bindTooltip(`comID: ${fl[0].comid}`)
-    //   .setZIndex(1)
-    //   .addTo(map);
+    const fl = data.output.flowlines_traversed;
 
-    // this.streamLayer = L.geoJSON().addTo(map);
-    // for (let i in fl) {
-    //   let streamColor = "#00F0F0";
-    //   let tmp_feature = L.geoJSON(fl[i].shape).bindTooltip(
-    //     `comID: ${fl[i].comid}`
-    //   );
+    // pour point segment
+    this.searchStartStream = L.geoJSON(fl[0].shape, {
+      style: {
+        color: startColor,
+        weight: 4,
+      },
+    })
+      .bindTooltip(`comID: ${fl[0].comid}`)
+      .setZIndex(1)
+      .addTo(this.map);
 
-    //   // Add click event listener to each stream layer for
-    //   // displaying comid select input UI.
-    //   tmp_feature.on("click", () => {
-    //     // this.selectedComid = fl[i].comid;
-    //     // this.comidClicked = !this.comidClicked;
-    //   });
+    this.streamLayer = L.geoJSON().addTo(this.map);
+    for (let i in fl) {
+      let streamColor = inHucColor;
+      let tmp_feature = L.geoJSON(fl[i].shape).bindTooltip(
+        `comID: ${fl[i].comid}`
+      );
 
-    //   if (this.hucSelected.HUC_12 === fl[i].wbd_huc12) {
-    //     streamColor = "#00F0F0";
-    //   } else {
-    //     streamColor = "#FF00FF";
-    //   }
-    //   tmp_feature.setStyle({
-    //     color: streamColor,
-    //     weight: 4,
-    //   });
-    //   this.streamLayer.addLayer(tmp_feature).setZIndex(2);
-    // }
+      // Add click event listener to each stream layer for
+      // displaying comid select input UI.
+      tmp_feature.on("click", () => {
+        this.simulation.selectComId(fl[i].comid);
+      });
+
+      // if (this.hucSelected.HUC_12 === fl[i].wbd_huc12) {
+      //   streamColor = inHucColor;
+      // } else {
+      //   streamColor = outHucColor;
+      // }
+      tmp_feature.setStyle({
+        color: streamColor,
+        weight: 4,
+      });
+      this.streamLayer.addLayer(tmp_feature).setZIndex(2);
+    }
 
     // build station layer
     this.stationLayer = L.geoJSON().addTo(this.map);

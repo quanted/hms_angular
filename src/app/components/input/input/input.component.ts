@@ -74,7 +74,7 @@ export class InputComponent implements OnInit {
     this.apiForm = this.fb.group({
       endpointSelect: [null],
     });
-    this.simulation.getInterfaceData().subscribe((d) => {
+    this.simulation.interfaceData().subscribe((d) => {
       this.updateInterface(d);
     });
   }
@@ -110,6 +110,7 @@ export class InputComponent implements OnInit {
 
   updatePourInput(pour): void {
     console.log("pour: ", pour);
+    this.pourComId = pour.comid;
   }
 
   updateSegmentInput(segment): void {
