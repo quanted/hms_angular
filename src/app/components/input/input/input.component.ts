@@ -1,3 +1,4 @@
+import { ThisReceiver } from "@angular/compiler";
 import { Component, OnInit } from "@angular/core";
 
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
@@ -18,12 +19,8 @@ export class InputComponent implements OnInit {
   apiForm: FormGroup;
   endpointForm: FormGroup;
 
-  hucId;
-  hucName;
-  hucMeta;
-  pourComId;
-  pourComName;
-  pourComMeta;
+  huc: HUC;
+  catchment: Catchment;
 
   loadingApi = false;
   apiVersion;
@@ -86,10 +83,10 @@ export class InputComponent implements OnInit {
           this.aoiForm.setValue(data[key]);
           break;
         case "huc":
-          this.updateHucInput(data[key].features[0]);
+          this.updateHucInput(data[key]);
           break;
-        case "pour":
-          this.updatePourInput(data[key]);
+        case "catchment":
+          this.updateCatchmentInput(data[key]);
           break;
         default:
         // console.log("unknown key: ", key);
@@ -102,26 +99,35 @@ export class InputComponent implements OnInit {
   }
 
   updateHucInput(huc): void {
-    // console.log("huc: ", huc);
-    this.hucId = huc.properties.HUC_12;
-    this.hucName = huc.properties.HU_12_NAME;
-    this.hucMeta = huc.properties.AREA_ACRES;
+    this.huc = huc;
   }
 
-  updatePourInput(pour): void {
-    console.log("pour: ", pour);
-    this.pourComId = pour.comid;
+  clearHuc(): void {
+    this.mapService.removeFeature("huc", this.huc.id);
+    this.simulation.updateSimData("huc", null);
+    this.huc = null;
+    if (this.catchment) {
+      this.clearCatchment();
+    }
   }
 
-  updateSegmentInput(segment): void {
-    console.log("segment: ", segment);
+  updateCatchmentInput(catchment): void {
+    this.catchment = catchment;
+  }
+
+  clearCatchment(): void {
+    this.mapService.removeFeature("catchment", this.catchment.id);
+    this.simulation.updateSimData("catchment", null);
+    this.catchment = null;
+  }
+
+  getStreamNetwork(): void {
+    this.mapService.getStreamNetwork(this.catchment.id);
   }
 
   selectModule(): void {
     this.simulation.selectATXModule(this.moduleForm.get("moduleSelect").value);
   }
-
-  getStreamNetwork(): void {}
 
   updateEndpointForm(): void {
     let endpoint = this.apiForm.get("endpointSelect").value;
@@ -164,4 +170,16 @@ export class InputComponent implements OnInit {
   gotoData(endpoint) {
     console.log("click! ", endpoint);
   }
+}
+
+interface HUC {
+  areaAcres: string;
+  areaSqKm: string;
+  id: string;
+  name: string;
+}
+
+interface Catchment {
+  areaSqKm: string;
+  id: string;
 }

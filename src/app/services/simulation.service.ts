@@ -49,7 +49,11 @@ export class SimulationService {
   }
 
   updateSimData(key, data): void {
-    this.simData[key] = { ...this.simData[key], ...data };
+    if (data) {
+      this.simData[key] = { ...this.simData[key], ...data };
+    } else {
+      this.simData[key] = null;
+    }
     this.simDataSubject.next(this.simData);
   }
 
@@ -58,6 +62,11 @@ export class SimulationService {
     return this.simDataSubject;
   }
 
+  getSimData() {
+    return this.simData;
+  }
+
+  // HMS api related data
   updateData(endpoint, data): void {
     this.hmsRequestedData[endpoint] = data;
   }

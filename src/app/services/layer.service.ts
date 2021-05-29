@@ -115,6 +115,12 @@ export class LayerService {
     },
   ];
 
+  // flag = L.icon({
+  //   iconUrl: "../assets/images/icon_flag.png",
+  //   iconSize: [32, 32], // size of the icon
+  //   iconAnchor: [16, 16], // point of the icon which will correspond to marker's location
+  // });
+
   basemapLayers = [
     /* "Map Name": L.tileLayer, */
   ];
@@ -124,11 +130,6 @@ export class LayerService {
 
   map;
   defaultBasemap = "Open Street Map";
-
-  snapline: L.GeoJSON = null;
-  streamLayer: L.GeoJSON = null;
-  searchStartStream: L.GeoJSON = null;
-  stationLayer: L.GeoJSON = null;
 
   constructor(private simulation: SimulationService) {
     // setup default tile maps
@@ -170,12 +171,8 @@ export class LayerService {
     }
   }
 
-  addFeature(feature): void {
-    console.log("addFeature: ", feature);
-    if (this.featureLayers[feature]) {
-      this.map.removeLayer(this.featureLayers[feature]);
-    }
-    const newFeature = L.geoJSON(feature.features[0].geometry, {
+  addFeature(id, feature) {
+    const newFeature = L.geoJSON(feature, {
       style: {
         color: "#0000ff",
         weight: 2,
@@ -183,19 +180,22 @@ export class LayerService {
         fillOpacity: 0.25,
       },
     });
-    newFeature
-      .bindTooltip(
-        `HUC: ${feature.features[0].properties.HUC_12}
-      ${feature.features[0].properties.HU_12_NAME}`
-      )
-      .setZIndex(3)
-      .addTo(this.map);
+    newFeature.bindTooltip(`ID: ${id}`).addTo(this.map);
     this.featureLayers.push({
       type: "feature",
-      name: feature.features[0].properties.HU_12_NAME,
+      name: id,
       layer: newFeature,
       show: true,
     });
+  }
+
+  removeFeature(id) {
+    for (let feature of this.featureLayers) {
+      if (feature.name == id) {
+        this.featureLayers.splice(this.featureLayers.indexOf(feature), 1);
+        this.map.removeLayer(feature.layer);
+      }
+    }
   }
 
   buildStreamLayer(data) {
@@ -204,65 +204,106 @@ export class LayerService {
     const outHucColor = "#FF00FF";
 
     const fl = data.output.flowlines_traversed;
+    const inHucSegments = [];
+    const outHucSegments = [];
 
-    // pour point segment
-    this.searchStartStream = L.geoJSON(fl[0].shape, {
-      style: {
-        color: startColor,
-        weight: 4,
-      },
-    })
-      .bindTooltip(`comID: ${fl[0].comid}`)
-      .setZIndex(1)
-      .addTo(this.map);
-
-    this.streamLayer = L.geoJSON().addTo(this.map);
     for (let i in fl) {
-      let streamColor = inHucColor;
+      // first segment is pour point, add it as layer
+      if (i == "0") {
+        let tmp_feature = L.geoJSON(fl[i].shape, {
+          style: {
+            color: startColor,
+            weight: 2,
+            fillColor: startColor,
+            fillOpacity: 1,
+          },
+        })
+          .bindTooltip(`comID: ${fl[i].comid}`)
+          .addTo(this.map);
+
+        // Add click event listener to each stream segment
+        tmp_feature.on("click", () => {
+          this.simulation.selectComId(fl[i].comid);
+        });
+        this.featureLayers.push({
+          type: "feature",
+          name: "Pout Point",
+          layer: tmp_feature,
+          show: true,
+        });
+        continue;
+      }
+
       let tmp_feature = L.geoJSON(fl[i].shape).bindTooltip(
         `comID: ${fl[i].comid}`
       );
-
-      // Add click event listener to each stream layer for
-      // displaying comid select input UI.
+      // Add click event listener to each stream segment
       tmp_feature.on("click", () => {
         this.simulation.selectComId(fl[i].comid);
       });
 
-      // if (this.hucSelected.HUC_12 === fl[i].wbd_huc12) {
-      //   streamColor = inHucColor;
-      // } else {
-      //   streamColor = outHucColor;
-      // }
-      tmp_feature.setStyle({
-        color: streamColor,
-        weight: 4,
-      });
-      this.streamLayer.addLayer(tmp_feature).setZIndex(2);
-    }
-
-    // build station layer
-    this.stationLayer = L.geoJSON().addTo(this.map);
-    const stations = data.output.events_encountered;
-    if (stations) {
-      for (let i = 0; i < stations.length; i++) {
-        const sEvent = stations[i];
-        const sFeatureId = sEvent.source_featureid;
-        const sProgram = sEvent.source_program;
-        // console.log("event: ", sEvent);
-        L.marker([sEvent.shape.coordinates[1], sEvent.shape.coordinates[0]])
-          .bindPopup(sFeatureId)
-          .addTo(this.stationLayer);
+      const selectedHuc = this.simulation.getSimData()["huc"].id;
+      if (selectedHuc == fl[i].wbd_huc12) {
+        inHucSegments.push(tmp_feature);
+        tmp_feature.setStyle({
+          color: inHucColor,
+          weight: 2,
+          fillColor: inHucColor,
+          fillOpacity: 1,
+        });
+      } else {
+        outHucSegments.push(tmp_feature);
+        tmp_feature.setStyle({
+          color: outHucColor,
+          weight: 2,
+          fillColor: outHucColor,
+          fillOpacity: 1,
+        });
       }
     }
 
-    // Bring search start segment to front
-    this.searchStartStream.bringToFront();
+    const streamLayer = L.layerGroup(inHucSegments).addTo(this.map);
+    streamLayer["options"]["style"] = {
+      color: inHucColor,
+      weight: 2,
+      fillColor: inHucColor,
+      fillOpacity: 1,
+    };
+    this.featureLayers.push({
+      type: "feature",
+      name: "network",
+      layer: streamLayer,
+      show: true,
+    });
 
-    // centers map on result - TODO: except it doesn't sometimes
-    // this.map.fitBounds(this.streamLayer.getBounds(), {
-    //   maxZoom: 13,
-    // });
+    const boundryLayer = L.featureGroup(outHucSegments).addTo(this.map);
+    boundryLayer["options"]["style"] = {
+      color: outHucColor,
+      weight: 2,
+      fillColor: outHucColor,
+      fillOpacity: 1,
+    };
+    this.featureLayers.push({
+      type: "feature",
+      name: "boundry",
+      layer: boundryLayer,
+      show: true,
+    });
+
+    // build station layer
+    // this.stationLayer = L.geoJSON().addTo(this.map);
+    // const stations = data.output.events_encountered;
+    // if (stations) {
+    //   for (let i = 0; i < stations.length; i++) {
+    //     const sEvent = stations[i];
+    //     const sFeatureId = sEvent.source_featureid;
+    //     const sProgram = sEvent.source_program;
+    //     // console.log("event: ", sEvent);
+    //     L.marker([sEvent.shape.coordinates[1], sEvent.shape.coordinates[0]])
+    //       .bindPopup(sFeatureId)
+    //       .addTo(this.stationLayer);
+    //   }
+    // }
   }
 
   toggleLayer(type, name): void {

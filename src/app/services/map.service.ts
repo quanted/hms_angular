@@ -18,14 +18,8 @@ export class MapService {
   map: L.Map;
 
   // State letiables interface steps
-  hucSelected = null;
-  pourSelected = null;
-
-  // flag = L.icon({
-  //   iconUrl: "../assets/images/icon_flag.png",
-  //   iconSize: [32, 32], // size of the icon
-  //   iconAnchor: [16, 16], // point of the icon which will correspond to marker's location
-  // });
+  hucSelected = false;
+  catchmentSelected = false;
 
   constructor(
     private layerService: LayerService,
@@ -59,9 +53,10 @@ export class MapService {
   handleClick(mapClickEvent): void {
     if (!this.hucSelected) {
       this.getHuc(mapClickEvent.latlng);
-    }
-    if (this.hucSelected && !this.pourSelected) {
-      this.getClosestComId(mapClickEvent.latlng);
+    } else {
+      if (this.hucSelected && !this.catchmentSelected) {
+        this.getCatchment(mapClickEvent.latlng);
+      }
     }
   }
 
@@ -95,16 +90,27 @@ export class MapService {
     // });
   }
 
+  removeFeature(type, id): void {
+    this.layerService.removeFeature(id);
+    if (type == "huc") this.hucSelected = false;
+    if (type == "catchment") this.catchmentSelected = false;
+  }
+
   getHuc(coords): void {
+    this.hucSelected = true;
     this.getHucData("HUC_12", coords.lat, coords.lng).subscribe((data) => {
       if (data) {
         this.simulation.updateSimData("coords", coords);
-        this.simulation.updateSimData("huc", data);
-        this.hucSelected = {
-          HUC_12: data.features[0].properties.HUC_12,
-          HUC_12_NAME: data.features[0].properties.HU_12_NAME,
-        };
-        this.layerService.addFeature(data);
+        const properties = data.features[0].properties;
+        this.simulation.updateSimData("huc", {
+          areaAcres: properties.AREA_ACRES,
+          areaSqKm: properties.AREA_SQKM,
+          id: properties.HUC_12,
+          name: properties.HU_12_NAME,
+        });
+        this.layerService.addFeature(data.features[0].properties.HUC_12, data);
+      } else {
+        this.hucSelected = false;
       }
     });
   }
@@ -152,7 +158,24 @@ export class MapService {
     );
   }
 
-  getCatchment(): void {}
+  getCatchment(coords): void {
+    this.getCatchmentData(coords.lat, coords.lng).subscribe((data) => {
+      if (data) {
+        this.catchmentSelected = true;
+        const properties = data.features[0].properties;
+        this.simulation.updateSimData("catchment", {
+          areaSqKm: properties.AREA_SQKM,
+          id: properties.FEATUREID,
+        });
+        this.layerService.addFeature(
+          data.features[0].properties.FEATUREID,
+          data
+        );
+      } else {
+        this.catchmentSelected = false;
+      }
+    });
+  }
 
   getCatchmentData(lat, lng): Observable<any> {
     // COMID Request
@@ -176,63 +199,10 @@ export class MapService {
     );
   }
 
-  getClosestComId(latlng): void {
-    this.getPointIndexingService(latlng.lat, latlng.lng).subscribe((data) => {
-      if (data) {
-        this.simulation.updateSimData("pour", {
-          comid: data.output.ary_flowlines[0].comid,
-        });
-        this.pourSelected = {
-          pour: data,
-        };
-        this.getStreamNetwork(data);
-      }
-    });
-  }
-
-  getPointIndexingService(lat, lng): Observable<any> {
-    let data = {
-      pGeometry: "POINT(" + lng + " " + lat + ")",
-      pGeometryMod: "WKT,SRSNAME=urn:ogc:def:crs:OGC::CRS84",
-      pPointIndexingMethod: "DISTANCE",
-      pPointIndexingRaindropDist: 0,
-      pPointIndexingMaxDist: 25,
-      pOutputPathFlag: "TRUE",
-      pReturnFlowlineGeomFlag: "FALSE",
-    };
-
-    const request =
-      this.watersUrl + "PointIndexing.Service?" + this.serialize(data);
-
-    return this.http.get(request).pipe(
-      map((data: any) => {
-        return data;
-      }),
-      catchError((err) => {
-        if (err.name == "TimeoutError") {
-          return of(err);
-        }
-        return of({ error: err });
-      })
-    );
-  }
-
-  getStreamNetwork(response): void {
-    let srv_rez = response.output;
-    let comid = srv_rez.ary_flowlines[0].comid;
-    let measure = srv_rez.ary_flowlines[0].fmeasure;
-
-    // adds new snapline to layer
-    // let tmp_feature = this.geojson2feature(srv_rez.indexing_path);
-    // this.snapline.addData(tmp_feature).setStyle({
-    //   color: "#FF0000",
-    //   fillColor: "#FF0000"
-    // });
-
+  getStreamNetwork(comid): void {
     let data = {
       pNavigationType: "UT", // Upstream with tributaries
       pStartComid: comid,
-      pStartMeasure: measure,
       pTraversalSummary: "TRUE",
       pFlowlinelist: "TRUE",
       pEventList: "10012,10030", // 10012 - STORET, Water Monitoring | 10030 - NPGAGE, USGS Streamgages from NHDPlus
@@ -240,7 +210,6 @@ export class MapService {
       pStopDistancekm: 50, // if value is null, set to default value: 50km
       pNearestEntityList: "STORET,NPGAGE",
       pNearestEntityListMod: ",",
-      //"optQueueResults": "THREADED", // using this option puts the request in a queue, must check for "complete"
       optOutPruneNumber: 8,
       optOutCS: "SRSNAME=urn:ogc:def:crs:OGC::CRS84",
     };

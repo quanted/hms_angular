@@ -11,9 +11,18 @@
                 <div>Lat <input type="number" formControlName="lat"/></div>
                 <div>Lng <input type="number" formControlName="lng"/></div>
             </div>
-            <div>Huc {{ hucId || 'unknown' }}, Name {{ hucName || 'unknown' }}, {{ hucMeta || 'no metadata' }}</div>
-            <div>Pour Point {{ pourComId || 'unknown' }}, Name {{ pourComName || 'unknown' }}, {{ pourComMeta || 'no metadata' }}</div>
-            <div class="button" (click)="getStreamNetwork()">Get stream network</div>
+            <div *ngIf="huc">
+                <div>Huc {{ huc.id || 'select huc' }}</div>
+                <div>Name {{ huc.name || 'unknown' }}</div>
+                <div class="button" (click)="clearHuc()">clear huc</div>
+            </div>
+            <div *ngIf="catchment">
+                <div>Catchment {{ catchment.id || 'select catchment' }}</div>
+                <div class="button" (click)="clearCatchment()">clear catchment</div>
+            </div>
+            <div *ngIf="huc && catchment">
+                <div class="button" (click)="getStreamNetwork()">Get stream network</div>
+            </div>
         </div>
 
         <div class="container-item" [formGroup]="moduleForm">
