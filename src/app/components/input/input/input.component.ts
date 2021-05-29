@@ -122,7 +122,7 @@ export class InputComponent implements OnInit {
   }
 
   getStreamNetwork(): void {
-    this.mapService.getStreamNetwork(this.catchment.id);
+    this.mapService.buildStreamNetwork(this.catchment.id);
   }
 
   selectModule(): void {
