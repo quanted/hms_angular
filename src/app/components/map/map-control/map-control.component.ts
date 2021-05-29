@@ -9,14 +9,16 @@ import { LayerService } from "src/app/services/layer.service";
 })
 export class MapControlComponent implements OnInit {
   basemaps = [];
-  features = [];
+  defaultFeatures = [];
+  simFeatures = [];
 
   constructor(private layerService: LayerService) {}
 
   ngOnInit(): void {
     const layers = this.layerService.getLayers();
     this.basemaps = layers.basemaps;
-    this.features = layers.features;
+    this.defaultFeatures = layers.defaultFeatures;
+    this.simFeatures = layers.simFeatures;
   }
 
   toggleBasemap(controlButton): void {

@@ -127,6 +127,9 @@ export class LayerService {
   featureLayers = [
     /* "Marker": ESRI.featureLayer, */
   ];
+  simLayers = [
+    /* "Pour Point": L.layer, */
+  ];
 
   map;
   defaultBasemap = "Open Street Map";
@@ -179,10 +182,9 @@ export class LayerService {
         fillColor: "#0000ff",
         fillOpacity: 0.25,
       },
-    });
-    newFeature.bindTooltip(`ID: ${id}`).addTo(this.map);
-    this.featureLayers.push({
-      type: "feature",
+    }).addTo(this.map);
+    this.simLayers.push({
+      type: "simfeature",
       name: id,
       layer: newFeature,
       show: true,
@@ -190,9 +192,9 @@ export class LayerService {
   }
 
   removeFeature(id) {
-    for (let feature of this.featureLayers) {
+    for (let feature of this.simLayers) {
       if (feature.name == id) {
-        this.featureLayers.splice(this.featureLayers.indexOf(feature), 1);
+        this.simLayers.splice(this.simLayers.indexOf(feature), 1);
         this.map.removeLayer(feature.layer);
       }
     }
@@ -225,8 +227,8 @@ export class LayerService {
         tmp_feature.on("click", () => {
           this.simulation.selectComId(fl[i].comid);
         });
-        this.featureLayers.push({
-          type: "feature",
+        this.simLayers.push({
+          type: "simfeature",
           name: "Pout Point",
           layer: tmp_feature,
           show: true,
@@ -269,8 +271,8 @@ export class LayerService {
       fillColor: inHucColor,
       fillOpacity: 1,
     };
-    this.featureLayers.push({
-      type: "feature",
+    this.simLayers.push({
+      type: "simfeature",
       name: "network",
       layer: streamLayer,
       show: true,
@@ -283,8 +285,8 @@ export class LayerService {
       fillColor: outHucColor,
       fillOpacity: 1,
     };
-    this.featureLayers.push({
-      type: "feature",
+    this.simLayers.push({
+      type: "simfeature",
       name: "boundry",
       layer: boundryLayer,
       show: true,
@@ -332,6 +334,18 @@ export class LayerService {
           }
         }
         break;
+      case "simfeature":
+        for (let feature of this.simLayers) {
+          if (feature.name == name) {
+            feature.show = !feature.show;
+          }
+          if (feature.show) {
+            this.map.addLayer(feature.layer);
+          } else {
+            this.map.removeLayer(feature.layer);
+          }
+        }
+        break;
       default:
         console.log("UNKNOWN MAP_LAYER_TYPE: ", type);
     }
@@ -348,7 +362,8 @@ export class LayerService {
   getLayers() {
     return {
       basemaps: this.basemapLayers,
-      features: this.featureLayers,
+      defaultFeatures: this.featureLayers,
+      simFeatures: this.simLayers,
     };
   }
 }
