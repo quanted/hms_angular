@@ -229,7 +229,7 @@ export class LayerService {
         });
         this.simLayers.push({
           type: "simfeature",
-          name: "Pout Point",
+          name: "Pour Point",
           layer: tmp_feature,
           show: true,
         });
