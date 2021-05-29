@@ -293,19 +293,31 @@ export class LayerService {
     });
 
     // build station layer
-    // this.stationLayer = L.geoJSON().addTo(this.map);
-    // const stations = data.output.events_encountered;
-    // if (stations) {
-    //   for (let i = 0; i < stations.length; i++) {
-    //     const sEvent = stations[i];
-    //     const sFeatureId = sEvent.source_featureid;
-    //     const sProgram = sEvent.source_program;
-    //     // console.log("event: ", sEvent);
-    //     L.marker([sEvent.shape.coordinates[1], sEvent.shape.coordinates[0]])
-    //       .bindPopup(sFeatureId)
-    //       .addTo(this.stationLayer);
-    //   }
-    // }
+    const stationLayer = L.geoJSON().addTo(this.map);
+    const stations = data.output.events_encountered;
+    if (stations) {
+      for (let i = 0; i < stations.length; i++) {
+        const sEvent = stations[i];
+        const sFeatureId = sEvent.source_featureid;
+        const sProgram = sEvent.source_program;
+        // console.log("event: ", sEvent);
+        L.marker([sEvent.shape.coordinates[1], sEvent.shape.coordinates[0]])
+          .bindPopup(sFeatureId)
+          .addTo(stationLayer);
+      }
+    }
+    stationLayer["options"]["style"] = {
+      color: outHucColor,
+      weight: 2,
+      fillColor: outHucColor,
+      fillOpacity: 1,
+    };
+    this.simLayers.push({
+      type: "simfeature",
+      name: "stations",
+      layer: stationLayer,
+      show: true,
+    });
   }
 
   toggleLayer(type, name): void {
