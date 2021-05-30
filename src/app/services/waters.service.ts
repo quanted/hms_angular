@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 
 import { Observable, of } from "rxjs";
-import { catchError, map, timeout } from "rxjs/operators";
+import { catchError, map } from "rxjs/operators";
 
 @Injectable({
   providedIn: "root",
@@ -43,13 +43,7 @@ export class WatersService {
     }
     let queryString = point + outFields + params;
     return this.http.get(baseUrl + queryString).pipe(
-      map((data: any) => {
-        return data;
-      }),
       catchError((err) => {
-        if (err.name == "TimeoutError") {
-          return of(err);
-        }
         return of({ error: err });
       })
     );
@@ -64,20 +58,13 @@ export class WatersService {
       lat +
       "%2C+%22spatialReference%22+%3A+%7B%22wkid%22+%3A+4326%7D%7D&geometryType=esriGeometryPoint&inSR=&spatialRel=esriSpatialRelWithin&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=%7B%22wkt%22+%3A+%22GEOGCS%5B%5C%22GCS_WGS_1984%5C%22%2CDATUM%5B%5C%22D_WGS_1984%5C%22%2C+SPHEROID%5B%5C%22WGS_1984%5C%22%2C6378137%2C298.257223563%5D%5D%2CPRIMEM%5B%5C%22Greenwich%5C%22%2C0%5D%2C+UNIT%5B%5C%22Degree%5C%22%2C0.017453292519943295%5D%5D%22%7D&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentsOnly=false&datumTransformation=&parameterValues=&rangeValues=&f=geojson";
     return this.http.get(url).pipe(
-      map((data: any) => {
-        return data;
-      }),
-      timeout(5000),
       catchError((err) => {
-        if (err.name == "TimeoutError") {
-          return of(err);
-        }
         return of({ error: err });
       })
     );
   }
 
-  getStreamNetwork(comid): Observable<any> {
+  getStreamNetworkData(comid): Observable<any> {
     let data = {
       pNavigationType: "UT", // Upstream with tributaries
       pStartComid: comid,
@@ -92,9 +79,18 @@ export class WatersService {
       optOutCS: "SRSNAME=urn:ogc:def:crs:OGC::CRS84",
     };
 
-    return this.http.get(
-      this.watersUrl + "UpstreamDownstream.Service?" + this.serialize(data)
-    );
+    return this.http
+      .get(
+        this.watersUrl + "UpstreamDownstream.Service?" + this.serialize(data)
+      )
+      .pipe(
+        map((data: any) => {
+          return data;
+        }),
+        catchError((err) => {
+          return of({ error: err });
+        })
+      );
   }
 
   /* from https://github.com/Esri/esri-leaflet/blob/master/src/Request.js */

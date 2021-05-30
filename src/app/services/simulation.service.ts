@@ -14,11 +14,6 @@ export class SimulationService {
   simData = {};
   simDataSubject: BehaviorSubject<any>;
 
-  selectedCoords;
-  selectedPourPoint;
-  selectedHUC;
-  selectedComId;
-
   // list of data returned from hms requests
   hmsRequestedData = [];
 
@@ -44,7 +39,6 @@ export class SimulationService {
   }
 
   selectComId(comid): void {
-    this.selectedComId = comid;
     this.updateSimData("selectedComId", { comid });
   }
 
@@ -57,7 +51,7 @@ export class SimulationService {
     this.simDataSubject.next(this.simData);
   }
 
-  // returns a Subject that component subscribes to
+  // returns a Subject for interface components to subscribe to
   interfaceData(): BehaviorSubject<any> {
     return this.simDataSubject;
   }
@@ -66,7 +60,7 @@ export class SimulationService {
     return this.simData;
   }
 
-  // HMS api related data
+  // HMS api related functions
   updateData(endpoint, data): void {
     this.hmsRequestedData[endpoint] = data;
   }

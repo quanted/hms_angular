@@ -12,7 +12,7 @@ import { WatersService } from "./waters.service";
 export class MapService {
   map: L.Map;
 
-  // State letiables interface steps
+  // State variables, interface steps
   hucSelected = false;
   catchmentSelected = false;
 
@@ -32,15 +32,6 @@ export class MapService {
       this.map.on("click", (mapClickEvent) => {
         this.handleClick(mapClickEvent);
       });
-      this.map.on("mousemove", (mapMoveEvent) => {
-        // this.handleMove(mapMoveEvent);
-      });
-      this.map.on("drag", (mapDragEvent) => {
-        this.handleDrag(mapDragEvent);
-      });
-      this.map.on("zoomend", (mapZoomEvent) => {
-        this.handleZoom(mapZoomEvent);
-      });
     }
     this.layerService.setupLayers(this.map);
   }
@@ -55,40 +46,13 @@ export class MapService {
     }
   }
 
-  handleDrag(mapDragEvent): void {
-    // console.log('mapDragEvent: ', mapDragEvent);
-  }
-
-  handleZoom(mapZoomEvent) {
-    let zoom = this.map.getZoom();
-  }
-
-  handleMove(mapMoveEvent) {
-    // this.getHucData(
-    //   "HUC_12",
-    //   mapMoveEvent.latlng.lat,
-    //   mapMoveEvent.latlng.lng
-    // ).subscribe((data) => {
-    //   if (this.hoverLayer !== null) {
-    //     this.map.removeLayer(this.hoverLayer);
-    //   }
-    //   this.hoverLayer = L.geoJSON(data, {
-    //     style: {
-    //       color: "#FF0000",
-    //       weight: 2,
-    //       fillColor: "#FF0000",
-    //       fillOpacity: 0.25,
-    //     },
-    //   })
-    //     .setZIndex(4)
-    //     .addTo(this.map);
-    // });
-  }
-
   removeFeature(type, id): void {
     this.layerService.removeFeature(id);
     if (type == "huc") this.hucSelected = false;
-    if (type == "catchment") this.catchmentSelected = false;
+    if (type == "catchment") {
+      this.catchmentSelected = false;
+      this.layerService.removeStream();
+    }
   }
 
   getHuc(coords): void {
@@ -116,9 +80,9 @@ export class MapService {
   }
 
   getCatchment(coords): void {
+    this.catchmentSelected = true;
     this.waters.getCatchmentData(coords.lat, coords.lng).subscribe((data) => {
       if (data) {
-        this.catchmentSelected = true;
         const properties = data.features[0].properties;
         this.simulation.updateSimData("catchment", {
           areaSqKm: properties.AREA_SQKM,
@@ -135,8 +99,8 @@ export class MapService {
   }
 
   buildStreamNetwork(comid): void {
-    this.waters.getStreamNetwork(comid).subscribe((data) => {
-      this.layerService.buildStreamLayer(data);
+    this.waters.getStreamNetworkData(comid).subscribe((data) => {
+      this.layerService.buildStreamLayers(data);
     });
   }
 }

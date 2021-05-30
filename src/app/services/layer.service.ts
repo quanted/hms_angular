@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 
 import * as L from "leaflet";
 import * as ESRI from "esri-leaflet";
+
 import { SimulationService } from "./simulation.service";
 
 @Injectable({
@@ -148,19 +149,43 @@ export class LayerService {
     for (let feature of this.features) {
       let layer = ESRI.featureLayer({
         url: feature.url,
+        onEachFeature: this.addToolTip,
       });
-      layer.setStyle({
-        color: feature.style.color,
-        weight: feature.style.weight,
-        fillColor: feature.style.fillColor,
-        fillOpacity: feature.style.fillOpacity,
+      layer.on("mouseover", (d) => {
+        d.layer.setStyle({
+          color: feature.style.color,
+          weight: feature.style.weight,
+          fillColor: "#00FF00",
+          fillOpacity: 0.25,
+        });
       });
+      layer.on("mouseout", (d) => {
+        d.layer.setStyle(feature.style);
+      });
+      layer.setStyle(feature.style);
       this.featureLayers.push({
         type: "feature",
         name: feature.name,
         layer: layer,
         show: false,
       });
+    }
+  }
+
+  addToolTip(feature, layer): void {
+    const layerNames = [
+      "HU_12_NAME",
+      "HU_10_NAME",
+      "HU_8_NAME",
+      "HU_6_NAME",
+      "HU_4_NAME",
+      "HU_2_NAME",
+    ];
+    for (let name of layerNames) {
+      if (feature.properties[name]) {
+        layer.bindTooltip(feature.properties[name]);
+        break;
+      }
     }
   }
 
@@ -200,7 +225,14 @@ export class LayerService {
     }
   }
 
-  buildStreamLayer(data) {
+  removeStream(): void {
+    this.removeFeature("Pour Point");
+    this.removeFeature("network");
+    this.removeFeature("boundry");
+    this.removeFeature("stations");
+  }
+
+  buildStreamLayers(data) {
     const startColor = "#FF0000";
     const inHucColor = "#00F0F0";
     const outHucColor = "#FF00FF";
@@ -264,38 +296,42 @@ export class LayerService {
       }
     }
 
-    const streamLayer = L.layerGroup(inHucSegments).addTo(this.map);
-    streamLayer["options"]["style"] = {
-      color: inHucColor,
-      weight: 2,
-      fillColor: inHucColor,
-      fillOpacity: 1,
-    };
-    this.simLayers.push({
-      type: "simfeature",
-      name: "network",
-      layer: streamLayer,
-      show: true,
-    });
+    if (inHucSegments.length) {
+      const streamLayer = L.layerGroup(inHucSegments).addTo(this.map);
+      streamLayer["options"]["style"] = {
+        color: inHucColor,
+        weight: 2,
+        fillColor: inHucColor,
+        fillOpacity: 1,
+      };
+      this.simLayers.push({
+        type: "simfeature",
+        name: "network",
+        layer: streamLayer,
+        show: true,
+      });
+    }
 
-    const boundryLayer = L.featureGroup(outHucSegments).addTo(this.map);
-    boundryLayer["options"]["style"] = {
-      color: outHucColor,
-      weight: 2,
-      fillColor: outHucColor,
-      fillOpacity: 1,
-    };
-    this.simLayers.push({
-      type: "simfeature",
-      name: "boundry",
-      layer: boundryLayer,
-      show: true,
-    });
+    if (outHucSegments.length) {
+      const boundryLayer = L.featureGroup(outHucSegments).addTo(this.map);
+      boundryLayer["options"]["style"] = {
+        color: outHucColor,
+        weight: 2,
+        fillColor: outHucColor,
+        fillOpacity: 1,
+      };
+      this.simLayers.push({
+        type: "simfeature",
+        name: "boundry",
+        layer: boundryLayer,
+        show: true,
+      });
+    }
 
     // build station layer
-    const stationLayer = L.geoJSON().addTo(this.map);
     const stations = data.output.events_encountered;
     if (stations) {
+      const stationLayer = L.geoJSON().addTo(this.map);
       for (let i = 0; i < stations.length; i++) {
         const sEvent = stations[i];
         const sFeatureId = sEvent.source_featureid;
@@ -305,19 +341,19 @@ export class LayerService {
           .bindPopup(sFeatureId)
           .addTo(stationLayer);
       }
+      stationLayer["options"]["style"] = {
+        color: outHucColor,
+        weight: 2,
+        fillColor: outHucColor,
+        fillOpacity: 1,
+      };
+      this.simLayers.push({
+        type: "simfeature",
+        name: "stations",
+        layer: stationLayer,
+        show: true,
+      });
     }
-    stationLayer["options"]["style"] = {
-      color: outHucColor,
-      weight: 2,
-      fillColor: outHucColor,
-      fillOpacity: 1,
-    };
-    this.simLayers.push({
-      type: "simfeature",
-      name: "stations",
-      layer: stationLayer,
-      show: true,
-    });
   }
 
   toggleLayer(type, name): void {

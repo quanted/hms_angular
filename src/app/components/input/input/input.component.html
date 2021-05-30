@@ -1,22 +1,23 @@
 <div class="container-col-1">
     <div class="scroll-pane">
         <div class="container-item">
-            Area of Interest
-            <div>
+            <div>Area of Interest</div>
+            <!-- <div id="coords-form" [formGroup]="aoiForm">
+                <div>Lat <input type="number" formControlName="lat"/></div>
+                <div>Lng <input type="number" formControlName="lng"/></div>
+            </div> -->
+            <div class="container-item">
                 <select>
                     <option value="12">HUC 12</option>
                 </select>
+                <div *ngIf="!huc">click map to select huc</div>
+                <div *ngIf="huc">
+                    <div>Huc {{ huc.id }}</div>
+                    <div>Name {{ huc.name }}</div>
+                    <div class="button" (click)="clearHuc()">clear huc</div>
+                </div>
             </div>
-            <div id="coords-form" [formGroup]="aoiForm">
-                <div>Lat <input type="number" formControlName="lat"/></div>
-                <div>Lng <input type="number" formControlName="lng"/></div>
-            </div>
-            <div *ngIf="huc">
-                <div>Huc {{ huc.id || 'select huc' }}</div>
-                <div>Name {{ huc.name || 'unknown' }}</div>
-                <div class="button" (click)="clearHuc()">clear huc</div>
-            </div>
-            <div *ngIf="catchment">
+            <div *ngIf="catchment" class="container-item">
                 <div>Catchment {{ catchment.id || 'select catchment' }}</div>
                 <div class="button" (click)="clearCatchment()">clear catchment</div>
             </div>
@@ -26,12 +27,14 @@
         </div>
 
         <div class="container-item" [formGroup]="moduleForm">
-            <div>Simulation Globals</div>
+            <div>Aquatox</div>
             <select formControlName="moduleSelect" (change)="selectModule()">
                 <option [value]='null' selected>Select Aquatox module</option>
                 <option *ngFor="let module of atxModules">{{ module }}</option>
             </select>
-            <div id="simulation-globals">
+
+            <div class="container-item" id="simulation-globals">
+                <div>Simulation Globals</div>
                 <div class="form-row">
                     <div>Site name: <input type="text"></div>
                     <div>Site comment: <input type="text"></div>
@@ -41,45 +44,49 @@
                     <div>Last day: <input type="text"></div>
                 </div>
             </div>
-        </div>
 
-        <div class="container-item" id="segment-form">
-            <app-comid-select-input></app-comid-select-input>
-        </div>
-
-        <div class="container-item" *ngIf="loadingApi">
-            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-        </div>
-        <div class="container-item" *ngIf="!loadingApi">
-            <div>HMS data requests</div>
-            <div id="api-form" [formGroup]="apiForm">
-                <select formControlName="endpointSelect" (change)="updateEndpointForm()">
-                    <option [value]='null' selected>Select an endpoint</option>
-                    <option *ngFor="let endpoint of apiEndpointList">{{ endpoint.endpoint }}</option>
-                </select>
+            <div class="container-item" id="segment-form">
+                <div>Stream segment loading</div>
+                <app-comid-select-input></app-comid-select-input>
             </div>
         </div>
-        <div *ngIf="currentEndpoint" class="container-item">
-            <form id="endpoint-form" [formGroup]="endpointForm">
-                <div id="summary">{{ currentEndpoint.summary || 'this endpoint has no summary' }}</div>
-                <div *ngFor="let input of formInputs" class="form-row">
-                    <label for="{{input}}">{{input}}</label>
-                    <input formControlName="{{input}}" type="text">
-                </div>
-                <div class="controls">
-                    <div class="button" (click)="reset()">Clear form</div>
-                    <div> 
-                        <div *ngIf="!waiting" class="button" (click)="submitHMSDataRequest()">submit form</div>
-                        <div *ngIf="waiting" class="button"><mat-progress-bar mode="indeterminate"></mat-progress-bar></div>
-                    </div>
-                </div>
-            </form>
-        </div>
+
         <div class="container-item">
-            <div>HMS data</div>
-            <div *ngIf="!responseList.length">No HMS data</div>
-            <div style="width: 100%;" *ngFor="let response of responseList" class="button" (click)="gotoData(response.endpoint)">
-                {{ response.endpoint }}{{ response.dataSource }}{{ response.dataset }}<mat-icon>delete</mat-icon>
+            <div>HMS</div>
+            <div class="container-item" *ngIf="loadingApi">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            </div>
+            <div class="container-item" *ngIf="!loadingApi">
+                <div>HMS data requests</div>
+                <div id="api-form" [formGroup]="apiForm">
+                    <select formControlName="endpointSelect" (change)="updateEndpointForm()">
+                        <option [value]='null' selected>Select an endpoint</option>
+                        <option *ngFor="let endpoint of apiEndpointList">{{ endpoint.endpoint }}</option>
+                    </select>
+                </div>
+            </div>
+            <div *ngIf="currentEndpoint" class="container-item">
+                <form id="endpoint-form" [formGroup]="endpointForm">
+                    <div id="summary">{{ currentEndpoint.summary || 'this endpoint has no summary' }}</div>
+                    <div *ngFor="let input of formInputs" class="form-row">
+                        <label for="{{input}}">{{input}}</label>
+                        <input formControlName="{{input}}" type="text">
+                    </div>
+                    <div class="controls">
+                        <div class="button" (click)="reset()">Clear form</div>
+                        <div> 
+                            <div *ngIf="!waiting" class="button" (click)="submitHMSDataRequest()">submit form</div>
+                            <div *ngIf="waiting" class="button"><mat-progress-bar mode="indeterminate"></mat-progress-bar></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="container-item">
+                <div>HMS data</div>
+                <div *ngIf="!responseList.length">No HMS data</div>
+                <div style="width: 100%;" *ngFor="let response of responseList" class="button" (click)="gotoData(response.endpoint)">
+                    {{ response.endpoint }}{{ response.dataSource }}{{ response.dataset }}<mat-icon>delete</mat-icon>
+                </div>
             </div>
         </div>
     </div>
