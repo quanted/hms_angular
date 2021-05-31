@@ -184,7 +184,9 @@ export class LayerService {
     ];
     for (let name of layerNames) {
       if (feature.properties[name]) {
-        layer.bindTooltip(feature.properties[name]);
+        layer.bindTooltip(feature.properties[name], {
+          sticky: true,
+        });
         break;
       }
     }
