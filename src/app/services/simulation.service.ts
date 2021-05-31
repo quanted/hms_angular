@@ -8,7 +8,7 @@ import { HmsService } from "./hms.service";
   providedIn: "root",
 })
 export class SimulationService {
-  baseJsons = [];
+  baseJsons = {};
   baseJson = {};
 
   simData = {};
@@ -49,6 +49,7 @@ export class SimulationService {
       this.simData[key] = null;
     }
     this.simDataSubject.next(this.simData);
+    console.log("simData: ", this.simData);
   }
 
   // returns a Subject for interface components to subscribe to
@@ -85,13 +86,7 @@ export class SimulationService {
   }
 
   selectATXModule(module): void {
-    this.baseJson = null;
-    for (let json of this.baseJsons) {
-      if (json.name == module.toLowerCase()) {
-        this.baseJson = json.AQTSim;
-      }
-      if (this.baseJson) break;
-    }
-    console.log(`${module} AQTsim: `, this.baseJson);
+    this.baseJson = this.hms.getBaseJson(module);
+    this.updateSimData("AQTsim", this.baseJson);
   }
 }

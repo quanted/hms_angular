@@ -6,23 +6,25 @@
                 <div>Lat <input type="number" formControlName="lat"/></div>
                 <div>Lng <input type="number" formControlName="lng"/></div>
             </div> -->
-            <div class="container-item">
-                <select>
-                    <option value="12">HUC 12</option>
-                </select>
-                <div *ngIf="!huc">click map to select huc</div>
-                <div *ngIf="huc">
-                    <div>Huc {{ huc.id }}</div>
-                    <div>Name {{ huc.name }}</div>
-                    <div class="button" (click)="clearHuc()">clear huc</div>
+            <select>
+                <option value="12">HUC 12</option>
+            </select>
+            <div *ngIf="!huc"><strong>click map to select huc</strong></div>
+            <div class="control" *ngIf="huc">
+                <div>{{ huc.name }}</div>
+                <div>Huc {{ huc.id }}</div>
+                <div class="button" (click)="clearHuc()">clear huc</div>
+            </div>
+            <div class="control" *ngIf="huc">
+                <div *ngIf="!catchment"><strong>click map to select catchment</strong></div>
+                <div *ngIf="catchment">
+                    <div>Catchment {{ catchment.id || 'select catchment' }}</div>
+                    <div class="button" (click)="clearCatchment()">clear catchment</div>
                 </div>
             </div>
-            <div *ngIf="catchment" class="container-item">
-                <div>Catchment {{ catchment.id || 'select catchment' }}</div>
-                <div class="button" (click)="clearCatchment()">clear catchment</div>
-            </div>
-            <div *ngIf="huc && catchment">
-                <div class="button" (click)="getStreamNetwork()">Get stream network</div>
+            <div class="control" *ngIf="huc && catchment">
+                <div class="button" *ngIf="!loadingStream" (click)="getStreamNetwork()">Get stream network</div>
+                <div class="button" *ngIf="loadingStream"><mat-progress-bar mode="indeterminate"></mat-progress-bar></div>
             </div>
         </div>
 
@@ -33,34 +35,41 @@
                 <option *ngFor="let module of atxModules">{{ module }}</option>
             </select>
 
-            <div class="container-item" id="simulation-globals">
-                <div>Simulation Globals</div>
-                <div class="form-row">
-                    <div>Site name: <input type="text"></div>
-                    <div>Site comment: <input type="text"></div>
+            <ng-container *ngIf="moduleSelected">
+                <div class="container-item" id="simulation-globals">
+                    <div>Simulation Globals</div>
+                    <div class="form-row">
+                        <div>Site name: <input type="text"></div>
+                        <div>Site comment: <input type="text"></div>
+                    </div>
+                    <div class="form-row">
+                        <div>First day: <input type="text"></div>
+                        <div>Last day: <input type="text"></div>
+                    </div>
                 </div>
-                <div class="form-row">
-                    <div>First day: <input type="text"></div>
-                    <div>Last day: <input type="text"></div>
-                </div>
-            </div>
+            </ng-container>
 
-            <div class="container-item" id="segment-form">
-                <div>Stream segment loading</div>
-                <app-comid-select-input></app-comid-select-input>
-            </div>
+            <ng-container *ngIf="stream">
+                <div class="container-item">
+                    <div>Boundry stream segments</div>
+                </div>
+
+                <div class="container-item" id="segment-form">
+                    <div>Stream segment loading</div>
+                    <app-comid-select-input></app-comid-select-input>
+                </div>
+            </ng-container>
         </div>
 
         <div class="container-item">
             <div>HMS</div>
-            <div class="container-item" *ngIf="loadingApi">
+            <div class="container-item" id="mat-progress-bar" *ngIf="loadingApi">
                 <mat-progress-bar mode="indeterminate"></mat-progress-bar>
             </div>
             <div class="container-item" *ngIf="!loadingApi">
-                <div>HMS data requests</div>
                 <div id="api-form" [formGroup]="apiForm">
                     <select formControlName="endpointSelect" (change)="updateEndpointForm()">
-                        <option [value]='null' selected>Select an endpoint</option>
+                        <option [value]='null' selected>Available data requests</option>
                         <option *ngFor="let endpoint of apiEndpointList">{{ endpoint.endpoint }}</option>
                     </select>
                 </div>

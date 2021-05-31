@@ -6,23 +6,35 @@ import { catchError, map, tap, timeout } from "rxjs/operators";
 
 import { environment } from "../../environments/environment";
 
+import * as animals from "../../base_jsons/base_animals.json";
+import * as bioaccumulation from "../../base_jsons/base_bioaccumulation.json";
+import * as chemical from "../../base_jsons/base_chemical.json";
+import * as diagenesis from "../../base_jsons/base_diagenesis.json";
+import * as ecotoxicology from "../../base_jsons/base_ecotoxicology.json";
+import * as nutrients from "../../base_jsons/base_nutrients.json";
+import * as organicmatter from "../../base_jsons/base_organicmatter.json";
+import * as plants from "../../base_jsons/base_plants.json";
+import * as streamhydrology from "../../base_jsons/base_streamhydrology.json";
+
 @Injectable({
   providedIn: "root",
 })
 export class HmsService {
-  atxModules = [
-    "animals",
-    "bioaccumulation",
-    "chemicals",
-    "diagenesis",
-    "ecotoxicology",
-    "nutrients",
-    "organicmatter",
-    "plants",
-    "streamhydrology",
-  ];
+  baseJsons = {};
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.baseJsons = {
+      animals: (animals as any).default,
+      bioaccumulation: (bioaccumulation as any).default,
+      chemical: (chemical as any).default,
+      diagenesis: (diagenesis as any).default,
+      ecotoxicology: (ecotoxicology as any).default,
+      nutrients: (nutrients as any).default,
+      organicmatter: (organicmatter as any).default,
+      plants: (plants as any).default,
+      streamhydrology: (streamhydrology as any).default,
+    };
+  }
 
   getApi(): Observable<any> {
     return this.http.get(environment.swaggerURL).pipe(
@@ -41,7 +53,11 @@ export class HmsService {
   }
 
   getATXModules() {
-    return this.atxModules;
+    return Object.keys(this.baseJsons);
+  }
+
+  getBaseJson(module) {
+    return this.baseJsons[module];
   }
 
   buildEndpointList(swagger) {

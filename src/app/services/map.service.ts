@@ -1,6 +1,8 @@
 import { Injectable } from "@angular/core";
 
 import * as L from "leaflet";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
 
 import { LayerService } from "src/app/services/layer.service";
 import { SimulationService } from "./simulation.service";
@@ -98,9 +100,12 @@ export class MapService {
     });
   }
 
-  buildStreamNetwork(comid): void {
-    this.waters.getStreamNetworkData(comid).subscribe((data) => {
-      this.layerService.buildStreamLayers(data);
-    });
+  buildStreamNetwork(comid): Observable<any> {
+    return this.waters.getStreamNetworkData(comid).pipe(
+      map((data) => {
+        this.layerService.buildStreamLayers(data);
+        return data;
+      })
+    );
   }
 }

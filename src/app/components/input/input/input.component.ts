@@ -1,7 +1,6 @@
-import { ThisReceiver } from "@angular/compiler";
 import { Component, OnInit } from "@angular/core";
 
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { FormBuilder, FormGroup } from "@angular/forms";
 
 import { HmsService } from "src/app/services/hms.service";
 import { MapService } from "src/app/services/map.service";
@@ -21,13 +20,16 @@ export class InputComponent implements OnInit {
 
   huc: HUC;
   catchment: Catchment;
+  stream = false;
 
+  loadingStream = false;
   loadingApi = false;
   apiVersion;
   apiEndpointList = [];
   schemas;
 
   atxModules;
+  moduleSelected = false;
 
   currentEndpoint;
   customRequest = false;
@@ -119,13 +121,21 @@ export class InputComponent implements OnInit {
     this.mapService.removeFeature("catchment", this.catchment.id);
     this.simulation.updateSimData("catchment", null);
     this.catchment = null;
+    this.stream = false;
   }
 
   getStreamNetwork(): void {
-    this.mapService.buildStreamNetwork(this.catchment.id);
+    this.loadingStream = true;
+    this.mapService.buildStreamNetwork(this.catchment.id).subscribe((data) => {
+      this.loadingStream = false;
+      if (data) this.stream = true;
+    });
   }
 
   selectModule(): void {
+    this.moduleForm.get("moduleSelect").value === "null"
+      ? (this.moduleSelected = false)
+      : (this.moduleSelected = true);
     this.simulation.selectATXModule(this.moduleForm.get("moduleSelect").value);
   }
 
