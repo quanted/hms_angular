@@ -49,7 +49,16 @@
                 </div>
             </ng-container>
 
-            <ng-container *ngIf="stream">
+            <div class="container-item" *ngIf="moduleSelected && !stream">
+                <ng-container *ngIf="!huc || !catchment">
+                    No area of interest
+                </ng-container>
+                <ng-container *ngIf="huc && catchment">
+                    No stream network
+                </ng-container>
+            </div>
+
+            <ng-container *ngIf="stream && moduleSelected">
                 <div class="container-item">
                     <div>Boundry stream segments</div>
                 </div>

@@ -70,6 +70,7 @@ export class MapService {
             areaSqKm: properties.AREA_SQKM,
             id: properties.HUC_12,
             name: properties.HU_12_NAME,
+            ...properties,
           });
           this.layerService.addFeature(
             data.features[0].properties.HUC_12,
@@ -87,8 +88,9 @@ export class MapService {
       if (data) {
         const properties = data.features[0].properties;
         this.simulation.updateSimData("catchment", {
-          areaSqKm: properties.AREA_SQKM,
+          areaSqKm: properties.AREASQKM,
           id: properties.FEATUREID,
+          ...properties,
         });
         this.layerService.addFeature(
           data.features[0].properties.FEATUREID,

@@ -116,11 +116,12 @@ export class LayerService {
     },
   ];
 
-  // flag = L.icon({
-  //   iconUrl: "../assets/images/icon_flag.png",
-  //   iconSize: [32, 32], // size of the icon
-  //   iconAnchor: [16, 16], // point of the icon which will correspond to marker's location
-  // });
+  marker = L.icon({
+    iconUrl: "../assets/images/marker-icon.png",
+    iconRetinaUrl: "../assets/images/marker-icon-2x.png",
+    shadowUrl: "../assets/images/marker-shadow.png",
+    iconAnchor: [16, 16], // point of the icon which will correspond to marker's location
+  });
 
   basemapLayers = [
     /* "Map Name": L.tileLayer, */
@@ -337,7 +338,9 @@ export class LayerService {
         const sFeatureId = sEvent.source_featureid;
         const sProgram = sEvent.source_program;
         // console.log("event: ", sEvent);
-        L.marker([sEvent.shape.coordinates[1], sEvent.shape.coordinates[0]])
+        L.marker([sEvent.shape.coordinates[1], sEvent.shape.coordinates[0]], {
+          icon: this.marker,
+        })
           .bindPopup(sFeatureId)
           .addTo(stationLayer);
       }

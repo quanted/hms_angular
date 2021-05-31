@@ -4,3 +4,6 @@ body {
     height: 100vh;
 }
 
+:root {
+    --main-color: lightgoldenrodyellow;
+}
