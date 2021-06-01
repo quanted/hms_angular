@@ -255,7 +255,9 @@ export class LayerService {
             fillOpacity: 1,
           },
         })
-          .bindTooltip(`comID: ${fl[i].comid}`)
+          .bindTooltip(`comID: ${fl[i].comid}`, {
+            sticky: true,
+          })
           .addTo(this.map);
 
         // Add click event listener to each stream segment
@@ -272,7 +274,10 @@ export class LayerService {
       }
 
       let tmp_feature = L.geoJSON(fl[i].shape).bindTooltip(
-        `comID: ${fl[i].comid}`
+        `comID: ${fl[i].comid}`,
+        {
+          sticky: true,
+        }
       );
       // Add click event listener to each stream segment
       tmp_feature.on("click", () => {
