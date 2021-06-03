@@ -103,8 +103,8 @@ export class MapService {
     });
   }
 
-  buildStreamNetwork(comid): Observable<any> {
-    return this.waters.getStreamNetworkData(comid).pipe(
+  buildStreamNetwork(comid, distance): Observable<any> {
+    return this.waters.getStreamNetworkData(comid, distance).pipe(
       map((data) => {
         this.layerService.buildStreamLayers(data);
         return data;

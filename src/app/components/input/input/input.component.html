@@ -22,8 +22,8 @@
                     <div class="button" (click)="clearCatchment()">clear catchment</div>
                 </div>
             </div>
-            <div class="control" *ngIf="huc && catchment && !stream">
-                <div class="form-row">Upstream distance (Km)<input type="number"></div>
+            <div class="control" *ngIf="huc && catchment && !stream" [formGroup]="distanceForm">
+                <div class="form-row">Upstream distance (Km)<input type="number" formControlName="distance"></div>
                 <div class="button" *ngIf="!loadingStream" (click)="getStreamNetwork()">Get stream network</div>
                 <div class="button" *ngIf="loadingStream"><mat-progress-bar mode="indeterminate"></mat-progress-bar></div>
             </div>

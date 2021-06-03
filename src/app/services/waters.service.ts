@@ -64,7 +64,7 @@ export class WatersService {
     );
   }
 
-  getStreamNetworkData(comid): Observable<any> {
+  getStreamNetworkData(comid, distance): Observable<any> {
     let data = {
       pNavigationType: "UT", // Upstream with tributaries
       pStartComid: comid,
@@ -72,7 +72,7 @@ export class WatersService {
       pFlowlinelist: "TRUE",
       pEventList: "10012,10030", // 10012 - STORET, Water Monitoring | 10030 - NPGAGE, USGS Streamgages from NHDPlus
       pEventListMod: ",",
-      pStopDistancekm: 50, // if value is null, set to default value: 50km
+      pStopDistancekm: distance, // if value is null, set to default value: 50km
       pNearestEntityList: "STORET,NPGAGE",
       pNearestEntityListMod: ",",
       optOutPruneNumber: 8,

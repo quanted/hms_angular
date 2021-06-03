@@ -13,6 +13,7 @@ import { SimulationService } from "src/app/services/simulation.service";
 })
 export class InputComponent implements OnInit {
   aoiForm: FormGroup;
+  distanceForm: FormGroup;
   sourceForm: FormGroup;
   moduleForm: FormGroup;
   apiForm: FormGroup;
@@ -67,6 +68,9 @@ export class InputComponent implements OnInit {
     this.aoiForm = this.fb.group({
       lat: [null],
       lng: [null],
+    });
+    this.distanceForm = this.fb.group({
+      distance: ["50"],
     });
     this.sourceForm = this.fb.group({
       source: [null],
@@ -131,10 +135,15 @@ export class InputComponent implements OnInit {
 
   getStreamNetwork(): void {
     this.loadingStream = true;
-    this.mapService.buildStreamNetwork(this.catchment.id).subscribe((data) => {
-      this.loadingStream = false;
-      if (data) this.stream = true;
-    });
+    this.mapService
+      .buildStreamNetwork(
+        this.catchment.id,
+        this.distanceForm.get("distance").value
+      )
+      .subscribe((data) => {
+        this.loadingStream = false;
+        if (data) this.stream = true;
+      });
   }
 
   selectModule(): void {
