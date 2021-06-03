@@ -157,7 +157,7 @@ export class LayerService {
           color: feature.style.color,
           weight: feature.style.weight,
           fillColor: "#00FF00",
-          fillOpacity: 0.25,
+          fillOpacity: 0,
         });
       });
       layer.on("mouseout", (d) => {
@@ -204,11 +204,12 @@ export class LayerService {
 
   addFeature(id, feature) {
     const newFeature = L.geoJSON(feature, {
+      interactive: false,
       style: {
         color: "#0000ff",
         weight: 2,
         fillColor: "#0000ff",
-        fillOpacity: 0.25,
+        fillOpacity: 0,
       },
     }).addTo(this.map);
     this.simLayers.push({
@@ -251,8 +252,6 @@ export class LayerService {
           style: {
             color: startColor,
             weight: 2,
-            fillColor: startColor,
-            fillOpacity: 1,
           },
         })
           .bindTooltip(`comID: ${fl[i].comid}`, {
@@ -261,11 +260,15 @@ export class LayerService {
           .addTo(this.map);
 
         // Add click event listener to each stream segment
-        tmp_feature.on("click", () => {
+        tmp_feature.on("click", (e) => {
+          e.target.setStyle({
+            color: "#FFFF00",
+            weight: 2,
+          });
           this.simulation.selectComId(fl[i].comid);
         });
         this.simLayers.push({
-          type: "simfeature",
+          type: "simfeature-line",
           name: "Pour Point",
           layer: tmp_feature,
           show: true,
@@ -280,7 +283,11 @@ export class LayerService {
         }
       );
       // Add click event listener to each stream segment
-      tmp_feature.on("click", () => {
+      tmp_feature.on("click", (e) => {
+        e.target.setStyle({
+          color: "#FFFF00",
+          weight: 2,
+        });
         this.simulation.selectComId(fl[i].comid);
       });
 
@@ -290,31 +297,25 @@ export class LayerService {
         tmp_feature.setStyle({
           color: inHucColor,
           weight: 2,
-          fillColor: inHucColor,
-          fillOpacity: 1,
         });
       } else {
         outHucSegments.push(tmp_feature);
         tmp_feature.setStyle({
           color: outHucColor,
           weight: 2,
-          fillColor: outHucColor,
-          fillOpacity: 1,
         });
       }
     }
 
     if (inHucSegments.length) {
-      const streamLayer = L.layerGroup(inHucSegments).addTo(this.map);
+      const streamLayer = L.featureGroup(inHucSegments).addTo(this.map);
       streamLayer["options"]["style"] = {
         color: inHucColor,
         weight: 2,
-        fillColor: inHucColor,
-        fillOpacity: 1,
       };
       this.simLayers.push({
-        type: "simfeature",
-        name: "network",
+        type: "simfeature-line",
+        name: "Network",
         layer: streamLayer,
         show: true,
       });
@@ -325,12 +326,10 @@ export class LayerService {
       boundryLayer["options"]["style"] = {
         color: outHucColor,
         weight: 2,
-        fillColor: outHucColor,
-        fillOpacity: 1,
       };
       this.simLayers.push({
-        type: "simfeature",
-        name: "boundry",
+        type: "simfeature-line",
+        name: "Boundry",
         layer: boundryLayer,
         show: true,
       });
@@ -343,8 +342,6 @@ export class LayerService {
       for (let i = 0; i < stations.length; i++) {
         const sEvent = stations[i];
         const sFeatureId = sEvent.source_featureid;
-        const sProgram = sEvent.source_program;
-        // console.log("event: ", sEvent);
         L.marker([sEvent.shape.coordinates[1], sEvent.shape.coordinates[0]], {
           icon: this.marker,
         })
@@ -359,7 +356,7 @@ export class LayerService {
       };
       this.simLayers.push({
         type: "simfeature",
-        name: "stations",
+        name: "Stations",
         layer: stationLayer,
         show: true,
       });
@@ -393,6 +390,7 @@ export class LayerService {
         }
         break;
       case "simfeature":
+      case "simfeature-line":
         for (let feature of this.simLayers) {
           if (feature.name == name) {
             feature.show = !feature.show;
@@ -411,6 +409,11 @@ export class LayerService {
 
   updateStyle(name, style) {
     for (let feature of this.featureLayers) {
+      if (feature.name == name) {
+        feature.layer.setStyle(style);
+      }
+    }
+    for (let feature of this.simLayers) {
       if (feature.name == name) {
         feature.layer.setStyle(style);
       }

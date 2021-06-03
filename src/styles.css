@@ -1,9 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+    --main-color: lightgoldenrodyellow;
+}
+
 body { 
     margin: 0px;
     height: 100vh;
 }
 
-:root {
-    --main-color: lightgoldenrodyellow;
+select {
+    cursor: pointer;
 }

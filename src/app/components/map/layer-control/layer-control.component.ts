@@ -23,6 +23,12 @@ export class LayerControlComponent implements OnInit {
   constructor(private fb: FormBuilder, private layerService: LayerService) {}
 
   ngOnInit(): void {
+    if (this.feature.type == "simfeature-line") {
+      this.styleForm = this.fb.group({
+        color: [null],
+        weight: [null],
+      });
+    }
     this.styleForm.setValue(this.feature.layer.options.style);
   }
 
@@ -30,13 +36,24 @@ export class LayerControlComponent implements OnInit {
     this.layerService.toggleLayer(this.feature.type, this.feature.name);
   }
 
-  updateStyle(): void {
-    this.layerService.updateStyle(this.feature.name, {
-      color: this.styleForm.get("color").value,
-      weight: this.styleForm.get("weight").value,
-      fillColor: this.styleForm.get("fillColor").value,
-      fillOpacity: this.styleForm.get("fillOpacity").value,
-    });
+  updateStyle(type): void {
+    switch (type) {
+      case "feature":
+      case "simfeature":
+        this.layerService.updateStyle(this.feature.name, {
+          color: this.styleForm.get("color").value,
+          weight: this.styleForm.get("weight").value,
+          fillColor: this.styleForm.get("fillColor").value,
+          fillOpacity: this.styleForm.get("fillOpacity").value,
+        });
+        break;
+      case "simfeature-line":
+        this.layerService.updateStyle(this.feature.name, {
+          color: this.styleForm.get("color").value,
+          weight: this.styleForm.get("weight").value,
+        });
+        break;
+    }
   }
 
   toggleControl(): void {

@@ -36,6 +36,7 @@ export class MapService {
       });
     }
     this.layerService.setupLayers(this.map);
+    document.getElementById("map").style.cursor = "crosshair";
   }
 
   handleClick(mapClickEvent): void {

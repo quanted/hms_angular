@@ -22,8 +22,13 @@ export class InputComponent implements OnInit {
   catchment: Catchment;
   stream = false;
 
+  // probably change this to a single stave variable and a loading spinner on map
+  // instead of this per button progress bar approach
+  loadingHuc = false;
+  loadingCatchment = false;
   loadingStream = false;
   loadingApi = false;
+
   apiVersion;
   apiEndpointList = [];
   schemas;

@@ -23,6 +23,7 @@
                 </div>
             </div>
             <div class="control" *ngIf="huc && catchment && !stream">
+                <div class="form-row">Upstream distance (Km)<input type="number"></div>
                 <div class="button" *ngIf="!loadingStream" (click)="getStreamNetwork()">Get stream network</div>
                 <div class="button" *ngIf="loadingStream"><mat-progress-bar mode="indeterminate"></mat-progress-bar></div>
             </div>
@@ -101,7 +102,7 @@
             </div>
             <div class="container-item">
                 <div>HMS data</div>
-                <div *ngIf="!responseList.length">No HMS data</div>
+                <div *ngIf="!responseList.length">Make HMS request to retrieve data</div>
                 <div style="width: 100%;" *ngFor="let response of responseList" class="button" (click)="gotoData(response.endpoint)">
                     {{ response.endpoint }}{{ response.dataSource }}{{ response.dataset }}<mat-icon>delete</mat-icon>
                 </div>
