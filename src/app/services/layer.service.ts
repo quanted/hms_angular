@@ -231,9 +231,9 @@ export class LayerService {
 
   removeStream(): void {
     this.removeFeature("Pour Point");
-    this.removeFeature("network");
-    this.removeFeature("boundry");
-    this.removeFeature("stations");
+    this.removeFeature("Network");
+    this.removeFeature("Boundry");
+    this.removeFeature("Stations");
   }
 
   buildStreamLayers(data) {
