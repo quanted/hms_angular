@@ -8,10 +8,12 @@
 }
 
 .container-item {
-    display: grid;
-    place-items: center;
     margin: 5px;
     margin-top: 0;
+}
+
+.container-item,
+.section-item {
     padding: .5rem;
     border: 1px solid black;
     border-radius: 5px;

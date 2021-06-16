@@ -61,6 +61,7 @@ export class HmsService {
   }
 
   buildEndpointList(swagger) {
+    console.log("swagger: ", swagger);
     const api = {
       version: "",
       apiEndpointList: [],

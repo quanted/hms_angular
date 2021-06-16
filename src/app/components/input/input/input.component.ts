@@ -146,6 +146,14 @@ export class InputComponent implements OnInit {
       });
   }
 
+  getBaseJSONByFlags(): void {
+    console.log("get base json by flags");
+  }
+
+  executeSimulation(): void {
+    console.log("execute simulation!");
+  }
+
   selectModule(): void {
     this.moduleForm.get("moduleSelect").value === "null"
       ? (this.moduleSelected = false)
