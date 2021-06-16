@@ -36,20 +36,6 @@
                 <option *ngFor="let module of atxModules">{{ module }}</option>
             </select>
 
-            <ng-container *ngIf="moduleSelected">
-                <div class="section-item" id="simulation-globals">
-                    <div>Simulation Globals</div>
-                    <div class="form-row">
-                        <div>Site name: <input type="text"></div>
-                        <div>Site comment: <input type="text"></div>
-                    </div>
-                    <div class="form-row">
-                        <div>First day: <input type="text"></div>
-                        <div>Last day: <input type="text"></div>
-                    </div>
-                </div>
-            </ng-container>
-
             <div class="section-item">
                 <div>Module specific flags?</div>
                 <div><input type="checkbox"/>Flag 1</div>
@@ -57,6 +43,33 @@
                 <div><input type="checkbox"/>Flag 3</div>
                 <div class="button" (click)="getBaseJSONByFlags()">Get Base JSON</div>
             </div>
+
+            <ng-container *ngIf="moduleSelected">
+                <div class="section-item" id="simulation-globals">
+                    <div>Simulation Globals</div>
+                    <div class="form-row">
+                        <div>Site name <input type="text"></div>
+                        <div>Site comment <input type="text"></div>
+                    </div>
+                    <div class="form-row">
+                        <!-- <div>First day: <input type="text"></div>
+                        <div>Last day: <input type="text"></div> -->
+                    </div>
+                    <div class="form-row">
+                        <div>
+                            <mat-label>Enter a date range</mat-label>
+                            <mat-date-range-input [rangePicker]="picker">
+                                <input matStartDate placeholder="Start date">
+                                <input matEndDate placeholder="End date">
+                            </mat-date-range-input>
+                        </div>
+                        <div>
+                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-date-range-picker #picker></mat-date-range-picker>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
 
             <div class="section-item" *ngIf="moduleSelected && !stream">
                 <ng-container *ngIf="!huc || !catchment">
