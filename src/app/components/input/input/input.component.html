@@ -9,17 +9,17 @@
             <select>
                 <option value="12">HUC 12</option>
             </select>
-            <div *ngIf="!huc"><strong>click map to select huc</strong></div>
+            <div *ngIf="!huc"><strong>Click map to select huc</strong></div>
             <div class="control" *ngIf="huc">
                 <div>{{ huc.name }}</div>
-                <div>Huc {{ huc.id }}</div>
-                <div class="button" (click)="clearHuc()">clear huc</div>
+                <div>HUC {{ huc.id }}</div>
+                <div class="button" (click)="clearHuc()">Clear HUC</div>
             </div>
             <div class="control" *ngIf="huc">
-                <div *ngIf="!catchment"><strong>click map to select catchment</strong></div>
+                <div *ngIf="!catchment"><strong>Click map to select catchment</strong></div>
                 <div *ngIf="catchment">
                     <div>Catchment {{ catchment.id || 'select catchment' }}</div>
-                    <div class="button" (click)="clearCatchment()">clear catchment</div>
+                    <div class="button" (click)="clearCatchment()">Clear catchment</div>
                 </div>
             </div>
             <div class="control" *ngIf="huc && catchment && !stream" [formGroup]="distanceForm">
@@ -41,7 +41,7 @@
                 <div><input type="checkbox"/>Flag 1</div>
                 <div><input type="checkbox"/>Flag 2</div>
                 <div><input type="checkbox"/>Flag 3</div>
-                <div class="button" (click)="getBaseJSONByFlags()">Get Base JSON</div>
+                <div class="button" (click)="getBaseJSONByFlags()">Get base JSON</div>
             </div>
 
             <ng-container *ngIf="moduleSelected">
@@ -82,9 +82,10 @@
 
             <ng-container *ngIf="stream && moduleSelected">
                 <div class="section-item">
-                    <div>This is going to ba a list of segments touched by user and that cross huc boundries. clicking on an entry loads that segment into the stream segment loading panel below and highlights segment on map</div>
-                    <div>Network Loadings</div>
-                    <div>Boundry stream segments</div>
+                    <div>This is going to ba a list of segments touched by user and those that cross huc boundries. clicking on an entry loads that segment into the stream segment loading panel below and highlights segment on map</div>
+                    <div>Boundry stream segments...</div>
+                    <div>User edited segments...</div>
+                    
                 </div>
 
                 <div class="section-item" id="segment-form">

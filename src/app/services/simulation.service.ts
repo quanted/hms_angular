@@ -39,7 +39,12 @@ export class SimulationService {
     this.hms
       .executeAquatoxSimulation({
         sim_input: this.baseJson, // required
-        network: this.simData["network"], // required
+        network: this.simData["network"]
+          ? {
+              order: this.simData["network"].order,
+              sources: this.simData["network"].sources,
+            }
+          : [], // required
         comid_inputs: this.simData["comid_loadings"]
           ? this.simData["comid_loadings"]
           : [],

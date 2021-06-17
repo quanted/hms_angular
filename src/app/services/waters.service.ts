@@ -84,10 +84,6 @@ export class WatersService {
         this.watersUrl + "UpstreamDownstream.Service?" + this.serialize(data)
       )
       .pipe(
-        map((data: any) => {
-          console.log("updown: ", data);
-          return data;
-        }),
         catchError((err) => {
           return of({ error: err });
         })
