@@ -152,6 +152,7 @@ export class InputComponent implements OnInit {
 
   executeSimulation(): void {
     console.log("execute simulation!");
+    this.simulation.executeSimulation();
   }
 
   selectModule(): void {

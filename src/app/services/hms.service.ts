@@ -60,8 +60,14 @@ export class HmsService {
     return this.baseJsons[module];
   }
 
+  getStreamNetwork(comid, distance): Observable<any> {
+    return this.http.get(
+      `${environment.apiURL}/api/info/streamnetwork?comid=${comid}&maxDistance=${distance}`
+    );
+  }
+
   buildEndpointList(swagger) {
-    console.log("swagger: ", swagger);
+    // console.log("swagger: ", swagger);
     const api = {
       version: "",
       apiEndpointList: [],
@@ -106,6 +112,14 @@ export class HmsService {
       default:
         return of({ error: `invalid request type: ${request.endpoint}` });
     }
+  }
+
+  executeAquatoxSimulation(simulation): Observable<any> {
+    console.log("execute: ", simulation);
+    return this.http.post(
+      `${environment.apiURL}/api/v2/hms/workflow/`,
+      simulation
+    );
   }
 
   private swagger = {

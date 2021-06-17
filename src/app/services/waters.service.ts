@@ -85,6 +85,7 @@ export class WatersService {
       )
       .pipe(
         map((data: any) => {
+          console.log("updown: ", data);
           return data;
         }),
         catchError((err) => {

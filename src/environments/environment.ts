@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  apiURL: 'https://ceamstg.ceeopdev.net/hms/rest',
-  swaggerURL: 'https://ceamdev.ceeopdev.net/hms/api_doc/swagger/'
+  apiURL: "https://ceamdev.ceeopdev.net/hms/rest",
+  swaggerURL: "https://ceamdev.ceeopdev.net/hms/api_doc/swagger/",
 };
 
 /*

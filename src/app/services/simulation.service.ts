@@ -36,6 +36,24 @@ export class SimulationService {
     // 		"sources: links catchment inputs dependencies to upstream catchments (parent)
     // 	}
     // }
+    this.hms
+      .executeAquatoxSimulation({
+        sim_input: this.baseJson, // required
+        network: this.simData["network"], // required
+        comid_inputs: this.simData["comid_loadings"]
+          ? this.simData["comid_loadings"]
+          : [],
+        simulation_dependencies: this.simData["simulation_dependencies"]
+          ? this.simData["simulation_dependencies"]
+          : [],
+        catchment_dependencies: this.simData["catchment_dependencies"]
+          ? this.simData["catchment_dependencies"]
+          : [],
+      })
+      .subscribe((simId) => {
+        console.log("simId: ", simId);
+        this.updateSimData("simId", simId);
+      });
   }
 
   selectComId(comid): void {
@@ -49,7 +67,7 @@ export class SimulationService {
       this.simData[key] = null;
     }
     this.simDataSubject.next(this.simData);
-    console.log("simData: ", this.simData);
+    // console.log("simData: ", this.simData);
   }
 
   // returns a Subject for interface components to subscribe to

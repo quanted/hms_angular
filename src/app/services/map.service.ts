@@ -5,6 +5,7 @@ import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 
 import { LayerService } from "src/app/services/layer.service";
+import { HmsService } from "./hms.service";
 import { SimulationService } from "./simulation.service";
 import { WatersService } from "./waters.service";
 
@@ -19,6 +20,7 @@ export class MapService {
   catchmentSelected = false;
 
   constructor(
+    private hms: HmsService,
     private waters: WatersService,
     private layerService: LayerService,
     private simulation: SimulationService
@@ -106,6 +108,9 @@ export class MapService {
   buildStreamNetwork(comid, distance): Observable<any> {
     return this.waters.getStreamNetworkData(comid, distance).pipe(
       map((data) => {
+        this.hms.getStreamNetwork(comid, distance).subscribe((network) => {
+          this.simulation.updateSimData("network", network);
+        });
         this.layerService.buildStreamLayers(data);
         return data;
       })
