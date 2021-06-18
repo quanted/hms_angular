@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 
 import * as L from "leaflet";
-import { Observable } from "rxjs";
+import { Observable, merge } from "rxjs";
 import { map } from "rxjs/operators";
 
 import { LayerService } from "src/app/services/layer.service";
@@ -106,14 +106,19 @@ export class MapService {
   }
 
   buildStreamNetwork(comid, distance): Observable<any> {
-    return this.waters.getStreamNetworkData(comid, distance).pipe(
-      map((data) => {
-        this.hms.getStreamNetwork(comid, distance).subscribe((network) => {
-          this.simulation.updateSimData("network", network);
-        });
-        this.layerService.buildStreamLayers(data);
-        return data;
-      })
+    return merge(
+      this.waters.getStreamNetworkData(comid, distance).pipe(
+        map((data) => {
+          this.layerService.buildStreamLayers(data);
+          return data;
+        })
+      ),
+      this.hms.getStreamNetwork(comid, distance).pipe(
+        map((data) => {
+          this.simulation.updateSimData("network", data);
+          return data;
+        })
+      )
     );
   }
 }
