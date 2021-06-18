@@ -7,17 +7,21 @@
     height: 791px;
 }
 
-.container-item {
-    margin: 5px;
-    margin-top: 0;
-}
-
 .container-item,
 .section-item {
+    margin: 5px;
     padding: .5rem;
     border: 1px solid black;
     border-radius: 5px;
     background-color: var(--main-color);
+}
+
+.section-item {
+    margin: 5px 0;
+}
+
+.first-item {
+    margin-top: 0;
 }
 
 #coords-form,
