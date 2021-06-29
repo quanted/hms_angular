@@ -23,7 +23,7 @@ export class InputComponent implements OnInit {
   catchment: Catchment;
   stream = false;
 
-  // probably change this to a single stave variable and a loading spinner on map
+  // probably change this to a single state variable and a loading spinner on map
   // instead of this per button progress bar approach
   loadingHuc = false;
   loadingCatchment = false;
@@ -31,6 +31,7 @@ export class InputComponent implements OnInit {
   loadingApi = false;
 
   apiVersion;
+  jsonFlags = null;
   apiEndpointList = [];
   schemas;
 
@@ -38,7 +39,6 @@ export class InputComponent implements OnInit {
   moduleSelected = false;
 
   currentEndpoint;
-  customRequest = false;
   selectedFile;
   uploadedFile;
   formInputs = [];
@@ -76,14 +76,21 @@ export class InputComponent implements OnInit {
       source: [null],
       within: ["50"],
     });
-    this.moduleForm = this.fb.group({
-      moduleSelect: [null],
-    });
     this.apiForm = this.fb.group({
       endpointSelect: [null],
     });
     this.simulation.interfaceData().subscribe((d) => {
       this.updateInterface(d);
+    });
+
+    this.moduleForm = this.fb.group({});
+    this.hms.getATXJsonFlags().subscribe((flags) => {
+      this.jsonFlags = flags;
+      const moduleFormFlags = {};
+      for (let flag of this.jsonFlags) {
+        moduleFormFlags[flag] = [false];
+      }
+      this.moduleForm = this.fb.group(moduleFormFlags);
     });
   }
 
@@ -147,7 +154,10 @@ export class InputComponent implements OnInit {
   }
 
   getBaseJSONByFlags(): void {
-    console.log("get base json by flags");
+    console.log("get base json by flags: ", this.moduleForm.value);
+    this.hms.getBaseJsonByFlags(this.moduleForm.value).subscribe((json) => {
+      console.log("getBaseJson: ", json);
+    });
   }
 
   executeSimulation(): void {

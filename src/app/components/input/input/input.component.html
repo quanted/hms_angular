@@ -3,10 +3,6 @@
         <div class="container-item first-item">
             <div>Area of Interest</div>
             <div class="section-item">
-                <!-- <div id="coords-form" [formGroup]="aoiForm">
-                    <div>Lat <input type="number" formControlName="lat"/></div>
-                    <div>Lng <input type="number" formControlName="lng"/></div>
-                </div> -->
                 <div *ngIf="!huc"><strong>Click map to select </strong>
                     <select>
                         <option value="12">HUC 12</option>
@@ -15,6 +11,10 @@
                 <div class="control" *ngIf="huc">
                     <div>{{ huc.name }}</div>
                     <div>HUC {{ huc.id }}</div>
+                    <!-- <div id="coords-form" class="form-row" [formGroup]="aoiForm">
+                        <div>Lat <input matInput type="number" formControlName="lat"/></div>
+                        <div>Lng <input matInput type="number" formControlName="lng"/></div>
+                    </div> -->
                     <div class="button" (click)="clearHuc()">Clear HUC</div>
                 </div>
                 <div class="control" *ngIf="huc">
@@ -35,15 +35,13 @@
         <div class="container-item" [formGroup]="moduleForm">
             <div>Aquatox</div>
 
-            <div class="section-item">
-                <select formControlName="moduleSelect" (change)="selectModule()">
+            <div class="section-item" *ngIf="jsonFlags">
+                <!-- <select formControlName="moduleSelect" (change)="selectModule()">
                     <option [value]='null' selected>Select Aquatox module</option>
                     <option *ngFor="let module of atxModules">{{ module }}</option>
-                </select>
-                <div>Module specific flags?</div>
-                <div><input type="checkbox"/>Flag 1</div>
-                <div><input type="checkbox"/>Flag 2</div>
-                <div><input type="checkbox"/>Flag 3</div>
+                </select> -->
+                <div>Module specific flags</div>
+                <div *ngFor='let flag of jsonFlags'><input formControlName="{{flag}}" type="checkbox"/> {{ flag }}</div>
                 <div class="button" (click)="getBaseJSONByFlags()">Get base JSON</div>
             </div>
 

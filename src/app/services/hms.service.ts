@@ -56,6 +56,17 @@ export class HmsService {
     return Object.keys(this.baseJsons);
   }
 
+  getATXJsonFlags(): Observable<any> {
+    return this.http.get(`${environment.apiURL}/api/aquatox/workflow/options`);
+  }
+
+  getBaseJsonByFlags(flags): Observable<any> {
+    return this.http.post(
+      `${environment.apiURL}/api/aquatox/workflow/options`,
+      JSON.stringify(flags)
+    );
+  }
+
   getBaseJson(module) {
     return this.baseJsons[module];
   }
@@ -118,7 +129,7 @@ export class HmsService {
     console.log("execute: ", simulation);
     return this.http.post(
       `${environment.apiURL}/api/v2/hms/workflow/`,
-      simulation
+      JSON.stringify(simulation)
     );
   }
 

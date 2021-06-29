@@ -24,22 +24,10 @@
     margin-top: 0;
 }
 
-#coords-form,
-#source-form {
-    display: grid;
-    place-items: center;
-}
-
-#coords-form {
-    grid-template-columns: auto auto;
-    column-gap: 1rem;
-}
-
 #endpoint-form {
     display: grid;
     row-gap: .5rem;
 }
-
 
 #parameter-form {
     display: grid;
@@ -81,3 +69,10 @@
     width: 95%;
     height: 2rem;
 }
+
+::ng-deep .mat-date-range-input {
+    background-color: white;
+    border: 1px solid gray;
+    border-radius: 2px;
+}
+
