@@ -155,8 +155,10 @@ export class InputComponent implements OnInit {
 
   getBaseJSONByFlags(): void {
     console.log("get base json by flags: ", this.moduleForm.value);
-    this.hms.getBaseJsonByFlags(this.moduleForm.value).subscribe((json) => {
-      console.log("getBaseJson: ", json);
+    const flags = this.moduleForm.value;
+    this.simulation.updateSimData("flags", flags);
+    this.hms.getBaseJsonByFlags(flags).subscribe((json) => {
+      this.simulation.updateSimData("base-json", json);
     });
   }
 

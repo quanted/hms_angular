@@ -72,7 +72,7 @@ export class SimulationService {
       this.simData[key] = null;
     }
     this.simDataSubject.next(this.simData);
-    // console.log("simData: ", this.simData);
+    console.log("simData: ", this.simData);
   }
 
   // returns a Subject for interface components to subscribe to
