@@ -107,9 +107,4 @@ export class SimulationService {
     }
     return responseList;
   }
-
-  selectATXModule(module): void {
-    this.baseJson = this.hms.getBaseJson(module);
-    this.updateSimData("AQTsim", this.baseJson);
-  }
 }

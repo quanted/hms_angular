@@ -1,7 +1,9 @@
 Segment List
-<div>
-    Boundry segments...
+<div *ngIf="!boundarySegments.length">This network has no boundary segments</div>
+<div *ngFor="let segment of boundarySegments" (click)="selectSegment(segment)">
+    {{ segment }}
 </div>
-<div>
-    User edited segments...
+<div *ngIf="!userSegments.length">No user added loadings</div>
+<div *ngFor="let segment of userSegments" (click)="selectSegment(segment)">
+    {{ segment }}
 </div>

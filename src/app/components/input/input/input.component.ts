@@ -30,13 +30,12 @@ export class InputComponent implements OnInit {
   loadingStream = false;
   loadingApi = false;
 
-  apiVersion;
   jsonFlags = null;
+  baseJson = false;
+
+  apiVersion;
   apiEndpointList = [];
   schemas;
-
-  atxModules;
-  moduleSelected = false;
 
   currentEndpoint;
   selectedFile;
@@ -61,7 +60,6 @@ export class InputComponent implements OnInit {
       this.apiEndpointList = api.apiEndpointList;
       this.schemas = api.schemas;
       this.loadingApi = false;
-      this.atxModules = this.hms.getATXModules();
       this.updateEndpointForm();
     });
 
@@ -159,19 +157,13 @@ export class InputComponent implements OnInit {
     this.simulation.updateSimData("flags", flags);
     this.hms.getBaseJsonByFlags(flags).subscribe((json) => {
       this.simulation.updateSimData("base-json", json);
+      this.baseJson = true;
     });
   }
 
   executeSimulation(): void {
     console.log("execute simulation!");
     this.simulation.executeSimulation();
-  }
-
-  selectModule(): void {
-    this.moduleForm.get("moduleSelect").value === "null"
-      ? (this.moduleSelected = false)
-      : (this.moduleSelected = true);
-    this.simulation.selectATXModule(this.moduleForm.get("moduleSelect").value);
   }
 
   updateEndpointForm(): void {

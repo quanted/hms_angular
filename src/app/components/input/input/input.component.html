@@ -45,7 +45,7 @@
                 <div class="button" (click)="getBaseJSONByFlags()">Get base JSON</div>
             </div>
 
-            <ng-container *ngIf="moduleSelected">
+            <ng-container *ngIf="baseJson">
                 <div class="section-item" id="simulation-globals">
                     <div>Simulation Globals</div>
                     <div class="form-row">
@@ -72,7 +72,7 @@
                 </div>
             </ng-container>
 
-            <div class="section-item" *ngIf="moduleSelected && !stream">
+            <div class="section-item" *ngIf="baseJson && !stream">
                 <ng-container *ngIf="!huc || !catchment">
                     No area of interest
                 </ng-container>
@@ -82,7 +82,7 @@
             </div>
 
             <div class="section-item" id="segment-form">
-            <!-- <ng-container *ngIf="stream && moduleSelected" class="section-item" id="segment-form"> -->
+            <!-- <ng-container *ngIf="stream && baseJson" class="section-item" id="segment-form"> -->
                 <app-segment-list></app-segment-list>
                 <app-comid-select-input></app-comid-select-input>
             </div>
