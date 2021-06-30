@@ -81,12 +81,12 @@
                 </ng-container>
             </div>
 
-            <div class="section-item" id="segment-form">
-            <!-- <ng-container *ngIf="stream && baseJson" class="section-item" id="segment-form"> -->
+            <!-- <div class="section-item" id="segment-form"> -->
+            <div *ngIf="stream && baseJson" class="section-item" id="segment-form">
                 <app-segment-list></app-segment-list>
                 <app-comid-select-input></app-comid-select-input>
             </div>
-            <ng-container class="container-item" *ngIf="true">
+            <ng-container class="container-item" *ngIf="executionReady">
                 <div class="button" (click)="executeSimulation()">Execute Aquatox Simulation</div>
             </ng-container>
         </div>

@@ -33,6 +33,9 @@ export class InputComponent implements OnInit {
   jsonFlags = null;
   baseJson = false;
 
+  // TODO: implement call to execution check endpoint
+  executionReady = true;
+
   apiVersion;
   apiEndpointList = [];
   schemas;

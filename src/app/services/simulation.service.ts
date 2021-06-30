@@ -39,12 +39,7 @@ export class SimulationService {
     this.hms
       .executeAquatoxSimulation({
         sim_input: this.baseJson, // required
-        network: this.simData["network"]
-          ? {
-              order: this.simData["network"].order,
-              sources: this.simData["network"].sources,
-            }
-          : [], // required
+        network: this.simData["network"] ? this.simData["network"] : [], // required
         comid_inputs: this.simData["comid_loadings"]
           ? this.simData["comid_loadings"]
           : [],
@@ -55,9 +50,8 @@ export class SimulationService {
           ? this.simData["catchment_dependencies"]
           : [],
       })
-      .subscribe((simId) => {
-        console.log("simId: ", simId);
-        this.updateSimData("simId", simId);
+      .subscribe((response) => {
+        this.updateSimData("simId", response["job_id"]);
       });
   }
 
@@ -67,7 +61,11 @@ export class SimulationService {
 
   updateSimData(key, data): void {
     if (data) {
-      this.simData[key] = { ...this.simData[key], ...data };
+      if (typeof data === "string") {
+        this.simData[key] = data;
+      } else {
+        this.simData[key] = { ...this.simData[key], ...data };
+      }
     } else {
       this.simData[key] = null;
     }
@@ -106,5 +104,10 @@ export class SimulationService {
       });
     }
     return responseList;
+  }
+
+  selectATXModule(module): void {
+    this.baseJson = this.hms.getBaseJson(module);
+    this.updateSimData("AQTsim", this.baseJson);
   }
 }
