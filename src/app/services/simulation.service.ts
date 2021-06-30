@@ -10,6 +10,7 @@ import { HmsService } from "./hms.service";
 export class SimulationService {
   baseJsons = {};
   baseJson = {};
+  flags = [];
 
   simData = {};
   simDataSubject: BehaviorSubject<any>;

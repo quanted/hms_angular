@@ -110,6 +110,10 @@ export class HmsService {
     return api;
   }
 
+  validateCSV(data): Observable<any> {
+    return this.http.get(environment.apiURL);
+  }
+
   submit(request): Observable<any> {
     console.log("submit: ", request);
     switch (request.type) {

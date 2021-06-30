@@ -39,7 +39,6 @@ import { HttpHeadersInterceptor } from "./interceptors/http-headers.interceptor"
 import { LayerControlComponent } from "./components/map/layer-control/layer-control.component";
 import { TableComponent } from "./components/output/table/table.component";
 import { GraphComponent } from "./components/output/graph/graph.component";
-import { KeysPipe } from "./components/output/table/keys.pipe";
 import { LandingComponent } from "./components/landing/landing.component";
 import { ComidSelectInputComponent } from "./components/input/comid-select-input/comid-select-input.component";
 import { SegmentListComponent } from "./components/input/segment-list/segment-list.component";
@@ -59,7 +58,6 @@ import { SegmentListComponent } from "./components/input/segment-list/segment-li
     LayerControlComponent,
     TableComponent,
     GraphComponent,
-    KeysPipe,
     LandingComponent,
     ComidSelectInputComponent,
     SegmentListComponent,
@@ -94,11 +92,9 @@ import { SegmentListComponent } from "./components/input/segment-list/segment-li
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpHeadersInterceptor,
-      multi: true,
-    },
-    KeysPipe,
-    TableComponent,
-  ],
-  bootstrap: [AppComponent],
+      multi: true
+    }
+  , TableComponent],
+  bootstrap: [AppComponent]
 })
 export class AppModule {}

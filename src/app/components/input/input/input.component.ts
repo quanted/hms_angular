@@ -44,6 +44,7 @@ export class InputComponent implements OnInit {
   selectedFile;
   uploadedFile;
   formInputs = [];
+  flags = [];
 
   waiting = false;
 
@@ -53,7 +54,7 @@ export class InputComponent implements OnInit {
     private hms: HmsService,
     private fb: FormBuilder,
     private simulation: SimulationService,
-    public mapService: MapService
+    public mapService: MapService,
   ) {}
 
   ngOnInit(): void {
@@ -203,6 +204,7 @@ export class InputComponent implements OnInit {
         this.simulation.updateData(this.currentEndpoint.endpoint, response);
         this.responseList = this.simulation.getResponseList();
         console.log("list: ", this.responseList);
+        console.log("response: ", response)
       });
   }
 
