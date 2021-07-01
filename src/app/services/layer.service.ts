@@ -304,6 +304,7 @@ export class LayerService {
           color: outHucColor,
           weight: 2,
         });
+        this.simulation.updateSegmentList("boundary", fl[i].comid);
       }
     }
 

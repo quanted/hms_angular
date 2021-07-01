@@ -13,12 +13,10 @@ export class SegmentListComponent implements OnInit {
   constructor(private simulation: SimulationService) {}
 
   ngOnInit(): void {
-    const simData = this.simulation.getSimData();
-    if (simData["segment-loadings"]) {
-      const segments = simData["segment-loadings"];
-      this.boundarySegments = segments["boundary"];
-      this.userSegments = segments["user"];
-    }
+    this.simulation.interfaceData().subscribe((simData) => {
+      this.boundarySegments = simData.segment_loadings.boundary;
+      this.userSegments = simData.segment_loadings.user;
+    });
   }
 
   selectSegment(comid) {

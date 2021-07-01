@@ -1,5 +1,7 @@
-<div>Stream segment loading</div>
-<h4>Comid: {{ selectedComId || "no stream segment selected" }}</h4>
+<div>Stream Segment Loadings</div>
+<div *ngIf="!selectedComId"><strong>click map to select stream segment</strong></div>
+<div *ngIf="selectedComId"><h4>Comid: {{ selectedComId }}</h4></div>
+
 <form class="form-row" [formGroup]="inputFormGroup" *ngIf="selectedComId">
     <label>SV Index</label>
     <select></select>

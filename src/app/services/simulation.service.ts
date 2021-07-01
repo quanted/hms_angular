@@ -12,7 +12,12 @@ export class SimulationService {
   baseJson = {};
   flags = [];
 
-  simData = {};
+  simData = {
+    segment_loadings: {
+      user: [],
+      boundary: [],
+    },
+  };
   simDataSubject: BehaviorSubject<any>;
 
   // list of data returned from hms requests
@@ -43,12 +48,31 @@ export class SimulationService {
   }
 
   selectComId(comid): void {
-    this.updateSimData("selectedComId", { comid });
+    this.updateSimData("selectedComId", comid);
+    this.updateSegmentList("user", comid);
   }
 
-  updateSimData(key, data): void {
+  updateSegmentList(type, comid): void {
+    switch (type) {
+      case "user":
+        if (!this.simData.segment_loadings.user.includes(comid)) {
+          this.simData.segment_loadings.user.push(comid);
+        }
+        break;
+      case "boundary":
+        if (!this.simData.segment_loadings.boundary.includes(comid)) {
+          this.simData.segment_loadings.boundary.push(comid);
+        }
+        break;
+      default:
+        console.log(`updateSegmentList.UNKNOWN_SEGMENT_TYPE: ${type}`);
+    }
+    this.updateSimData();
+  }
+
+  updateSimData(key?, data?): void {
     if (data) {
-      if (typeof data === "string") {
+      if (typeof data === "string" || typeof data === "number") {
         this.simData[key] = data;
       } else {
         this.simData[key] = { ...this.simData[key], ...data };

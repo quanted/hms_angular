@@ -54,7 +54,7 @@ export class InputComponent implements OnInit {
     private hms: HmsService,
     private fb: FormBuilder,
     private simulation: SimulationService,
-    public mapService: MapService,
+    public mapService: MapService
   ) {}
 
   ngOnInit(): void {
@@ -156,7 +156,6 @@ export class InputComponent implements OnInit {
   }
 
   getBaseJSONByFlags(): void {
-    console.log("get base json by flags: ", this.moduleForm.value);
     const flags = this.moduleForm.value;
     this.simulation.updateSimData("flags", flags);
     this.hms.getBaseJsonByFlags(flags).subscribe((json) => {
@@ -204,7 +203,7 @@ export class InputComponent implements OnInit {
         this.simulation.updateData(this.currentEndpoint.endpoint, response);
         this.responseList = this.simulation.getResponseList();
         console.log("list: ", this.responseList);
-        console.log("response: ", response)
+        console.log("response: ", response);
       });
   }
 

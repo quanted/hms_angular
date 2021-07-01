@@ -5,8 +5,8 @@ import { FormBuilder, FormGroup } from "@angular/forms";
 
 import { HmsService } from "src/app/services/hms.service";
 
-import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from "@angular/material/paginator";
+import { MatTableDataSource } from "@angular/material/table";
 
 @Component({
   selector: "app-comid-select-input",
@@ -20,8 +20,8 @@ export class ComidSelectInputComponent implements OnInit {
 
   uploadedTimeSeries = false;
 
-  dataCSV = '';
-  
+  dataCSV = "";
+
   columnData = [];
   columnNames = [];
 
@@ -53,9 +53,8 @@ export class ComidSelectInputComponent implements OnInit {
     });
   }
 
-  updateComId(data): void {
-    console.log("selectedComId: ", data);
-    this.selectedComId = data.comid;
+  updateComId(comid): void {
+    this.selectedComId = comid;
   }
 
   onFileChange($event) {
@@ -65,11 +64,10 @@ export class ComidSelectInputComponent implements OnInit {
     reader.readAsText(file);
     reader.onload = (e) => {
       let csv: string = reader.result as string;
-      
+
       this.dataCSV = csv;
       const columnData = this.dataCSV.split("\n");
       this.columnNames = columnData[0].split(",");
-
 
       for (let i = 1; i < columnData.length; i++) {
         const row = columnData[i].split(",");
@@ -82,14 +80,10 @@ export class ComidSelectInputComponent implements OnInit {
 
       this.dataSource.data = this.columnData;
       this.dataSource.paginator = this.paginator;
-    }
-    }
-
-    validateLoadings() {
-      this.hmsService.validateCSV(this.dataCSV).subscribe();
-    }
-
-    
-
+    };
   }
 
+  validateLoadings() {
+    this.hmsService.validateCSV(this.dataCSV).subscribe();
+  }
+}

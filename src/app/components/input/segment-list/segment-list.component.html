@@ -1,9 +1,10 @@
-Segment List
-<div *ngIf="!boundarySegments.length">This network has no boundary segments</div>
+<div>Boundry Segments</div>
+<div *ngIf="!boundarySegments.length"><strong>This network has no boundary segments</strong></div>
 <div *ngFor="let segment of boundarySegments" (click)="selectSegment(segment)">
-    {{ segment }}
+    <div>{{ segment }}</div>
 </div>
-<div *ngIf="!userSegments.length">No user added loadings</div>
+<div>User Segments</div>
+<div *ngIf="!userSegments.length"><strong>No user added loadings</strong></div>
 <div *ngFor="let segment of userSegments" (click)="selectSegment(segment)">
-    {{ segment }}
+    <div>{{ segment }}</div>
 </div>
