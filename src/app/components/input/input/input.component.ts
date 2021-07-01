@@ -164,6 +164,11 @@ export class InputComponent implements OnInit {
     });
   }
 
+  clearBaseJson(): void {
+    this.baseJson = false;
+    this.simulation.updateSimData("base-json", null);
+  }
+
   executeSimulation(): void {
     console.log("execute simulation!");
     this.simulation.executeSimulation();
