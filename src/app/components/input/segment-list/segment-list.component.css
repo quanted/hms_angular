@@ -1,0 +1,10 @@
+.button {
+    font-size: .75rem;
+    display: grid;
+    place-items: center;
+    height: 30px;
+    border-radius: 5px;
+    margin-bottom: .125rem;
+    color: lightgoldenrodyellow;
+    background-color: steelblue;
+}

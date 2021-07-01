@@ -40,7 +40,7 @@
                     <option [value]='null' selected>Select Aquatox module</option>
                     <option *ngFor="let module of atxModules">{{ module }}</option>
                 </select> -->
-                <div>Module specific flags</div>
+                <div>Module Selection Flags</div>
                 <div *ngFor='let flag of jsonFlags'><input formControlName="{{flag}}" type="checkbox"/> {{ flag }}</div>
                 <div class="button" (click)="getBaseJSONByFlags()">Get base JSON</div>
             </div>

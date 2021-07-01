@@ -16,6 +16,12 @@ import { MatTableDataSource } from "@angular/material/table";
 export class ComidSelectInputComponent implements OnInit {
   inputFormGroup: FormGroup;
   svIndex = []; /* Get from service */
+
+  addingParameter = false;
+  addingSource = false;
+  parameters = [];
+  sources = [];
+
   useConstLoadings = true;
 
   uploadedTimeSeries = false;
@@ -30,18 +36,15 @@ export class ComidSelectInputComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   dataSource = new MatTableDataSource();
 
-  constructor(
-    private fb: FormBuilder,
-    private simulation: SimulationService,
-    private hmsService: HmsService
-  ) {}
+  constructor(private fb: FormBuilder, private simulation: SimulationService) {}
 
   ngOnInit(): void {
     this.simulation.interfaceData().subscribe((data) => {
       for (let key of Object.keys(data)) {
         switch (key) {
           case "selectedComId":
-            this.updateComId(data[key]);
+            this.initializeSegmentValues(data);
+            break;
         }
       }
     });
@@ -53,8 +56,13 @@ export class ComidSelectInputComponent implements OnInit {
     });
   }
 
-  updateComId(comid): void {
-    this.selectedComId = comid;
+  initializeSegmentValues(simData): void {
+    this.selectedComId = simData.selectedComId;
+    if (simData.comid_inputs[this.selectedComId]) {
+      this.parameters = simData.comid_inputs[this.selectedComId].sv;
+    } else {
+      this.parameters = [];
+    }
   }
 
   onFileChange($event) {
@@ -83,7 +91,33 @@ export class ComidSelectInputComponent implements OnInit {
     };
   }
 
-  validateLoadings() {
-    this.hmsService.validateCSV(this.dataCSV).subscribe();
+  addParameter(): void {
+    this.addingParameter = true;
+    this.addingSource = false;
+  }
+
+  addSource(): void {
+    this.addingParameter = false;
+    this.addingSource = true;
+  }
+
+  insertParameter() {
+    this.addingParameter = false;
+    // this.hmsService.validateCSV(this.dataCSV).subscribe();
+    this.simulation.updateSimData("comid_inputs", {
+      comid: this.selectedComId,
+      type: "parameter",
+      value: "new parameter object",
+    });
+  }
+
+  insertSource() {
+    this.addingSource = false;
+    // this.hmsService.validateCSV(this.dataCSV).subscribe();
+    this.simulation.updateSimData("comid_inputs", {
+      comid: this.selectedComId,
+      type: "source",
+      value: "new source object",
+    });
   }
 }

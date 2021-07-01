@@ -122,7 +122,7 @@ export class InputComponent implements OnInit {
 
   clearHuc(): void {
     this.mapService.removeFeature("huc", this.huc.id);
-    this.simulation.updateSimData("huc", null);
+    this.simulation.clearHuc();
     this.huc = null;
     if (this.catchment) {
       this.clearCatchment();
@@ -135,7 +135,7 @@ export class InputComponent implements OnInit {
 
   clearCatchment(): void {
     this.mapService.removeFeature("catchment", this.catchment.id);
-    this.simulation.updateSimData("catchment", null);
+    this.simulation.clearCatchment();
     this.catchment = null;
     this.stream = false;
   }

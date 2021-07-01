@@ -8,15 +8,12 @@ import { HmsService } from "./hms.service";
   providedIn: "root",
 })
 export class SimulationService {
-  baseJsons = {};
-  baseJson = {};
-  flags = [];
-
   simData = {
     segment_loadings: {
       user: [],
       boundary: [],
     },
+    comid_inputs: {},
   };
   simDataSubject: BehaviorSubject<any>;
 
@@ -54,6 +51,22 @@ export class SimulationService {
     }
   }
 
+  clearHuc(): void {
+    this.simData["coords"] = {
+      lat: null,
+      lng: null,
+    };
+    this.updateSimData("huc", null);
+  }
+
+  clearCatchment(): void {
+    this.simData.segment_loadings.user = [];
+    this.simData.segment_loadings.boundary = [];
+    this.simData["network"] = null;
+    this.simData["selectedComId"] = null;
+    this.updateSimData("catchment", null);
+  }
+
   updateSegmentList(type, comid): void {
     switch (type) {
       case "user":
@@ -74,12 +87,19 @@ export class SimulationService {
 
   updateSimData(key?, data?): void {
     if (data) {
-      if (typeof data === "string" || typeof data === "number") {
+      if (key == "comid_inputs") {
+        if (!this.simData.comid_inputs[data.comid]) {
+          this.simData.comid_inputs[data.comid] = {
+            sv: [],
+          };
+        }
+        this.simData.comid_inputs[data.comid].sv.push(data.value);
+      } else if (typeof data === "string" || typeof data === "number") {
         this.simData[key] = data;
       } else {
         this.simData[key] = { ...this.simData[key], ...data };
       }
-    } else {
+    } else if (key && !data) {
       this.simData[key] = null;
     }
     this.simDataSubject.next(this.simData);

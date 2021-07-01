@@ -1,41 +1,58 @@
-<div>Stream Segment Loadings</div>
 <div *ngIf="!selectedComId"><strong>click map to select stream segment</strong></div>
-<div *ngIf="selectedComId"><h4>Comid: {{ selectedComId }}</h4></div>
 
-<form class="form-row" [formGroup]="inputFormGroup" *ngIf="selectedComId">
-    <label>SV Index</label>
-    <select></select>
-    <label>Use Constant Loading?</label>
-    <input type="checkbox" (change)="useConstLoadings = !useConstLoadings" checked>
-    <label *ngIf="useConstLoadings">Constant Loading</label>
-    <input *ngIf="useConstLoadings" formControlName="constLoading" type="text">
-    <label *ngIf="!useConstLoadings">Upload Alternate Loadings</label>
-    <input *ngIf="!useConstLoadings" 
-     formControlName="altLoadings"
-     type="file"  
-     accept=".csv"
-     name="files[]"
-     (change)="onFileChange($event)"
-    />
-
-    <label>Loading Multiplier</label>
-    <input formControlName="loadingMulti" type="text">
-</form>
-<div *ngIf="uploadedTimeSeries">
-  <div class="table-flex-container">
-    <table mat-table [dataSource]="dataSource">
-      <ng-container *ngFor="let disCol of columnNames" matColumnDef="{{disCol}}">
-        <th mat-header-cell *matHeaderCellDef>
-          <div>{{ disCol }}</div>
-        </th>
-        <td mat-cell *matCellDef="let row">{{ row[disCol] }}</td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="columnNames"></tr>
-
-      <tr mat-row *matRowDef="let row; columns: columnNames"></tr>
-    </table>
+<form [formGroup]="inputFormGroup" *ngIf="selectedComId">
+  <div><strong>Segment Loadings</strong></div>
+  <div>Comid: {{ selectedComId }}</div>
+  <div>Parameters and Sources</div>
+  <div *ngIf="!parameters.length">
+    <strong>This segment has no parameters or sources</strong>
   </div>
-  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
-  <div class="button">Validate TimeSeries</div>
-</div>
+  <div *ngFor="let parameter of parameters">{{ parameter }}</div>
+  <div *ngFor="let source of sources">{{ source }}</div>
+  <div class="form-row">
+    <div class="button" (click)="addParameter()">Add Parameter</div>
+    <div class="button" (click)="addSource()">Add Source</div>
+  </div>
+  <div *ngIf="addingParameter">
+    <div class="form-row">
+      <label>Use Constant Loading?</label>
+      <input type="checkbox" (change)="useConstLoadings = !useConstLoadings" checked>
+    </div>
+    <div class="form-row">
+      <label *ngIf="useConstLoadings">Constant Loading</label>
+      <input *ngIf="useConstLoadings" formControlName="constLoading" type="text">
+    </div>
+    <div class="form-row">
+      <label *ngIf="!useConstLoadings">Upload Loading</label>
+      <input *ngIf="!useConstLoadings" 
+        formControlName="altLoadings"
+        type="file"  
+        accept=".csv"
+        name="files[]"
+        (change)="onFileChange($event)"
+      />
+    </div>
+    <div class="form-row">
+      <label>Loading Multiplier</label>
+      <input formControlName="loadingMulti" type="text">
+    </div>
+    <div *ngIf="uploadedTimeSeries">
+      <div class="table-flex-container">
+        <table mat-table [dataSource]="dataSource">
+          <ng-container *ngFor="let disCol of columnNames" matColumnDef="{{disCol}}">
+            <th mat-header-cell *matHeaderCellDef>
+              <div>{{ disCol }}</div>
+            </th>
+            <td mat-cell *matCellDef="let row">{{ row[disCol] }}</td>
+          </ng-container>
+    
+          <tr mat-header-row *matHeaderRowDef="columnNames"></tr>
+    
+          <tr mat-row *matRowDef="let row; columns: columnNames"></tr>
+        </table>
+      </div>
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    </div>
+    <div class="button" (click)="insertParameter()">Insert Loadings</div>
+  </div>
+</form>
