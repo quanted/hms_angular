@@ -30,7 +30,7 @@ export class SimulationService {
   executeSimulation(): void {
     this.hms
       .executeAquatoxSimulation({
-        sim_input: this.baseJson, // required
+        sim_input: this.simData["base_json"], // required
         network: this.simData["network"] ? this.simData["network"] : [], // required
         comid_inputs: this.simData["comid_loadings"]
           ? this.simData["comid_loadings"]
@@ -49,7 +49,9 @@ export class SimulationService {
 
   selectComId(comid): void {
     this.updateSimData("selectedComId", comid);
-    this.updateSegmentList("user", comid);
+    if (!this.simData.segment_loadings.boundary.includes(comid)) {
+      this.updateSegmentList("user", comid);
+    }
   }
 
   updateSegmentList(type, comid): void {
@@ -115,10 +117,5 @@ export class SimulationService {
       });
     }
     return responseList;
-  }
-
-  selectATXModule(module): void {
-    this.baseJson = this.hms.getBaseJson(module);
-    this.updateSimData("AQTsim", this.baseJson);
   }
 }

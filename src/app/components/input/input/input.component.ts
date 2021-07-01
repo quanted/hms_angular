@@ -41,8 +41,6 @@ export class InputComponent implements OnInit {
   schemas;
 
   currentEndpoint;
-  selectedFile;
-  uploadedFile;
   formInputs = [];
   flags = [];
 
@@ -159,14 +157,14 @@ export class InputComponent implements OnInit {
     const flags = this.moduleForm.value;
     this.simulation.updateSimData("flags", flags);
     this.hms.getBaseJsonByFlags(flags).subscribe((json) => {
-      this.simulation.updateSimData("base-json", json);
+      this.simulation.updateSimData("base_json", json);
       this.baseJson = true;
     });
   }
 
   clearBaseJson(): void {
     this.baseJson = false;
-    this.simulation.updateSimData("base-json", null);
+    this.simulation.updateSimData("base_json", null);
   }
 
   executeSimulation(): void {
