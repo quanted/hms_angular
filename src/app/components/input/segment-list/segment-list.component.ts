@@ -20,6 +20,6 @@ export class SegmentListComponent implements OnInit {
   }
 
   selectSegment(comid) {
-    console.log("selectSegment: ", comid);
+    this.simulation.selectComId(comid);
   }
 }
