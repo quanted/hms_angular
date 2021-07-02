@@ -44,6 +44,13 @@ export class ComidSelectInputComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.inputForm = this.fb.group({
+      constLoading: [""],
+      loadingMulti: [""],
+      altLoadings: [""],
+      comid: [""],
+    });
+
     this.simulation.interfaceData().subscribe((data) => {
       for (let key of Object.keys(data)) {
         switch (key) {
@@ -52,13 +59,6 @@ export class ComidSelectInputComponent implements OnInit {
             break;
         }
       }
-    });
-
-    this.inputForm = this.fb.group({
-      constLoading: [""],
-      loadingMulti: [""],
-      altLoadings: [""],
-      comid: [""],
     });
   }
 
