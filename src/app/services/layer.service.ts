@@ -416,6 +416,7 @@ export class LayerService {
   }
 
   selectSegment(comid): void {
+    let found = false;
     for (let layer of this.segmentLayers) {
       if (layer.comid === this.selectedComId) {
         switch (layer.name) {
@@ -448,10 +449,13 @@ export class LayerService {
           color: this.selectedColor,
           weight: 4,
         });
+        found = true;
       }
     }
-    this.selectedComId = comid;
-    this.simulation.selectComId(comid);
+    if (found) {
+      this.selectedComId = comid;
+      this.simulation.selectComId(comid);
+    }
   }
 
   updateStyle(name, style) {

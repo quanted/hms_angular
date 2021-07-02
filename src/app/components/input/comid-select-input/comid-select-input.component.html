@@ -1,8 +1,11 @@
 <div *ngIf="!selectedComId"><strong>click map to select stream segment</strong></div>
 
-<form [formGroup]="inputFormGroup" *ngIf="selectedComId">
+<form [formGroup]="inputForm" *ngIf="selectedComId">
+  <div class="form-row">
+    <div>Comid: <input class="input-comid" type="number" formControlName="comid" /></div>
+    <div class="button" (click)="addSegment()">Add Segment</div>
+  </div>
   <div><strong>Segment Loadings</strong></div>
-  <div>Comid: {{ selectedComId }}</div>
   <div>Parameters and Sources</div>
   <div *ngIf="!parameters.length">
     <strong>This segment has no parameters or sources</strong>

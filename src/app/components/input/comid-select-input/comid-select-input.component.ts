@@ -7,6 +7,7 @@ import { HmsService } from "src/app/services/hms.service";
 
 import { MatPaginator } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
+import { LayerService } from "src/app/services/layer.service";
 
 @Component({
   selector: "app-comid-select-input",
@@ -14,7 +15,7 @@ import { MatTableDataSource } from "@angular/material/table";
   styleUrls: ["./comid-select-input.component.css"],
 })
 export class ComidSelectInputComponent implements OnInit {
-  inputFormGroup: FormGroup;
+  inputForm: FormGroup;
   svIndex = []; /* Get from service */
 
   addingParameter = false;
@@ -36,7 +37,11 @@ export class ComidSelectInputComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   dataSource = new MatTableDataSource();
 
-  constructor(private fb: FormBuilder, private simulation: SimulationService) {}
+  constructor(
+    private fb: FormBuilder,
+    private simulation: SimulationService,
+    private layerService: LayerService
+  ) {}
 
   ngOnInit(): void {
     this.simulation.interfaceData().subscribe((data) => {
@@ -49,15 +54,17 @@ export class ComidSelectInputComponent implements OnInit {
       }
     });
 
-    this.inputFormGroup = this.fb.group({
+    this.inputForm = this.fb.group({
       constLoading: [""],
       loadingMulti: [""],
       altLoadings: [""],
+      comid: [""],
     });
   }
 
   initializeSegmentValues(simData): void {
     this.selectedComId = simData.selectedComId;
+    this.inputForm.get("comid").setValue(simData.selectedComId);
     if (simData.comid_inputs[this.selectedComId]) {
       this.parameters = simData.comid_inputs[this.selectedComId].sv;
     } else {
@@ -89,6 +96,10 @@ export class ComidSelectInputComponent implements OnInit {
       this.dataSource.data = this.columnData;
       this.dataSource.paginator = this.paginator;
     };
+  }
+
+  addSegment(): void {
+    this.layerService.selectSegment(this.inputForm.get("comid").value);
   }
 
   addParameter(): void {

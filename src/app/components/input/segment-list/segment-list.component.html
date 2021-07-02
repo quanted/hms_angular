@@ -4,7 +4,15 @@
     <div>{{ segment }}</div>
 </div>
 <div>User Segments</div>
-<div *ngIf="!userSegments.length"><strong>No user added segments</strong></div>
+<div *ngIf="!userSegments.length">
+    <strong>No user added segments</strong>
+    <div>Click map to add a segment</div>
+    <div>- or -</div>
+    <div class="form-row" [formGroup]="comidForm">
+      <div>Comid: <input class="input-comid" type="number" formControlName="comid" /></div>
+      <div class="button" (click)="addSegment()">Add Segment</div>
+    </div>
+</div>
 <div class="button" *ngFor="let segment of userSegments" [class.active]="isActive(segment)" (click)="selectSegment(segment)">
     <div>{{ segment }}</div>
 </div>
