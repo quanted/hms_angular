@@ -96,10 +96,10 @@
 
         <div class="container-item">
             <div>HMS</div>
-            <div class="container-item" id="mat-progress-bar" *ngIf="loadingApi">
+            <div class="section-item" id="mat-progress-bar" *ngIf="loadingApi">
                 <mat-progress-bar mode="indeterminate"></mat-progress-bar>
             </div>
-            <div class="container-item" *ngIf="!loadingApi">
+            <div class="section-item" *ngIf="!loadingApi">
                 <div id="api-form" [formGroup]="apiForm">
                     <select formControlName="endpointSelect" (change)="updateEndpointForm()">
                         <option [value]='null' selected>Available data requests</option>
@@ -107,7 +107,7 @@
                     </select>
                 </div>
             </div>
-            <div *ngIf="currentEndpoint" class="container-item">
+            <div class="section-item" *ngIf="currentEndpoint">
                 <form id="endpoint-form" [formGroup]="endpointForm">
                     <div id="summary">{{ currentEndpoint.summary || 'this endpoint has no summary' }}</div>
                     <div *ngFor="let input of formInputs" class="form-row">
@@ -123,7 +123,7 @@
                     </div>
                 </form>
             </div>
-            <div class="container-item">
+            <div class="section-item">
                 <div>HMS data</div>
                 <div *ngIf="!responseList.length">Make HMS request to retrieve data</div>
                 <div style="width: 100%;" *ngFor="let response of responseList" class="button" (click)="gotoData(response.endpoint)">

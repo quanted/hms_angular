@@ -14,6 +14,8 @@ export class SimulationService {
       boundary: [],
     },
     comid_inputs: {},
+    simulation_dependencies: [],
+    catchment_dependencies: {},
   };
   simDataSubject: BehaviorSubject<any>;
 
@@ -103,7 +105,7 @@ export class SimulationService {
       this.simData[key] = null;
     }
     this.simDataSubject.next(this.simData);
-    console.log("simData: ", this.simData);
+    // console.log("simData: ", this.simData);
   }
 
   // returns a Subject for interface components to subscribe to

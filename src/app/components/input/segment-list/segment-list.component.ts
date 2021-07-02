@@ -1,4 +1,6 @@
 import { Component, OnInit } from "@angular/core";
+
+import { LayerService } from "src/app/services/layer.service";
 import { SimulationService } from "src/app/services/simulation.service";
 
 @Component({
@@ -10,7 +12,10 @@ export class SegmentListComponent implements OnInit {
   boundarySegments = [];
   userSegments = [];
 
-  constructor(private simulation: SimulationService) {}
+  constructor(
+    private simulation: SimulationService,
+    private layerService: LayerService
+  ) {}
 
   ngOnInit(): void {
     this.simulation.interfaceData().subscribe((simData) => {
@@ -20,6 +25,6 @@ export class SegmentListComponent implements OnInit {
   }
 
   selectSegment(comid) {
-    this.simulation.selectComId(comid);
+    this.layerService.selectSegment(comid);
   }
 }

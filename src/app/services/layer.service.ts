@@ -132,9 +132,23 @@ export class LayerService {
   simLayers = [
     /* "Pour Point": L.layer, */
   ];
+  segmentLayers = [
+    /*  {
+          comid: comid,
+          layer: layer, 
+        } */
+  ];
+
+  selectedComId = null;
 
   map;
   defaultBasemap = "Open Street Map";
+
+  startColor = "#FF0000";
+  inHucColor = "#00F0F0";
+  outHucColor = "#FF00FF";
+  selectedColor = "#0000FF";
+  simCompletedColor = "#00FF00";
 
   constructor(private simulation: SimulationService) {
     // setup default tile maps
@@ -234,38 +248,52 @@ export class LayerService {
     this.removeFeature("Network");
     this.removeFeature("Boundry");
     this.removeFeature("Stations");
+    this.selectSegment = null;
   }
 
   buildStreamLayers(data) {
-    const startColor = "#FF0000";
-    const inHucColor = "#00F0F0";
-    const outHucColor = "#FF00FF";
-
     const fl = data.output.flowlines_traversed;
     const inHucSegments = [];
     const outHucSegments = [];
+    const selectedHuc = this.simulation.getSimData()["huc"].id;
 
     for (let i in fl) {
+      let tmp_feature = L.geoJSON(fl[i].shape, {
+        style: {
+          color: this.inHucColor,
+          weight: 2,
+        },
+      });
+      tmp_feature.on("click", (e) => {
+        this.selectSegment(fl[i].comid);
+      });
+      tmp_feature.bindTooltip(`comID: ${fl[i].comid}`, {
+        sticky: true,
+      });
+
+      const selectedLayerProps = {
+        comid: fl[i].comid,
+        name: "in-huc-segment",
+        layer: tmp_feature,
+      };
+
+      if (selectedHuc == fl[i].wbd_huc12) {
+        inHucSegments.push(tmp_feature);
+      } else {
+        tmp_feature.setStyle({
+          color: this.outHucColor,
+          weight: 2,
+        });
+        selectedLayerProps.name = "out-huc-segment";
+        outHucSegments.push(tmp_feature);
+        this.simulation.updateSegmentList("boundary", fl[i].comid);
+      }
+
       // first segment is pour point, add it as layer
       if (i == "0") {
-        let tmp_feature = L.geoJSON(fl[i].shape, {
-          style: {
-            color: startColor,
-            weight: 2,
-          },
-        })
-          .bindTooltip(`comID: ${fl[i].comid}`, {
-            sticky: true,
-          })
-          .addTo(this.map);
-
-        // Add click event listener to each stream segment
-        tmp_feature.on("click", (e) => {
-          e.target.setStyle({
-            color: "#FFFF00",
-            weight: 2,
-          });
-          this.simulation.selectComId(fl[i].comid);
+        tmp_feature.setStyle({
+          color: this.startColor,
+          weight: 2,
         });
         this.simLayers.push({
           type: "simfeature-line",
@@ -273,45 +301,15 @@ export class LayerService {
           layer: tmp_feature,
           show: true,
         });
-        continue;
+        selectedLayerProps.name = "pour-point";
       }
-
-      let tmp_feature = L.geoJSON(fl[i].shape).bindTooltip(
-        `comID: ${fl[i].comid}`,
-        {
-          sticky: true,
-        }
-      );
-      // Add click event listener to each stream segment
-      tmp_feature.on("click", (e) => {
-        e.target.setStyle({
-          color: "#FFFF00",
-          weight: 2,
-        });
-        this.simulation.selectComId(fl[i].comid);
-      });
-
-      const selectedHuc = this.simulation.getSimData()["huc"].id;
-      if (selectedHuc == fl[i].wbd_huc12) {
-        inHucSegments.push(tmp_feature);
-        tmp_feature.setStyle({
-          color: inHucColor,
-          weight: 2,
-        });
-      } else {
-        outHucSegments.push(tmp_feature);
-        tmp_feature.setStyle({
-          color: outHucColor,
-          weight: 2,
-        });
-        this.simulation.updateSegmentList("boundary", fl[i].comid);
-      }
+      this.segmentLayers.push(selectedLayerProps);
     }
 
     if (inHucSegments.length) {
       const streamLayer = L.featureGroup(inHucSegments).addTo(this.map);
       streamLayer["options"]["style"] = {
-        color: inHucColor,
+        color: this.inHucColor,
         weight: 2,
       };
       this.simLayers.push({
@@ -325,7 +323,7 @@ export class LayerService {
     if (outHucSegments.length) {
       const boundryLayer = L.featureGroup(outHucSegments).addTo(this.map);
       boundryLayer["options"]["style"] = {
-        color: outHucColor,
+        color: this.outHucColor,
         weight: 2,
       };
       this.simLayers.push({
@@ -350,9 +348,9 @@ export class LayerService {
           .addTo(stationLayer);
       }
       stationLayer["options"]["style"] = {
-        color: outHucColor,
+        color: this.outHucColor,
         weight: 2,
-        fillColor: outHucColor,
+        fillColor: this.outHucColor,
         fillOpacity: 1,
       };
       this.simLayers.push({
@@ -406,6 +404,45 @@ export class LayerService {
       default:
         console.log("UNKNOWN MAP_LAYER_TYPE: ", type);
     }
+  }
+
+  selectSegment(comid): void {
+    for (let layer of this.segmentLayers) {
+      if (layer.comid === this.selectedComId) {
+        switch (layer.name) {
+          case "in-huc-segment":
+            layer.layer.setStyle({
+              color: this.inHucColor,
+              weight: 2,
+            });
+            break;
+          case "out-huc-segment":
+            layer.layer.setStyle({
+              color: this.outHucColor,
+              weight: 2,
+            });
+            break;
+          case "pour-point":
+            layer.layer.setStyle({
+              color: this.startColor,
+              weight: 2,
+            });
+            break;
+          default:
+            console.log(
+              `ERROR: selectSegment.UNKNOWN_LAYER_NAME ${layer.name}`
+            );
+        }
+      }
+      if (layer.comid == comid) {
+        layer.layer.setStyle({
+          color: this.selectedColor,
+          weight: 4,
+        });
+      }
+    }
+    this.selectedComId = comid;
+    this.simulation.selectComId(comid);
   }
 
   updateStyle(name, style) {
