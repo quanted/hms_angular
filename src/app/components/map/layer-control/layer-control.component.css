@@ -1,7 +1,6 @@
 #layer-control {
     display: grid;
     grid-template-rows: 1fr auto;
-    margin-bottom: .125rem;
 }
 
 #layer-select {

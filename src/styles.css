@@ -17,7 +17,7 @@ input[type='number'].input-comid {
     place-items: center;
     height: 30px;
     border-radius: 5px;
-    margin-bottom: .125rem;
+    /* margin-bottom: .125rem; */
     /* color: var(--main-color); */
     background-color: var(--main-button);
 }
@@ -30,10 +30,6 @@ input[type='number'].input-comid {
 .button:active {
     transform: translateY(-1px);
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-}
-
-.button:last-of-type {
-    margin-bottom: 0;
 }
 
 .active {

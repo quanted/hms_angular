@@ -1,18 +1,18 @@
 <div class="grid-container">
     <div class="item">
-        Basemaps
+        <div>Basemaps</div>
         <div *ngFor="let map of basemaps" class="button" [class.active]=map.show (click)="toggleBasemap(map)">
             {{ map.name }}
         </div>      
     </div>
     
     <div class="item">
-        Features
+        <div>Features</div>
         <app-layer-control *ngFor="let feature of defaultFeatures" [feature]="feature"></app-layer-control>
     </div>
 
     <div class="item">
-        User Features
+        <div>User Features</div>
         <app-layer-control *ngFor="let feature of simFeatures" [feature]="feature"></app-layer-control>
     </div>
 </div>
