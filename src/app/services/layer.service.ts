@@ -253,7 +253,11 @@ export class LayerService {
     this.removeFeature("Network");
     this.removeFeature("Boundry");
     this.removeFeature("Stations");
-    this.selectSegment = null;
+    this.selectedComId = null;
+    for (let segmentLayer of this.segmentLayers) {
+      this.map.removeLayer(segmentLayer.layer);
+    }
+    this.segmentLayers = [];
   }
 
   buildStreamLayers(data) {
