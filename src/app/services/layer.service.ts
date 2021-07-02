@@ -243,7 +243,12 @@ export class LayerService {
     }
   }
 
+  removeHuc(): void {
+    this.removeFeature("HUC");
+  }
+
   removeStream(): void {
+    this.removeFeature("Catchment");
     this.removeFeature("Pour Point");
     this.removeFeature("Network");
     this.removeFeature("Boundry");

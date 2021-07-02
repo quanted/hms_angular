@@ -53,7 +53,10 @@ export class MapService {
 
   removeFeature(type, id): void {
     this.layerService.removeFeature(id);
-    if (type == "huc") this.hucSelected = false;
+    if (type == "huc") {
+      this.hucSelected = false;
+      this.layerService.removeHuc();
+    }
     if (type == "catchment") {
       this.catchmentSelected = false;
       this.layerService.removeStream();
@@ -75,10 +78,7 @@ export class MapService {
             name: properties.HU_12_NAME,
             ...properties,
           });
-          this.layerService.addFeature(
-            data.features[0].properties.HUC_12,
-            data
-          );
+          this.layerService.addFeature("HUC", data);
         } else {
           this.hucSelected = false;
         }
@@ -95,10 +95,7 @@ export class MapService {
           id: properties.FEATUREID,
           ...properties,
         });
-        this.layerService.addFeature(
-          data.features[0].properties.FEATUREID,
-          data
-        );
+        this.layerService.addFeature("Catchment", data);
       } else {
         this.catchmentSelected = false;
       }
