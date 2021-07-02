@@ -8,3 +8,12 @@
     color: lightgoldenrodyellow;
     background-color: steelblue;
 }
+
+.button:hover {
+    background: rgba(146, 146, 146, 0.5);
+    cursor: pointer;
+}
+
+.active {
+    background-color: rgb(250, 146, 146);
+}
