@@ -2,7 +2,7 @@
     display: grid;
     height: 100%;
     min-width: 180px;
-    background-color: lightsteelblue;
+    background-color: var(--main-background);
     grid-template-rows: auto auto 1fr;
 }
 
@@ -12,27 +12,5 @@
     padding: .25rem;
     border: 1px solid black;
     border-radius: 5px;
-}
-
-.button {
-    font-size: .75rem;
-    display: grid;
-    place-items: center;
-    height: 30px;
-    border-radius: 5px;
-    margin-bottom: .125rem;
-    background-color: steelblue;
-}
-
-.button:last-of-type {
-    margin-bottom: 0;
-}
-
-.button:hover {
-    background: rgba(146, 146, 146, 0.5);
-    cursor: pointer;
-}
-
-.active {
-    background-color: rgb(250, 146, 146);
+    background-color: var(--main-color);
 }

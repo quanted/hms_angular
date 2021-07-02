@@ -1,6 +1,39 @@
 /* You can add global styles to this file, and also import other style files */
 :root {
     --main-color: lightgoldenrodyellow;
+    --main-background: lightsteelblue;
+    --main-button: steelblue;
+    --main-hover: rgba(146, 146, 146, 0.5);
+    --main-active: rgb(250, 146, 146);
+}
+
+.button {
+    font-size: .75rem;
+    display: grid;
+    place-items: center;
+    height: 30px;
+    border-radius: 5px;
+    margin-bottom: .125rem;
+    color: var(--main-color);
+    background-color: var(--main-button);
+}
+
+.button:hover {
+    background: var(--main-hover);
+    cursor: pointer;
+}
+
+.button:active {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.button:last-of-type {
+    margin-bottom: 0;
+}
+
+.active {
+    background-color: var(--main-active);
 }
 
 body { 

@@ -9,22 +9,6 @@
     row-gap: .5rem;
 }
 
-.button {
-    font-size: .75rem;
-    display: grid;
-    place-items: center;
-    height: 30px;
-    border-radius: 5px;
-    margin-bottom: .125rem;
-    color: lightgoldenrodyellow;
-    background-color: steelblue;
-}
-
-.button:hover {
-    background: rgba(146, 146, 146, 0.5);
-    cursor: pointer;
-}
-
 .table-flex-container {
     overflow: auto;
     display: flex;

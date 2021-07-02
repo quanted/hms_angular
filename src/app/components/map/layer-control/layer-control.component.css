@@ -10,29 +10,11 @@
     column-gap: .125rem;
 }
 
-.button {
-    font-size: .75rem;
-    display: grid;
-    place-items: center;
-    height: 30px;
-    border-radius: 5px;
-    background-color: steelblue;
-}
-
-.button:hover {
-    background: rgba(146, 146, 146, 0.5);
-    cursor: pointer;
-}
-
-.active {
-    background-color: rgb(250, 146, 146);
-}
-
 #editor-form {
     display: grid;
     place-items: center;
     row-gap: .25rem;
-    background-color: lightgoldenrodyellow;
+    background-color: var(--main-color);
     margin: 0 .25rem .25rem .25rem;
     padding: .25rem;
     border-radius: 0 0 5px 5px;
