@@ -126,7 +126,7 @@
             <div class="section-item">
                 <div>HMS data</div>
                 <div *ngIf="!responseList.length">Make HMS request to retrieve data</div>
-                <div style="width: 100%;" *ngFor="let response of responseList" class="button" (click)="gotoData(response.endpoint)">
+                <div *ngFor="let response of responseList" class="button" (click)="gotoData(response.endpoint)">
                     <div>{{ response.endpoint }} {{ response.dataSource }} {{ response.dataset }} <mat-icon title="Download Data">download</mat-icon> <mat-icon title="Remove Data">delete</mat-icon></div>
                 </div>
             </div>

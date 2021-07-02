@@ -63,6 +63,12 @@ export class ComidSelectInputComponent implements OnInit {
   }
 
   initializeSegmentValues(simData): void {
+    console.log("selectedComId: ", this.selectedComId);
+    console.log("initSegment: ", simData.selectedComId);
+    if (this.selectedComId !== simData.selectedComId) {
+      this.addingParameter = false;
+      this.addingSource = false;
+    }
     this.selectedComId = simData.selectedComId;
     this.inputForm.get("comid").setValue(simData.selectedComId);
     if (simData.comid_inputs[this.selectedComId]) {

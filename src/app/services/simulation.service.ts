@@ -9,6 +9,7 @@ import { HmsService } from "./hms.service";
 })
 export class SimulationService {
   simData = {
+    selectedComId: null,
     segment_loadings: {
       user: [],
       boundary: [],
@@ -47,7 +48,7 @@ export class SimulationService {
   }
 
   selectComId(comid): void {
-    this.updateSimData("selectedComId", comid);
+    this.simData.selectedComId = comid;
     if (!this.simData.segment_loadings.boundary.includes(comid)) {
       this.updateSegmentList("user", comid);
     }
@@ -65,7 +66,7 @@ export class SimulationService {
     this.simData.segment_loadings.user = [];
     this.simData.segment_loadings.boundary = [];
     this.simData["network"] = null;
-    this.simData["selectedComId"] = null;
+    this.simData.selectedComId = null;
     this.updateSimData("catchment", null);
   }
 

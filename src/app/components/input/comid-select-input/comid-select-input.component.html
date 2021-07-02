@@ -10,8 +10,12 @@
   <div *ngIf="!parameters.length">
     <strong>This segment has no parameters or sources</strong>
   </div>
-  <div *ngFor="let parameter of parameters">{{ parameter }}</div>
-  <div *ngFor="let source of sources">{{ source }}</div>
+  <div *ngFor="let parameter of parameters" class="button">
+    <div>{{ parameter }}<mat-icon title="Remove Parameter">delete</mat-icon></div>
+  </div>
+  <div *ngFor="let source of sources" class="button">
+    <div>{{ source }}<mat-icon title="Remove Parameter">delete</mat-icon></div>
+  </div>
   <div class="form-row" *ngIf="!addingParameter && !addingSource">
     <div class="button" (click)="addParameter()">Add Parameter</div>
     <div class="button" (click)="addSource()">Add Source</div>
