@@ -120,4 +120,9 @@ export class ComidSelectInputComponent implements OnInit {
       value: "new source object",
     });
   }
+
+  cancelAdd(): void {
+    this.addingParameter = false;
+    this.addingSource = false;
+  }
 }

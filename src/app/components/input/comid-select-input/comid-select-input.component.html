@@ -53,6 +53,9 @@
       </div>
       <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
     </div>
-    <div class="button" (click)="insertParameter()">Insert Loadings</div>
+    <div class="form-row">
+      <div class="button" (click)="cancelAdd()">Cancel</div>
+      <div class="button" (click)="insertParameter()">Insert Loadings</div>
+    </div>
   </div>
 </form>
