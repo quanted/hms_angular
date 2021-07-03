@@ -1,46 +1,36 @@
 <div class="container-col-1">
     <div class="scroll-pane">
+        <!-- AOI section -->
         <div class="container-item first-item">
             <div>Area of Interest</div>
-            <div class="section-item">
-                <div *ngIf="!huc"><strong>Click map to select </strong>
-                    <select>
-                        <option value="12">HUC 12</option>
-                    </select>
-                </div>
-                <div class="control" *ngIf="huc">
-                    <div>{{ huc.name }}</div>
-                    <div>HUC {{ huc.id }}</div>
-                    <!-- <div id="coords-form" class="form-row" [formGroup]="aoiForm">
-                        <div>Lat <input matInput type="number" formControlName="lat"/></div>
-                        <div>Lng <input matInput type="number" formControlName="lng"/></div>
-                    </div> -->
-                    <div class="button" (click)="clearHuc()">Clear HUC</div>
-                </div>
-                <div class="control" *ngIf="huc">
-                    <div *ngIf="!catchment"><strong>Click map to select catchment</strong></div>
-                    <div *ngIf="catchment">
-                        <div>Catchment {{ catchment.id || 'select catchment' }}</div>
-                        <div class="button" (click)="clearCatchment()">Clear catchment</div>
-                    </div>
-                </div>
-                <div *ngIf="huc && catchment && !stream" [formGroup]="distanceForm">
-                    <div class="form-row">Upstream distance (Km)<input type="number" formControlName="distance"></div>
+            <div *ngIf="!huc"><strong>Click map to select </strong>
+                <select>
+                    <option value="12">HUC 12</option>
+                </select>
+            </div>
+            <div class="section-item" *ngIf="huc">
+                <div>{{ huc.name }}</div>
+                <div>HUC {{ huc.id }}</div>
+                <div class="button" (click)="clearHuc()">Clear HUC</div>
+                <div *ngIf="!catchment"><strong>Click map to select catchment</strong></div>
+                <div *ngIf="catchment">
+                    <div>Catchment {{ catchment.id || 'select catchment' }}</div>
+                    <div class="button" (click)="clearCatchment()">Clear catchment</div>
                 </div>
                 
+                <div *ngIf="catchment && !stream" [formGroup]="distanceForm">
+                    <div class="form-row">Upstream distance (Km)<input type="number" formControlName="distance"></div>
+                </div>
                 <div class="button" *ngIf="huc && catchment && !stream && !loadingStream" (click)="getStreamNetwork()">Get stream network</div>
                 <div class="button" *ngIf="huc && catchment && !stream && loadingStream"><mat-progress-bar mode="indeterminate"></mat-progress-bar></div>
             </div>
         </div>
 
+        <!-- Aquatox section -->
         <div class="container-item" [formGroup]="moduleForm">
             <div>Aquatox</div>
 
             <div class="section-item" *ngIf="jsonFlags && !baseJson">
-                <!-- <select formControlName="moduleSelect" (change)="selectModule()">
-                    <option [value]='null' selected>Select Aquatox module</option>
-                    <option *ngFor="let module of atxModules">{{ module }}</option>
-                </select> -->
                 <div>Module Selection Flags</div>
                 <div *ngFor='let flag of jsonFlags'><input formControlName="{{flag}}" type="checkbox"/> {{ flag }}</div>
                 <div class="button" (click)="getBaseJSONByFlags()">Get Base Simulation</div>
@@ -53,10 +43,6 @@
                     <div class="form-row">
                         <div>Site name <input type="text"></div>
                         <div>Site comment <input type="text"></div>
-                    </div>
-                    <div class="form-row">
-                        <!-- <div>First day: <input type="text"></div>
-                        <div>Last day: <input type="text"></div> -->
                     </div>
                     <div class="form-row">
                         <div>
@@ -94,6 +80,7 @@
             </ng-container>
         </div>
 
+        <!-- HMS section -->
         <div class="container-item">
             <div>HMS</div>
             <div class="section-item" id="mat-progress-bar" *ngIf="loadingApi">
