@@ -10,10 +10,10 @@
         <div>Click map to add a segment</div>
         <div>- or -</div>
         <div class="form-row" [formGroup]="comidForm">
-        <div class="vertical-center">
-            <div>Comid: <input class="input-comid" type="number" formControlName="comid" /></div>
-        </div> 
-        <div class="button" (click)="addSegment()">Add Segment</div>
+            <div class="vertical-center">
+                <div>Comid <input class="input-comid" type="number" formControlName="comid" /></div>
+            </div> 
+            <div class="button" (click)="addSegment()">Add Segment</div>
         </div>
     </div>
     <div class="button" *ngFor="let segment of userSegments" [class.active]="isActive(segment)" (click)="selectSegment(segment)">

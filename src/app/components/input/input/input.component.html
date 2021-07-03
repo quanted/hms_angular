@@ -3,19 +3,36 @@
         <!-- AOI section -->
         <div class="container-item first-item">
             <div>Area of Interest</div>
-            <div *ngIf="!huc"><strong>Click map to select </strong>
-                <select>
-                    <option value="12">HUC 12</option>
-                </select>
+            <div class="section-item" *ngIf="!huc">
+                <div class="form-row">
+                    <div class="vertical-center">
+                        <div>Comid <input type="number" class="input-comid" /></div>
+                    </div>
+                    <div class="button">Get Catchment</div>
+                </div>
+                <div>
+                    <strong>Click map to select </strong>
+                    <select>
+                        <option value="12">HUC 12</option>
+                    </select>
+                </div>
             </div>
             <div class="section-item" *ngIf="huc">
                 <div>{{ huc.name }}</div>
-                <div>HUC {{ huc.id }}</div>
-                <div class="button" (click)="clearHuc()">Clear HUC</div>
+                <div class="form-row">
+                    <div class="vertical-center">
+                        <div>HUC {{ huc.id }}</div>
+                    </div>
+                    <div class="button" (click)="clearHuc()">Clear HUC</div>
+                </div>
                 <div *ngIf="!catchment"><strong>Click map to select catchment</strong></div>
                 <div *ngIf="catchment">
-                    <div>Catchment {{ catchment.id || 'select catchment' }}</div>
-                    <div class="button" (click)="clearCatchment()">Clear catchment</div>
+                    <div class="form-row">
+                        <div class="vertical-center">
+                            <div>Catchment {{ catchment.id }}</div>
+                        </div>
+                        <div class="button" (click)="clearCatchment()">Clear catchment</div>
+                    </div>
                 </div>
                 
                 <div *ngIf="catchment && !stream" [formGroup]="distanceForm">
@@ -28,7 +45,7 @@
 
         <!-- Aquatox section -->
         <div class="container-item" [formGroup]="moduleForm">
-            <div>Aquatox</div>
+            <div>Aquatox Simulation</div>
 
             <div class="section-item" *ngIf="jsonFlags && !baseJson">
                 <div>Module Selection Flags</div>
@@ -82,7 +99,7 @@
 
         <!-- HMS section -->
         <div class="container-item">
-            <div>HMS</div>
+            <div>HMS Data</div>
             <div class="section-item" id="mat-progress-bar" *ngIf="loadingApi">
                 <mat-progress-bar mode="indeterminate"></mat-progress-bar>
             </div>
