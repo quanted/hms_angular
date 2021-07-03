@@ -2,7 +2,9 @@
     <div>Boundary Segments</div>
     <div *ngIf="!boundarySegments.length"><strong>This network has no boundary segments</strong></div>
     <div class="button" *ngFor="let segment of boundarySegments" [class.active]="isActive(segment)"  (click)="selectSegment(segment)">
-        <div>{{ segment }}<mat-icon title="Remove Segment">delete</mat-icon></div>
+        <div class="form-row">
+            <div class="vertical-center">{{ segment }}</div><mat-icon title="Remove Segment">delete</mat-icon>
+        </div>
     </div>
     <div>User Segments</div>
     <div *ngIf="!selectedComId">
@@ -17,6 +19,8 @@
         </div>
     </div>
     <div class="button" *ngFor="let segment of userSegments" [class.active]="isActive(segment)" (click)="selectSegment(segment)">
-        <div>{{ segment }}<mat-icon title="Remove Segment">delete</mat-icon></div>
+        <div class="form-row">
+            <div class="vertical-center">{{ segment }}</div><mat-icon title="Remove Segment">delete</mat-icon>
+        </div>
     </div>
 </div>

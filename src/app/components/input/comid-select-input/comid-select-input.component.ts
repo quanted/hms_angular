@@ -70,7 +70,13 @@ export class ComidSelectInputComponent implements OnInit {
     this.selectedComId = simData.selectedComId;
     this.inputForm.get("comid").setValue(simData.selectedComId);
     if (simData.comid_inputs[this.selectedComId]) {
-      this.parameters = simData.comid_inputs[this.selectedComId].sv;
+      this.parameters = [];
+      this.sources = [];
+      const tempArry = simData.comid_inputs[this.selectedComId].sv;
+      for (let sv of tempArry) {
+        if (sv == "new parameter object") this.parameters.push(sv);
+        if (sv == "new source object") this.sources.push(sv);
+      }
     } else {
       this.parameters = [];
     }

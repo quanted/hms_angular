@@ -1,10 +1,10 @@
 mat-icon:hover {
     cursor: pointer;
-    background-color: #bbbbbb;
+    background-color: var(--main-hover);
 }
 
 .container {
-    background: lightsteelblue;
+    background: var(--main-background);
     display: grid;
     grid-template-rows: auto 1fr;
     height: 100%;
