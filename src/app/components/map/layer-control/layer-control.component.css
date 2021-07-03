@@ -6,7 +6,7 @@
 #layer-select {
     display: grid;
     grid-template-columns: auto 2rem;
-    column-gap: .125rem;
+    column-gap: var(--column-gap);
 }
 
 #editor-form {

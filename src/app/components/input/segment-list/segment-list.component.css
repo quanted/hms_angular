@@ -1,10 +1,11 @@
 .list {
     display: flex;
     flex-direction: column;
-    row-gap: .125rem;
+    row-gap: var(--row-gap);
 }
 
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    column-gap: var(--column-gap);
 }

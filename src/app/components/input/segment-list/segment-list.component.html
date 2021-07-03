@@ -10,7 +10,9 @@
         <div>Click map to add a segment</div>
         <div>- or -</div>
         <div class="form-row" [formGroup]="comidForm">
-        <div>Comid: <input class="input-comid" type="number" formControlName="comid" /></div>
+        <div class="vertical-center">
+            <div>Comid: <input class="input-comid" type="number" formControlName="comid" /></div>
+        </div> 
         <div class="button" (click)="addSegment()">Add Segment</div>
         </div>
     </div>

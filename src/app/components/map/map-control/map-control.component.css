@@ -7,7 +7,7 @@
 }
 
 .item {
-    margin: 5px;
+    margin: .25rem;
     margin-top: 0;
     padding: .25rem;
     border: 1px solid black;
@@ -15,5 +15,5 @@
     background-color: var(--main-color);
     display: flex;
     flex-direction: column;
-    row-gap: .125rem;
+    row-gap: var(--row-gap);
 }

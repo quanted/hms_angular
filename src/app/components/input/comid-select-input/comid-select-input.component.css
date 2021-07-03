@@ -2,11 +2,16 @@
     width: 100%;
 }
 
-.form-row,
-.controls {
+.segment-form {
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--row-gap);
+}
+
+.form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    row-gap: .5rem;
+    column-gap: var(--column-gap);
 }
 
 .table-flex-container {

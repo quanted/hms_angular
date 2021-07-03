@@ -5,6 +5,9 @@
     --main-button: steelblue;
     --main-hover: rgba(146, 146, 146, 0.5);
     --main-active: rgb(250, 146, 146);
+
+    --row-gap: .125rem;
+    --column-gap: .125rem;
 }
 
 input[type='number'].input-comid {
@@ -41,6 +44,11 @@ body {
 
 select {
     cursor: pointer;
+}
+
+.vertical-center {
+    display: grid;
+    align-items: center;
 }
 
 /* width */

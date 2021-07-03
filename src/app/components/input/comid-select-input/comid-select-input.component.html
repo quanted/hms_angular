@@ -1,8 +1,10 @@
 <div *ngIf="!selectedComId"><strong>click map to select stream segment</strong></div>
 
-<form [formGroup]="inputForm" *ngIf="selectedComId">
+<form [formGroup]="inputForm" *ngIf="selectedComId" class="segment-form">
   <div class="form-row">
-    <div>Comid: <input class="input-comid" type="number" formControlName="comid" /></div>
+    <div class="vertical-center">
+      <div>Comid: <input class="input-comid" type="number" formControlName="comid" /></div>
+    </div>
     <div class="button" (click)="addSegment()">Add Segment</div>
   </div>
   <div><strong>Segment Loadings</strong></div>
@@ -21,7 +23,7 @@
     <div class="button" (click)="addSource()">Add Source</div>
   </div>
 
-  <div *ngIf="addingParameter">
+  <div *ngIf="addingParameter" class="segment-form">
     New Parameter
     <div class="form-row">
       <label>Use Constant Loading?</label>
@@ -68,7 +70,7 @@
     </div>
   </div>
 
-  <div *ngIf="addingSource">
+  <div *ngIf="addingSource" class="segment-form">
     New Source
     <div class="form-row">
       <div>Source Type</div>
