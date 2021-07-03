@@ -79,6 +79,7 @@ export class ComidSelectInputComponent implements OnInit {
       }
     } else {
       this.parameters = [];
+      this.sources = [];
     }
   }
 
@@ -108,7 +109,7 @@ export class ComidSelectInputComponent implements OnInit {
     };
   }
 
-  addSegment(): void {
+  selectSegment(): void {
     this.layerService.selectSegment(this.inputForm.get("comid").value);
   }
 

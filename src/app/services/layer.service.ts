@@ -308,6 +308,7 @@ export class LayerService {
           type: "simfeature-line",
           name: "Pour Point",
           layer: tmp_feature,
+          inSim: false, // has the user added this segment/added loadings to segment
           show: true,
         });
         selectedLayerProps.name = "pour-point";
@@ -422,19 +423,25 @@ export class LayerService {
         switch (layer.name) {
           case "in-huc-segment":
             layer.layer.setStyle({
-              color: this.inHucColor,
+              color: (layer.inSim = true
+                ? this.selectedColor
+                : this.inHucColor),
               weight: 2,
             });
             break;
           case "out-huc-segment":
             layer.layer.setStyle({
-              color: this.outHucColor,
+              color: (layer.inSim = true
+                ? this.selectedColor
+                : this.outHucColor),
               weight: 2,
             });
             break;
           case "pour-point":
             layer.layer.setStyle({
-              color: this.startColor,
+              color: (layer.inSim = true
+                ? this.selectedColor
+                : this.startColor),
               weight: 2,
             });
             break;
@@ -445,6 +452,7 @@ export class LayerService {
         }
       }
       if (layer.comid == comid) {
+        layer.inSim = true;
         layer.layer.setStyle({
           color: this.selectedColor,
           weight: 4,

@@ -1,5 +1,4 @@
 import { Component, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup } from "@angular/forms";
 
 import { LayerService } from "src/app/services/layer.service";
 import { SimulationService } from "src/app/services/simulation.service";
@@ -14,12 +13,9 @@ export class SegmentListComponent implements OnInit {
   userSegments = [];
   selectedComId = null;
 
-  comidForm: FormGroup;
-
   constructor(
     private simulation: SimulationService,
-    private layerService: LayerService,
-    private fb: FormBuilder
+    private layerService: LayerService
   ) {}
 
   ngOnInit(): void {
@@ -28,13 +24,6 @@ export class SegmentListComponent implements OnInit {
       this.userSegments = simData.segment_loadings.user;
       this.selectedComId = simData.selectedComId;
     });
-    this.comidForm = this.fb.group({
-      comid: [""],
-    });
-  }
-
-  addSegment(): void {
-    this.selectSegment(this.comidForm.get("comid").value);
   }
 
   selectSegment(comid) {
