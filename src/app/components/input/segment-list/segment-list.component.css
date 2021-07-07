@@ -1,9 +1,3 @@
-.list {
-    display: flex;
-    flex-direction: column;
-    row-gap: var(--row-gap);
-}
-
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;

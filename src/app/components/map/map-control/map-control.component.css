@@ -17,3 +17,11 @@
     flex-direction: column;
     row-gap: var(--row-gap);
 }
+
+.scroll-pane-control {
+    max-height: 330px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--row-gap);
+}

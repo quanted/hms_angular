@@ -56,6 +56,10 @@
     height: 2rem;
 }
 
+.centered {
+    text-align: center;
+}
+
 ::ng-deep .mat-date-range-input {
     background-color: white;
     border: 1px solid gray;

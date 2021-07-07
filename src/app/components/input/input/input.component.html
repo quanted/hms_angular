@@ -10,7 +10,8 @@
                     </div>
                     <div class="button">Get Catchment</div>
                 </div>
-                <div>
+                <div class="centered">- or -</div>
+                <div class="centered">
                     <strong>Click map to select </strong>
                     <select>
                         <option value="12">HUC 12</option>
@@ -25,7 +26,7 @@
                     </div>
                     <div class="button" (click)="clearHuc()">Clear HUC</div>
                 </div>
-                <div *ngIf="!catchment"><strong>Click map to select catchment</strong></div>
+                <div *ngIf="!catchment" class="centered"><strong>Click map to select catchment</strong></div>
                 <div *ngIf="catchment">
                     <div class="form-row">
                         <div class="vertical-center">
@@ -78,17 +79,15 @@
             </ng-container>
 
             <div class="section-item" *ngIf="baseJson && !stream">
-                <ng-container *ngIf="!huc || !catchment">
+                <div *ngIf="!huc || !catchment" class="centered">
                     <strong>No area of interest</strong>
-                </ng-container>
-                <ng-container *ngIf="huc && catchment">
+                </div>
+                <div *ngIf="huc && catchment" class="centered">
                     <strong>No stream network</strong>
-                </ng-container>
+                </div>
             </div>
 
-            <!-- <div class="section-item" id="segment-form"> -->
             <div *ngIf="stream && baseJson" class="section-item" id="segment-form">
-                <div>Segment Variables</div>
                 <app-segment-list></app-segment-list>
                 <app-comid-select-input></app-comid-select-input>
             </div>

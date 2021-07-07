@@ -64,8 +64,7 @@ export class ComidSelectInputComponent implements OnInit {
 
   initializeSegmentValues(simData): void {
     if (this.selectedComId !== simData.selectedComId) {
-      this.addingParameter = false;
-      this.addingSource = false;
+      this.cancelAdd();
     }
     this.selectedComId = simData.selectedComId;
     this.inputForm.get("comid").setValue(simData.selectedComId);
@@ -146,5 +145,11 @@ export class ComidSelectInputComponent implements OnInit {
   cancelAdd(): void {
     this.addingParameter = false;
     this.addingSource = false;
+    this.uploadedTimeSeries = false;
+
+    this.dataCSV = "";
+
+    this.columnData = [];
+    this.columnNames = [];
   }
 }

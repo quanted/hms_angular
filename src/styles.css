@@ -50,6 +50,17 @@ select {
     cursor: pointer;
 }
 
+.scroll-pane-list {
+    overflow-y: auto;
+    max-height: 145px;
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--row-gap);
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: var(--row-gap);
+}
+
 .vertical-center {
     display: grid;
     align-items: center;

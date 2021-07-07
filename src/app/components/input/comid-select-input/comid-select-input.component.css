@@ -18,3 +18,7 @@
     overflow: auto;
     display: flex;
 }
+
+.centered {
+    text-align: center;
+}
