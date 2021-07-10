@@ -14,8 +14,10 @@ import { SimulationService } from "src/app/services/simulation.service";
 export class InputComponent implements OnInit {
   aoiForm: FormGroup;
   distanceForm: FormGroup;
-  sourceForm: FormGroup;
   moduleForm: FormGroup;
+  pPointForm: FormGroup;
+  pSetUpForm: FormGroup;
+  sourceForm: FormGroup;
   apiForm: FormGroup;
   endpointForm: FormGroup;
 
@@ -48,6 +50,30 @@ export class InputComponent implements OnInit {
 
   responseList = [];
 
+  /*
+  Total N
+  Total P
+  Organic Matter
+
+  Total N
+  Dissolved Phosphate (PO4)
+  Organic Matter
+
+  Amonia
+  Nitrate
+  Total P
+  Organic Matter
+
+  Nitrogen
+  Phosphorus
+  Organic Matter
+
+  Amonia
+  Nitrate
+  Phosphate- dissoved PO4
+  Organic matter 
+  */
+
   constructor(
     private hms: HmsService,
     private fb: FormBuilder,
@@ -65,6 +91,10 @@ export class InputComponent implements OnInit {
       this.updateEndpointForm();
     });
 
+    this.pPointForm = this.fb.group({
+      pPointComid: [null],
+    });
+
     this.aoiForm = this.fb.group({
       lat: [null],
       lng: [null],
@@ -76,21 +106,31 @@ export class InputComponent implements OnInit {
       source: [null],
       within: ["50"],
     });
+
+    this.moduleForm = this.fb.group({});
+    this.hms.getATXJsonFlags().subscribe((flags) => {
+      this.jsonFlags = flags;
+      const moduleFormFields = {};
+      for (let flag of this.jsonFlags) {
+        moduleFormFields[flag] = [false];
+      }
+      this.moduleForm = this.fb.group(moduleFormFields);
+    });
+
+    this.pSetUpForm = this.fb.group({
+      studyName: [null],
+      firstDay: [null],
+      lastDay: [null],
+      stepSizeInDays: [null],
+      useFixStepSize: [null],
+      fixStepSize: [null],
+    });
+
     this.apiForm = this.fb.group({
       endpointSelect: [null],
     });
     this.simulation.interfaceData().subscribe((d) => {
       this.updateInterface(d);
-    });
-
-    this.moduleForm = this.fb.group({});
-    this.hms.getATXJsonFlags().subscribe((flags) => {
-      this.jsonFlags = flags;
-      const moduleFormFlags = {};
-      for (let flag of this.jsonFlags) {
-        moduleFormFlags[flag] = [false];
-      }
-      this.moduleForm = this.fb.group(moduleFormFlags);
     });
   }
 
@@ -140,6 +180,10 @@ export class InputComponent implements OnInit {
     this.stream = false;
   }
 
+  getPourPoint(): void {
+    console.log("pour point: ", this.pPointForm.get("pPointComid").value);
+  }
+
   getStreamNetwork(): void {
     this.loadingStream = true;
     this.mapService
@@ -165,6 +209,10 @@ export class InputComponent implements OnInit {
   clearBaseJson(): void {
     this.baseJson = false;
     this.simulation.updateSimData("base_json", null);
+  }
+
+  isUsingFixedStep(): boolean {
+    return this.pSetUpForm.get("useFixStepSize").value;
   }
 
   executeSimulation(): void {

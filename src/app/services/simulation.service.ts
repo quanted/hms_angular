@@ -14,6 +14,24 @@ export class SimulationService {
       user: [],
       boundary: [],
     },
+    pSetup: {
+      StudyName: "",
+      FirstDay: {
+        val: "",
+      },
+      LastDay: {
+        val: "",
+      },
+      StepSizeInDays: {
+        val: false,
+      },
+      UseFixStepSize: {
+        val: false,
+      },
+      FixStepSize: {
+        val: null,
+      },
+    },
     comid_inputs: {},
     simulation_dependencies: [],
     catchment_dependencies: {},
