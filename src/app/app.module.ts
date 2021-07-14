@@ -44,6 +44,7 @@ import { LandingComponent } from "./components/landing/landing.component";
 import { ComidSelectInputComponent } from "./components/input/comid-select-input/comid-select-input.component";
 import { SegmentListComponent } from "./components/input/segment-list/segment-list.component";
 import { OutputComponent } from './components/output/output.component';
+import { MultiLineChartComponent } from './components/output/multi-line-chart/multi-line-chart.component';
 
 @NgModule({
   declarations: [
@@ -64,6 +65,7 @@ import { OutputComponent } from './components/output/output.component';
     ComidSelectInputComponent,
     SegmentListComponent,
     OutputComponent,
+    MultiLineChartComponent,
   ],
   imports: [
     BrowserModule,
