@@ -1,7 +1,7 @@
 <div class="grid-container">
     <div class="item">
         <div>Basemaps</div>
-        <div *ngFor="let map of basemaps" class="button" [class.active]=map.show (click)="toggleBasemap(map)">
+        <div *ngFor="let map of basemaps" class="button" [class.active]=map.show (click)="toggleBasemap(map)" matTooltip="Select Basemap">
             {{ map.name }}
         </div>      
     </div>

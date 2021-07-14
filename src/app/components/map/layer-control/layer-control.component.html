@@ -1,9 +1,9 @@
 <div id="layer-control">
     <div id="layer-select">
-        <div class="button" [class.active]=feature.show (click)="toggleLayer()" readonly>
+        <div class="button" [class.active]=feature.show (click)="toggleLayer()" matTooltip="Toggle Layer">
             {{ feature.name }}
         </div>
-        <div class="button" (click)="toggleControl()">
+        <div class="button" (click)="toggleControl()" matTooltip="Layer Options">
             <mat-icon>settings</mat-icon>
         </div>
     </div>

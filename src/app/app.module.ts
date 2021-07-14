@@ -20,6 +20,7 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatIconModule } from "@angular/material/icon";
 import { MatTableModule } from "@angular/material/table";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ScrollingModule } from "@angular/cdk/scrolling";
 
@@ -79,6 +80,7 @@ import { SegmentListComponent } from "./components/input/segment-list/segment-li
     MatProgressSpinnerModule,
     MatIconModule,
     MatTableModule,
+    MatTooltipModule,
     FormsModule,
     ReactiveFormsModule,
     ScrollingModule,
@@ -92,9 +94,10 @@ import { SegmentListComponent } from "./components/input/segment-list/segment-li
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpHeadersInterceptor,
-      multi: true
-    }
-  , TableComponent],
-  bootstrap: [AppComponent]
+      multi: true,
+    },
+    TableComponent,
+  ],
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -17,7 +17,6 @@ export class InputComponent implements OnInit {
   moduleForm: FormGroup;
   pPointForm: FormGroup;
   pSetUpForm: FormGroup;
-  sourceForm: FormGroup;
   apiForm: FormGroup;
   endpointForm: FormGroup;
 
@@ -94,17 +93,12 @@ export class InputComponent implements OnInit {
     this.pPointForm = this.fb.group({
       pPointComid: [null],
     });
-
     this.aoiForm = this.fb.group({
       lat: [null],
       lng: [null],
     });
     this.distanceForm = this.fb.group({
       distance: ["50"],
-    });
-    this.sourceForm = this.fb.group({
-      source: [null],
-      within: ["50"],
     });
 
     this.moduleForm = this.fb.group({});

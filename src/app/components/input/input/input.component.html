@@ -8,7 +8,7 @@
                     <div class="vertical-center">
                         <div>Comid <input type="number" class="input-comid" formControlName="pPointComid"/></div>
                     </div>
-                    <div class="button" (click)="getPourPoint()">Get Pour Point</div>
+                    <div class="button" (click)="getPourPoint()" matTooltip="Get Pour Point">Get Pour Point</div>
                 </div>
                 <div class="centered">- or -</div>
                 <div class="centered">
@@ -32,12 +32,12 @@
                         <div class="vertical-center">
                             <div>Catchment {{ catchment.id }}</div>
                         </div>
-                        <div class="button" (click)="clearCatchment()">Clear catchment</div>
+                        <div class="button" (click)="clearCatchment()">Clear Catchment</div>
                     </div>
                 </div>
                 
                 <div *ngIf="catchment && !stream" [formGroup]="distanceForm">
-                    <div class="form-row">Upstream distance (Km)<input type="number" formControlName="distance"></div>
+                    <div class="form-row">Upstream Distance (Km)<input type="number" formControlName="distance"></div>
                 </div>
                 <div class="button" *ngIf="huc && catchment && !stream && !loadingStream" (click)="getStreamNetwork()">Get stream network</div>
                 <div class="button" *ngIf="huc && catchment && !stream && loadingStream"><mat-progress-bar mode="indeterminate"></mat-progress-bar></div>
