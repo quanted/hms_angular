@@ -57,7 +57,9 @@ export class HmsService {
   }
 
   getATXJsonFlags(): Observable<any> {
-    return this.http.get(`${environment.apiURL}/api/aquatox/workflow/options`);
+    return this.http.get(
+      `${environment.apiURL}/api/aquatox/input-builder/base-json/flags`
+    );
   }
 
   getBaseJsonByFlags(flags): Observable<any> {

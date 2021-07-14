@@ -43,6 +43,7 @@ import { GraphComponent } from "./components/output/graph/graph.component";
 import { LandingComponent } from "./components/landing/landing.component";
 import { ComidSelectInputComponent } from "./components/input/comid-select-input/comid-select-input.component";
 import { SegmentListComponent } from "./components/input/segment-list/segment-list.component";
+import { OutputComponent } from './components/output/output.component';
 
 @NgModule({
   declarations: [
@@ -62,6 +63,7 @@ import { SegmentListComponent } from "./components/input/segment-list/segment-li
     LandingComponent,
     ComidSelectInputComponent,
     SegmentListComponent,
+    OutputComponent,
   ],
   imports: [
     BrowserModule,

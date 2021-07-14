@@ -29,8 +29,8 @@ export class GraphComponent implements OnInit {
   scaleY;
 
   ngOnInit(): void {
-    this.data = this.simulation.getData()["data"];
-    this.dataKeys = Object.keys(this.data);
+    // this.data = this.simulation.getData()["data"];
+    // this.dataKeys = Object.keys(this.data);
     this.initChart();
     this.createChart();
   }
@@ -68,27 +68,29 @@ export class GraphComponent implements OnInit {
         "translate(" + this.margin.left + "," + this.margin.top + ")"
       );
     // transform data array to form d3 expects
-    // [{x: 0, y: 93.24},
-    // {x: 1, y: 95.35},
-    // {x: 2, y: 98.84},
-    // {x: 3, y: 99.92},
-    // {x: 4, y: 99.8},
-    // {x: 5, y: 99.47}, ...]
+    this.chartData = [
+      { x: 0, y: 93.24 },
+      { x: 1, y: 95.35 },
+      { x: 2, y: 98.84 },
+      { x: 3, y: 99.92 },
+      { x: 4, y: 99.8 },
+      { x: 5, y: 99.47 },
+    ];
 
-    this.dataKeys.forEach((key) => {
-      const newValue = this.data[key][0]; //.split('E')[0];
-      this.chartData.push({
-        date: this.dataKeys.indexOf(key),
-        value: newValue,
-      });
-      if (this.data[key][1]) {
-        const value = this.data[key][1];
-        this.chartData2.push({
-          date: this.dataKeys.indexOf(key),
-          value: value,
-        });
-      }
-    });
+    // this.dataKeys.forEach((key) => {
+    //   const newValue = this.data[key][0]; //.split('E')[0];
+    //   this.chartData.push({
+    //     date: this.dataKeys.indexOf(key),
+    //     value: newValue,
+    //   });
+    //   if (this.data[key][1]) {
+    //     const value = this.data[key][1];
+    //     this.chartData2.push({
+    //       date: this.dataKeys.indexOf(key),
+    //       value: value,
+    //     });
+    //   }
+    // });
 
     this.scaleX = d3
       .scaleLinear()
@@ -106,7 +108,7 @@ export class GraphComponent implements OnInit {
 
     this.scaleY = d3
       .scaleLinear()
-      .domain(d3.extent(this.chartData, (d) => d.value))
+      .domain(d3.extent(this.chartData, (d) => d.y))
       .range([this.height - this.margin.bottom, 0 + this.margin.top]);
 
     this.svg
@@ -134,10 +136,10 @@ export class GraphComponent implements OnInit {
         d3
           .line()
           .x((d) => {
-            return this.scaleX(d["date"]);
+            return this.scaleX(d["x"]);
           })
           .y((d) => {
-            return this.scaleY(d["value"]);
+            return this.scaleY(d["y"]);
           })
       );
     // d3.select('svg')
@@ -155,18 +157,18 @@ export class GraphComponent implements OnInit {
     //     })
     // );
 
-    const tooltip = this.svg.append("g");
-    this.svg.on("touchmove mousemove", (event) => {
-      const { date, value } = this.bisect(d3.pointer(event, this)[0]);
+    // const tooltip = this.svg.append("g");
+    // this.svg.on("touchmove mousemove", (event) => {
+    //   const { date, value } = this.bisect(d3.pointer(event, this)[0]);
 
-      tooltip
-        .attr(
-          "transform",
-          `translate(${this.scaleX(date)},${this.scaleY(value)})`
-        )
-        .call(this.callout, `${this.dataKeys[date]}, ${value}`);
-    });
-    this.svg.on("touchend mouseleave", () => tooltip.call(this.callout, null));
+    //   tooltip
+    //     .attr(
+    //       "transform",
+    //       `translate(${this.scaleX(date)},${this.scaleY(value)})`
+    //     )
+    //     .call(this.callout, `${this.dataKeys[date]}, ${value}`);
+    // });
+    // this.svg.on("touchend mouseleave", () => tooltip.call(this.callout, null));
   }
 
   callout(g, value) {
