@@ -144,6 +144,12 @@ export class HmsService {
     );
   }
 
+  cancelAquatoxSimulationExecution(simId): Observable<any> {
+    return this.http.delete(
+      `${environment.apiURL}/api/v2/hms/workflow/compute/?sim_id=${simId}`
+    );
+  }
+
   getAquatoxSimStatus(simId): Observable<any> {
     return this.http.get(
       `${environment.apiURL}/api/v2/hms/workflow/status/?task_id=${simId}`
