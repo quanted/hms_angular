@@ -131,11 +131,37 @@ export class HmsService {
     }
   }
 
-  executeAquatoxSimulation(simulation): Observable<any> {
-    console.log("execute: ", simulation);
+  addAquatoxSimData(simulation): Observable<any> {
     return this.http.post(
-      `${environment.apiURL}/api/v2/hms/workflow/`,
+      `${environment.apiURL}/api/v2/hms/workflow/compute/`,
       JSON.stringify(simulation)
+    );
+  }
+
+  executeAquatoxSimulation(simId): Observable<any> {
+    return this.http.get(
+      `${environment.apiURL}/api/v2/hms/workflow/compute/?sim_id=${simId}`
+    );
+  }
+
+  getAquatoxSimStatus(simId): Observable<any> {
+    return this.http.get(
+      `${environment.apiURL}/api/v2/hms/workflow/status/?task_id=${simId}`
+    );
+  }
+
+  getAquatoxSimResults(simId): Observable<any> {
+    return this.http.get(
+      `${environment.apiURL}/api/v2/hms/workflow/data/?task_id=${simId}`
+    );
+  }
+
+  downloadAquatoxSimResults(simId): Observable<any> {
+    return this.http.get(
+      `${environment.apiURL}/api/v2/hms/workflow/download/?task_id=a3f4f816-ea32-4127-94f0-5293409bee05`,
+      {
+        responseType: "arraybuffer",
+      }
     );
   }
 

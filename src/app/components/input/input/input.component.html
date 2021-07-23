@@ -122,7 +122,11 @@
                 <app-comid-select-input></app-comid-select-input>
             </div>
             <ng-container class="container-item" *ngIf="baseJson && stream && executionReady">
+                <div class="button" (click)="addData()">Add Simulation Data</div>
                 <div class="button" (click)="executeSimulation()">Execute Aquatox Simulation</div>
+                <div class="button" (click)="getSimStatus()">Check Status</div>
+                <div class="button" (click)="getSimResults()" [class.ready]="simComplete">Get Data</div>
+                <div class="button" (click)="downloadSimResults()" [class.ready]="simComplete">Download Data</div>
             </ng-container>
         </div>
 

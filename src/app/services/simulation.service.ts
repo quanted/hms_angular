@@ -4,10 +4,20 @@ import { BehaviorSubject } from "rxjs";
 
 import { HmsService } from "./hms.service";
 
+import * as testRequest1 from "../../base_jsons/test_compute_submit1.json";
+import * as testRequest2 from "../../base_jsons/test_compute_submit2.json";
+import * as testRequest3 from "../../base_jsons/test_compute_submit3.json";
+
 @Injectable({
   providedIn: "root",
 })
 export class SimulationService {
+  testCompute1 = (testRequest1 as any).default;
+  testCompute2 = (testRequest2 as any).default;
+  testCompute3 = (testRequest3 as any).default;
+
+  computeExecution = 1;
+
   simData = {
     selectedComId: null,
     segment_loadings: {
@@ -45,23 +55,63 @@ export class SimulationService {
     this.simDataSubject = new BehaviorSubject(this.simData);
   }
 
+  addData(): void {
+    let request = this.testCompute1;
+    switch (this.computeExecution) {
+      case 2:
+        request = this.testCompute2;
+        request["sim_id"] = this.simData["simId"];
+        break;
+      case 3:
+        request = this.testCompute3;
+        request["sim_id"] = this.simData["simId"];
+        break;
+      default:
+        request = this.testCompute1;
+    }
+    this.hms.addAquatoxSimData(request).subscribe((response) => {
+      console.log(`Compute${this.computeExecution} response: `, response);
+      this.updateSimData("simId", response["_id"]);
+      this.computeExecution >= 3
+        ? (this.computeExecution = 1)
+        : this.computeExecution++;
+    });
+  }
+
   executeSimulation(): void {
     this.hms
-      .executeAquatoxSimulation({
-        sim_input: this.simData["base_json"], // required
-        network: this.simData["network"] ? this.simData["network"] : [], // required
-        comid_inputs: this.simData["comid_loadings"]
-          ? this.simData["comid_loadings"]
-          : [],
-        simulation_dependencies: this.simData["simulation_dependencies"]
-          ? this.simData["simulation_dependencies"]
-          : [],
-        catchment_dependencies: this.simData["catchment_dependencies"]
-          ? this.simData["catchment_dependencies"]
-          : [],
-      })
+      .executeAquatoxSimulation(this.simData["simId"])
       .subscribe((response) => {
-        this.updateSimData("simId", response["job_id"]);
+        console.log("Execute: ", response);
+      });
+  }
+
+  getStatus(): void {
+    this.hms
+      .getAquatoxSimStatus(this.simData["simId"])
+      .subscribe((response) => {
+        let status = response.status;
+        if (!status) status = response.error;
+        console.log("Status: ", status);
+        console.log("Simulation: ", response);
+      });
+  }
+
+  getSimResults(): void {
+    this.hms.getAquatoxSimResults(this.simData["simId"]).subscribe((data) => {
+      console.log("Simulation results: ", data);
+    });
+  }
+
+  downloadSimResults(): void {
+    this.hms
+      .downloadAquatoxSimResults(this.simData["simId"])
+      .subscribe((data) => {
+        const blob = new Blob([data], {
+          type: "application/zip",
+        });
+        const url = window.URL.createObjectURL(blob);
+        window.open(url);
       });
   }
 
@@ -124,7 +174,7 @@ export class SimulationService {
       this.simData[key] = null;
     }
     this.simDataSubject.next(this.simData);
-    console.log("simData: ", this.simData);
+    // console.log("simData: ", this.simData);
   }
 
   // returns a Subject for interface components to subscribe to
