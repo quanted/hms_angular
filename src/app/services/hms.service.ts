@@ -158,7 +158,7 @@ export class HmsService {
 
   downloadAquatoxSimResults(simId): Observable<any> {
     return this.http.get(
-      `${environment.apiURL}/api/v2/hms/workflow/download/?task_id=a3f4f816-ea32-4127-94f0-5293409bee05`,
+      `${environment.apiURL}/api/v2/hms/workflow/download/?task_id=${simId}`,
       {
         responseType: "arraybuffer",
       }
