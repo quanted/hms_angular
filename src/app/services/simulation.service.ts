@@ -105,7 +105,7 @@ export class SimulationService {
 
   downloadSimResults(): void {
     this.hms
-      .downloadAquatoxSimResults("a3f4f816-ea32-4127-94f0-5293409bee05")
+      .downloadAquatoxSimResults(this.simData["simId"])
       .subscribe((data) => {
         const blob = new Blob([data], {
           type: "application/zip",
