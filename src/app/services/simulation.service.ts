@@ -105,13 +105,13 @@ export class SimulationService {
 
   downloadSimResults(): void {
     this.hms
-      .downloadAquatoxSimResults(this.simData["simId"])
+      .downloadAquatoxSimResults("a3f4f816-ea32-4127-94f0-5293409bee05")
       .subscribe((data) => {
         const blob = new Blob([data], {
           type: "application/zip",
         });
         const url = window.URL.createObjectURL(blob);
-        window.open(url);
+        window.open(url, "_self");
       });
   }
 
