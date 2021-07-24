@@ -9,13 +9,8 @@ img {
 #name {
     margin: 0px;
     padding: 0px;
-    font-size: 1rem;
+    font-size: 2rem;
     color: white;
     margin-left: 2rem;
     align-self: center;
-}
-
-.big {
-    font-size: 2rem;
-    margin-right: 1rem;
 }

@@ -32,6 +32,7 @@ export class MapService {
         center: [38.5, -96], // US geographical center
         zoom: 10,
         minZoom: 5,
+        zoomControl: false,
       });
       this.map.on("click", (mapClickEvent) => {
         this.handleClick(mapClickEvent);

@@ -4,8 +4,17 @@ mat-icon:hover {
 }
 
 .container {
-    background: var(--main-background);
-    height: 100%;
     display: grid;
     grid-template-rows: auto 1fr;
+    margin: .25rem;
+}
+
+.panel-open-right {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: var(--column-gap);
+}
+
+app-map-control {
+    background: var(--main-transparent);
 }
