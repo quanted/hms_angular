@@ -1,17 +1,18 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from "@angular/core";
 
 @Component({
-  selector: 'app-expansion-panel-right',
-  templateUrl: './expansion-panel-right.component.html',
-  styleUrls: ['./expansion-panel-right.component.css']
+  selector: "app-expansion-panel-right",
+  templateUrl: "./expansion-panel-right.component.html",
+  styleUrls: ["./expansion-panel-right.component.css"],
 })
 export class ExpansionPanelRightComponent implements OnInit {
   @Input() open: boolean;
 
-  constructor() { }
+  tooltipPosition = "left";
 
-  ngOnInit(): void {
-  }
+  constructor() {}
+
+  ngOnInit(): void {}
 
   openPanel(): void {
     this.open = true;
@@ -19,4 +20,5 @@ export class ExpansionPanelRightComponent implements OnInit {
 
   closePanel(): void {
     this.open = false;
-  }}
+  }
+}

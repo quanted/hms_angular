@@ -1,63 +1,12 @@
-.container-col-1 {
+.input-container {
     width: 425px;
-}
-
-.scroll-pane {
-    overflow-y: auto;
-    height: 791px;
-}
-
-.container-item,
-.section-item {
-    margin: .25rem;
-    padding: .5rem;
-    border: 1px solid black;
-    border-radius: 5px;
-    background-color: var(--main-color);
-    display: flex;
-    flex-direction: column;
+    display: grid;
     row-gap: var(--row-gap);
-}
-
-.section-item {
-    margin: 0px;
-}
-
-/* #segment-form {
-    display: flex;
-    flex-direction: column;
-    row-gap: var(--row-gap);
-}
-
-#endpoint-form {
-    display: grid;
-    row-gap: .5rem;
-}
-
-#parameter-form {
-    display: grid;
-} */
-
-.form-row,
-.controls {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: var(--column-gap);
-}
-
-.control {
-    display: grid;
-    grid-template-columns: 1fr;
-    width: 100%;
 }
 
 #mat-progress-bar {
     width: 95%;
     height: 2rem;
-}
-
-.centered {
-    text-align: center;
 }
 
 ::ng-deep .mat-date-range-input {

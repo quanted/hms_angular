@@ -1,9 +1,13 @@
-<div class="container">
-    <ng-container *ngIf="open">
-        <mat-icon (click)="closePanel()" title="collapse panel">chevron_left</mat-icon>
+<div class="panel-left">
+    <div *ngIf="open" class="panel-left-open">
         <app-input></app-input>
-    </ng-container>
-    <ng-container *ngIf="!open">
-        <mat-icon (click)="openPanel()" title="expand panel">chevron_right</mat-icon>
-    </ng-container>
+        <div (click)="closePanel()">
+            <mat-icon matTooltip="Hide" [matTooltipPosition]="tooltipPosition">chevron_left</mat-icon>
+        </div>
+    </div>
+    <div *ngIf="!open">
+        <div (click)="openPanel()">
+            <mat-icon matTooltip="Show Aquatox Simulation Input Panel" [matTooltipPosition]="tooltipPosition">chevron_right</mat-icon>
+        </div>  
+    </div>
 </div>

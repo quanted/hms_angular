@@ -1,7 +1,8 @@
-<div class="container-col-1">
+<div class="input-container">
+    <strong class="centered">Aquatox WebWorkflow</strong>
     <div class="scroll-pane">
         <!-- AOI section -->
-        <div class="container-item first-item">
+        <div class="container-item">
             <div>Area of Interest</div>
             <div class="section-item" *ngIf="!huc">
                 <div class="form-row" [formGroup]="pPointForm">
@@ -19,12 +20,11 @@
                 </div>
             </div>
             <div class="section-item" *ngIf="huc">
-                <div>{{ huc.name }}</div>
                 <div class="form-row">
                     <div class="vertical-center">
-                        <div>HUC {{ huc.id }}</div>
+                        <div>{{ huc.name }}</div>
                     </div>
-                    <div class="button" (click)="clearHuc()">Clear HUC</div>
+                    <div class="button" (click)="clearHuc()">Reset Area of Interest</div>
                 </div>
                 <div *ngIf="!catchment" class="centered"><strong>Click map to select catchment</strong></div>
                 <div *ngIf="catchment">
@@ -45,7 +45,7 @@
         </div>
 
         <!-- Aquatox section -->
-        <div class="container-item">
+        <div class="container-item" *ngIf="stream">
             <div>Aquatox Simulation</div>
 
             <div class="section-item" *ngIf="jsonFlags && !baseJson" [formGroup]="moduleForm">
@@ -122,12 +122,16 @@
                 <app-comid-select-input></app-comid-select-input>
             </div>
             <ng-container class="container-item" *ngIf="baseJson && stream && executionReady">
+                <div class="button" (click)="addData()">Add Simulation Data</div>
                 <div class="button" (click)="executeSimulation()">Execute Aquatox Simulation</div>
+                <div class="button" (click)="getSimStatus()">Check Status</div>
+                <div class="button" (click)="getSimResults()" [class.ready]="simComplete">Get Data</div>
+                <div class="button" (click)="downloadSimResults()" [class.ready]="simComplete">Download Data</div>
             </ng-container>
         </div>
 
         <!-- HMS section -->
-        <div class="container-item">
+        <!-- <div class="container-item">
             <div>HMS Data</div>
             <div class="section-item" id="mat-progress-bar" *ngIf="loadingApi">
                 <mat-progress-bar mode="indeterminate"></mat-progress-bar>
@@ -163,6 +167,6 @@
                     <div>{{ response.endpoint }} {{ response.dataSource }} {{ response.dataset }} <mat-icon title="Download Data">download</mat-icon> <mat-icon title="Remove Data">delete</mat-icon></div>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </div>

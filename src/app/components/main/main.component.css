@@ -1,19 +1,24 @@
 body {
     display: grid;
-    grid-template: auto 1fr auto / auto 1fr auto;
-    background-color: #2f7b9e;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
+    grid-template-rows: auto 1fr auto;
+    background-color: var(--main-epa);
 }
 
-app-header {
-    grid-column: 1 / 4;
+.float {
+    position: absolute;
+    z-index: 9999;
 }
 
-app-map {
-    grid-column: 2 / 3;
+.panel-left {
+    top: inherit;
+    left: 0;
+}
+
+.panel-right {
+    top: inherit;
+    right: 0;
 }
 
 app-footer {
     text-align: center;
-    grid-column: 1 / 4;
 }

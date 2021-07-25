@@ -8,6 +8,8 @@ import { Component, Input } from "@angular/core";
 export class ExpansionPanelLeftComponent {
   @Input() open: boolean;
 
+  tooltipPosition = "right";
+
   constructor() {}
 
   openPanel(): void {

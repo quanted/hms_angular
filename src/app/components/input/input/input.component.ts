@@ -36,6 +36,7 @@ export class InputComponent implements OnInit {
 
   // TODO: implement call to execution check endpoint
   executionReady = true;
+  simComplete = true;
 
   apiVersion;
   apiEndpointList = [];
@@ -209,9 +210,24 @@ export class InputComponent implements OnInit {
     return this.pSetUpForm.get("useFixStepSize").value;
   }
 
+  addData(): void {
+    this.simulation.addData();
+  }
+
   executeSimulation(): void {
-    console.log("execute simulation!");
     this.simulation.executeSimulation();
+  }
+
+  getSimStatus(): void {
+    this.simulation.getStatus();
+  }
+
+  getSimResults(): void {
+    this.simulation.getSimResults();
+  }
+
+  downloadSimResults(): void {
+    this.simulation.downloadSimResults();
   }
 
   updateEndpointForm(): void {

@@ -1,7 +1,7 @@
 <div class="list">
     <div>Boundary Segments</div>
     <div *ngIf="!boundarySegments.length"><strong>This network has no boundary segments</strong></div>
-    <div class="scroll-pane-list" *ngIf="boundarySegments.length">
+    <div class="scroll-pane list-short" *ngIf="boundarySegments.length">
         <div class="button" *ngFor="let segment of boundarySegments" [class.active]="isActive(segment)"  (click)="selectSegment(segment)">
             <div class="form-row">
                 <div class="vertical-center">{{ segment }}</div><mat-icon title="Remove Segment">delete</mat-icon>
@@ -9,7 +9,7 @@
         </div>
     </div>
     <div>User Segments</div>
-    <div class="scroll-pane-list" *ngIf="userSegments.length">
+    <div class="scroll-pane list-short" *ngIf="userSegments.length">
         <div class="button" *ngFor="let segment of userSegments" [class.active]="isActive(segment)" (click)="selectSegment(segment)">
             <div class="form-row">
                 <div class="vertical-center">{{ segment }}</div><mat-icon title="Remove Segment">delete</mat-icon>

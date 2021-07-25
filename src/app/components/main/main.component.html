@@ -1,7 +1,9 @@
 <body>
     <app-header></app-header>
-    <app-expansion-panel-left [open]="true"></app-expansion-panel-left>
-    <app-map></app-map>
-    <app-expansion-panel-right [open]="true"></app-expansion-panel-right>
+    <div>
+        <app-expansion-panel-left [open]="true" class="float panel-left"></app-expansion-panel-left>
+        <app-expansion-panel-right [open]="true" class="float panel-right"></app-expansion-panel-right>
+        <app-map></app-map>
+    </div>
     <app-footer></app-footer>
 </body>

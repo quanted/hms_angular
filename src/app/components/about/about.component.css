@@ -2,8 +2,8 @@
     padding-left: 1rem;
     padding-right: 1rem;
     overflow-y: scroll;
-    height: 750px;
-    background-color: lightgoldenrodyellow;
+    height: 812px;
+    background-color: var(--main-color);
 }
 
 .container > h2 {
