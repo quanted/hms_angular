@@ -11,7 +11,7 @@
   <div *ngIf="selectedComId" class="segment-form">
     <div><strong>Segment Loadings</strong></div>
     <div>Parameters</div>
-    <div class="scroll-pane-list" *ngIf="parameters.length">
+    <div class="scroll-pane list-short" *ngIf="parameters.length">
       <div *ngFor="let parameter of parameters" class="button">
         <div class="form-row">
           <div class="vertical-center">{{ parameter }}</div><mat-icon title="Remove Parameter">delete</mat-icon>
@@ -22,7 +22,7 @@
       <strong>This segment has no parameters</strong>
     </div>
     <div>Sources</div>
-    <div class="scroll-pane-list" *ngIf="sources.length">
+    <div class="scroll-pane list-short" *ngIf="sources.length">
       <div *ngFor="let source of sources" class="button">
         <div class="form-row">
           <div class="vertical-center">{{ source }}</div><mat-icon title="Remove Source">delete</mat-icon>

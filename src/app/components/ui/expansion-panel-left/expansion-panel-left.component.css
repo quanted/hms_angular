@@ -3,13 +3,13 @@ mat-icon:hover {
     background-color: var(--main-hover);
 }
 
-.container {
+.panel-left {
     display: grid;
     grid-template-rows: auto 1fr;
     margin: .25rem;
 }
 
-.panel-open-left {
+.panel-left-open {
     display: grid;
     grid-template-columns: 1fr auto;
     column-gap: var(--column-gap);
@@ -17,5 +17,4 @@ mat-icon:hover {
 
 app-input {
     background-color: var(--main-transparent);
-    border-radius: 5px;
 }

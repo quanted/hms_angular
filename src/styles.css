@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 :root {
+    --main-epa: #2f7b9e;
     /* --main-color: rgb(250, 250, 210); */
     --main-color: rgb(195, 195, 195);
     --main-background: rgb(176, 196, 222);
@@ -13,7 +14,9 @@
     --row-gap: .125rem;
     --column-gap: .125rem;
 
-    --main-max-panel-height: 700px;
+    --main-max-panel-height: 720px;
+
+    --main-list-short-height: 100px;
 }
 
 input[type='number'] {
@@ -43,16 +46,22 @@ input[type=number]::-webkit-outer-spin-button {
 	        box-shadow: 0 3px 3px -2px black;
 }
 
-.button:hover {
-    background: var(--main-hover);
-    cursor: pointer;
-}
-
 .button:active {
     transform: translateY(2px);
     -webkit-box-shadow: none;
        -moz-box-shadow: none;
             box-shadow: none;
+}
+
+select,
+mat-icon:hover,
+.button {
+    cursor: pointer;
+}
+
+mat-icon:hover,
+.button:hover {
+    background-color: var(--main-hover);
 }
 
 .active {
@@ -66,10 +75,7 @@ input[type=number]::-webkit-outer-spin-button {
 body { 
     margin: 0px;
     height: 100vh;
-}
-
-select {
-    cursor: pointer;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
 .centered {
@@ -79,6 +85,12 @@ select {
 .vertical-center {
     display: grid;
     align-items: center;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--column-gap);
 }
 
 .container-item,
@@ -104,24 +116,24 @@ select {
     max-height: var(--main-max-panel-height);
 }
 
-/* width */
+.list-short {
+    max-height: var(--main-list-short-height);
+}
+
 ::-webkit-scrollbar {
     width: 10px;
 }
 
-/* Track */
 ::-webkit-scrollbar-track {
     box-shadow: inset 0 0 5px lightgrey; 
     border-radius: 5px;
 }
 
-/* Handle */
 ::-webkit-scrollbar-thumb {
     background: gray; 
     border-radius: 10px;
 }
 
-/* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-    background: darkgrey; 
+    background: darkgrey;
 }
