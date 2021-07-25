@@ -1,18 +1,21 @@
 <div class="grid-container">
-    <div class="item">
-        <div>Basemaps</div>
-        <div *ngFor="let map of basemaps" class="button" [class.active]=map.show (click)="toggleBasemap(map)" matTooltip="Select Basemap">
-            {{ map.name }}
-        </div>      
-    </div>
+    <strong class="centered">Layer Controls</strong>
+    <div class="scroll-pane">
+        <div class="container-item">
+            <div>Basemaps</div>
+            <div *ngFor="let map of basemaps" class="button" [class.active]=map.show (click)="toggleBasemap(map)" matTooltip="Select Basemap">
+                {{ map.name }}
+            </div>      
+        </div>
+        
+        <div class="container-item">
+            <div>Overlays</div>
+            <app-layer-control *ngFor="let feature of defaultFeatures" [feature]="feature"></app-layer-control>
+        </div>
     
-    <div class="item">
-        <div>Overlays</div>
-        <app-layer-control *ngFor="let feature of defaultFeatures" [feature]="feature"></app-layer-control>
-    </div>
-
-    <div class="item" *ngIf="simFeatures.length" >
-        <div>Area of Interest</div>
-        <app-layer-control *ngFor="let feature of simFeatures" [feature]="feature"></app-layer-control>
+        <div class="container-item" *ngIf="simFeatures.length" >
+            <div>Area of Interest</div>
+            <app-layer-control *ngFor="let feature of simFeatures" [feature]="feature"></app-layer-control>
+        </div>
     </div>
 </div>
