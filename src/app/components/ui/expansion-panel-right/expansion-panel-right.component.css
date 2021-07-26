@@ -7,7 +7,6 @@
 .panel-right-open {
     display: grid;
     grid-template-columns: auto 1fr;
-    column-gap: var(--column-gap);
 }
 
 app-map-control {

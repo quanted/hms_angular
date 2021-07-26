@@ -2,12 +2,12 @@
     <div *ngIf="open" class="panel-left-open">
         <app-input></app-input>
         <div (click)="closePanel()">
-            <mat-icon matTooltip="Hide" [matTooltipPosition]="tooltipPosition">chevron_left</mat-icon>
+            <mat-icon class="icon-panel-toggle" matTooltip="Hide Simulation Interface" [matTooltipPosition]="tooltipPosition">chevron_left</mat-icon>
         </div>
     </div>
     <div *ngIf="!open">
         <div (click)="openPanel()">
-            <mat-icon matTooltip="Show Aquatox Simulation Input Panel" [matTooltipPosition]="tooltipPosition">chevron_right</mat-icon>
+            <mat-icon class="icon-panel-toggle" matTooltip="Show Simulation Interface" [matTooltipPosition]="tooltipPosition">chevron_right</mat-icon>
         </div>  
     </div>
 </div>

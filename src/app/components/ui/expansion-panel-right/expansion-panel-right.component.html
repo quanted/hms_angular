@@ -1,13 +1,13 @@
 <div class="panel-right">
     <div *ngIf="open" class="panel-right-open">
         <div (click)="closePanel()">
-            <mat-icon matTooltip="Hide" [matTooltipPosition]="tooltipPosition">chevron_right</mat-icon>
+            <mat-icon class="icon-panel-toggle" matTooltip="Hide Layer Controls" [matTooltipPosition]="tooltipPosition">chevron_right</mat-icon>
         </div>
         <app-map-control></app-map-control>
     </div>
     <div *ngIf="!open">
         <div (click)="openPanel()">
-            <mat-icon matTooltip="Show Map Layer Controls" [matTooltipPosition]="tooltipPosition">chevron_left</mat-icon>
+            <mat-icon class="icon-panel-toggle" matTooltip="Show Layer Controls" [matTooltipPosition]="tooltipPosition">chevron_left</mat-icon>
         </div>
     </div>
 </div>
