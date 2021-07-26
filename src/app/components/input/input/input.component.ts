@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 
 import { FormBuilder, FormGroup } from "@angular/forms";
+import { Router } from "@angular/router";
 
 import { HmsService } from "src/app/services/hms.service";
 import { MapService } from "src/app/services/map.service";
@@ -75,6 +76,7 @@ export class InputComponent implements OnInit {
   */
 
   constructor(
+    private router: Router,
     private hms: HmsService,
     private fb: FormBuilder,
     private simulation: SimulationService,
@@ -274,6 +276,10 @@ export class InputComponent implements OnInit {
   // navigate to data browsing page loading the selected dataset
   gotoData(endpoint) {
     console.log("click! ", endpoint);
+  }
+
+  goToOutput() {
+    this.router.navigateByUrl("output");
   }
 }
 

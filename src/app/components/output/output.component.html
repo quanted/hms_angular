@@ -1,6 +1,10 @@
 <body>
     <app-header></app-header>
-    <app-graph></app-graph>
+    <div>
+        <app-expansion-panel-left [open]="true" class="float panel-left"></app-expansion-panel-left>
+        <div class="temp">
+            <app-multi-line-chart *ngIf="lineData !== undefined" [data]=lineData></app-multi-line-chart>
+        </div>
+    </div>
     <app-footer></app-footer>
 </body>
-

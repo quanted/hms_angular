@@ -1,4 +1,5 @@
 import { Component, Input } from "@angular/core";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-expansion-panel-left",
@@ -10,7 +11,12 @@ export class ExpansionPanelLeftComponent {
 
   tooltipPosition = "right";
 
-  constructor() {}
+  constructor(
+    public router: Router
+  ) { }
+
+  ngOnInit(): void {
+  }
 
   openPanel(): void {
     this.open = true;

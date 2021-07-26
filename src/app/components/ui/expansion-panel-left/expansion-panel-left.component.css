@@ -9,6 +9,6 @@
     grid-template-columns: 1fr auto;
 }
 
-app-input {
+app-input, app-output-panel-left {
     background-color: var(--main-transparent);
 }

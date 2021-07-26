@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { OutputService } from 'src/app/services/output.service';
 
 @Component({
   selector: 'app-output',
@@ -7,9 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class OutputComponent implements OnInit {
 
-  constructor() { }
+  lineData: any[] = [];
+  constructor(private outputService: OutputService) { }
 
   ngOnInit(): void {
+    this.outputService.getData();
+    this.lineData = this.outputService.lineData;
   }
-
 }

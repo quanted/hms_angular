@@ -1,13 +1,16 @@
 <div class="panel-left">
     <div *ngIf="open" class="panel-left-open">
-        <app-input></app-input>
+        <app-input *ngIf="this.router.url === '/home'"></app-input>
+        <app-output-panel-left *ngIf="this.router.url === '/output'"></app-output-panel-left>
         <div (click)="closePanel()">
-            <mat-icon class="icon-panel-toggle" matTooltip="Hide Simulation Interface" [matTooltipPosition]="tooltipPosition">chevron_left</mat-icon>
+            <mat-icon class="icon-panel-toggle" matTooltip="Hide Simulation Interface"
+                [matTooltipPosition]="tooltipPosition">chevron_left</mat-icon>
         </div>
     </div>
     <div *ngIf="!open">
         <div (click)="openPanel()">
-            <mat-icon class="icon-panel-toggle" matTooltip="Show Simulation Interface" [matTooltipPosition]="tooltipPosition">chevron_right</mat-icon>
-        </div>  
+            <mat-icon class="icon-panel-toggle" matTooltip="Show Simulation Interface"
+                [matTooltipPosition]="tooltipPosition">chevron_right</mat-icon>
+        </div>
     </div>
 </div>

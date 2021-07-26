@@ -1,6 +1,7 @@
-import {Component, OnInit, ViewChild, ElementRef, Input, OnChanges, SimpleChanges} from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input, OnChanges, SimpleChanges, AfterViewInit } from '@angular/core';
 import * as d3 from 'd3';
-import {nest} from 'd3-collection';
+import { nest } from 'd3-collection';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-multi-line-chart',
@@ -13,46 +14,60 @@ export class MultiLineChartComponent implements OnInit, OnChanges {
   // The static attribute is set to True to resolve query results before change
   // detection runs. Without this, changes are applied to data before chart is
   // retrieved and set to a variable.
-  @ViewChild('chart', {static: true}) public chart: ElementRef;
+  @ViewChild('chart', { static: true }) public chart: ElementRef;
 
   // @Input data must be of the specified format to properly render multi data
   // group charts.
-  @Input() data: {type: string, x: any, y: number}[];
+  @Input() data: { type: string, x: any, y: number }[];
 
   svg: any;
   width: number;
   height: number;
-  margin = { top: 30, right: 30, bottom: 30, left: 50 };
+  margin = { top: 30, right: 30, bottom: 70, left: 50 };
   scaleX: any;
   scaleY: any;
 
-  public constructor(public chartElem: ElementRef) {}
+  public constructor(public chartElem: ElementRef) { }
 
   ngOnInit(): void {
-    this.initChart();
-    this.createChart();
+    // The height is being set faster than footer can load. Set timeout to fix.
+    setTimeout(() => {
+      this.initChart();
+      this.createChart();
+    }, 10);
+
+    // Add event listener to reload the chart on window resize
+    window.addEventListener('resize', () => {
+      this.reloadChart();
+    });
+    // Add event listener to reload the chart on expansion panel click
+    document.querySelector('app-expansion-panel-left').addEventListener('click', () => {
+      this.reloadChart();
+    });
   }
 
+  /**
+   * Updates the chart when data changes. 
+   */
   public ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty('data') && this.data) {
       if (this.svg !== undefined && !changes.data.firstChange) {
-        // remove appended 'g's
-        this.svg.selectAll('g').remove();
-        // remove append 'paths'
-        this.svg.selectAll('path').remove();
-        this.initChart();
-        this.createChart();
+        this.reloadChart();
       }
-      window.addEventListener('resize', () => {
-        // remove appended 'g's
-        this.svg.selectAll('g').remove();
-        // remove append 'paths'
-        this.svg.selectAll('path').remove();
-        // Re-init and draw
-        this.initChart();
-        this.createChart();
-      });
     }
+  }
+
+  /**
+   * Reloads the chart.
+   */
+  private reloadChart(): void {
+    // remove appended 'g's
+    this.svg.selectAll('g').remove();
+    // remove append 'paths'
+    this.svg.selectAll('path').remove();
+    // Re-init and draw
+    this.initChart();
+    this.createChart();
   }
 
   /**
@@ -67,17 +82,25 @@ export class MultiLineChartComponent implements OnInit, OnChanges {
 
     this.svg.append('g').attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
 
-    this.scaleX = d3.scaleLinear()
-      .domain(d3.extent(this.data, d => d.x))
+    this.scaleX = d3.scalePoint()
+      .domain(this.data.map(i => {
+        return i.x;
+      }))
       .range([this.margin.left, this.width - this.margin.right]);
 
     this.svg.append('g')
       .attr('class', 'x axis')
       .attr('transform', 'translate(' + 0 + ',' + (this.height - this.margin.bottom) + ')')
-      .call(d3.axisBottom(this.scaleX));
+      .call(d3.axisBottom(this.scaleX).tickValues(this.scaleX.domain().filter((d, i) => i % 20 === 0)))
+      .selectAll("text")
+      .attr("y", 10)
+      .attr("x", 5)
+      .attr("dy", ".35em")
+      .attr("transform", "rotate(30)")
+      .style("text-anchor", "start");
 
     this.scaleY = d3.scaleLinear()
-      .domain(d3.extent(this.data, d =>  d.y))
+      .domain(d3.extent(this.data, d => d.y))
       .range([this.height - this.margin.bottom, this.margin.top / 2]);
 
     this.svg.append('g')
@@ -118,7 +141,7 @@ export class MultiLineChartComponent implements OnInit, OnChanges {
       .data(sumstat)
       .enter()
       .append('path')
-      .attr('d',  d => {
+      .attr('d', d => {
         return d3.line()
           .x(D => {
             return this.scaleX(D[`x`]);

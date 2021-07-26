@@ -12,6 +12,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
+import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatNativeDateModule } from "@angular/material/core";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
@@ -45,6 +46,7 @@ import { ComidSelectInputComponent } from "./components/input/comid-select-input
 import { SegmentListComponent } from "./components/input/segment-list/segment-list.component";
 import { OutputComponent } from './components/output/output.component';
 import { MultiLineChartComponent } from './components/output/multi-line-chart/multi-line-chart.component';
+import { OutputPanelLeftComponent } from './components/output/output-panel-left/output-panel-left.component';
 
 @NgModule({
   declarations: [
@@ -66,6 +68,7 @@ import { MultiLineChartComponent } from './components/output/multi-line-chart/mu
     SegmentListComponent,
     OutputComponent,
     MultiLineChartComponent,
+    OutputPanelLeftComponent,
   ],
   imports: [
     BrowserModule,
@@ -76,6 +79,7 @@ import { MultiLineChartComponent } from './components/output/multi-line-chart/mu
     MatFormFieldModule,
     MatSelectModule,
     MatButtonModule,
+    MatCheckboxModule,
     MatDatepickerModule,
     MatNativeDateModule,
     MatSnackBarModule,
@@ -104,4 +108,4 @@ import { MultiLineChartComponent } from './components/output/multi-line-chart/mu
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }
