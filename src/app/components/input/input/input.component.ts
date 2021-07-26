@@ -113,7 +113,6 @@ export class InputComponent implements OnInit {
     });
 
     this.pSetUpForm = this.fb.group({
-      studyName: [null],
       firstDay: [null],
       lastDay: [null],
       stepSizeInDays: [null],
@@ -216,6 +215,10 @@ export class InputComponent implements OnInit {
 
   executeSimulation(): void {
     this.simulation.executeSimulation();
+  }
+
+  cancelExecution(): void {
+    this.simulation.cancelAquatoxSimulationExecution();
   }
 
   getSimStatus(): void {

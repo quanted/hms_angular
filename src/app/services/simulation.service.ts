@@ -86,6 +86,14 @@ export class SimulationService {
       });
   }
 
+  cancelAquatoxSimulationExecution(): void {
+    this.hms
+      .cancelAquatoxSimulationExecution(this.simData["simId"])
+      .subscribe((response) => {
+        console.log("Cancel: ", response);
+      });
+  }
+
   getStatus(): void {
     this.hms
       .getAquatoxSimStatus(this.simData["simId"])

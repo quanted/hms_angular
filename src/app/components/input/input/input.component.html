@@ -3,7 +3,10 @@
     <div class="scroll-pane">
         <!-- AOI section -->
         <div class="container-item">
-            <div>Area of Interest</div>
+            <div class="centered"><strong>Study Area</strong></div>
+            <div class="form-row">
+                <div>Study Name </div><input type="text">
+            </div>
             <div class="section-item" *ngIf="!huc">
                 <div class="form-row" [formGroup]="pPointForm">
                     <div class="vertical-center">
@@ -26,13 +29,13 @@
                     </div>
                     <div class="button" (click)="clearHuc()">Reset Area of Interest</div>
                 </div>
-                <div *ngIf="!catchment" class="centered"><strong>Click map to select catchment</strong></div>
+                <div *ngIf="!catchment" class="centered"><strong>Click map to select pour point</strong></div>
                 <div *ngIf="catchment">
                     <div class="form-row">
                         <div class="vertical-center">
-                            <div>Catchment {{ catchment.id }}</div>
+                            <div>ComID {{ catchment.id }}</div>
                         </div>
-                        <div class="button" (click)="clearCatchment()">Clear Catchment</div>
+                        <div class="button" (click)="clearCatchment()">Reset Pour Point</div>
                     </div>
                 </div>
                 
@@ -46,46 +49,16 @@
 
         <!-- Aquatox section -->
         <div class="container-item" *ngIf="stream">
-            <div>Aquatox Simulation</div>
-
             <div class="section-item" *ngIf="jsonFlags && !baseJson" [formGroup]="moduleForm">
-                <div>Module Selection Flags</div>
+                <div class="centered"><strong>Select Base Simulation</strong></div>
+                <div>Base Simulation Selection Options</div>
                 <div *ngFor='let flag of jsonFlags'><input formControlName="{{flag}}" type="checkbox"/> {{ flag }}</div>
-
-                <div>Simulation Globals</div>
-                    <div class="form-row">
-                        <div>Study Name </div><input type="text" />
-                    </div>
-                    <div class="form-row">
-                        <div>
-                            First Day
-                            <input type="date" />
-                        </div>
-                        <div>
-                            Last Day
-                            <input type="date" />
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="vertical-center">Time Step Size</div><div class="form-row"><div class="button">Hours</div><div class="button">Days</div></div>
-                    </div>
-                    <div class="form-row">
-                        Use Alternate Step Size <input type="checkbox" />
-                    </div>
-                    <div class="form-row" *ngIf="isUsingFixedStep()">
-                        Fixed Step Size <input type="number" />
-                    </div>
-
                 <div class="button" (click)="getBaseJSONByFlags()">Get Base Simulation</div>
             </div>
 
             <div *ngIf="baseJson" [formGroup]="pSetUpForm">
-                <div class="button" (click)="clearBaseJson()">Clear Base Simulation</div>
+                <div class="centered"><strong>Study Time Period</strong></div>
                 <div class="section-item" id="simulation-globals">
-                    <div>Simulation Globals</div>
-                    <div class="form-row">
-                        <div>Study Name </div><input type="text" formControlName="studyName">
-                    </div>
                     <div class="form-row">
                         <div>
                             First Day
@@ -97,76 +70,70 @@
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="vertical-center">Time Step size in</div><div class="form-row"><div class="button">Hours</div><div class="button">Days</div></div>
+                        <div class="vertical-center">Time Step size</div><div class="form-row"><div class="button">Hour</div><div class="button">Day</div></div>
                     </div>
                     <div class="form-row">
-                        Use Alternate Fixed Step Size <input type="checkbox" formControlName="useFixStepSize" />
+                        Use Alternate Step Size <input type="checkbox" formControlName="useFixStepSize" />
                     </div>
                     <div class="form-row" *ngIf="isUsingFixedStep()">
-                        Fixed StepSize <input type="number" formControlName="fixStepSize" />
+                        Step Size <input type="number" formControlName="fixStepSize" />
                     </div>
                 </div>
             </div>
-
-            <div class="section-item" *ngIf="baseJson && !stream">
-                <div *ngIf="!huc || !catchment" class="centered">
-                    <strong>No area of interest</strong>
-                </div>
-                <div *ngIf="huc && catchment" class="centered">
-                    <strong>No stream network</strong>
-                </div>
-            </div>
-
-            <div *ngIf="stream && baseJson" class="section-item" id="segment-form">
-                <app-segment-list></app-segment-list>
-                <app-comid-select-input></app-comid-select-input>
-            </div>
-            <ng-container class="container-item" *ngIf="baseJson && stream && executionReady">
-                <div class="button" (click)="addData()">Add Simulation Data</div>
-                <div class="button" (click)="executeSimulation()">Execute Aquatox Simulation</div>
-                <div class="button" (click)="getSimStatus()">Check Status</div>
-                <div class="button" (click)="getSimResults()" [class.ready]="simComplete">Get Data</div>
-                <div class="button" (click)="downloadSimResults()" [class.ready]="simComplete">Download Data</div>
-            </ng-container>
         </div>
 
-        <!-- HMS section -->
-        <!-- <div class="container-item">
-            <div>HMS Data</div>
-            <div class="section-item" id="mat-progress-bar" *ngIf="loadingApi">
-                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-            </div>
-            <div class="section-item" *ngIf="!loadingApi">
-                <div id="api-form" [formGroup]="apiForm">
-                    <select formControlName="endpointSelect" (change)="updateEndpointForm()">
-                        <option [value]='null' selected>Available data requests</option>
-                        <option *ngFor="let endpoint of apiEndpointList">{{ endpoint.endpoint }}</option>
-                    </select>
-                </div>
-            </div>
-            <div class="section-item" *ngIf="currentEndpoint">
-                <form id="endpoint-form" [formGroup]="endpointForm">
-                    <div id="summary">{{ currentEndpoint.summary || 'this endpoint has no summary' }}</div>
-                    <div *ngFor="let input of formInputs" class="form-row">
-                        <label for="{{input}}">{{input}}</label>
-                        <input formControlName="{{input}}" type="text">
-                    </div>
-                    <div class="controls">
-                        <div class="button" (click)="reset()">Clear form</div>
-                        <div> 
-                            <div *ngIf="!waiting" class="button" (click)="submitHMSDataRequest()">submit form</div>
-                            <div *ngIf="waiting" class="button"><mat-progress-bar mode="indeterminate"></mat-progress-bar></div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="section-item">
-                <div>HMS data</div>
-                <div *ngIf="!responseList.length">Make HMS request to retrieve data</div>
-                <div *ngFor="let response of responseList" class="button" (click)="gotoData(response.endpoint)">
-                    <div>{{ response.endpoint }} {{ response.dataSource }} {{ response.dataset }} <mat-icon title="Download Data">download</mat-icon> <mat-icon title="Remove Data">delete</mat-icon></div>
-                </div>
-            </div>
-        </div> -->
+        <div class="container-item" *ngIf="stream && baseJson">
+            <div class="centered"><strong>Stream Segments</strong></div>
+            <app-segment-list></app-segment-list>
+            <app-comid-select-input></app-comid-select-input>
+        </div>
+        <div class="container-item" *ngIf="baseJson && stream">
+            <div class="button" (click)="addData()">Add Simulation Data</div>
+            <div class="button" (click)="executeSimulation()">Execute Aquatox Simulation</div>
+            <div class="button" (click)="cancelExecution()">Cancel Simulation Execution</div>
+            <div class="button" (click)="clearBaseJson()">Reset Base Simulation</div>
+            <div class="button" (click)="getSimStatus()">Check Status</div>
+            <div class="button" (click)="getSimResults()" [class.ready]="simComplete">Get Data</div>
+            <div class="button" (click)="downloadSimResults()" [class.ready]="simComplete">Download Data</div>
+        </div>
     </div>
+
+    <!-- HMS section -->
+    <!-- <div class="container-item">
+        <div>HMS Data</div>
+        <div class="section-item" id="mat-progress-bar" *ngIf="loadingApi">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </div>
+        <div class="section-item" *ngIf="!loadingApi">
+            <div id="api-form" [formGroup]="apiForm">
+                <select formControlName="endpointSelect" (change)="updateEndpointForm()">
+                    <option [value]='null' selected>Available data requests</option>
+                    <option *ngFor="let endpoint of apiEndpointList">{{ endpoint.endpoint }}</option>
+                </select>
+            </div>
+        </div>
+        <div class="section-item" *ngIf="currentEndpoint">
+            <form id="endpoint-form" [formGroup]="endpointForm">
+                <div id="summary">{{ currentEndpoint.summary || 'this endpoint has no summary' }}</div>
+                <div *ngFor="let input of formInputs" class="form-row">
+                    <label for="{{input}}">{{input}}</label>
+                    <input formControlName="{{input}}" type="text">
+                </div>
+                <div class="controls">
+                    <div class="button" (click)="reset()">Clear form</div>
+                    <div> 
+                        <div *ngIf="!waiting" class="button" (click)="submitHMSDataRequest()">submit form</div>
+                        <div *ngIf="waiting" class="button"><mat-progress-bar mode="indeterminate"></mat-progress-bar></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="section-item">
+            <div>HMS data</div>
+            <div *ngIf="!responseList.length">Make HMS request to retrieve data</div>
+            <div *ngFor="let response of responseList" class="button" (click)="gotoData(response.endpoint)">
+                <div>{{ response.endpoint }} {{ response.dataSource }} {{ response.dataset }} <mat-icon title="Download Data">download</mat-icon> <mat-icon title="Remove Data">delete</mat-icon></div>
+            </div>
+        </div>
+    </div> -->
 </div>
