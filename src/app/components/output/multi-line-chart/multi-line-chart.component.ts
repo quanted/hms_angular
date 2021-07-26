@@ -1,7 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, Input, OnChanges, SimpleChanges, AfterViewInit } from '@angular/core';
 import * as d3 from 'd3';
-import { nest } from 'd3-collection';
-import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-multi-line-chart',
@@ -116,12 +114,11 @@ export class MultiLineChartComponent implements OnInit, OnChanges {
   private createChart(): void {
 
     // Parse the data data into keys based on type for d3 charting
-    const sumstat = nest()
-      .key(d => d.type)
-      .entries(this.data);
+    const sumstat = Array.from(d3.group(this.data, d => d.type),
+      ([key, value]) => ({ key, values: value }));
 
     // Get each key and place in a list
-    const lineNames = sumstat.map(d => d.key);
+    const lineNames = Object.keys(sumstat);
 
     // Create a function color() that returns a mapped hex color from a key name.
     const color = d3.scaleOrdinal().domain(lineNames).range([
@@ -133,6 +130,7 @@ export class MultiLineChartComponent implements OnInit, OnChanges {
     ]);
 
     // Draw the chart
+
     this.svg.selectAll('.line')
       .style('background', 'none')
       .attr('width', this.width)

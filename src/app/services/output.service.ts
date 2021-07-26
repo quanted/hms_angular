@@ -8,6 +8,7 @@ export class OutputService {
 
   lineData: any[] = [];
   types: string[] = [];
+  selected: string[] = [];
 
   constructor() { }
 
@@ -30,5 +31,15 @@ export class OutputService {
         });
       });
     });
+  }
+
+  /**
+   * Filter the data to only show the selected variables.
+   */
+  filterData() {
+    this.lineData = this.lineData.filter(line => {
+      return this.selected.indexOf(line.type) > -1;
+    });
+    console.log(this.lineData);
   }
 }
