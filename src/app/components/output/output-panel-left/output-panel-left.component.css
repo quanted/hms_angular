@@ -1,5 +1,9 @@
 .output-container {
-    width: 425px;
+    width: 98%;
     display: grid;
     row-gap: var(--row-gap);
+}
+
+.container-item {  
+    overflow-x: auto;
 }

@@ -13,7 +13,8 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCheckboxModule } from "@angular/material/checkbox";
-import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatDatepickerModule } from "@angular/material/datepicker"
+import { MatGridListModule } from "@angular/material/grid-list";
 import { MatNativeDateModule } from "@angular/material/core";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatPaginatorModule } from "@angular/material/paginator";
@@ -81,6 +82,7 @@ import { OutputPanelLeftComponent } from './components/output/output-panel-left/
     MatButtonModule,
     MatCheckboxModule,
     MatDatepickerModule,
+    MatGridListModule,
     MatNativeDateModule,
     MatSnackBarModule,
     MatPaginatorModule,

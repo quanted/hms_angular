@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, Input, OnChanges, SimpleChanges, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input, OnChanges, SimpleChanges, AfterViewInit, AfterViewChecked } from '@angular/core';
 import * as d3 from 'd3';
 
 @Component({
@@ -38,10 +38,6 @@ export class MultiLineChartComponent implements OnInit, OnChanges {
     window.addEventListener('resize', () => {
       this.reloadChart();
     });
-    // Add event listener to reload the chart on expansion panel click
-    document.querySelector('app-expansion-panel-left').addEventListener('click', () => {
-      this.reloadChart();
-    });
   }
 
   /**
@@ -77,6 +73,7 @@ export class MultiLineChartComponent implements OnInit, OnChanges {
 
     this.width = this.svg.style('width').replace('px', '');
     this.height = this.svg.style('height').replace('px', '');
+    console.log(this.width, this.height);
 
     this.svg.append('g').attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
 

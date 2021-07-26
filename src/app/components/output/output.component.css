@@ -4,22 +4,11 @@ body {
     background-color: var(--main-epa);
 }
 
-.float {
-    position: absolute;
-    z-index: 9999;
-}
-
-.panel-left {
-    top: inherit;
-    left: 0;
-}
-
 app-footer {
     text-align: center;
 }
-
-.temp {
+    
+mat-grid-tile div {
     height: 100%;
     width: 100%;
-} 
-    
+}
