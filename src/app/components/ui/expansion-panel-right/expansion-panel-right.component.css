@@ -10,6 +10,5 @@
 }
 
 app-map-control {
-    padding-top: 2px;
     background-color: var(--main-transparent);
 }
