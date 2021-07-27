@@ -16,12 +16,12 @@ export class MultiLineChartComponent implements OnInit, OnChanges {
 
   // @Input data must be of the specified format to properly render multi data
   // group charts.
-  @Input() data: { type: string, x: any, y: number }[];
+  @Input() data: { type: string, x: Date, y: number }[];
 
   svg: any;
   width: number;
   height: number;
-  margin = { top: 30, right: 30, bottom: 70, left: 50 };
+  margin = { top: 30, right: 50, bottom: 70, left: 50 };
   scaleX: any;
   scaleY: any;
 
@@ -73,25 +73,34 @@ export class MultiLineChartComponent implements OnInit, OnChanges {
 
     this.width = this.svg.style('width').replace('px', '');
     this.height = this.svg.style('height').replace('px', '');
-    console.log(this.width, this.height);
 
     this.svg.append('g').attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
 
+    /*
+    // Scale x strings
     this.scaleX = d3.scalePoint()
       .domain(this.data.map(i => {
         return i.x;
+      }))
+      .range([this.margin.left, this.width - this.margin.right]);
+      */
+
+    // Scale x Dates 
+    this.scaleX = d3.scaleTime()
+      .domain(d3.extent(this.data, d => {
+        return d.x
       }))
       .range([this.margin.left, this.width - this.margin.right]);
 
     this.svg.append('g')
       .attr('class', 'x axis')
       .attr('transform', 'translate(' + 0 + ',' + (this.height - this.margin.bottom) + ')')
-      .call(d3.axisBottom(this.scaleX).tickValues(this.scaleX.domain().filter((d, i) => i % 20 === 0)))
+      .call(d3.axisBottom(this.scaleX).tickFormat(d3.timeFormat("%Y-%m-%d-%H")).ticks(15))
       .selectAll("text")
       .attr("y", 10)
       .attr("x", 5)
       .attr("dy", ".35em")
-      .attr("transform", "rotate(30)")
+      .attr("transform", "rotate(50)")
       .style("text-anchor", "start");
 
     this.scaleY = d3.scaleLinear()
