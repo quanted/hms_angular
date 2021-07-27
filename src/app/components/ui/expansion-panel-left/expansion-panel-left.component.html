@@ -1,7 +1,6 @@
 <div class="panel-left">
     <div *ngIf="open" class="panel-left-open">
-        <app-input *ngIf="this.router.url === '/home'"></app-input>
-        <app-output-panel-left *ngIf="this.router.url === '/output'"></app-output-panel-left>
+        <app-input></app-input>
         <div (click)="closePanel()">
             <mat-icon class="icon-panel-toggle" matTooltip="Hide Simulation Interface"
                 [matTooltipPosition]="tooltipPosition">chevron_left</mat-icon>
