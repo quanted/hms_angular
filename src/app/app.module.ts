@@ -41,13 +41,14 @@ import { ExpansionPanelLeftComponent } from "./components/ui/expansion-panel-lef
 import { HttpHeadersInterceptor } from "./interceptors/http-headers.interceptor";
 import { LayerControlComponent } from "./components/map/layer-control/layer-control.component";
 import { TableComponent } from "./components/output/table/table.component";
-import { GraphComponent } from "./components/output/graph/graph.component";
 import { LandingComponent } from "./components/landing/landing.component";
 import { ComidSelectInputComponent } from "./components/input/comid-select-input/comid-select-input.component";
 import { SegmentListComponent } from "./components/input/segment-list/segment-list.component";
 import { OutputComponent } from './components/output/output.component';
 import { MultiLineChartComponent } from './components/output/multi-line-chart/multi-line-chart.component';
 import { OutputPanelLeftComponent } from './components/output/output-panel-left/output-panel-left.component';
+import { PlotlyComponent } from './components/output/plotly/plotly.component';
+import { PlotContainerComponent } from './components/output/plot-container/plot-container.component';
 
 @NgModule({
   declarations: [
@@ -63,13 +64,14 @@ import { OutputPanelLeftComponent } from './components/output/output-panel-left/
     ExpansionPanelRightComponent,
     LayerControlComponent,
     TableComponent,
-    GraphComponent,
     LandingComponent,
     ComidSelectInputComponent,
     SegmentListComponent,
     OutputComponent,
     MultiLineChartComponent,
     OutputPanelLeftComponent,
+    PlotlyComponent,
+    PlotContainerComponent,
   ],
   imports: [
     BrowserModule,

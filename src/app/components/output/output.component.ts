@@ -8,11 +8,8 @@ import { OutputService } from 'src/app/services/output.service';
 })
 export class OutputComponent implements OnInit {
 
-  lineData: any[] = [];
   constructor(private outputService: OutputService) { }
 
   ngOnInit(): void {
-    this.outputService.getData();
-    this.lineData = this.outputService.lineData;
   }
 }

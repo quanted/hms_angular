@@ -105,9 +105,9 @@ export class SimulationService {
       });
   }
 
-  getSimResults(): void {
+  getSimResults(): any {
     this.hms.getAquatoxSimResults(this.simData["simId"]).subscribe((data) => {
-      console.log("Simulation results: ", data);
+      return data;
     });
   }
 

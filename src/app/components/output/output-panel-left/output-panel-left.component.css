@@ -1,9 +1,19 @@
-.output-container {
-    width: 98%;
-    display: grid;
-    row-gap: var(--row-gap);
+:host {
+    height: 100%;
+    width: 100%;
+    overflow-y: scroll;
+    padding: 5px;
 }
 
-.container-item {  
-    overflow-x: auto;
+:host::ng-deep.mat-checkbox-layout {
+    white-space: normal !important;
+}
+
+.mat-checkbox {
+    height: 100%;
+    width: 100%;
+}
+
+.mat-checkbox:hover {
+    background-color: var(--main-hover);
 }

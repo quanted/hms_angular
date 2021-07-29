@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as test_data from './../../base_jsons/output_sim.json';
+import { SimulationService } from './simulation.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,14 +9,25 @@ export class OutputService {
   lineData: any[] = [];
   types: string[] = [];
   selected: string[] = [];
+  chartColors: string[] = [];
+  catchments: any = {};
 
-  constructor() { }
+  constructor(private simulationService: SimulationService) { }
 
   /**
    * Parses Aquatox simulation json and gets the state variables outputs.
    * The outputs are parsed into the proper form for passing data to the d3 charts.  
    */
   getData() {
+    // Call data endpoint for current simid
+    const simResults = this.simulationService.getSimResults();
+    // Get each comid and taskid from simResults
+    this.catchments = simResults.catchments;
+    // For each comid, make get request with taskid to get outputs
+    Object.keys(this.catchments).forEach(comid => {
+      const taskid = this.catchments[comid];
+    });
+    /*
     const sv = test_data['AQTSeg']['SV'];
     sv.forEach(element => {
       // Get SV name and units for label
@@ -26,11 +37,12 @@ export class OutputService {
       Object.keys(element['SVoutput']['Data']).forEach(item => {
         this.lineData.push({
           type: type,
-          x: item,
+          x: new Date(item),
           y: +element['SVoutput']['Data'][item][0].split('E')[0]
         });
       });
     });
+    */
   }
 
   /**

@@ -1,15 +1,9 @@
 <body>
     <app-header></app-header>
-    <mat-grid-list cols="3" rowHeight="fit">
-        <mat-grid-tile class="my-grid-tile" colspan="1" rowspan="3">
-            <app-output-panel-left></app-output-panel-left>
+    <mat-grid-list cols="1" rowHeight="fit" gutterSize="20px">
+        <mat-grid-tile class="my-grid-tile" colspan="1" rowspan="1">
+            <app-plot-container></app-plot-container>
         </mat-grid-tile>
-        <mat-grid-tile colspan="2" rowspan="2">
-            <div>
-                <app-multi-line-chart *ngIf="lineData !== undefined" [data]=lineData></app-multi-line-chart>
-            </div>
-        </mat-grid-tile>
-        <mat-grid-tile colspan="2" rowspan="1">C</mat-grid-tile>
     </mat-grid-list>
     <app-footer></app-footer>
 </body>

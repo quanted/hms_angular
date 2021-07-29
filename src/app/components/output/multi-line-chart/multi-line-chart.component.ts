@@ -18,6 +18,9 @@ export class MultiLineChartComponent implements OnInit, OnChanges {
   // group charts.
   @Input() data: { type: string, x: Date, y: number }[];
 
+  // @Input colors for the chart
+  @Input() colors: string[];
+
   svg: any;
   width: number;
   height: number;
@@ -127,13 +130,7 @@ export class MultiLineChartComponent implements OnInit, OnChanges {
     const lineNames = Object.keys(sumstat);
 
     // Create a function color() that returns a mapped hex color from a key name.
-    const color = d3.scaleOrdinal().domain(lineNames).range([
-      '#003f5c',
-      '#58508d',
-      '#bc5090',
-      '#ff6361',
-      '#ffa600'
-    ]);
+    const color = d3.scaleOrdinal().domain(lineNames).range(this.colors);
 
     // Draw the chart
 
