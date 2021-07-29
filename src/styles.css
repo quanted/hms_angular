@@ -119,6 +119,7 @@ body {
 }
 
 .list-short {
+    padding-bottom: var(--row-gap);
     max-height: var(--main-list-short-height);
 }
 

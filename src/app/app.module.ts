@@ -13,7 +13,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCheckboxModule } from "@angular/material/checkbox";
-import { MatDatepickerModule } from "@angular/material/datepicker"
+import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatGridListModule } from "@angular/material/grid-list";
 import { MatNativeDateModule } from "@angular/material/core";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
@@ -44,11 +44,11 @@ import { TableComponent } from "./components/output/table/table.component";
 import { LandingComponent } from "./components/landing/landing.component";
 import { ComidSelectInputComponent } from "./components/input/comid-select-input/comid-select-input.component";
 import { SegmentListComponent } from "./components/input/segment-list/segment-list.component";
-import { OutputComponent } from './components/output/output.component';
-import { MultiLineChartComponent } from './components/output/multi-line-chart/multi-line-chart.component';
-import { OutputPanelLeftComponent } from './components/output/output-panel-left/output-panel-left.component';
-import { PlotlyComponent } from './components/output/plotly/plotly.component';
-import { PlotContainerComponent } from './components/output/plot-container/plot-container.component';
+import { OutputComponent } from "./components/output/output.component";
+import { MultiLineChartComponent } from "./components/output/multi-line-chart/multi-line-chart.component";
+import { OutputPanelLeftComponent } from "./components/output/output-panel-left/output-panel-left.component";
+import { PlotlyComponent } from "./components/output/plotly/plotly.component";
+import { PlotContainerComponent } from "./components/output/plot-container/plot-container.component";
 
 @NgModule({
   declarations: [
@@ -112,4 +112,4 @@ import { PlotContainerComponent } from './components/output/plot-container/plot-
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

@@ -17,6 +17,7 @@ export class InputComponent implements OnInit {
   distanceForm: FormGroup;
   moduleForm: FormGroup;
   pPointForm: FormGroup;
+  svForm: FormGroup;
   pSetUpForm: FormGroup;
   apiForm: FormGroup;
   endpointForm: FormGroup;
@@ -56,23 +57,29 @@ export class InputComponent implements OnInit {
   Total P
   Organic Matter
 
-  Total N
-  Dissolved Phosphate (PO4)
-  Organic Matter
-
   Amonia
   Nitrate
   Total P
-  Organic Matter
-
-  Nitrogen
-  Phosphorus
   Organic Matter
 
   Amonia
   Nitrate
   Phosphate- dissoved PO4
   Organic matter 
+
+  Nitrogen
+  Phosphorus
+  Organic Matter
+
+  Total N
+  Dissolved Phosphate (PO4)
+  Organic Matter
+
+  "$type": "TNH4Obj", "PName": "Total Ammonia as N",
+  "$type": "TNO3Obj", "PName": "Nitrate as N",
+  "$type": "TPO4Obj", "PName": "Total Soluble P",
+  "$type": "TCO2Obj", "PName": "Carbon dioxide",
+  "$type": "TO2Obj", "PName": "Oxygen",
   */
 
   constructor(
@@ -112,6 +119,13 @@ export class InputComponent implements OnInit {
         moduleFormFields[flag] = [false];
       }
       this.moduleForm = this.fb.group(moduleFormFields);
+    });
+
+    this.svForm = this.fb.group({
+      totalN: [true],
+      totalP: [true],
+      nType: [null],
+      pType: [null],
     });
 
     this.pSetUpForm = this.fb.group({
@@ -197,6 +211,8 @@ export class InputComponent implements OnInit {
     const flags = this.moduleForm.value;
     this.simulation.updateSimData("flags", flags);
     this.hms.getBaseJsonByFlags(flags).subscribe((json) => {
+      console.log("flags: ", flags);
+      console.log("base_json: ", json);
       this.simulation.updateSimData("base_json", json);
       this.baseJson = true;
     });
