@@ -19,6 +19,7 @@ export class SimulationService {
   computeExecution = 1;
 
   simData = {
+    pour_point_comid: null,
     selectedComId: null,
     segment_loadings: {
       user: [],
@@ -42,9 +43,30 @@ export class SimulationService {
         val: null,
       },
     },
+    base_json: null,
+    network: {
+      order: null,
+      sources: null,
+    },
     comid_inputs: {},
     simulation_dependencies: [],
     catchment_dependencies: {},
+    default_catchment_dependency: {
+      name: "streamflow",
+      url: "api/hydrology/streamflow/",
+      input: {
+        source: "nwm",
+        dateTimeSpan: {
+          startDate: null,
+          endDate: null,
+        },
+        geometry: {
+          comID: null,
+        },
+        temporalResolution: "hourly",
+        timeLocalized: "false",
+      },
+    },
   };
   simDataSubject: BehaviorSubject<any>;
 
@@ -54,6 +76,54 @@ export class SimulationService {
   constructor(private hms: HmsService) {
     this.simDataSubject = new BehaviorSubject(this.simData);
   }
+
+  initializeAquatoxSimulation(): void {
+    const sources = this.simData.network.sources;
+    let tempsources = {};
+
+    for (let key of Object.keys(sources)) {
+      if (key != "boundaries") {
+        tempsources[key] = sources[key];
+      }
+    }
+
+    const initData = {
+      comid_input: {
+        comid: this.simData.pour_point_comid.toString(),
+        input: this.simData.base_json,
+      },
+      network: {
+        order: this.simData.network.order,
+        sources: tempsources,
+      },
+      simulation_dependencies: [],
+      catchment_dependencies: [
+        {
+          name: "streamflow",
+          url: "api/hydrology/streamflow/",
+          input: {
+            source: "nwm",
+            dateTimeSpan: {
+              startDate: "2000-01-01T00:00:00",
+              endDate: "2000-12-31T00:00:00",
+            },
+            geometry: {
+              comID: this.simData.pour_point_comid.toString(),
+            },
+            temporalResolution: "hourly",
+            timeLocalized: "false",
+          },
+        },
+      ],
+    };
+    console.log("initData: ", initData);
+    this.hms.addAquatoxSimData(initData).subscribe((response) => {
+      console.log("initSim: ", response);
+      this.updateSimData("simId", response["_id"]);
+    });
+  }
+
+  updateAquatoxSimulation(): void {}
 
   addData(): void {
     let request = this.testCompute1;
@@ -182,7 +252,7 @@ export class SimulationService {
       this.simData[key] = null;
     }
     this.simDataSubject.next(this.simData);
-    // console.log("simData: ", this.simData);
+    console.log("simData: ", this.simData);
   }
 
   // returns a Subject for interface components to subscribe to

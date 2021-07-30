@@ -91,6 +91,7 @@ export class MapService {
     this.waters.getCatchmentData(coords.lat, coords.lng).subscribe((data) => {
       if (data) {
         const properties = data.features[0].properties;
+        this.simulation.updateSimData("pour_point_comid", properties.FEATUREID);
         this.simulation.updateSimData("catchment", {
           areaSqKm: properties.AREASQKM,
           id: properties.FEATUREID,

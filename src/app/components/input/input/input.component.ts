@@ -211,8 +211,6 @@ export class InputComponent implements OnInit {
     const flags = this.moduleForm.value;
     this.simulation.updateSimData("flags", flags);
     this.hms.getBaseJsonByFlags(flags).subscribe((json) => {
-      console.log("flags: ", flags);
-      console.log("base_json: ", json);
       this.simulation.updateSimData("base_json", json);
       this.baseJson = true;
     });
@@ -225,6 +223,10 @@ export class InputComponent implements OnInit {
 
   isUsingFixedStep(): boolean {
     return this.pSetUpForm.get("useFixStepSize").value;
+  }
+
+  initSim(): void {
+    this.simulation.initializeAquatoxSimulation();
   }
 
   addData(): void {
