@@ -123,7 +123,7 @@ export class SimulationService {
     });
   }
 
-  updateAquatoxSimulation(): void {}
+  updateAquatoxSimulation(): void { }
 
   addData(): void {
     let request = this.testCompute1;

@@ -10,7 +10,7 @@ app-footer {
 
 mat-grid-list {
     width: 95%;
-    margin: 0 auto;
+    margin: 0 auto 30px auto;
 }   
     
 mat-grid-tile div {

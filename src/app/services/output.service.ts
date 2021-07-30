@@ -1,5 +1,9 @@
 import { Injectable } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
+import { HmsService } from './hms.service';
 import { SimulationService } from './simulation.service';
+import { HttpClient } from "@angular/common/http";
+import { environment } from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -11,38 +15,39 @@ export class OutputService {
   selected: string[] = [];
   chartColors: string[] = [];
   catchments: any = {};
+  catchmentSubject = new Subject<any>();
+  catchmentDataSubject = new Subject<any>();
+  catchmentData: any;
 
-  constructor(private simulationService: SimulationService) { }
+  constructor(
+    private hmsService: HmsService,
+    private simulationService: SimulationService,
+    private http: HttpClient
+  ) {
+    this.catchmentSubject.subscribe((value) => {
+      this.catchments = value;
+    });
+    this.catchmentDataSubject.subscribe((value) => {
+      this.catchmentData = value;
+    });
+  }
 
   /**
-   * Parses Aquatox simulation json and gets the state variables outputs.
-   * The outputs are parsed into the proper form for passing data to the d3 charts.  
+   * Makes request with simulation id to data endpoint and gets the catchments with task ids  
    */
-  getData() {
+  getCatchments(): void {
     // Call data endpoint for current simid
-    const simResults = this.simulationService.getSimResults();
+    this.simulationService.simData["simId"] = "47bdaa9b-7d27-4486-8aa4-5501a190d7b9";
     // Get each comid and taskid from simResults
-    this.catchments = simResults.catchments;
-    // For each comid, make get request with taskid to get outputs
-    Object.keys(this.catchments).forEach(comid => {
-      const taskid = this.catchments[comid];
+    this.hmsService.getAquatoxSimResults("47bdaa9b-7d27-4486-8aa4-5501a190d7b9").subscribe((data) => {
+      this.catchmentSubject.next(data.catchments);
     });
-    /*
-    const sv = test_data['AQTSeg']['SV'];
-    sv.forEach(element => {
-      // Get SV name and units for label
-      const type = `${element['PName']} (${element['SVoutput']['Metadata']['Unit_1']})`;
-      this.types.push(type);
-      // Loop through each Data element of the current element
-      Object.keys(element['SVoutput']['Data']).forEach(item => {
-        this.lineData.push({
-          type: type,
-          x: new Date(item),
-          y: +element['SVoutput']['Data'][item][0].split('E')[0]
-        });
-      });
-    });
-    */
+  }
+
+  getCatchmentData(taskId: string): Observable<any> {
+    return this.http.get(
+      `${environment.apiURL}/api/aquatox/workflow/archive-results/?task_id=${taskId}`
+    );
   }
 
   /**

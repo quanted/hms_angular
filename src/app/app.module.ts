@@ -46,8 +46,6 @@ import { LandingComponent } from "./components/landing/landing.component";
 import { ComidSelectInputComponent } from "./components/input/comid-select-input/comid-select-input.component";
 import { SegmentListComponent } from "./components/input/segment-list/segment-list.component";
 import { OutputComponent } from "./components/output/output.component";
-import { MultiLineChartComponent } from "./components/output/multi-line-chart/multi-line-chart.component";
-import { OutputPanelLeftComponent } from "./components/output/output-panel-left/output-panel-left.component";
 import { PlotlyComponent } from "./components/output/plotly/plotly.component";
 import { PlotContainerComponent } from "./components/output/plot-container/plot-container.component";
 
@@ -69,8 +67,6 @@ import { PlotContainerComponent } from "./components/output/plot-container/plot-
     ComidSelectInputComponent,
     SegmentListComponent,
     OutputComponent,
-    MultiLineChartComponent,
-    OutputPanelLeftComponent,
     PlotlyComponent,
     PlotContainerComponent,
   ],
