@@ -23,6 +23,7 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatIconModule } from "@angular/material/icon";
 import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatMenuModule } from '@angular/material/menu';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ScrollingModule } from "@angular/cdk/scrolling";
 
@@ -85,6 +86,7 @@ import { PlotContainerComponent } from "./components/output/plot-container/plot-
     MatCheckboxModule,
     MatDatepickerModule,
     MatGridListModule,
+    MatMenuModule,
     MatNativeDateModule,
     MatSnackBarModule,
     MatPaginatorModule,
@@ -112,4 +114,4 @@ import { PlotContainerComponent } from "./components/output/plot-container/plot-
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }
