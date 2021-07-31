@@ -27,6 +27,7 @@
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
               "src/styles.css",
+              "src/styles.custom.scss",
               "./node_modules/leaflet/dist/leaflet.css"
             ],
             "scripts": []
@@ -91,7 +92,8 @@
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
-              "src/styles.css"
+              "src/styles.css",
+              "src/styles.custom.scss"
             ],
             "scripts": []
           }
