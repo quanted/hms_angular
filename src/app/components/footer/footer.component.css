@@ -128,7 +128,7 @@
 .footer-title:hover {
     cursor: pointer;
 }
-::ng-deep .mat-menu-content {
+::ng-deep .footer-link-block {
     background: #323a45 !important;
 }
 .footer-link {
