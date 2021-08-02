@@ -79,7 +79,7 @@
     text-align: center;
 }
 .footer-epa-logo {
-    background: url(src/assets/images/epa-seal.svg) no-repeat;
+    background: url(/assets/images/epa-seal.svg) no-repeat;
     background-size: contain;
     color: transparent;
     display: inline-block;
