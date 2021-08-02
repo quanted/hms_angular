@@ -1,9 +1,47 @@
 <body>
     <app-header></app-header>
-    <mat-grid-list cols="1" rowHeight="fit" gutterSize="20px">
-        <mat-grid-tile class="my-grid-tile" colspan="1" rowspan="1">
+    <!--
+    <div class="task-bar">
+        <mat-icon class="add" [matMenuTriggerFor]="menu">add_box</mat-icon>
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="newGraph()">
+                <mat-icon style="pointer-events: none">insert_chart</mat-icon>Graph
+            </button>
+            <button mat-menu-item (click)="newTable()">
+                <mat-icon style="pointer-events: none">table_chart</mat-icon>Table
+            </button>
+        </mat-menu>
+    </div>
+    <mat-grid-list cols="{{columns}}" rowHeight="fit" gutterSize="20px">
+        <mat-grid-tile class="my-grid-tile" *ngFor="let tile of tiles" [colspan]="tile.cols" [rowspan]="tile.rows"
+            [style.background]="tile.color" cdkDrag>
             <app-plot-container></app-plot-container>
         </mat-grid-tile>
     </mat-grid-list>
+    -->
+    <div class="task-bar">
+        <mat-icon class="add" (click)="add()">add_box</mat-icon>
+    </div>
+    <div class="categories-container">
+        <div class="categories" cdkDropListGroup>
+            <ng-container *ngFor="let item of items;let i=index">
+                <div class="categories-item" cdkDropList cdkDropListOrientation="horizontal"
+                    [cdkDropListData]="{item:item,index:i}" (cdkDropListDropped)="drop($event)">
+                    <div #cc class="inner" cdkDrag>
+                        <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
+                        <div class="example-handle" cdkDragHandle>
+                            <svg width="24px" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z">
+                                </path>
+                                <path d="M0 0h24v24H0z" fill="none"></path>
+                            </svg>
+                        </div>
+                        <app-plot-container></app-plot-container>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </div>
     <app-footer></app-footer>
 </body>

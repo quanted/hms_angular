@@ -31,23 +31,31 @@ export class PlotlyComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.draw();
+
   }
 
   draw(): void {
     this.chart = {
       data: this.data,
       layout: {
-        title: { text: this.plotTitle, font: { size: 20 } },
+        title: { text: this.plotTitle, font: { size: 17 } },
         xaxis: {
           title: { text: this.xAxisTitle },
         },
         yaxis: {
           title: { text: this.yAxisTitle },
+        },
+        margin: {
+          l: 40,
+          r: 40,
+          b: 40,
+          t: 40,
+          pad: 0
         }
       },
       config: {
         responsive: true,
+        displaylogo: false
       }
     };
     Plotly.newPlot(this.plot.nativeElement, this.chart);

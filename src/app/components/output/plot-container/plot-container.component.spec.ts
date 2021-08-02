@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PlotContainerComponent } from './plot-container.component';
+import * as test from '../../../../base_jsons/response.json';
 
 describe('PlotContainerComponent', () => {
   let component: PlotContainerComponent;
@@ -8,9 +9,9 @@ describe('PlotContainerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PlotContainerComponent ]
+      declarations: [PlotContainerComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

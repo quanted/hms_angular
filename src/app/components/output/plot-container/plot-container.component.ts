@@ -1,8 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { Subject, Subscription } from 'rxjs';
+import { Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { OutputService } from 'src/app/services/output.service';
-import * as test from '../../../../base_jsons/response.json';
 
 @Component({
   selector: 'app-plot-container',
@@ -14,9 +11,10 @@ export class PlotContainerComponent implements OnInit {
   data: any;
   plotData: any[];
   stateVariablesList: string[] = [];
-  catchmentList: string[];
+  catchmentList: string[] = [];
   selectedCatchment: string;
   plotTitle: string;
+
   constructor(public outputService: OutputService) {
     // Subscribe to changes in the catchments
     this.outputService.catchmentSubject.subscribe(catchments => {
@@ -53,7 +51,7 @@ export class PlotContainerComponent implements OnInit {
   }
 
   catchmentChange(event) {
-    // Make request for catchement data
+    // Make request for catchment data
     this.outputService.getCatchmentData(this.outputService.catchments[this.selectedCatchment]).subscribe(data => {
       this.data = data;
       this.setPlotData(data);

@@ -26,6 +26,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatMenuModule } from '@angular/material/menu';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ScrollingModule } from "@angular/cdk/scrolling";
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 import { AppComponent } from "./app.component";
 import { MapComponent } from "./components/map/map.component";
@@ -68,7 +69,7 @@ import { PlotContainerComponent } from "./components/output/plot-container/plot-
     SegmentListComponent,
     OutputComponent,
     PlotlyComponent,
-    PlotContainerComponent,
+    PlotContainerComponent
   ],
   imports: [
     BrowserModule,
@@ -94,6 +95,7 @@ import { PlotContainerComponent } from "./components/output/plot-container/plot-
     FormsModule,
     ReactiveFormsModule,
     ScrollingModule,
+    DragDropModule
   ],
   providers: [
     {
