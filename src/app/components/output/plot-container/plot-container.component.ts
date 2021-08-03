@@ -14,6 +14,7 @@ export class PlotContainerComponent implements OnInit {
   catchmentList: string[] = [];
   selectedCatchment: string;
   plotTitle: string;
+  chart: string = "scatter";
 
   constructor(public outputService: OutputService) {
     // Subscribe to changes in the catchments
@@ -45,7 +46,8 @@ export class PlotContainerComponent implements OnInit {
     this.plotData.push({
       x: dates,
       y: values,
-      type: 'scatter',
+      mode: this.chart,
+      type: this.chart,
       name: this.plotTitle,
     });
   }
@@ -59,6 +61,10 @@ export class PlotContainerComponent implements OnInit {
   }
 
   svChange(event) {
+    this.setPlotData(this.data);
+  }
+
+  chartChange(event) {
     this.setPlotData(this.data);
   }
 }

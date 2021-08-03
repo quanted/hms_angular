@@ -12,6 +12,14 @@
                 <mat-option *ngFor="let sv of stateVariablesList" [value]="sv">{{sv}}</mat-option>
             </mat-select>
         </mat-form-field>
+        <mat-form-field>
+            <mat-label>Chart Type</mat-label>
+            <mat-select [(ngModel)]="chart" (selectionChange)="chartChange($event)">
+                <mat-option value="scatter">Line</mat-option>
+                <mat-option value="markers">Scatter</mat-option>
+                <mat-option value="lines+markers">Line + Scatter</mat-option>
+            </mat-select>
+        </mat-form-field>
     </div>
     <app-plotly *ngIf="plotData" [data]="plotData" [plotTitle]="plotTitle"></app-plotly>
     <!--
