@@ -47,7 +47,7 @@ app-footer {
   margin: 5px;
   background-color: transparent;
   position: relative;
-  min-width: 200px;
+  min-width: 300px;
   min-height: 0;
   max-height: 100%;
 }
@@ -64,4 +64,5 @@ app-footer {
   cursor: move;
   width: 24px;
   height: 24px;
+  z-index: 10;
 }

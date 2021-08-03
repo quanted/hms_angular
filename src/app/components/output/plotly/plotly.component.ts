@@ -51,12 +51,15 @@ export class PlotlyComponent implements OnInit, OnChanges {
           b: 40,
           t: 40,
           pad: 0
-        }
+        },
+        autosize: true
       },
       config: {
         responsive: true,
-        displaylogo: false
-      }
+        displaylogo: false,
+        useResizeHandler: true,
+        style: { width: "100%", height: "100%" }
+      },
     };
     Plotly.newPlot(this.plot.nativeElement, this.chart);
   }
