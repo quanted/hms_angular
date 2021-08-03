@@ -67,6 +67,8 @@ export class SimulationService {
         timeLocalized: "false",
       },
     },
+    completed_segments: [],
+    sim_completed: false,
   };
   simDataSubject: BehaviorSubject<any>;
 
@@ -116,14 +118,53 @@ export class SimulationService {
         },
       ],
     };
-    console.log("initData: ", initData);
     this.hms.addAquatoxSimData(initData).subscribe((response) => {
       console.log("initSim: ", response);
       this.updateSimData("simId", response["_id"]);
+      this.addCatchmentDependencies();
     });
   }
 
-  updateAquatoxSimulation(): void {}
+  addCatchmentDependencies(): void {
+    const sources = this.simData.network.sources;
+
+    for (let key of Object.keys(sources)) {
+      if (key != "boundaries") {
+        this.addCatchmentDependency(key);
+      }
+    }
+  }
+
+  addCatchmentDependency(comid): void {
+    const dependency = {
+      sim_id: this.simData["simId"],
+      comid_input: {
+        comid: comid.toString(),
+        input: this.simData.base_json,
+      },
+      catchment_dependencies: [
+        {
+          name: "streamflow",
+          url: "api/hydrology/streamflow/",
+          input: {
+            source: "nwm",
+            dateTimeSpan: {
+              startDate: "2000-01-01T00:00:00",
+              endDate: "2000-01-31T00:00:00",
+            },
+            geometry: {
+              comID: comid.toString(),
+            },
+            temporalResolution: "hourly",
+            timeLocalized: "false",
+          },
+        },
+      ],
+    };
+    this.hms.addAquatoxSimData(dependency).subscribe((response) => {
+      console.log(`added dependency to comid ${comid}: `, response);
+    });
+  }
 
   addData(): void {
     let request = this.testCompute1;
@@ -153,6 +194,7 @@ export class SimulationService {
       .executeAquatoxSimulation(this.simData["simId"])
       .subscribe((response) => {
         console.log("Execute: ", response);
+        this.startStatusCheck();
       });
   }
 
@@ -164,14 +206,39 @@ export class SimulationService {
       });
   }
 
+  startStatusCheck(): void {
+    let statusCheck = setInterval(() => {
+      this.hms
+        .getAquatoxSimStatus(this.simData["simId"])
+        .subscribe((response) => {
+          let status = response.status;
+          if (!status) return;
+          for (let comid of Object.keys(response.catchments)) {
+            if (
+              response.catchments[comid].status == "COMPLETED" ||
+              response.catchments[comid].status == "FAILED"
+            ) {
+              this.updateSimData("completed_segments", {
+                comid,
+                status: response.catchments[comid].status,
+              });
+            }
+          }
+          if (response.status == "COMPLETED") {
+            this.updateSimData("sim_completed", true);
+            clearInterval(statusCheck);
+          }
+        });
+    }, 500);
+  }
+
   getStatus(): void {
     this.hms
       .getAquatoxSimStatus(this.simData["simId"])
       .subscribe((response) => {
         let status = response.status;
         if (!status) status = response.error;
-        console.log("Status: ", status);
-        console.log("Simulation: ", response);
+        console.log(`Status: ${status}`, response);
       });
   }
 
@@ -243,7 +310,16 @@ export class SimulationService {
           };
         }
         this.simData.comid_inputs[data.comid].sv.push(data.value);
-      } else if (typeof data === "string" || typeof data === "number") {
+      } else if (key == "completed_segments") {
+        for (let segment of this.simData.completed_segments) {
+          if (segment.comid == data.comid) return;
+        }
+        this.simData[key].push(data);
+      } else if (
+        typeof data === "string" ||
+        typeof data === "number" ||
+        typeof data === "boolean"
+      ) {
         this.simData[key] = data;
       } else {
         this.simData[key] = { ...this.simData[key], ...data };
@@ -252,7 +328,7 @@ export class SimulationService {
       this.simData[key] = null;
     }
     this.simDataSubject.next(this.simData);
-    console.log("simData: ", this.simData);
+    // console.log("simData: ", this.simData);
   }
 
   // returns a Subject for interface components to subscribe to

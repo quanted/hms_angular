@@ -145,6 +145,7 @@ export class LayerService {
   outHucColor = "#FF00FF";
   selectedColor = "#0000FF";
   simCompletedColor = "#00FF00";
+  simFailColor = "#FF00FF";
 
   constructor(private simulation: SimulationService) {
     // setup default tile maps
@@ -181,6 +182,11 @@ export class LayerService {
         show: false,
       });
     }
+    this.simulation.interfaceData().subscribe((d) => {
+      if (d.completed_segments.length) {
+        this.updateStreamLayer(d.completed_segments);
+      }
+    });
   }
 
   addToolTip(feature, layer): void {
@@ -412,6 +418,12 @@ export class LayerService {
     }
   }
 
+  updateStreamLayer(completed_segments): void {
+    for (let segment of completed_segments) {
+      this.updateSegment(segment.comid, segment.status);
+    }
+  }
+
   selectSegment(comid): void {
     let found = false;
     for (let layer of this.segmentLayers) {
@@ -459,6 +471,26 @@ export class LayerService {
     if (found) {
       this.selectedComId = comid;
       this.simulation.selectComId(comid);
+    }
+  }
+
+  updateSegment(comid, status): void {
+    // update segment color
+    for (let layer of this.segmentLayers) {
+      if (layer.comid == comid) {
+        if (status == "COMPLETED") {
+          layer.layer.setStyle({
+            color: this.simCompletedColor,
+            weight: 5,
+          });
+        }
+        if (status == "FAILED") {
+          layer.layer.setStyle({
+            color: this.simFailColor,
+            weight: 5,
+          });
+        }
+      }
     }
   }
 

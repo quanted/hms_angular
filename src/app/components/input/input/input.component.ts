@@ -38,7 +38,7 @@ export class InputComponent implements OnInit {
 
   // TODO: implement call to execution check endpoint
   executionReady = true;
-  simComplete = true;
+  simComplete = false;
 
   apiVersion;
   apiEndpointList = [];
@@ -156,8 +156,11 @@ export class InputComponent implements OnInit {
         case "catchment":
           this.updateCatchmentInput(data[key]);
           break;
+        case "sim_completed":
+          this.simComplete = data[key];
+          break;
         default:
-        // console.log("unknown key: ", key);
+        // console.log("input doesn't use: ", key);
       }
     }
   }
