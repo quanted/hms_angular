@@ -1,9 +1,35 @@
-<div style="padding: 20px;">
-    <mat-form-field>
-        <mat-label>State Variables</mat-label>
-        <mat-select [(ngModel)]="plotTitle" (selectionChange)="dataChange($event)">
-            <mat-option *ngFor="let sv of stateVariablesList" [value]="sv">{{sv}}</mat-option>
-        </mat-select>
-    </mat-form-field>
-    <app-plotly *ngIf="data" [data]="data" [plotTitle]="plotTitle"></app-plotly>
+<div class="upper-c">
+    <div>
+        <div class="select-container">
+            <mat-form-field *ngIf="catchmentList">
+                <mat-label>Catchment</mat-label>
+                <mat-select [(ngModel)]="selectedCatchment" (selectionChange)="catchmentChange($event)">
+                    <mat-option *ngFor="let c of catchmentList" [value]="c">{{c}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field *ngIf="stateVariablesList">
+                <mat-label>State Variables</mat-label>
+                <mat-select [(ngModel)]="plotTitle" (selectionChange)="svChange($event)">
+                    <mat-option *ngFor="let sv of stateVariablesList" [value]="sv">{{sv}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Chart Type</mat-label>
+                <mat-select [(ngModel)]="chart" (selectionChange)="chartChange($event)">
+                    <mat-option value="scatter">Line</mat-option>
+                    <mat-option value="markers">Scatter</mat-option>
+                    <mat-option value="lines+markers">Line + Scatter</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+    <div [ngClass]="{container: plotData, errorContainer: !plotData}">
+        <app-plotly *ngIf="plotData" [data]="plotData" [plotTitle]="plotTitle"></app-plotly>
+        <!--
+    <div *ngIf="!plotData" class="errorBox">
+        Error retrieving data.
+        <button mat-button>Try Again</button>
+    </div>
+    -->
+    </div>
 </div>

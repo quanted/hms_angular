@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import * as test from '../../../../base_jsons/response.json';
+import { Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { OutputService } from 'src/app/services/output.service';
 
 @Component({
   selector: 'app-plot-container',
@@ -9,41 +8,63 @@ import * as test from '../../../../base_jsons/response.json';
 })
 export class PlotContainerComponent implements OnInit {
 
-  data: any[];
+  data: any;
+  plotData: any[];
   stateVariablesList: string[] = [];
+  catchmentList: string[] = [];
+  selectedCatchment: string;
   plotTitle: string;
-  constructor() { }
+  chart: string = "scatter";
 
-  ngOnInit(): void {
-    // Get the state variables
-    this.stateVariablesList = Object.keys(test.data);
-    this.plotTitle = this.stateVariablesList[0];
-    const dates = [];
-    test.dates.forEach(d => dates.push(new Date(d)));
-    const values = [];
-    test.data[this.stateVariablesList[0]].forEach(d => values.push(d));
-
-    this.data = [];
-    this.data.push({
-      x: dates,
-      y: values,
-      type: 'scatter',
-      name: this.stateVariablesList[0]
+  constructor(public outputService: OutputService) {
+    // Subscribe to changes in the catchments
+    this.outputService.catchmentSubject.subscribe(catchments => {
+      this.catchmentList = Object.keys(catchments);
+      this.selectedCatchment = this.catchmentList[0];
+      this.outputService.getCatchmentData(this.outputService.catchments[this.catchmentList[0]]).subscribe(data => {
+        this.data = data;
+        // Get the state variables
+        this.stateVariablesList = Object.keys(this.data.data);
+        this.plotTitle = this.stateVariablesList[0];
+        this.setPlotData(data);
+      });
     });
   }
 
-  dataChange(event) {
-    const dates = [];
-    test.dates.forEach(d => dates.push(new Date(d)));
-    const values = [];
-    test.data[this.plotTitle].forEach(d => values.push(d));
+  ngOnInit(): void {
+    // Get the catchments
+    this.outputService.getCatchments();
+  }
 
-    this.data = [];
-    this.data.push({
+  setPlotData(data) {
+    const dates = [];
+    data.dates.forEach(d => dates.push(new Date(d)));
+    const values = [];
+    data.data[this.plotTitle].forEach(d => values.push(d));
+
+    this.plotData = [];
+    this.plotData.push({
       x: dates,
       y: values,
-      type: 'scatter',
-      name: this.plotTitle
+      mode: this.chart,
+      type: this.chart,
+      name: this.plotTitle,
     });
+  }
+
+  catchmentChange(event) {
+    // Make request for catchment data
+    this.outputService.getCatchmentData(this.outputService.catchments[this.selectedCatchment]).subscribe(data => {
+      this.data = data;
+      this.setPlotData(data);
+    });
+  }
+
+  svChange(event) {
+    this.setPlotData(this.data);
+  }
+
+  chartChange(event) {
+    this.setPlotData(this.data);
   }
 }

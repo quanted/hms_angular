@@ -23,8 +23,10 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatIconModule } from "@angular/material/icon";
 import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatMenuModule } from '@angular/material/menu';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ScrollingModule } from "@angular/cdk/scrolling";
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 import { AppComponent } from "./app.component";
 import { MapComponent } from "./components/map/map.component";
@@ -45,8 +47,6 @@ import { LandingComponent } from "./components/landing/landing.component";
 import { ComidSelectInputComponent } from "./components/input/comid-select-input/comid-select-input.component";
 import { SegmentListComponent } from "./components/input/segment-list/segment-list.component";
 import { OutputComponent } from "./components/output/output.component";
-import { MultiLineChartComponent } from "./components/output/multi-line-chart/multi-line-chart.component";
-import { OutputPanelLeftComponent } from "./components/output/output-panel-left/output-panel-left.component";
 import { PlotlyComponent } from "./components/output/plotly/plotly.component";
 import { PlotContainerComponent } from "./components/output/plot-container/plot-container.component";
 
@@ -68,10 +68,8 @@ import { PlotContainerComponent } from "./components/output/plot-container/plot-
     ComidSelectInputComponent,
     SegmentListComponent,
     OutputComponent,
-    MultiLineChartComponent,
-    OutputPanelLeftComponent,
     PlotlyComponent,
-    PlotContainerComponent,
+    PlotContainerComponent
   ],
   imports: [
     BrowserModule,
@@ -85,6 +83,7 @@ import { PlotContainerComponent } from "./components/output/plot-container/plot-
     MatCheckboxModule,
     MatDatepickerModule,
     MatGridListModule,
+    MatMenuModule,
     MatNativeDateModule,
     MatSnackBarModule,
     MatPaginatorModule,
@@ -96,6 +95,7 @@ import { PlotContainerComponent } from "./components/output/plot-container/plot-
     FormsModule,
     ReactiveFormsModule,
     ScrollingModule,
+    DragDropModule
   ],
   providers: [
     {
@@ -112,4 +112,4 @@ import { PlotContainerComponent } from "./components/output/plot-container/plot-
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }
