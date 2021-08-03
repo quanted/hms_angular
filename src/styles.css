@@ -129,12 +129,10 @@ body {
 
 ::-webkit-scrollbar-track {
     box-shadow: inset 0 0 5px lightgrey; 
-    border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb {
     background: gray; 
-    border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
