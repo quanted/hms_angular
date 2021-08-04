@@ -41,7 +41,6 @@ export class OutputService {
     this.hmsService
       .getAquatoxSimResults(this.simulationService.simData["simId"])
       .subscribe((data) => {
-        console.log("getCatchments: ", data);
         this.catchmentSubject.next(data.catchments);
       });
   }
