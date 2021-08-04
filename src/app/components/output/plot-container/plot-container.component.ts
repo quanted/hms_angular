@@ -1,13 +1,20 @@
-import { Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { OutputService } from 'src/app/services/output.service';
+import {
+  Component,
+  ElementRef,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+  ViewChild,
+} from "@angular/core";
+import { OutputService } from "src/app/services/output.service";
 
 @Component({
-  selector: 'app-plot-container',
-  templateUrl: './plot-container.component.html',
-  styleUrls: ['./plot-container.component.css']
+  selector: "app-plot-container",
+  templateUrl: "./plot-container.component.html",
+  styleUrls: ["./plot-container.component.css"],
 })
 export class PlotContainerComponent implements OnInit {
-
   data: any;
   plotData: any[];
   stateVariablesList: string[] = [];
@@ -18,16 +25,18 @@ export class PlotContainerComponent implements OnInit {
 
   constructor(public outputService: OutputService) {
     // Subscribe to changes in the catchments
-    this.outputService.catchmentSubject.subscribe(catchments => {
+    this.outputService.catchmentSubject.subscribe((catchments) => {
       this.catchmentList = Object.keys(catchments);
       this.selectedCatchment = this.catchmentList[0];
-      this.outputService.getCatchmentData(this.outputService.catchments[this.catchmentList[0]]).subscribe(data => {
-        this.data = data;
-        // Get the state variables
-        this.stateVariablesList = Object.keys(this.data.data);
-        this.plotTitle = this.stateVariablesList[0];
-        this.setPlotData(data);
-      });
+      this.outputService
+        .getCatchmentData(this.outputService.catchments[this.catchmentList[0]])
+        .subscribe((data) => {
+          this.data = data;
+          // Get the state variables
+          this.stateVariablesList = Object.keys(this.data.data);
+          this.plotTitle = this.stateVariablesList[0];
+          this.setPlotData(data);
+        });
     });
   }
 
@@ -38,9 +47,9 @@ export class PlotContainerComponent implements OnInit {
 
   setPlotData(data) {
     const dates = [];
-    data.dates.forEach(d => dates.push(new Date(d)));
+    data.dates.forEach((d) => dates.push(new Date(d)));
     const values = [];
-    data.data[this.plotTitle].forEach(d => values.push(d));
+    data.data[this.plotTitle].forEach((d) => values.push(d));
 
     this.plotData = [];
     this.plotData.push({
@@ -54,10 +63,12 @@ export class PlotContainerComponent implements OnInit {
 
   catchmentChange(event) {
     // Make request for catchment data
-    this.outputService.getCatchmentData(this.outputService.catchments[this.selectedCatchment]).subscribe(data => {
-      this.data = data;
-      this.setPlotData(data);
-    });
+    this.outputService
+      .getCatchmentData(this.outputService.catchments[this.selectedCatchment])
+      .subscribe((data) => {
+        this.data = data;
+        this.setPlotData(data);
+      });
   }
 
   svChange(event) {

@@ -1,5 +1,5 @@
-import { OutputService } from 'src/app/services/output.service';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { OutputService } from "src/app/services/output.service";
+import { Component, ElementRef, ViewChild } from "@angular/core";
 import { CdkDragDrop } from "@angular/cdk/drag-drop";
 
 export interface Tile {
@@ -8,9 +8,9 @@ export interface Tile {
 }
 
 @Component({
-  selector: 'app-output',
-  templateUrl: './output.component.html',
-  styleUrls: ['./output.component.css']
+  selector: "app-output",
+  templateUrl: "./output.component.html",
+  styleUrls: ["./output.component.css"],
 })
 export class OutputComponent {
   items = [0];

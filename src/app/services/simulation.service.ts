@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { Router } from "@angular/router";
 
 import { BehaviorSubject } from "rxjs";
 
@@ -75,7 +76,7 @@ export class SimulationService {
   // list of data returned from hms requests
   hmsRequestedData = [];
 
-  constructor(private hms: HmsService) {
+  constructor(private hms: HmsService, private router: Router) {
     this.simDataSubject = new BehaviorSubject(this.simData);
   }
 
@@ -243,9 +244,7 @@ export class SimulationService {
   }
 
   getSimResults(): any {
-    this.hms.getAquatoxSimResults(this.simData["simId"]).subscribe((data) => {
-      return data;
-    });
+    this.router.navigateByUrl("output");
   }
 
   downloadSimResults(): void {
