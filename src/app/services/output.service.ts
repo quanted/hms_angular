@@ -21,7 +21,6 @@ export class OutputService {
   constructor(
     private hmsService: HmsService,
     private simulationService: SimulationService,
-    private http: HttpClient
   ) {
     this.catchmentSubject.subscribe((value) => {
       this.catchments = value;
@@ -32,23 +31,17 @@ export class OutputService {
   }
 
   /**
-   * Makes request with simulation id to data endpoint and gets the catchments with task ids
+   * Makes request with simulation id to data endpoint and gets the catchments
+   *  with task ids
    */
   getCatchments(): void {
     // Call data endpoint for current simid
-    // this.simulationService.simData["simId"] =
-    //   "47bdaa9b-7d27-4486-8aa4-5501a190d7b9";
+    this.simulationService.simData["simId"] = "47bdaa9b-7d27-4486-8aa4-5501a190d7b9";
     this.hmsService
       .getAquatoxSimResults(this.simulationService.simData["simId"])
       .subscribe((data) => {
         this.catchmentSubject.next(data.catchments);
       });
-  }
-
-  getCatchmentData(taskId: string): Observable<any> {
-    return this.http.get(
-      `${environment.apiURL}/api/aquatox/workflow/archive-results/?task_id=${taskId}`
-    );
   }
 
   /**

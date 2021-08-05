@@ -10,7 +10,7 @@ import { environment } from "../../environments/environment";
   providedIn: "root",
 })
 export class HmsService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getApi(): Observable<any> {
     return this.http.get(environment.swaggerURL).pipe(
@@ -64,8 +64,8 @@ export class HmsService {
       let requestType = swagger.paths[apiPath].hasOwnProperty("post")
         ? "post"
         : swagger.paths[apiPath].hasOwnProperty("get")
-        ? "get"
-        : "null";
+          ? "get"
+          : "null";
       let request = swagger.paths[apiPath];
       api.apiEndpointList.push({
         endpoint: apiPath,
@@ -124,6 +124,16 @@ export class HmsService {
   getAquatoxSimResults(simId, input?, output?): Observable<any> {
     return this.http.get(
       `${environment.apiURL}/api/v2/hms/workflow/data/?task_id=${simId}&input=${input}&output=${output}`
+    );
+  }
+
+  /**
+   * Given a catchments taskid, returns the summarized data from its 
+   * simulation run. 
+   */
+  getCatchmentData(taskId: string): Observable<any> {
+    return this.http.get(
+      `${environment.apiURL}/api/aquatox/workflow/archive-results/?task_id=${taskId}`
     );
   }
 
