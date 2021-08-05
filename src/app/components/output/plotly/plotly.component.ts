@@ -7,7 +7,7 @@ import * as Plotly from 'plotly.js/dist/plotly.js';
   styleUrls: ['./plotly.component.css']
 })
 export class PlotlyComponent implements OnInit, OnChanges {
-
+  // Get access to the plot element in the DOM
   @ViewChild("plot", { static: true }) public plot: ElementRef;
 
   // Titles
@@ -17,28 +17,30 @@ export class PlotlyComponent implements OnInit, OnChanges {
   // Array of data with x values, y values, type (line, bar, etc...),
   // and name for each line to be plotted 
   @Input() data: {
-    x: Date,
-    y: number,
+    x: Date[],
+    y: number[],
     type: string,
     name: string,
   }[];
-
+  // Any to hold the plot specific properties
   chart: any;
 
-  constructor() { }
   ngOnChanges(changes: SimpleChanges): void {
-    this.draw()
+    // Redraw on changes
+    this.draw();
   }
 
   ngOnInit(): void {
-
+    // Draw on init
+    this.draw()
   }
 
   draw(): void {
+    // Set plot specific properties
     this.chart = {
       data: this.data,
       layout: {
-        title: { text: this.plotTitle, font: { size: 17 } },
+        title: { text: this.plotTitle, font: { size: 14 } },
         xaxis: {
           title: { text: this.xAxisTitle },
         },
@@ -46,9 +48,9 @@ export class PlotlyComponent implements OnInit, OnChanges {
           title: { text: this.yAxisTitle },
         },
         margin: {
-          l: 40,
-          r: 40,
-          b: 40,
+          l: 30,
+          r: 30,
+          b: 35,
           t: 40,
           pad: 0
         },
@@ -61,6 +63,7 @@ export class PlotlyComponent implements OnInit, OnChanges {
         style: { width: "100%", height: "100%" }
       },
     };
+    // Plot 
     Plotly.newPlot(this.plot.nativeElement, this.chart);
   }
 }

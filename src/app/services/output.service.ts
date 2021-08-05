@@ -1,12 +1,10 @@
 import { Injectable } from "@angular/core";
-import { Observable, Subject } from "rxjs";
+import { Subject } from "rxjs";
 import { HmsService } from "./hms.service";
 import { SimulationService } from "./simulation.service";
-import { HttpClient } from "@angular/common/http";
-import { environment } from "../../environments/environment";
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class OutputService {
   lineData: any[] = [];
@@ -42,15 +40,5 @@ export class OutputService {
       .subscribe((data) => {
         this.catchmentSubject.next(data.catchments);
       });
-  }
-
-  /**
-   * Filter the data to only show the selected variables.
-   */
-  filterData() {
-    this.lineData = this.lineData.filter((line) => {
-      return this.selected.indexOf(line.type) > -1;
-    });
-    console.log(this.lineData);
   }
 }

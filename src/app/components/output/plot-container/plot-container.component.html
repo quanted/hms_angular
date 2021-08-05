@@ -1,19 +1,20 @@
 <div class="upper-c">
     <div>
-        <div class="select-container">
-            <mat-form-field *ngIf="catchmentList">
+        <mat-icon class="menu-icon" [matMenuTriggerFor]="menu">menu</mat-icon>
+        <mat-menu #menu="matMenu" class="menu">
+            <mat-form-field class="menu-field" *ngIf="catchmentList" (click)="$event.stopPropagation()">
                 <mat-label>Catchment</mat-label>
                 <mat-select [(ngModel)]="selectedCatchment" (selectionChange)="catchmentChange($event)">
                     <mat-option *ngFor="let c of catchmentList" [value]="c">{{c}}</mat-option>
                 </mat-select>
             </mat-form-field>
-            <mat-form-field *ngIf="stateVariablesList">
+            <mat-form-field class="menu-field" *ngIf="stateVariablesList" (click)="$event.stopPropagation()">
                 <mat-label>State Variables</mat-label>
                 <mat-select [(ngModel)]="plotTitle" (selectionChange)="svChange($event)">
                     <mat-option *ngFor="let sv of stateVariablesList" [value]="sv">{{sv}}</mat-option>
                 </mat-select>
             </mat-form-field>
-            <mat-form-field>
+            <mat-form-field class="menu-field" (click)="$event.stopPropagation()">
                 <mat-label>Chart Type</mat-label>
                 <mat-select [(ngModel)]="chart" (selectionChange)="chartChange($event)">
                     <mat-option value="scatter">Line</mat-option>
@@ -21,15 +22,10 @@
                     <mat-option value="lines+markers">Line + Scatter</mat-option>
                 </mat-select>
             </mat-form-field>
-        </div>
+            <button class="menu-field menu-button" mat-flat-button (click)="delete($event)">Delete</button>
+        </mat-menu>
     </div>
     <div [ngClass]="{container: plotData, errorContainer: !plotData}">
         <app-plotly *ngIf="plotData" [data]="plotData" [plotTitle]="plotTitle"></app-plotly>
-        <!--
-    <div *ngIf="!plotData" class="errorBox">
-        Error retrieving data.
-        <button mat-button>Try Again</button>
-    </div>
-    -->
     </div>
 </div>
