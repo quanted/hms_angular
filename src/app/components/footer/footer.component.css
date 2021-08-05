@@ -129,7 +129,7 @@
     cursor: pointer;
 }
 ::ng-deep .footer-link-block {
-    background: #323a45 !important;
+    background: var(--main-epa) !important;
 }
 .footer-link {
     color: white;
