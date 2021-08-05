@@ -34,7 +34,7 @@ export class OutputService {
    */
   getCatchments(): void {
     // Call data endpoint for current simid
-    this.simulationService.simData["simId"] = "47bdaa9b-7d27-4486-8aa4-5501a190d7b9";
+    //this.simulationService.simData["simId"] = "47bdaa9b-7d27-4486-8aa4-5501a190d7b9";
     this.hmsService
       .getAquatoxSimResults(this.simulationService.simData["simId"])
       .subscribe((data) => {
