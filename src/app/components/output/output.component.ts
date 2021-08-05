@@ -1,11 +1,6 @@
-import { OutputService } from "src/app/services/output.service";
-import { Component, ElementRef, ViewChild } from "@angular/core";
+import { Component } from '@angular/core';
 import { CdkDragDrop } from "@angular/cdk/drag-drop";
-
-export interface Tile {
-  cols: number;
-  rows: number;
-}
+import { SimulationService } from 'src/app/services/simulation.service';
 
 @Component({
   selector: "app-output",
@@ -13,12 +8,23 @@ export interface Tile {
   styleUrls: ["./output.component.css"],
 })
 export class OutputComponent {
+
   items = [0];
+  MAX_CONTAINERS = 6;
+  constructor(private simulationService: SimulationService) {
+    console.log(this.simulationService.simData);
+  }
+
   drop(event: CdkDragDrop<any>) {
     this.items[event.previousContainer.data.index] = event.container.data.item;
     this.items[event.container.data.index] = event.previousContainer.data.item;
+    // Trigger resize event to make plotly redraw
+    window.dispatchEvent(new Event('resize'));
   }
+
   add() {
-    this.items.push(this.items.length);
+    this.items.length < this.MAX_CONTAINERS && this.items.push(this.items.length);
+    // Trigger resize event to make plotly redraw
+    window.dispatchEvent(new Event('resize'));
   }
 }
