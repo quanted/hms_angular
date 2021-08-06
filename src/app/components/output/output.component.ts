@@ -24,8 +24,12 @@ export class OutputComponent {
   }
 
   add() {
-    // Check if we can add another item then find the max item data add 1 and push
-    this.items.length < this.MAX_CONTAINERS && this.items.push(Math.max(...this.items) + 1);
+    // Check if we can add another item 
+    if (this.items.length < this.MAX_CONTAINERS && this.items.length > 0) {
+      this.items.push(Math.max(...this.items) + 1);
+    } else if (this.items.length === 0) {
+      this.items.push(0);
+    }
     // Trigger resize event to make plotly redraw
     window.dispatchEvent(new Event('resize'));
   }
