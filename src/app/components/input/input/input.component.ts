@@ -13,14 +13,11 @@ import { SimulationService } from "src/app/services/simulation.service";
   styleUrls: ["./input.component.css"],
 })
 export class InputComponent implements OnInit {
-  aoiForm: FormGroup;
   distanceForm: FormGroup;
   moduleForm: FormGroup;
   pPointForm: FormGroup;
   svForm: FormGroup;
   pSetUpForm: FormGroup;
-  apiForm: FormGroup;
-  endpointForm: FormGroup;
 
   huc: HUC;
   catchment: Catchment;
@@ -36,8 +33,8 @@ export class InputComponent implements OnInit {
   jsonFlags = null;
   baseJson = false;
 
-  // TODO: implement call to execution check endpoint
-  executionReady = true;
+  status_message = "";
+  simulationExecuting = false;
   simComplete = false;
 
   apiVersion;
@@ -97,16 +94,12 @@ export class InputComponent implements OnInit {
       this.apiEndpointList = api.apiEndpointList;
       this.schemas = api.schemas;
       this.loadingApi = false;
-      this.updateEndpointForm();
     });
 
     this.pPointForm = this.fb.group({
       pPointComid: [null],
     });
-    this.aoiForm = this.fb.group({
-      lat: [null],
-      lng: [null],
-    });
+
     this.distanceForm = this.fb.group({
       distance: ["50"],
     });
@@ -136,9 +129,6 @@ export class InputComponent implements OnInit {
       fixStepSize: [null],
     });
 
-    this.apiForm = this.fb.group({
-      endpointSelect: [null],
-    });
     this.simulation.interfaceData().subscribe((d) => {
       this.updateInterface(d);
     });
@@ -147,26 +137,23 @@ export class InputComponent implements OnInit {
   updateInterface(data): void {
     for (let key of Object.keys(data)) {
       switch (key) {
-        case "coords":
-          this.aoiForm.setValue(data[key]);
-          break;
         case "huc":
           this.updateHucInput(data[key]);
           break;
         case "catchment":
           this.updateCatchmentInput(data[key]);
           break;
+        case "status_message":
+          this.status_message = data[key];
+          break;
         case "sim_completed":
+          if (data[key] === true) this.simulationExecuting = false;
           this.simComplete = data[key];
           break;
         default:
         // console.log("input doesn't use: ", key);
       }
     }
-  }
-
-  updateCoordsInput(coords): void {
-    this.aoiForm.setValue(coords);
   }
 
   updateHucInput(huc): void {
@@ -237,10 +224,12 @@ export class InputComponent implements OnInit {
   }
 
   executeSimulation(): void {
+    this.simulationExecuting = true;
     this.simulation.executeSimulation();
   }
 
   cancelExecution(): void {
+    this.simulationExecuting = false;
     this.simulation.cancelAquatoxSimulationExecution();
   }
 
@@ -248,59 +237,12 @@ export class InputComponent implements OnInit {
     this.simulation.getStatus();
   }
 
-  getSimResults(): void {
-    this.simulation.getSimResults();
+  gotoOutput(): void {
+    this.router.navigateByUrl("output");
   }
 
   downloadSimResults(): void {
     this.simulation.downloadSimResults();
-  }
-
-  updateEndpointForm(): void {
-    let endpoint = this.apiForm.get("endpointSelect").value;
-    this.formInputs = [];
-    const formBuilderInputs = {};
-    if (endpoint !== null && endpoint !== "null") {
-      // TODO this will also need a bunch of attention once a more complex endpoint list arrives
-      for (let apiEndpoint of this.apiEndpointList) {
-        if (this.apiForm.get("endpointSelect").value == apiEndpoint.endpoint) {
-          endpoint = apiEndpoint;
-          for (let key of Object.keys(endpoint.request)) {
-            this.formInputs.push(key);
-            formBuilderInputs[key] = [null];
-          }
-        }
-      }
-      this.endpointForm = this.fb.group(formBuilderInputs);
-      this.endpointForm.setValue(endpoint.request);
-    }
-    this.currentEndpoint = endpoint !== "null" ? endpoint : null;
-  }
-
-  submitHMSDataRequest(): void {
-    this.waiting = true;
-    this.hms
-      .submit({
-        type: this.currentEndpoint.type,
-        endpoint: this.currentEndpoint.endpoint,
-        args: this.endpointForm.value,
-      })
-      .subscribe((response) => {
-        this.waiting = false;
-        this.simulation.updateData(this.currentEndpoint.endpoint, response);
-        this.responseList = this.simulation.getResponseList();
-        console.log("list: ", this.responseList);
-        console.log("response: ", response);
-      });
-  }
-
-  // navigate to data browsing page loading the selected dataset
-  gotoData(endpoint) {
-    console.log("click! ", endpoint);
-  }
-
-  goToOutput() {
-    this.router.navigateByUrl("output");
   }
 }
 

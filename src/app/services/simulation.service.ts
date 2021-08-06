@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { Router } from "@angular/router";
 
 import { BehaviorSubject } from "rxjs";
 
@@ -76,7 +75,7 @@ export class SimulationService {
   // list of data returned from hms requests
   hmsRequestedData = [];
 
-  constructor(private hms: HmsService, private router: Router) {
+  constructor(private hms: HmsService) {
     this.simDataSubject = new BehaviorSubject(this.simData);
   }
 
@@ -191,6 +190,7 @@ export class SimulationService {
   }
 
   executeSimulation(): void {
+    this.updateSimData("sim_completed", false);
     this.hms
       .executeAquatoxSimulation(this.simData["simId"])
       .subscribe((response) => {
@@ -209,11 +209,11 @@ export class SimulationService {
 
   startStatusCheck(): void {
     let statusCheck = setInterval(() => {
+      console.log("checking status...");
       this.hms
         .getAquatoxSimStatus(this.simData["simId"])
         .subscribe((response) => {
-          let status = response.status;
-          if (!status) return;
+          this.updateSimData("status_message", response.message);
           for (let comid of Object.keys(response.catchments)) {
             if (
               response.catchments[comid].status == "COMPLETED" ||
@@ -227,6 +227,7 @@ export class SimulationService {
           }
           if (response.status == "COMPLETED") {
             this.updateSimData("sim_completed", true);
+            console.log("simulation complete");
             clearInterval(statusCheck);
           }
         });
@@ -241,10 +242,6 @@ export class SimulationService {
         if (!status) status = response.error;
         console.log(`Status: ${status}`, response);
       });
-  }
-
-  getSimResults(): any {
-    this.router.navigateByUrl("output");
   }
 
   downloadSimResults(): void {
