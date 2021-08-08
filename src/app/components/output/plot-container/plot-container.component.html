@@ -8,7 +8,8 @@
                     <mat-option *ngFor="let c of catchmentList" [value]="c">{{c}}</mat-option>
                 </mat-select>
             </mat-form-field>
-            <mat-form-field class="menu-field" *ngIf="stateVariablesList" (click)="$event.stopPropagation()">
+            <mat-form-field class="menu-field" *ngIf="stateVariablesList && chart !== 'table'"
+                (click)="$event.stopPropagation()">
                 <mat-label>State Variables</mat-label>
                 <mat-select [(ngModel)]="plotTitle" (selectionChange)="svChange($event)">
                     <mat-option *ngFor="let sv of stateVariablesList" [value]="sv">{{sv}}</mat-option>
@@ -20,12 +21,16 @@
                     <mat-option value="scatter">Line</mat-option>
                     <mat-option value="markers">Scatter</mat-option>
                     <mat-option value="lines+markers">Line + Scatter</mat-option>
+                    <mat-option value="table">Table</mat-option>
                 </mat-select>
             </mat-form-field>
-            <button class="menu-field menu-button" mat-flat-button (click)="delete($event)">Delete</button>
+            <button class="menu-field delete-button" mat-flat-button (click)="delete($event)">Delete</button>
+            <button class="menu-field download-button" mat-flat-button>Download (.csv)</button>
         </mat-menu>
     </div>
     <div [ngClass]="{container: plotData, errorContainer: !plotData}">
-        <app-plotly *ngIf="plotData" [data]="plotData" [plotTitle]="plotTitle"></app-plotly>
+        <app-plotly *ngIf="plotData && chart !== 'table'" [data]="plotData" [plotTitle]="plotTitle"></app-plotly>
+        <app-table *ngIf="plotData && chart === 'table'" [columnNames]="tableColumnNames"
+            [columnData]="tableColumnData"></app-table>
     </div>
 </div>

@@ -26,7 +26,10 @@ export class PlotContainerComponent implements OnInit {
   // Plot title set by State Variables selection
   plotTitle: string;
   // Chart types set by chart type selection
-  chart: string = "scatter";
+  chart: string = "table";
+  // Table column setup variables
+  tableColumnNames: string[] = [];
+  tableColumnData: any[] = [];
 
   constructor(
     public outputService: OutputService,
@@ -45,7 +48,8 @@ export class PlotContainerComponent implements OnInit {
           // Get the state variables and set plot title, then set plot data
           this.stateVariablesList = Object.keys(this.data.data);
           this.plotTitle = this.stateVariablesList[0];
-          this.setPlotData(data);
+          this.setPlotData();
+          this.setTableData();
         });
     });
   }
@@ -54,15 +58,20 @@ export class PlotContainerComponent implements OnInit {
     this.outputService.getCatchments();
   }
 
+  setData() {
+    this.setTableData();
+    this.setPlotData();
+  }
+
   /**
    * Parses the data received from the HmsService and sets the plot data
    * which updates the @Input() data in the plotly component.
    */
-  setPlotData(data) {
+  setPlotData() {
     const dates = [];
-    data.dates.forEach((d) => dates.push(new Date(d)));
+    this.data.dates.forEach((d) => dates.push(new Date(d)));
     const values = [];
-    data.data[this.plotTitle].forEach((d) => values.push(d));
+    this.data.data[this.plotTitle].forEach((d) => values.push(d));
 
     this.plotData = [];
     this.plotData.push({
@@ -73,6 +82,34 @@ export class PlotContainerComponent implements OnInit {
       name: this.plotTitle,
     });
   }
+  /**
+   * Parses the data received from the HmsService and sets the table data
+   * which updates the @Input() data in the table component. Places the 
+   * data in the correct format for the table component.
+   */
+  setTableData() {
+    // Reset tables values
+    this.tableColumnNames = [];
+    this.tableColumnData = [];
+
+    // Set column names
+    this.tableColumnNames.push("Date");
+    Object.keys(this.data.data).forEach((key) => {
+      this.tableColumnNames.push(key);
+    });
+
+    // Loop over length of data
+    for (let i = 0; i < this.data.dates.length; i++) {
+      let obj: any = {};
+      // Loop over state variables
+      for (let j = 1; j < this.tableColumnNames.length; j++) {
+        obj[this.tableColumnNames[0]] = this.data.dates[i];
+        obj[this.tableColumnNames[j]] = this.data.data[this.tableColumnNames[j]][i];
+      }
+      // Push to table data
+      this.tableColumnData.push(obj);
+    }
+  }
 
   catchmentChange(event) {
     // Make request for catchment data
@@ -80,18 +117,18 @@ export class PlotContainerComponent implements OnInit {
       .getCatchmentData(this.outputService.catchments[this.selectedCatchment])
       .subscribe((data) => {
         this.data = data;
-        this.setPlotData(data);
+        this.setData();
       });
   }
 
   // Update on change of state variables
   svChange(event) {
-    this.setPlotData(this.data);
+    this.setData();
   }
 
   // Update on change of chart type
   chartChange(event) {
-    this.setPlotData(this.data);
+    this.setData();
   }
 
   // Delete the drop list item on click

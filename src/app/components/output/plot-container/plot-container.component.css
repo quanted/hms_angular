@@ -40,6 +40,10 @@
     width: 100%;
 }
 
-.menu-button {
+.delete-button {
     color: red;
+}
+
+.delete-button:hover, .download-button:hover {
+    opacity: 0.5;
 }

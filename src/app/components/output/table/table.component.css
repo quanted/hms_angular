@@ -1,0 +1,28 @@
+:host {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    height : 100%;
+    width : 100%;
+    min-height: 0;
+}
+
+.table-container {
+    padding-top: 30px;
+    overflow: scroll;
+    min-height: 0;
+}
+th {
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+td {
+    white-space: nowrap;
+    max-width: 100px;
+    text-overflow: ellipsis; 
+    overflow: hidden; 
+}
+
+th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
+    padding: 0.5em;
+}
