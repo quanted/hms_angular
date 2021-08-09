@@ -16,6 +16,7 @@
 table {
     width: 100%;
     table-layout: fixed;
+    text-align: center !important;
   }
   
   th, td {
@@ -23,10 +24,20 @@ table {
     width: 100px;
     text-overflow: ellipsis;
     white-space: normal;
+    text-align: center !important;
+    vertical-align: middle !important;
   }
   th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
     padding: 5px;
   }
+
+::ng-deep .mat-sort-header-container{
+    justify-content: center;
+}
+
+.mat-header-cell {
+    text-align: center !important;
+}
 
   .title {
     display: flex;

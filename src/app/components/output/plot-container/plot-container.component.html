@@ -1,6 +1,7 @@
 <div class="upper-c">
     <div>
-        <mat-icon class="menu-icon" [matMenuTriggerFor]="menu">menu</mat-icon>
+        <mat-icon class="menu-icon" [matMenuTriggerFor]="menu" matTooltip="Open container menu."
+            matTooltipPosition="after">menu</mat-icon>
         <mat-menu #menu="matMenu" class="menu">
             <mat-form-field class="menu-field" *ngIf="catchmentList" (click)="$event.stopPropagation()">
                 <mat-label>Catchment</mat-label>
@@ -24,13 +25,21 @@
                     <mat-option value="table">Table</mat-option>
                 </mat-select>
             </mat-form-field>
-            <button class="menu-field delete-button" mat-flat-button (click)="delete($event)">Delete</button>
-            <button class="menu-field download-button" mat-flat-button>Download (.csv)</button>
+            <button class="menu-field delete-button" mat-flat-button (click)="delete($event)" mat-flat-button
+                matTooltip="Deletes this container." matTooltipPosition="after">Delete</button>
+            <button class="menu-field download-button" mat-flat-button
+                matTooltip="Downloads a csv of the current data displayed in this container."
+                matTooltipPosition="after">Download
+                (.csv)</button>
+            <button class="menu-field download-button" mat-flat-button mat-flat-button
+                matTooltip="Downloads a zip of the entire simulation data." matTooltipPosition="after">Download All
+                Simulation Data (.zip)</button>
         </mat-menu>
     </div>
     <div [ngClass]="{container: plotData, errorContainer: !plotData}">
         <app-plotly *ngIf="plotData && chart !== 'table'" [data]="plotData" [plotTitle]="plotTitle"></app-plotly>
         <app-table *ngIf="plotData && chart === 'table'" [columnNames]="tableColumnNames" [columnData]="tableColumnData"
             [catchment]="selectedCatchment"></app-table>
+        <div *ngIf="!plotData" class="error">Error retrieving simulation data.</div>
     </div>
 </div>
