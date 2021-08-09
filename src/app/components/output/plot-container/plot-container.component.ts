@@ -23,6 +23,8 @@ export class PlotContainerComponent implements OnInit {
   catchmentList: string[] = [];
   // Selected catchment set by catchments selection
   selectedCatchment: string;
+  // Selected State Variable set by sv selection
+  selectedSV: string;
   // Plot title set by State Variables selection
   plotTitle: string;
   // Chart types set by chart type selection
@@ -47,7 +49,7 @@ export class PlotContainerComponent implements OnInit {
           this.data = data;
           // Get the state variables and set plot title, then set plot data
           this.stateVariablesList = Object.keys(this.data.data);
-          this.plotTitle = this.stateVariablesList[0];
+          this.selectedSV = this.stateVariablesList[0];
           this.setPlotData();
           this.setTableData();
         });
@@ -71,17 +73,18 @@ export class PlotContainerComponent implements OnInit {
     const dates = [];
     this.data.dates.forEach((d) => dates.push(new Date(d)));
     const values = [];
-    this.data.data[this.plotTitle].forEach((d) => values.push(d));
-
+    this.data.data[this.selectedSV].forEach((d) => values.push(d));
     this.plotData = [];
     this.plotData.push({
       x: dates,
       y: values,
       mode: this.chart,
       type: this.chart,
-      name: this.plotTitle,
+      name: this.selectedSV,
     });
+    this.plotTitle = `Catchment: ${this.selectedCatchment} <br> ${this.selectedSV}`;
   }
+
   /**
    * Parses the data received from the HmsService and sets the table data
    * which updates the @Input() data in the table component. Places the 
@@ -103,7 +106,7 @@ export class PlotContainerComponent implements OnInit {
       let obj: any = {};
       // Loop over state variables
       for (let j = 1; j < this.tableColumnNames.length; j++) {
-        obj[this.tableColumnNames[0]] = this.data.dates[i];
+        obj[this.tableColumnNames[0]] = new Date(this.data.dates[i]).toString().split("GMT")[0];
         obj[this.tableColumnNames[j]] = this.data.data[this.tableColumnNames[j]][i];
       }
       // Push to table data

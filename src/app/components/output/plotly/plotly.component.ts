@@ -48,7 +48,7 @@ export class PlotlyComponent implements OnInit, OnChanges {
           title: { text: this.yAxisTitle },
         },
         margin: {
-          l: 30,
+          l: 40,
           r: 30,
           b: 35,
           t: 40,
