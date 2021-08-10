@@ -34,6 +34,7 @@ export class InputComponent implements OnInit {
   jsonFlags = null;
   baseJson = false;
 
+  simStatus = "";
   status_message = "";
   simulationExecuting = false;
   simComplete = false;
@@ -151,6 +152,7 @@ export class InputComponent implements OnInit {
           this.updateCatchmentInput(data[key]);
           break;
         case "status_message":
+          this.simStatus = data["status"];
           this.status_message = data[key];
           break;
         case "sim_completed":

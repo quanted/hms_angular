@@ -144,8 +144,8 @@ export class LayerService {
   inHucColor = "#00F0F0";
   outHucColor = "#FF00FF";
   selectedColor = "#0000FF";
-  simCompletedColor = "#00FF00";
-  simFailColor = "#FF00FF";
+  simCompletedColor = "#00C113";
+  simFailColor = "#FF0037";
 
   constructor(private simulation: SimulationService) {
     // setup default tile maps
@@ -481,13 +481,13 @@ export class LayerService {
         if (status == "COMPLETED") {
           layer.layer.setStyle({
             color: this.simCompletedColor,
-            weight: 5,
+            weight: 3,
           });
         }
         if (status == "FAILED") {
           layer.layer.setStyle({
             color: this.simFailColor,
-            weight: 5,
+            weight: 3,
           });
         }
       }

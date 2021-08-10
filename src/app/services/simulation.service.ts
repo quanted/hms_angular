@@ -122,8 +122,16 @@ export class SimulationService {
           input: {
             source: "nwm",
             dateTimeSpan: {
-              startDate: this.simData.pSetup.firstDay,
-              endDate: this.simData.pSetup.lastDay,
+              startDate: formatDate(
+                this.simData.pSetup.firstDay,
+                "yyyy-MM-ddTHH:mm:ss",
+                "en"
+              ),
+              endDate: formatDate(
+                this.simData.pSetup.lastDay,
+                "yyyy-MM-ddTHH:mm:ss",
+                "en"
+              ),
             },
             geometry: {
               comID: comid.toString(),
@@ -172,7 +180,6 @@ export class SimulationService {
     this.hms
       .executeAquatoxSimulation(this.simData["simId"])
       .subscribe((response) => {
-        console.log("Execute: ", response);
         this.startStatusCheck();
       });
   }
@@ -181,7 +188,6 @@ export class SimulationService {
     this.hms
       .cancelAquatoxSimulationExecution(this.simData["simId"])
       .subscribe((response) => {
-        console.log("Cancel: ", response);
         this.endStatusCheck();
       });
   }
@@ -192,6 +198,7 @@ export class SimulationService {
       this.hms
         .getAquatoxSimStatus(this.simData["simId"])
         .subscribe((response) => {
+          this.updateSimData("status", response.status);
           this.updateSimData("status_message", response.message);
           for (let comid of Object.keys(response.catchments)) {
             if (
@@ -204,7 +211,7 @@ export class SimulationService {
               });
             }
           }
-          if (response.status == "COMPLETED") {
+          if (response.status == "COMPLETED" || response.status == "FAILED") {
             this.updateSimData("sim_completed", true);
             console.log("simulation complete");
             this.endStatusCheck();

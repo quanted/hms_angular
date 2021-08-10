@@ -5,13 +5,13 @@
         <div class="container-item">
             <div class="centered"><strong>Study Area</strong></div>
             <div class="section-item" *ngIf="!huc">
-                <div class="form-row" [formGroup]="pPointForm">
+                <!-- <div class="form-row" [formGroup]="pPointForm">
                     <div class="vertical-center">
                         <div>Comid <input type="number" class="input-comid" formControlName="pPointComid" /></div>
                     </div>
                     <div class="button" (click)="getPourPoint()" matTooltip="Get Pour Point">Get Pour Point</div>
                 </div>
-                <div class="centered">- or -</div>
+                <div class="centered">- or -</div> -->
                 <div class="centered">
                     <strong>Click map to select </strong>
                     <select>
@@ -77,12 +77,12 @@
                             <div class="button">Day</div>
                         </div>
                     </div>
-                    <div class="form-row">
+                    <!-- <div class="form-row">
                         Use Alternate Step Size <input type="checkbox" formControlName="useFixStepSize" />
                     </div>
                     <div class="form-row" *ngIf="isUsingFixedStep()">
                         Step Size <input type="number" formControlName="fixStepSize" />
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -113,25 +113,24 @@
             <app-comid-select-input></app-comid-select-input>
         </div>
 
-        <div class="container-item" *ngIf="baseJson && stream">
+        <div class="container-item" *ngIf="baseJson && stream && !simulationExecuting">
             <div class="button" (click)="initSim()">initSim</div>
             <div class="button" (click)="clearBaseJson()">Reset Base Simulation</div>
-            <!-- <div class="button" (click)="addData()">Add Simulation Data</div> -->
-            <div class="button" (click)="cancelExecution()">Cancel Simulation Execution</div>
-            <!-- <div class="button" (click)="getSimStatus()">Check Status</div> -->
         </div>
     </div>
-    <div class="container-item" *ngIf="baseJson && stream">
-        <div *ngIf="simulationExecuting">{{ status_message }}</div>
-        <div *ngIf="simComplete">
-            <div class="button" (click)="gotoOutput()" [class.ready]="simComplete">Examine Output</div>
-            <div class="button" (click)="downloadSimResults()" [class.ready]="simComplete">Download Data</div>
-        </div>
+    <div class="container-item" *ngIf="simulationExecuting || simStatus == 'FAILED'">
+        <div>Simulation Status: {{ simStatus }}</div>
+        <div>{{ status_message }}</div>
+    </div>
+    <div *ngIf="simComplete && simStatus !== 'FAILED'">
+        <div class="button" (click)="gotoOutput()" [class.ready]="simComplete">Examine Output</div>
+        <div class="button" (click)="downloadSimResults()" [class.ready]="simComplete">Download Data</div>
     </div>
     <div *ngIf="baseJson && stream">
         <div class="button" *ngIf="!simulationExecuting" (click)="executeSimulation()">Execute Aquatox Simulation</div>
-        <div class="button" *ngIf="simulationExecuting">
-            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-        </div>
     </div>
+    <div class="button" *ngIf="simulationExecuting">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+    <div class="button"  *ngIf="simulationExecuting" (click)="cancelExecution()">Cancel Simulation Execution</div>
 </div>
