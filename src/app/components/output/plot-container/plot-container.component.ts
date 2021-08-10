@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { HmsService } from "src/app/services/hms.service";
 import { OutputService } from "src/app/services/output.service";
+import { SimulationService } from "src/app/services/simulation.service";
 
 @Component({
   selector: "app-plot-container",
@@ -28,14 +29,15 @@ export class PlotContainerComponent implements OnInit {
   // Plot title set by State Variables selection
   plotTitle: string;
   // Chart types set by chart type selection
-  chart: string = "table";
+  chart: string = "scatter";
   // Table column setup variables
   tableColumnNames: string[] = [];
   tableColumnData: any[] = [];
 
   constructor(
     public outputService: OutputService,
-    private hmsService: HmsService
+    private hmsService: HmsService,
+    private simulationService: SimulationService
   ) {
     // Subscribe to changes in the catchments
     this.outputService.catchmentSubject.subscribe((catchments) => {
@@ -137,5 +139,9 @@ export class PlotContainerComponent implements OnInit {
   // Delete the drop list item on click
   delete(event) {
     this.deleteItem.emit(this.dropListData);
+  }
+
+  downloadSimResults(): void {
+    this.simulationService.downloadSimResults();
   }
 }
