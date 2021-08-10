@@ -27,12 +27,13 @@
             </mat-form-field>
             <button class="menu-field delete-button" mat-flat-button (click)="delete($event)" mat-flat-button
                 matTooltip="Deletes this container." matTooltipPosition="after">Delete</button>
-            <button class="menu-field download-button" mat-flat-button
+            <!--<button class="menu-field download-button" mat-flat-button
                 matTooltip="Downloads a csv of the current data displayed in this container."
                 matTooltipPosition="after">Download
-                (.csv)</button>
+                (.csv)</button>-->
             <button class="menu-field download-button" mat-flat-button mat-flat-button
-                matTooltip="Downloads a zip of the entire simulation data." matTooltipPosition="after">Download All
+                matTooltip="Downloads a zip of the entire simulation data." matTooltipPosition="after"
+                (click)="downloadSimResults()">Download All
                 Simulation Data (.zip)</button>
         </mat-menu>
     </div>
@@ -40,6 +41,6 @@
         <app-plotly *ngIf="plotData && chart !== 'table'" [data]="plotData" [plotTitle]="plotTitle"></app-plotly>
         <app-table *ngIf="plotData && chart === 'table'" [columnNames]="tableColumnNames" [columnData]="tableColumnData"
             [catchment]="selectedCatchment"></app-table>
-        <div *ngIf="!plotData" class="error">Error retrieving simulation data.</div>
+        <!--<div *ngIf="!plotData" class="error">Error retrieving simulation data.</div>-->
     </div>
 </div>
