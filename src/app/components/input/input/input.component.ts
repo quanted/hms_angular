@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
+import { formatDate } from "@angular/common";
 
-import { FormBuilder, FormGroup } from "@angular/forms";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 
 import { HmsService } from "src/app/services/hms.service";
@@ -122,8 +123,14 @@ export class InputComponent implements OnInit {
     });
 
     this.pSetUpForm = this.fb.group({
-      firstDay: [null],
-      lastDay: [null],
+      firstDay: [
+        formatDate(new Date("2000-01-01T00:00:00"), "yyyy-MM-dd", "en"),
+        Validators.required,
+      ],
+      lastDay: [
+        formatDate(new Date("2000-12-31T00:00:00"), "yyy-MM-dd", "en"),
+        Validators.required,
+      ],
       stepSizeInDays: [null],
       useFixStepSize: [null],
       fixStepSize: [null],
@@ -216,7 +223,7 @@ export class InputComponent implements OnInit {
   }
 
   initSim(): void {
-    this.simulation.initializeAquatoxSimulation();
+    this.simulation.initializeAquatoxSimulation(this.pSetUpForm.value);
   }
 
   addData(): void {

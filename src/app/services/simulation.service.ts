@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { formatDate } from "@angular/common";
 
 import { BehaviorSubject } from "rxjs";
 
@@ -26,22 +27,11 @@ export class SimulationService {
       boundary: [],
     },
     pSetup: {
-      StudyName: "",
-      FirstDay: {
-        val: "",
-      },
-      LastDay: {
-        val: "",
-      },
-      StepSizeInDays: {
-        val: false,
-      },
-      UseFixStepSize: {
-        val: false,
-      },
-      FixStepSize: {
-        val: null,
-      },
+      firstDay: "2000-01-01T00:00:00", // default one month
+      lastDay: "2000-12-31T00:00:00", // time span
+      stepSizeInDays: 1,
+      useFixStepSize: false,
+      fixStepSize: 1,
     },
     base_json: null,
     network: {
@@ -51,35 +41,35 @@ export class SimulationService {
     comid_inputs: {},
     simulation_dependencies: [],
     catchment_dependencies: {},
-    default_catchment_dependency: {
-      name: "streamflow",
-      url: "api/hydrology/streamflow/",
-      input: {
-        source: "nwm",
-        dateTimeSpan: {
-          startDate: null,
-          endDate: null,
-        },
-        geometry: {
-          comID: null,
-        },
-        temporalResolution: "hourly",
-        timeLocalized: "false",
-      },
-    },
     completed_segments: [],
     sim_completed: false,
   };
   simDataSubject: BehaviorSubject<any>;
 
-  // list of data returned from hms requests
-  hmsRequestedData = [];
+  statusCheck; // checks with backend and updates sim status
 
   constructor(private hms: HmsService) {
     this.simDataSubject = new BehaviorSubject(this.simData);
   }
 
-  initializeAquatoxSimulation(): void {
+  initializeAquatoxSimulation(pSetup): void {
+    console.log("pSetup: ", pSetup);
+    this.simData.pSetup.firstDay = pSetup.firstDay;
+    this.simData.pSetup.lastDay = pSetup.lastDay;
+
+    this.simData.base_json.AQTSeg.PSetup.FirstDay.Val = formatDate(
+      pSetup.firstDay,
+      "yyyy-MM-ddTHH:mm:ss",
+      "en"
+    );
+    this.simData.base_json.AQTSeg.PSetup.LastDay.Val = formatDate(
+      pSetup.lastDay,
+      "yyyy-MM-ddTHH:mm:ss",
+      "en"
+    );
+
+    console.log("base_json: ", this.simData.base_json);
+
     const sources = this.simData.network.sources;
     let tempsources = {};
 
@@ -99,24 +89,7 @@ export class SimulationService {
         sources: tempsources,
       },
       simulation_dependencies: [],
-      catchment_dependencies: [
-        {
-          name: "streamflow",
-          url: "api/hydrology/streamflow/",
-          input: {
-            source: "nwm",
-            dateTimeSpan: {
-              startDate: "2000-01-01T00:00:00",
-              endDate: "2000-12-31T00:00:00",
-            },
-            geometry: {
-              comID: this.simData.pour_point_comid.toString(),
-            },
-            temporalResolution: "hourly",
-            timeLocalized: "false",
-          },
-        },
-      ],
+      catchment_dependencies: [],
     };
     this.hms.addAquatoxSimData(initData).subscribe((response) => {
       console.log("initSim: ", response);
@@ -149,8 +122,8 @@ export class SimulationService {
           input: {
             source: "nwm",
             dateTimeSpan: {
-              startDate: "2000-01-01T00:00:00",
-              endDate: "2000-01-31T00:00:00",
+              startDate: this.simData.pSetup.firstDay,
+              endDate: this.simData.pSetup.lastDay,
             },
             geometry: {
               comID: comid.toString(),
@@ -162,7 +135,12 @@ export class SimulationService {
       ],
     };
     this.hms.addAquatoxSimData(dependency).subscribe((response) => {
-      console.log(`added dependency to comid ${comid}: `, response);
+      console.log(
+        `added dependency `,
+        dependency,
+        ` to comid ${comid}: `,
+        response
+      );
     });
   }
 
@@ -204,11 +182,12 @@ export class SimulationService {
       .cancelAquatoxSimulationExecution(this.simData["simId"])
       .subscribe((response) => {
         console.log("Cancel: ", response);
+        this.endStatusCheck();
       });
   }
 
   startStatusCheck(): void {
-    let statusCheck = setInterval(() => {
+    this.statusCheck = setInterval(() => {
       console.log("checking status...");
       this.hms
         .getAquatoxSimStatus(this.simData["simId"])
@@ -228,10 +207,15 @@ export class SimulationService {
           if (response.status == "COMPLETED") {
             this.updateSimData("sim_completed", true);
             console.log("simulation complete");
-            clearInterval(statusCheck);
+            this.endStatusCheck();
           }
         });
     }, 500);
+  }
+
+  endStatusCheck(): void {
+    clearInterval(this.statusCheck);
+    console.log("end status checking...");
   }
 
   getStatus(): void {
@@ -336,27 +320,22 @@ export class SimulationService {
     return this.simData;
   }
 
-  // HMS api related functions
-  updateData(endpoint, data): void {
-    this.hmsRequestedData[endpoint] = data;
-  }
-
-  getData(): any {
-    return this.hmsRequestedData;
-  }
-
-  getResponseList() {
-    const responseList = [];
-    const endpoints = Object.keys(this.hmsRequestedData);
-    for (let endpoint of endpoints) {
-      let d = this.hmsRequestedData[endpoint];
-      console.log("d: ", d);
-      responseList.push({
-        endpoint,
-        dataSource: d.dataSource,
-        dataset: d.dataset,
-      });
-    }
-    return responseList;
+  getDefaultCatchmentDependencies() {
+    return {
+      name: "streamflow",
+      url: "api/hydrology/streamflow/",
+      input: {
+        source: "nwm",
+        dateTimeSpan: {
+          startDate: "2000-01-01T00:00:00",
+          endDate: "2000-12-31T00:00:00",
+        },
+        geometry: {
+          comID: this.simData.pour_point_comid.toString(),
+        },
+        temporalResolution: "hourly",
+        timeLocalized: "false",
+      },
+    };
   }
 }
