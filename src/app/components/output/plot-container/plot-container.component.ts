@@ -137,11 +137,7 @@ export class PlotContainerComponent implements OnInit {
   }
 
   // Delete the drop list item on click
-  delete(event) {
+  remove(event) {
     this.deleteItem.emit(this.dropListData);
-  }
-
-  downloadSimResults(): void {
-    this.simulationService.downloadSimResults();
   }
 }

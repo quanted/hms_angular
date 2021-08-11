@@ -25,16 +25,8 @@
                     <mat-option value="table">Table</mat-option>
                 </mat-select>
             </mat-form-field>
-            <button class="menu-field delete-button" mat-flat-button (click)="delete($event)" mat-flat-button
-                matTooltip="Deletes this container." matTooltipPosition="after">Delete</button>
-            <!--<button class="menu-field download-button" mat-flat-button
-                matTooltip="Downloads a csv of the current data displayed in this container."
-                matTooltipPosition="after">Download
-                (.csv)</button>-->
-            <button class="menu-field download-button" mat-flat-button mat-flat-button
-                matTooltip="Downloads a zip of the entire simulation data." matTooltipPosition="after"
-                (click)="downloadSimResults()">Download All
-                Simulation Data (.zip)</button>
+            <button class="menu-field remove-button" mat-flat-button (click)="remove($event)" mat-flat-button
+                matTooltip="Remove this container from the view." matTooltipPosition="after">Remove</button>
         </mat-menu>
     </div>
     <div [ngClass]="{container: plotData, errorContainer: !plotData}">

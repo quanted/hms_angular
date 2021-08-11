@@ -40,11 +40,11 @@
     width: 100%;
 }
 
-.delete-button {
-    color: red;
+.remove-button {
+    color: var(--main-epa);
 }
 
-.delete-button:hover, .download-button:hover {
+.remove-button:hover, .download-button:hover {
     opacity: 0.5;
 }
 
