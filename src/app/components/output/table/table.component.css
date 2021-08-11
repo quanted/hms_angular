@@ -27,16 +27,18 @@ table {
     text-align: center !important;
     vertical-align: middle !important;
   }
-  th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
-    padding: 5px;
-  }
 
 ::ng-deep .mat-sort-header-container{
     justify-content: center;
 }
 
 .mat-header-cell {
+    padding-left: 20px;
     text-align: center !important;
+}
+
+.mat-header-cell:first-of-type {
+  padding-left: 30px !important;
 }
 
   .title {
@@ -50,4 +52,14 @@ table {
     font-weight: normal;
     white-space: pre;
     padding: 5px;
+  }
+
+  .export{
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+  }
+
+  .export:hover {
+    opacity: 0.5;
   }

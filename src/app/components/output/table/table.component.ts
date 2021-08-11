@@ -56,4 +56,23 @@ export class TableComponent implements OnInit {
       }
     };
   }
+
+  /**
+   * Creates a csv file from the table data and downloads it.
+   */
+  download() {
+    let names = [];
+    for (let i = 0; i < this.columnNames.length; i++) {
+      names.push(this.columnNames[i].replace(/,/g, ''));
+    }
+    let csv = names.join(',') + '\n';
+    this.columnData.forEach(row => {
+      csv += Object.values(row).join(',') + '\r\n';
+    });
+    let hiddenElement = document.createElement('a');
+    hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+    hiddenElement.target = '_blank';
+    hiddenElement.download = this.catchment + '.csv';
+    hiddenElement.click();
+  }
 }

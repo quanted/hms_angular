@@ -10,6 +10,8 @@
       <tr mat-row *matRowDef="let row; columns: columnNames;"></tr>
     </table>
   </div>
+  <button mat-flat-button class="export" disableRipple="true" (click)="download()">Export
+    (.csv)</button>
   <mat-paginator style="border-radius: 5px;" [pageSizeOptions]="[5, 10, 20, dataSource.data.length]"
     showFirstLastButtons></mat-paginator>
 </div>
