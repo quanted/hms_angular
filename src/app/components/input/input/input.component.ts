@@ -17,12 +17,14 @@ export class InputComponent implements OnInit {
   distanceForm: FormGroup;
   moduleForm: FormGroup;
   pPointForm: FormGroup;
+  tStepForm: FormGroup;
   svForm: FormGroup;
   pSetUpForm: FormGroup;
 
   huc: HUC;
   catchment: Catchment;
   stream = false;
+  numNetSegments: number;
 
   // probably change this to a single state variable and a loading spinner on map
   // instead of this per button progress bar approach
@@ -39,17 +41,10 @@ export class InputComponent implements OnInit {
   simulationExecuting = false;
   simComplete = false;
 
-  apiVersion;
-  apiEndpointList = [];
-  schemas;
-
-  currentEndpoint;
   formInputs = [];
   flags = [];
 
   waiting = false;
-
-  responseList = [];
 
   /*
   Total N
@@ -83,21 +78,13 @@ export class InputComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private hms: HmsService,
     private fb: FormBuilder,
+    private hms: HmsService,
     private simulation: SimulationService,
-    public mapService: MapService
+    private mapService: MapService
   ) {}
 
   ngOnInit(): void {
-    this.loadingApi = true;
-    this.hms.getApi().subscribe((api) => {
-      this.apiVersion = api.version;
-      this.apiEndpointList = api.apiEndpointList;
-      this.schemas = api.schemas;
-      this.loadingApi = false;
-    });
-
     this.pPointForm = this.fb.group({
       pPointComid: [null],
     });
@@ -112,8 +99,15 @@ export class InputComponent implements OnInit {
       const moduleFormFields = {};
       for (let flag of this.jsonFlags) {
         moduleFormFields[flag] = [false];
+        if (flag == this.jsonFlags[0]) {
+          moduleFormFields[flag] = [true];
+        }
       }
       this.moduleForm = this.fb.group(moduleFormFields);
+    });
+
+    this.tStepForm = this.fb.group({
+      tStep: ["hour"],
     });
 
     this.svForm = this.fb.group({
@@ -125,11 +119,19 @@ export class InputComponent implements OnInit {
 
     this.pSetUpForm = this.fb.group({
       firstDay: [
-        formatDate(new Date("2000-01-01T00:00:00"), "yyyy-MM-dd", "en"),
+        formatDate(
+          new Date(this.simulation.simData.pSetup.firstDay),
+          "yyyy-MM-dd",
+          "en"
+        ),
         Validators.required,
       ],
       lastDay: [
-        formatDate(new Date("2000-12-31T00:00:00"), "yyy-MM-dd", "en"),
+        formatDate(
+          new Date(this.simulation.simData.pSetup.lastDay),
+          "yyy-MM-dd",
+          "en"
+        ),
         Validators.required,
       ],
       stepSizeInDays: [null],
@@ -158,6 +160,11 @@ export class InputComponent implements OnInit {
         case "sim_completed":
           if (data[key] === true) this.simulationExecuting = false;
           this.simComplete = data[key];
+          break;
+        case "network":
+          if (data[key] && data[key].sources) {
+            this.numNetSegments = Object.keys(data[key].sources).length - 1;
+          }
           break;
         default:
         // console.log("input doesn't use: ", key);
@@ -226,10 +233,6 @@ export class InputComponent implements OnInit {
 
   initSim(): void {
     this.simulation.initializeAquatoxSimulation(this.pSetUpForm.value);
-  }
-
-  addData(): void {
-    this.simulation.addData();
   }
 
   executeSimulation(): void {

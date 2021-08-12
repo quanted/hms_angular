@@ -4,15 +4,16 @@
     <div class="scroll-pane list-short" *ngIf="boundarySegments.length">
         <div class="button" *ngFor="let segment of boundarySegments" [class.active]="isActive(segment)"  (click)="selectSegment(segment)">
             <div class="form-row">
-                <div class="vertical-center">ComID {{ segment }}</div><mat-icon title="Remove Segment">delete</mat-icon>
+                <div class="vertical-center">ComID {{ segment }}</div><mat-icon title="Remove Loadings">delete</mat-icon>
             </div>
         </div>
     </div>
-    <div>Edited In-Network Segments</div>
+    <div>Segments with additional Loadings</div>
+    <div *ngIf="!userSegments.length"><strong>This network has no additional loadings</strong></div>
     <div class="scroll-pane list-short" *ngIf="userSegments.length">
         <div class="button" *ngFor="let segment of userSegments" [class.active]="isActive(segment)" (click)="selectSegment(segment)">
             <div class="form-row">
-                <div class="vertical-center">ComID {{ segment }}</div><mat-icon title="Remove Segment">delete</mat-icon>
+                <div class="vertical-center">ComID {{ segment }}</div><mat-icon title="Remove Loadings">delete</mat-icon>
             </div>
         </div>
     </div>

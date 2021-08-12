@@ -5,20 +5,10 @@ import { BehaviorSubject } from "rxjs";
 
 import { HmsService } from "./hms.service";
 
-import * as testRequest1 from "../../base_jsons/test_compute_submit1.json";
-import * as testRequest2 from "../../base_jsons/test_compute_submit2.json";
-import * as testRequest3 from "../../base_jsons/test_compute_submit3.json";
-
 @Injectable({
   providedIn: "root",
 })
 export class SimulationService {
-  testCompute1 = (testRequest1 as any).default;
-  testCompute2 = (testRequest2 as any).default;
-  testCompute3 = (testRequest3 as any).default;
-
-  computeExecution = 1;
-
   simData = {
     pour_point_comid: null,
     selectedComId: null,
@@ -28,8 +18,8 @@ export class SimulationService {
     },
     pSetup: {
       firstDay: "2000-01-01T00:00:00", // default one month
-      lastDay: "2000-12-31T00:00:00", // time span
-      stepSizeInDays: 1,
+      lastDay: "2000-01-31T00:00:00", // time span
+      stepSizeInDays: true,
       useFixStepSize: false,
       fixStepSize: 1,
     },
@@ -144,34 +134,11 @@ export class SimulationService {
     };
     this.hms.addAquatoxSimData(dependency).subscribe((response) => {
       console.log(
-        `added dependency `,
+        `added dependency: `,
         dependency,
-        ` to comid ${comid}: `,
+        ` to comid ${comid}, `,
         response
       );
-    });
-  }
-
-  addData(): void {
-    let request = this.testCompute1;
-    switch (this.computeExecution) {
-      case 2:
-        request = this.testCompute2;
-        request["sim_id"] = this.simData["simId"];
-        break;
-      case 3:
-        request = this.testCompute3;
-        request["sim_id"] = this.simData["simId"];
-        break;
-      default:
-        request = this.testCompute1;
-    }
-    this.hms.addAquatoxSimData(request).subscribe((response) => {
-      console.log(`Compute${this.computeExecution} response: `, response);
-      this.updateSimData("simId", response["_id"]);
-      this.computeExecution >= 3
-        ? (this.computeExecution = 1)
-        : this.computeExecution++;
     });
   }
 
@@ -211,13 +178,17 @@ export class SimulationService {
               });
             }
           }
-          if (response.status == "COMPLETED" || response.status == "FAILED") {
+          if (
+            !this.simData.sim_completed &&
+            (response.status == "COMPLETED" || response.status == "FAILED")
+          ) {
             this.updateSimData("sim_completed", true);
             console.log("simulation complete");
+            console.log("status: ", response);
             this.endStatusCheck();
           }
         });
-    }, 500);
+    }, 1000);
   }
 
   endStatusCheck(): void {
