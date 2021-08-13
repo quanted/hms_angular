@@ -3,12 +3,6 @@
         <mat-icon class="menu-icon" [matMenuTriggerFor]="menu" matTooltip="Open container menu."
             matTooltipPosition="after">menu</mat-icon>
         <mat-menu #menu="matMenu" class="menu">
-            <mat-form-field class="menu-field" *ngIf="catchmentList" (click)="$event.stopPropagation()">
-                <mat-label>Catchment</mat-label>
-                <mat-select [(ngModel)]="selectedCatchment" (selectionChange)="catchmentChange($event)">
-                    <mat-option *ngFor="let c of catchmentList" [value]="c">{{c}}</mat-option>
-                </mat-select>
-            </mat-form-field>
             <mat-form-field class="menu-field" *ngIf="stateVariablesList && chart !== 'table'"
                 (click)="$event.stopPropagation()">
                 <mat-label>State Variables</mat-label>
