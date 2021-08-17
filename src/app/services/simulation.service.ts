@@ -4,6 +4,7 @@ import { formatDate } from "@angular/common";
 import { BehaviorSubject } from "rxjs";
 
 import { HmsService } from "./hms.service";
+import { CookieService } from "ngx-cookie-service";
 
 @Injectable({
   providedIn: "root",
@@ -38,12 +39,11 @@ export class SimulationService {
 
   statusCheck; // checks with backend and updates sim status
 
-  constructor(private hms: HmsService) {
+  constructor(private hms: HmsService, private cookieService: CookieService) {
     this.simDataSubject = new BehaviorSubject(this.simData);
   }
 
   initializeAquatoxSimulation(pSetup): void {
-    console.log("pSetup: ", pSetup);
     this.simData.pSetup.firstDay = pSetup.firstDay;
     this.simData.pSetup.lastDay = pSetup.lastDay;
 
@@ -61,13 +61,6 @@ export class SimulationService {
     console.log("base_json: ", this.simData.base_json);
 
     const sources = this.simData.network.sources;
-    let tempsources = {};
-
-    for (let key of Object.keys(sources)) {
-      if (key != "boundaries") {
-        tempsources[key] = sources[key];
-      }
-    }
 
     const initData = {
       comid_input: {
@@ -76,7 +69,7 @@ export class SimulationService {
       },
       network: {
         order: this.simData.network.order,
-        sources: tempsources,
+        sources: this.simData.network.sources,
       },
       simulation_dependencies: [],
       catchment_dependencies: [],
@@ -84,6 +77,17 @@ export class SimulationService {
     this.hms.addAquatoxSimData(initData).subscribe((response) => {
       console.log("initSim: ", response);
       this.updateSimData("simId", response["_id"]);
+
+      this.cookieService.set("simId", response["_id"]);
+      this.cookieService.set("pPoint", this.simData.pour_point_comid);
+      this.cookieService.set("network", JSON.stringify(this.simData.network));
+      console.log("cookie_id: ", this.cookieService.get("simId"));
+      console.log("cookie_pPoint: ", this.cookieService.get("pPoint"));
+      console.log(
+        "cookie_network: ",
+        JSON.parse(this.cookieService.get("network"))
+      );
+
       this.addCatchmentDependencies();
     });
   }
@@ -160,35 +164,39 @@ export class SimulationService {
   }
 
   startStatusCheck(): void {
-    this.statusCheck = setInterval(() => {
-      console.log("checking status...");
-      this.hms
-        .getAquatoxSimStatus(this.simData["simId"])
-        .subscribe((response) => {
-          this.updateSimData("status", response.status);
-          this.updateSimData("status_message", response.message);
-          for (let comid of Object.keys(response.catchments)) {
-            if (
-              response.catchments[comid].status == "COMPLETED" ||
-              response.catchments[comid].status == "FAILED"
-            ) {
-              this.updateSimData("completed_segments", {
-                comid,
-                status: response.catchments[comid].status,
-              });
+    if (this.simData["simId"]) {
+      this.statusCheck = setInterval(() => {
+        console.log("checking status...");
+        this.hms
+          .getAquatoxSimStatus(this.simData["simId"])
+          .subscribe((response) => {
+            this.updateSimData("status", response.status);
+            this.updateSimData("status_message", response.message);
+            for (let comid of Object.keys(response.catchments)) {
+              if (
+                response.catchments[comid].status == "COMPLETED" ||
+                response.catchments[comid].status == "FAILED"
+              ) {
+                this.updateSimData("completed_segments", {
+                  comid,
+                  status: response.catchments[comid].status,
+                });
+              }
             }
-          }
-          if (
-            !this.simData.sim_completed &&
-            (response.status == "COMPLETED" || response.status == "FAILED")
-          ) {
-            this.updateSimData("sim_completed", true);
-            console.log("simulation complete");
-            console.log("status: ", response);
-            this.endStatusCheck();
-          }
-        });
-    }, 1000);
+            if (
+              !this.simData.sim_completed &&
+              (response.status == "COMPLETED" || response.status == "FAILED")
+            ) {
+              this.updateSimData("sim_completed", true);
+              console.log("simulation complete");
+              console.log("status: ", response);
+              this.endStatusCheck();
+            }
+          });
+      }, 1000);
+    } else {
+      this.updateSimData("status_message", "No simId for this simulation");
+    }
   }
 
   endStatusCheck(): void {

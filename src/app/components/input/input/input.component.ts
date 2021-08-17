@@ -32,6 +32,7 @@ export class InputComponent implements OnInit {
   loadingCatchment = false;
   loadingStream = false;
   loadingApi = false;
+  waiting = false;
 
   jsonFlags = null;
   baseJson = false;
@@ -41,10 +42,7 @@ export class InputComponent implements OnInit {
   simulationExecuting = false;
   simComplete = false;
 
-  formInputs = [];
   flags = [];
-
-  waiting = false;
 
   /*
   Total N
@@ -99,6 +97,7 @@ export class InputComponent implements OnInit {
       const moduleFormFields = {};
       for (let flag of this.jsonFlags) {
         moduleFormFields[flag] = [false];
+        // select the first checkbox by default
         if (flag == this.jsonFlags[0]) {
           moduleFormFields[flag] = [true];
         }
@@ -197,15 +196,20 @@ export class InputComponent implements OnInit {
   }
 
   getPourPoint(): void {
-    console.log("pour point: ", this.pPointForm.get("pPointComid").value);
+    // this.hms.getStreamNetwork();
+    // this.pPointForm.get("pPointComid").value;
   }
 
   getStreamNetwork(): void {
     this.loadingStream = true;
     this.mapService
       .buildStreamNetwork(
-        this.catchment.id,
+        this.pPointForm.get("pPointComid").value
+          ? this.pPointForm.get("pPointComid").value
+          : this.catchment.id,
         this.distanceForm.get("distance").value
+          ? this.distanceForm.get("distance").value
+          : "50"
       )
       .subscribe((data) => {
         this.loadingStream = false;
@@ -238,23 +242,6 @@ export class InputComponent implements OnInit {
   executeSimulation(): void {
     this.simulationExecuting = true;
     this.simulation.executeSimulation();
-  }
-
-  cancelExecution(): void {
-    this.simulationExecuting = false;
-    this.simulation.cancelAquatoxSimulationExecution();
-  }
-
-  getSimStatus(): void {
-    this.simulation.getStatus();
-  }
-
-  gotoOutput(): void {
-    this.router.navigateByUrl("output");
-  }
-
-  downloadSimResults(): void {
-    this.simulation.downloadSimResults();
   }
 }
 
