@@ -11,20 +11,48 @@ import { SimulationService } from "./simulation.service";
 export class LayerService {
   basemaps = [
     {
-      name: "Open Street Map",
-      layer: L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution:
-          '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      }),
+      name: "ESRI National Geographic",
+      layer: L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}",
+        {
+          attribution:
+            "Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC",
+          maxZoom: 16,
+        }
+      ),
     },
     {
-      name: "Open Topo Map",
-      layer: L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
-        attribution: '<a href="https://opentopomap.org">OpenTopoMap</a>',
-      }),
+      name: "ESRI World Imagery",
+      layer: L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        {
+          attribution:
+            "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
+        }
+      ),
     },
     {
-      name: "No basemap",
+      name: "ESRI World Topo",
+      layer: L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+        {
+          attribution:
+            "Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community",
+        }
+      ),
+    },
+    {
+      name: "ESRI Gray",
+      layer: L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+        {
+          attribution: "Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ",
+          maxZoom: 16,
+        }
+      ),
+    },
+    {
+      name: "No Basemap",
       layer: L.tileLayer("", {}),
     },
   ];
@@ -138,7 +166,7 @@ export class LayerService {
   selectedComId = null;
 
   map;
-  defaultBasemap = "Open Street Map";
+  defaultBasemap = "ESRI National Geographic";
 
   startColor = "#FF0000";
   inHucColor = "#00F0F0";
@@ -212,8 +240,8 @@ export class LayerService {
     this.map = map;
     for (let layer of this.basemapLayers) {
       if (layer.name == this.defaultBasemap) {
-        map.addLayer(layer.layer);
         layer.show = true;
+        this.toggleLayer("basemap", layer.name);
       }
     }
   }
@@ -267,6 +295,15 @@ export class LayerService {
     const inHucSegments = [];
     const outHucSegments = [];
     const selectedHuc = this.simulation.getSimData()["huc"].id;
+
+    // animated icon test
+    let splashIcon = L.icon({
+      iconUrl: "../../../assets/images/icon_water.png",
+      iconSize: [32, 32],
+      iconAnchor: [0, 0],
+      popupAnchor: [0, 32],
+      className: "splash",
+    });
 
     for (let i in fl) {
       let tmp_feature = L.geoJSON(fl[i].shape, {
@@ -508,6 +545,15 @@ export class LayerService {
   }
 
   getLayers() {
+    for (let layer of this.basemapLayers) {
+      if (layer.show) this.toggleLayer(layer.type, layer.name);
+    }
+    for (let layer of this.featureLayers) {
+      if (layer.show) this.toggleLayer(layer.type, layer.name);
+    }
+    for (let layer of this.simLayers) {
+      if (layer.show) this.toggleLayer(layer.type, layer.name);
+    }
     return {
       basemaps: this.basemapLayers,
       defaultFeatures: this.featureLayers,
