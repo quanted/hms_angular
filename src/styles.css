@@ -17,6 +17,12 @@
     --main-list-short-height: 100px;
 }
 
+input[type='number'],
+input[type='date'],
+input[type='radio'] {
+    cursor: pointer;
+}
+
 input[type='number'] {
     text-align: center;
 }

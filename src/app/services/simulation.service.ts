@@ -281,6 +281,8 @@ export class SimulationService {
           if (segment.comid == data.comid) return;
         }
         this.simData[key].push(data);
+      } else if (key == "sv") {
+        this.simData[key] = data;
       } else if (
         typeof data === "string" ||
         typeof data === "number" ||

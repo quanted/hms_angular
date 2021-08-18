@@ -89,23 +89,12 @@
             </div>
 
 
-            <div class="container-item" *ngIf="stream && baseJson" [formGroup]="svForm">
+            <div class="container-item" *ngIf="stream && baseJson">
                 <div class="centered"><strong>Output State Variables</strong></div>
-                <div class="form-row">               
-                    <div>Total N<input type="checkbox" formControlName="totalN" /></div>
-                    <div *ngIf="!svForm.get('totalN').value">
-                        <div>Amonia and Nitrate<input type="radio" name="nType" formControlName="nType" value="amonia_nitrate" /></div>
-                        <div>Nitrogen<input type="radio" name="nType" formControlName="nType" value="nitrogen" /></div>
-                    </div>
+                <div class="form-row" *ngFor="let variable of sVariables">
+                    <div>{{ variable.PName }}</div>
+                    <div>({{ variable.LoadingUnit }})</div>
                 </div>
-                <div class="form-row">
-                    <div>Total P<input type="checkbox" formControlName="totalP" /></div>
-                    <div *ngIf="!svForm.get('totalP').value">
-                        <div>Phosphorus<input type="radio" name="pType" formControlName="pType" value="phosphorus" /></div>
-                        <div>Phosphate<input type="radio" name="pType" formControlName="pType" value="phosphate" /></div>
-                    </div>
-                </div>
-                <div>Organic Matter</div>
             </div>
 
             <div class="container-item" *ngIf="stream && baseJson">

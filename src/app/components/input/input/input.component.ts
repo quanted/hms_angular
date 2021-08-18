@@ -37,6 +37,8 @@ export class InputComponent implements OnInit {
   jsonFlags = null;
   baseJson = false;
 
+  sVariables = [];
+
   simStatus = "";
   status_message = "";
   simulationExecuting = false;
@@ -109,13 +111,6 @@ export class InputComponent implements OnInit {
       tStep: ["hour"],
     });
 
-    this.svForm = this.fb.group({
-      totalN: [true],
-      totalP: [true],
-      nType: [null],
-      pType: [null],
-    });
-
     this.pSetUpForm = this.fb.group({
       firstDay: [
         formatDate(
@@ -152,6 +147,13 @@ export class InputComponent implements OnInit {
         case "catchment":
           this.updateCatchmentInput(data[key]);
           break;
+        case "sv":
+          if (data[key]) {
+            this.sVariables = data[key];
+          } else {
+            this.sVariables = [];
+          }
+          break;
         case "status_message":
           this.simStatus = data["status"];
           this.status_message = data[key];
@@ -162,7 +164,7 @@ export class InputComponent implements OnInit {
           break;
         case "network":
           if (data[key] && data[key].sources) {
-            this.numNetSegments = Object.keys(data[key].sources).length - 1;
+            this.numNetSegments = Object.keys(data[key].sources).length;
           }
           break;
         default:
@@ -222,6 +224,11 @@ export class InputComponent implements OnInit {
     this.simulation.updateSimData("flags", flags);
     this.hms.getBaseJsonByFlags(flags).subscribe((json) => {
       this.simulation.updateSimData("base_json", json);
+      const sv = [];
+      for (let key of Object.keys(json.AQTSeg.SV)) {
+        sv.push(json.AQTSeg.SV[key]);
+      }
+      this.simulation.updateSimData("sv", sv);
       this.baseJson = true;
     });
   }

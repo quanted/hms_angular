@@ -22,7 +22,7 @@ export class LayerService {
       ),
     },
     {
-      name: "ESRI World Imagery",
+      name: "ESRI Imagery",
       layer: L.tileLayer(
         "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
         {
@@ -32,7 +32,7 @@ export class LayerService {
       ),
     },
     {
-      name: "ESRI World Topo",
+      name: "ESRI Topo",
       layer: L.tileLayer(
         "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
         {
@@ -42,12 +42,24 @@ export class LayerService {
       ),
     },
     {
-      name: "ESRI Gray",
+      name: "USGS Imagery",
       layer: L.tileLayer(
-        "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+        "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}",
         {
-          attribution: "Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ",
-          maxZoom: 16,
+          maxZoom: 20,
+          attribution:
+            'Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological Survey</a>',
+        }
+      ),
+    },
+    {
+      name: "USGS Topo",
+      layer: L.tileLayer(
+        "https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}",
+        {
+          maxZoom: 20,
+          attribution:
+            'Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological Survey</a>',
         }
       ),
     },
