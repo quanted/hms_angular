@@ -1,6 +1,6 @@
 <div class="input-container">
     <strong class="centered">Aquatox WebWorkflow Alpha v0.1.0</strong>
-    <div *ngIf="!simulationExecuting">
+    <div *ngIf="!simulationExecuting && !simComplete">
         <div class="scroll-pane">
             <!-- AOI section -->
             <div class="container-item">
@@ -91,9 +91,24 @@
 
             <div class="container-item" *ngIf="stream && baseJson">
                 <div class="centered"><strong>Output State Variables</strong></div>
-                <div class="form-row" *ngFor="let variable of sVariables">
-                    <div>{{ variable.PName }}</div>
-                    <div>({{ variable.LoadingUnit }})</div>
+                <div class="section-item" *ngFor="let variable of sVariables">
+                    <div class="form-row">
+                        <div>{{ variable.PName }}</div>
+                        <div class="vertical-center">
+                            <div>
+                                <input type="number" class="input-comid" value="{{ variable.InitialCond }}" matTooltip="{{ variable.PName }}"/>
+                                {{ variable.LoadingUnit }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div class="form-row" [formGroup]="pPointForm">
+                        <div class="vertical-center">
+                            <div>Comid <input type="number" class="input-comid" formControlName="pPointComid" /></div>
+                        </div>
+                        <div class="button" (click)="getPourPoint()" matTooltip="Get Pour Point">Get Pour Point</div>
+                    </div> -->
+
                 </div>
             </div>
 
@@ -110,5 +125,5 @@
         </div>
     </div>
 
-    <app-execution-panel *ngIf="simulationExecuting"></app-execution-panel>
+    <app-execution-panel *ngIf="simulationExecuting || simComplete"></app-execution-panel>
 </div>

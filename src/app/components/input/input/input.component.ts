@@ -242,13 +242,9 @@ export class InputComponent implements OnInit {
     return this.pSetUpForm.get("useFixStepSize").value;
   }
 
-  initSim(): void {
-    this.simulation.initializeAquatoxSimulation(this.pSetUpForm.value);
-  }
-
   executeSimulation(): void {
     this.simulationExecuting = true;
-    this.simulation.executeSimulation();
+    this.simulation.executeSimulation(this.pSetUpForm.value);
   }
 }
 
