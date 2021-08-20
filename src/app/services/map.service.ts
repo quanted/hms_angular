@@ -1,8 +1,9 @@
 import { Injectable } from "@angular/core";
 
-import * as L from "leaflet";
-import { Observable, merge } from "rxjs";
+import { Observable, forkJoin } from "rxjs";
 import { map } from "rxjs/operators";
+
+import * as L from "leaflet";
 
 import { LayerService } from "src/app/services/layer.service";
 import { HmsService } from "./hms.service";
@@ -103,7 +104,7 @@ export class MapService {
   }
 
   buildStreamNetwork(comid, distance): Observable<any> {
-    return merge(
+    return forkJoin([
       this.waters.getStreamNetworkData(comid, distance).pipe(
         map((data) => {
           this.layerService.buildStreamLayers(data);
@@ -123,7 +124,7 @@ export class MapService {
           this.simulation.updateSimData("network", data);
           return data;
         })
-      )
-    );
+      ),
+    ]);
   }
 }

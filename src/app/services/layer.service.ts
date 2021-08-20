@@ -1,5 +1,7 @@
 import { Injectable } from "@angular/core";
 
+import { BehaviorSubject } from "rxjs";
+
 import * as L from "leaflet";
 import * as ESRI from "esri-leaflet";
 
@@ -180,12 +182,28 @@ export class LayerService {
   map;
   defaultBasemap = "ESRI National Geographic";
 
-  startColor = "#FF0000";
-  inHucColor = "#00F0F0";
+  // selection colors
+  hucColor = "";
+  catchmentColor = "";
+  // stream segment colors
+  pourColor = "#FF0000";
+  inHucColor = "#0000FF";
   outHucColor = "#FF00FF";
-  selectedColor = "#0000FF";
+  selectedColor = "#FFFF00";
   simCompletedColor = "#00C113";
   simFailColor = "#FF0037";
+
+  // animated water icon
+  splashIcon = L.icon({
+    iconUrl: "../../../assets/images/icon_water.png",
+    iconSize: [32, 32],
+    iconAnchor: [0, 0],
+    popupAnchor: [0, 32],
+    className: "splash",
+  });
+
+  // this isn't doing anything yet
+  layerDataSubject: BehaviorSubject<any>;
 
   constructor(private simulation: SimulationService) {
     // setup default tile maps
@@ -222,6 +240,7 @@ export class LayerService {
         show: false,
       });
     }
+    // this.layerDataSubject = new BehaviorSubject(this.layerData);
     this.simulation.interfaceData().subscribe((d) => {
       if (d.completed_segments.length) {
         this.updateStreamLayer(d.completed_segments);
@@ -242,6 +261,8 @@ export class LayerService {
       if (feature.properties[name]) {
         layer.bindTooltip(feature.properties[name], {
           sticky: true,
+          open: true,
+          icon: this.splashIcon,
         });
         break;
       }
@@ -308,15 +329,6 @@ export class LayerService {
     const outHucSegments = [];
     const selectedHuc = this.simulation.getSimData()["huc"].id;
 
-    // animated icon test
-    let splashIcon = L.icon({
-      iconUrl: "../../../assets/images/icon_water.png",
-      iconSize: [32, 32],
-      iconAnchor: [0, 0],
-      popupAnchor: [0, 32],
-      className: "splash",
-    });
-
     for (let i in fl) {
       let tmp_feature = L.geoJSON(fl[i].shape, {
         style: {
@@ -352,7 +364,7 @@ export class LayerService {
       // first segment is pour point, add it as layer
       if (i == "0") {
         tmp_feature.setStyle({
-          color: this.startColor,
+          color: this.pourColor,
           weight: 2,
         });
         this.simLayers.push({
@@ -496,9 +508,7 @@ export class LayerService {
             break;
           case "pour-point":
             layer.layer.setStyle({
-              color: (layer.inSim = true
-                ? this.selectedColor
-                : this.startColor),
+              color: (layer.inSim = true ? this.selectedColor : this.pourColor),
               weight: 2,
             });
             break;

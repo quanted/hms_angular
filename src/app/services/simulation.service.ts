@@ -1,10 +1,11 @@
 import { Injectable } from "@angular/core";
 import { formatDate } from "@angular/common";
 
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, forkJoin, Observable } from "rxjs";
+
+import { CookieService } from "ngx-cookie-service";
 
 import { HmsService } from "./hms.service";
-import { CookieService } from "ngx-cookie-service";
 
 @Injectable({
   providedIn: "root",
@@ -43,7 +44,31 @@ export class SimulationService {
     this.simDataSubject = new BehaviorSubject(this.simData);
   }
 
-  initializeAquatoxSimulation(pSetup): void {
+  executeSimulation(pSetup): void {
+    this.initializeAquatoxSimulation(pSetup).subscribe((response) => {
+      console.log("initSim: ", response);
+      this.updateSimData("simId", response["_id"]);
+
+      this.cookieService.set("simId", response["_id"]);
+      this.cookieService.set("pPoint", this.simData.pour_point_comid);
+      this.cookieService.set("network", JSON.stringify(this.simData.network));
+
+      this.addCatchmentDependencies().subscribe((response) => {
+        this.hms
+          .executeAquatoxSimulation(this.simData["simId"])
+          .subscribe((response) => {
+            if (!response.error) {
+              console.log("execute: ", response);
+              this.startStatusCheck();
+            }
+          });
+      });
+    });
+  }
+
+  initializeAquatoxSimulation(pSetup): Observable<any> {
+    this.updateSimData("sim_completed", false);
+
     this.simData.pSetup.firstDay = pSetup.firstDay;
     this.simData.pSetup.lastDay = pSetup.lastDay;
 
@@ -58,10 +83,6 @@ export class SimulationService {
       "en"
     );
 
-    console.log("base_json: ", this.simData.base_json);
-
-    const sources = this.simData.network.sources;
-
     const initData = {
       comid_input: {
         comid: this.simData.pour_point_comid.toString(),
@@ -74,35 +95,18 @@ export class SimulationService {
       simulation_dependencies: [],
       catchment_dependencies: [],
     };
-    this.hms.addAquatoxSimData(initData).subscribe((response) => {
-      console.log("initSim: ", response);
-      this.updateSimData("simId", response["_id"]);
-
-      this.cookieService.set("simId", response["_id"]);
-      this.cookieService.set("pPoint", this.simData.pour_point_comid);
-      this.cookieService.set("network", JSON.stringify(this.simData.network));
-      console.log("cookie_id: ", this.cookieService.get("simId"));
-      console.log("cookie_pPoint: ", this.cookieService.get("pPoint"));
-      console.log(
-        "cookie_network: ",
-        JSON.parse(this.cookieService.get("network"))
-      );
-
-      this.addCatchmentDependencies();
-    });
+    return this.hms.addAquatoxSimData(initData);
   }
 
-  addCatchmentDependencies(): void {
-    const sources = this.simData.network.sources;
-
-    for (let key of Object.keys(sources)) {
-      if (key != "boundaries") {
-        this.addCatchmentDependency(key);
-      }
+  addCatchmentDependencies(): Observable<any> {
+    const dependencyRequests = [];
+    for (let comid of Object.keys(this.simData.network.sources)) {
+      dependencyRequests.push(this.addCatchmentDependency(comid));
     }
+    return forkJoin(dependencyRequests);
   }
 
-  addCatchmentDependency(comid): void {
+  addCatchmentDependency(comid): Observable<any> {
     const dependency = {
       sim_id: this.simData["simId"],
       comid_input: {
@@ -136,29 +140,14 @@ export class SimulationService {
         },
       ],
     };
-    this.hms.addAquatoxSimData(dependency).subscribe((response) => {
-      console.log(
-        `added dependency: `,
-        dependency,
-        ` to comid ${comid}, `,
-        response
-      );
-    });
-  }
-
-  executeSimulation(): void {
-    this.updateSimData("sim_completed", false);
-    this.hms
-      .executeAquatoxSimulation(this.simData["simId"])
-      .subscribe((response) => {
-        this.startStatusCheck();
-      });
+    return this.hms.addAquatoxSimData(dependency);
   }
 
   cancelAquatoxSimulationExecution(): void {
     this.hms
       .cancelAquatoxSimulationExecution(this.simData["simId"])
       .subscribe((response) => {
+        this.updateSimData("sim_completed", true);
         this.endStatusCheck();
       });
   }
