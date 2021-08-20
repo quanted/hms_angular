@@ -42,15 +42,15 @@ export class ExecutionPanelComponent implements OnInit {
     this.simulation.cancelAquatoxSimulationExecution();
   }
 
-  getSimStatus(): void {
-    this.simulation.getStatus();
-  }
-
   gotoOutput(): void {
     this.router.navigateByUrl("output");
   }
 
   downloadSimResults(): void {
     this.simulation.downloadSimResults();
+  }
+
+  backToInput(): void {
+    // reset sim status to return to input panel
   }
 }

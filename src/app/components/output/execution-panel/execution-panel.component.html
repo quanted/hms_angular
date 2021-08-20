@@ -3,7 +3,7 @@
         <div>Simulation Status: {{ simStatus }}</div>
         <div>{{ status_message }}</div>
     </div>
-    <div class="button" *ngIf="true">
+    <div class="button" *ngIf="!simComplete">
         <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     </div>
     <app-segment-status-list></app-segment-status-list>
@@ -11,5 +11,6 @@
         <div class="button ready" (click)="gotoOutput()">Examine Output</div>
         <div class="button ready" (click)="downloadSimResults()">Download Data</div>
     </div>
-    <div class="button" (click)="cancelExecution()">Cancel Simulation Execution</div>
+    <div class="button" *ngIf="!simComplete" (click)="cancelExecution()">Cancel Simulation Execution</div>
+    <div class="button" *ngIf="!simulationExecuting" (click)="backToInput()">Back to setup</div>
 </div>
