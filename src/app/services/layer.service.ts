@@ -190,7 +190,7 @@ export class LayerService {
   inHucColor = "#0000FF";
   outHucColor = "#FF00FF";
   selectedColor = "#FFFF00";
-  simInProgressColor = "#0022AA";
+  simInProgressColor = "#47C7FF";
   simCompletedColor = "#00C113";
   simFailColor = "#FF0037";
 

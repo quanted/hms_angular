@@ -2,7 +2,7 @@
     Segment Status
     <div class="scroll">
         <div class="items">
-            <div class="button item" *ngFor="let segment of segmentList" (click)="gotoData(segment)" 
+            <div class="button item" *ngFor="let segment of segmentList" (click)="gotoData(segment)"
                 [class.in-progress]="segment.in_progress" [class.ready]="segment.completed" [class.fail]="segment.failed">
                 {{ segment.comid }} {{ segment.status }}
             </div>
