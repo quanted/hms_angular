@@ -183,13 +183,14 @@ export class LayerService {
   defaultBasemap = "ESRI National Geographic";
 
   // selection colors
-  hucColor = "";
-  catchmentColor = "";
+  hucColor = "#00FF00";
+  catchmentColor = "#00FF00";
   // stream segment colors
   pourColor = "#FF0000";
   inHucColor = "#0000FF";
   outHucColor = "#FF00FF";
   selectedColor = "#FFFF00";
+  simInProgressColor = "#0022AA";
   simCompletedColor = "#00C113";
   simFailColor = "#FF0037";
 
@@ -242,8 +243,8 @@ export class LayerService {
     }
     // this.layerDataSubject = new BehaviorSubject(this.layerData);
     this.simulation.interfaceData().subscribe((d) => {
-      if (d.completed_segments.length) {
-        this.updateStreamLayer(d.completed_segments);
+      if (d.sim_status.catchment_status.length) {
+        this.updateStreamLayer(d.sim_status.catchment_status);
       }
     });
   }
@@ -537,6 +538,12 @@ export class LayerService {
     // update segment color
     for (let layer of this.segmentLayers) {
       if (layer.comid == comid) {
+        if (status == "IN_PROGRESS") {
+          layer.layer.setStyle({
+            color: this.simInProgressColor,
+            weight: 3,
+          });
+        }
         if (status == "COMPLETED") {
           layer.layer.setStyle({
             color: this.simCompletedColor,

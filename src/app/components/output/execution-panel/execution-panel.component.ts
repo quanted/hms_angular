@@ -24,9 +24,9 @@ export class ExecutionPanelComponent implements OnInit {
   updateInterface(data): void {
     for (let key of Object.keys(data)) {
       switch (key) {
-        case "status_message":
-          this.simStatus = data["status"];
-          this.status_message = data[key];
+        case "sim_status":
+          this.simStatus = data[key].status;
+          this.status_message = data[key].status_message;
           break;
         case "sim_completed":
           if (data[key] === true) this.simulationExecuting = false;

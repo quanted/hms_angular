@@ -33,7 +33,11 @@ export class SimulationService {
     comid_inputs: {},
     simulation_dependencies: [],
     catchment_dependencies: {},
-    completed_segments: [],
+    sim_status: {
+      status: "Starting...",
+      status_message: "Initializing...",
+      catchment_status: [],
+    },
     sim_completed: false,
   };
   simDataSubject: BehaviorSubject<any>;
@@ -46,7 +50,6 @@ export class SimulationService {
 
   executeSimulation(pSetup): void {
     this.initializeAquatoxSimulation(pSetup).subscribe((response) => {
-      console.log("initSim: ", response);
       this.updateSimData("simId", response["_id"]);
 
       this.cookieService.set("simId", response["_id"]);
@@ -58,7 +61,6 @@ export class SimulationService {
           .executeAquatoxSimulation(this.simData["simId"])
           .subscribe((response) => {
             if (!response.error) {
-              console.log("execute: ", response);
               this.startStatusCheck();
             }
           });
@@ -159,26 +161,30 @@ export class SimulationService {
         this.hms
           .getAquatoxSimStatus(this.simData["simId"])
           .subscribe((response) => {
-            this.updateSimData("status", response.status);
-            this.updateSimData("status_message", response.message);
+            const catchment_status = [];
             for (let comid of Object.keys(response.catchments)) {
-              if (
-                response.catchments[comid].status == "COMPLETED" ||
-                response.catchments[comid].status == "FAILED"
-              ) {
-                this.updateSimData("completed_segments", {
-                  comid,
-                  status: response.catchments[comid].status,
-                });
-              }
+              let cStatus = {
+                comid,
+                status: response.catchments[comid].status,
+              };
+              if (cStatus.status == "IN-PROGRESS")
+                cStatus["in_progress"] = true;
+              if (cStatus.status == "COMPLETED") cStatus["completed"] = true;
+              if (cStatus.status == "FAILED") cStatus["failed"] = true;
+              catchment_status.push(cStatus);
             }
+            let simStatus = {
+              status: response.status,
+              status_message: response.message,
+              catchment_status,
+            };
+            this.updateSimData("sim_status", simStatus);
             if (
               !this.simData.sim_completed &&
               (response.status == "COMPLETED" || response.status == "FAILED")
             ) {
               this.updateSimData("sim_completed", true);
               console.log("simulation complete");
-              console.log("status: ", response);
               this.endStatusCheck();
             }
           });
@@ -265,11 +271,8 @@ export class SimulationService {
           };
         }
         this.simData.comid_inputs[data.comid].sv.push(data.value);
-      } else if (key == "completed_segments") {
-        for (let segment of this.simData.completed_segments) {
-          if (segment.comid == data.comid) return;
-        }
-        this.simData[key].push(data);
+      } else if (key == "sim_status") {
+        this.simData.sim_status = data;
       } else if (key == "sv") {
         this.simData[key] = data;
       } else if (
@@ -285,7 +288,7 @@ export class SimulationService {
       this.simData[key] = null;
     }
     this.simDataSubject.next(this.simData);
-    // console.log("simData: ", this.simData);
+    // console.log("POST simData: ", this.simData);
   }
 
   // returns a Subject for interface components to subscribe to

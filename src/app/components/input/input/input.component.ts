@@ -154,14 +154,6 @@ export class InputComponent implements OnInit {
             this.sVariables = [];
           }
           break;
-        case "status_message":
-          this.simStatus = data["status"];
-          this.status_message = data[key];
-          break;
-        case "sim_completed":
-          if (data[key] === true) this.simulationExecuting = false;
-          this.simComplete = data[key];
-          break;
         case "network":
           if (data[key] && data[key].sources) {
             this.numNetSegments = Object.keys(data[key].sources).length;

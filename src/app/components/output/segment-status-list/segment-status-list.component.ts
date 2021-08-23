@@ -20,18 +20,8 @@ export class SegmentStatusListComponent implements OnInit {
   }
 
   updateInterface(data): void {
-    for (let key of Object.keys(data)) {
-      switch (key) {
-        case "network":
-          if (data[key]) {
-            this.segmentList = Object.keys(data[key].sources);
-          } else {
-            this.segmentList = [];
-          }
-          break;
-        default:
-          break;
-      }
+    if (data.sim_status.catchment_status.length) {
+      this.segmentList = data.sim_status.catchment_status;
     }
   }
 

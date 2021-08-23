@@ -8,6 +8,7 @@
     --main-hover: rgba(146, 146, 146, 0.5);
     --main-active: rgb(250, 146, 146);
     --main-ready: rgb(0, 200, 0);
+    --main-fail: rgb(255, 0, 0);
 
     --row-gap: .19rem;
     --column-gap: .125rem;
@@ -62,6 +63,10 @@ mat-icon:hover,
 
 .ready {
     background-color: var(--main-ready);
+}
+
+.fail {
+    background-color: var(--main-fail);
 }
 
 .centered {
