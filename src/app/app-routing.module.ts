@@ -9,6 +9,7 @@ const routes: Routes = [
   { path: "", component: LandingComponent },
   { path: "home", component: MainComponent },
   { path: "output", component: OutputComponent },
+  { path: "output/:comid", component: OutputComponent },
 ];
 
 @NgModule({

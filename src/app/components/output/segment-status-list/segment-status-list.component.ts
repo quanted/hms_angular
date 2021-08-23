@@ -27,6 +27,6 @@ export class SegmentStatusListComponent implements OnInit {
 
   gotoData(comId): void {
     console.log(`gotoData(${comId})`);
-    // this.router.navigateByUrl(`output/${comId}`);
+    this.router.navigateByUrl(`output/${comId}`);
   }
 }
