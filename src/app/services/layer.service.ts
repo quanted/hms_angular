@@ -480,8 +480,8 @@ export class LayerService {
     }
   }
 
-  updateStreamLayer(completed_segments): void {
-    for (let segment of completed_segments) {
+  updateStreamLayer(catchment_status): void {
+    for (let segment of catchment_status) {
       this.updateSegment(segment.comid, segment.status);
     }
   }
@@ -538,7 +538,7 @@ export class LayerService {
     // update segment color
     for (let layer of this.segmentLayers) {
       if (layer.comid == comid) {
-        if (status == "IN_PROGRESS") {
+        if (status == "IN-PROGRESS") {
           layer.layer.setStyle({
             color: this.simInProgressColor,
             weight: 3,
