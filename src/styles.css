@@ -16,7 +16,7 @@
 
     --main-max-panel-height: 75vh;
 
-    --main-list-short-height: 100px;
+    --main-list-short-height: 8vh;
 }
 
 html {
@@ -52,6 +52,7 @@ body {
        -moz-box-shadow: none;
             box-shadow: none;
 }
+
 
 .button:hover,
 .segment-status,
