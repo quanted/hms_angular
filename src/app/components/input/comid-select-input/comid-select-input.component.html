@@ -1,5 +1,5 @@
 <div [formGroup]="inputForm">
-  <div class="centered"><strong>Click stream segment to edit variables</strong></div>
+  <div class="centered"><strong>Click stream segment to edit loadings</strong></div>
   <div class="centered">- or -</div>
   <div class="form-row">
     <div class="vertical-center">
@@ -9,7 +9,7 @@
   </div>
 
   <div *ngIf="selectedComId" class="segment-form">
-    <div class="centered"><strong>Segment Loadings</strong></div>
+    <div class="centered"><strong>Segment {{ selectedComId }} Loadings</strong></div>
     <div>Parameters</div>
     <div class="scroll-pane list-short" *ngIf="parameters.length">
       <div *ngFor="let parameter of parameters" class="button">

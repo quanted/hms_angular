@@ -1,8 +1,9 @@
 import { Injectable } from "@angular/core";
 
-import * as L from "leaflet";
-import { Observable, merge } from "rxjs";
+import { Observable, forkJoin } from "rxjs";
 import { map } from "rxjs/operators";
+
+import * as L from "leaflet";
 
 import { LayerService } from "src/app/services/layer.service";
 import { HmsService } from "./hms.service";
@@ -27,17 +28,15 @@ export class MapService {
   ) {}
 
   initMap(): void {
-    if (!this.map) {
-      this.map = L.map("map", {
-        center: [38.5, -96], // US geographical center
-        zoom: 10,
-        minZoom: 5,
-        zoomControl: false,
-      });
-      this.map.on("click", (mapClickEvent) => {
-        this.handleClick(mapClickEvent);
-      });
-    }
+    this.map = L.map("map", {
+      center: [38.5, -96], // US geographical center
+      zoom: 10,
+      minZoom: 5,
+      zoomControl: false,
+    });
+    this.map.on("click", (mapClickEvent) => {
+      this.handleClick(mapClickEvent);
+    });
     this.layerService.setupLayers(this.map);
     document.getElementById("map").style.cursor = "crosshair";
   }
@@ -105,7 +104,7 @@ export class MapService {
   }
 
   buildStreamNetwork(comid, distance): Observable<any> {
-    return merge(
+    return forkJoin([
       this.waters.getStreamNetworkData(comid, distance).pipe(
         map((data) => {
           this.layerService.buildStreamLayers(data);
@@ -114,10 +113,18 @@ export class MapService {
       ),
       this.hms.getStreamNetwork(comid, distance).pipe(
         map((data) => {
+          // strip off the boundaries key
+          let tempsources = {};
+          for (let key of Object.keys(data.sources)) {
+            if (key != "boundaries") {
+              tempsources[key] = data.sources[key];
+            }
+          }
+          data.sources = tempsources;
           this.simulation.updateSimData("network", data);
           return data;
         })
-      )
-    );
+      ),
+    ]);
   }
 }

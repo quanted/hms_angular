@@ -1,136 +1,129 @@
 <div class="input-container">
     <strong class="centered">Aquatox WebWorkflow Alpha v0.1.0</strong>
-    <div class="scroll-pane">
-        <!-- AOI section -->
-        <div class="container-item">
-            <div class="centered"><strong>Study Area</strong></div>
-            <div class="section-item" *ngIf="!huc">
-                <!-- <div class="form-row" [formGroup]="pPointForm">
-                    <div class="vertical-center">
-                        <div>Comid <input type="number" class="input-comid" formControlName="pPointComid" /></div>
+    <div *ngIf="!simulationExecuting && !simComplete">
+        <div class="scroll-pane">
+            <!-- AOI section -->
+            <div class="container-item">
+                <div class="centered"><strong>Study Area</strong></div>
+                <div class="section-item" *ngIf="!huc">
+                    <div class="form-row" [formGroup]="pPointForm">
+                        <div class="vertical-center">
+                            <div>Comid <input type="number" class="input-comid" formControlName="pPointComid" /></div>
+                        </div>
+                        <div class="button" (click)="getPourPoint()" matTooltip="Get Pour Point">Get Pour Point</div>
                     </div>
-                    <div class="button" (click)="getPourPoint()" matTooltip="Get Pour Point">Get Pour Point</div>
-                </div>
-                <div class="centered">- or -</div> -->
-                <div class="centered">
-                    <strong>Click map to select </strong>
-                    <select>
-                        <option value="12">HUC 12</option>
-                    </select>
-                </div>
-            </div>
-            <div class="section-item" *ngIf="huc">
-                <div class="form-row">
-                    <div class="vertical-center">
-                        <div>{{ huc.name }}</div>
+                    <div class="centered">- or -</div>
+                    <div class="centered">
+                        <strong>Click map to select </strong>
+                        <select>
+                            <option value="12">HUC 12</option>
+                        </select>
                     </div>
-                    <div class="button" (click)="clearHuc()">Reset Area of Interest</div>
                 </div>
-                <div *ngIf="!catchment" class="centered"><strong>Click map to select pour point</strong></div>
-                <div *ngIf="catchment">
+                <div class="section-item" *ngIf="huc">
                     <div class="form-row">
                         <div class="vertical-center">
-                            <div>ComID {{ catchment.id }}</div>
+                            <div>{{ huc.name }}</div>
                         </div>
-                        <div class="button" (click)="clearCatchment()">Reset Pour Point</div>
+                        <div class="button" (click)="clearHuc()">Reset Area of Interest</div>
                     </div>
-                </div>
-
-                <div *ngIf="catchment && !stream" [formGroup]="distanceForm">
-                    <div class="form-row">Upstream Distance (Km)<input type="number" formControlName="distance"></div>
-                </div>
-                <div class="button" *ngIf="huc && catchment && !stream && !loadingStream" (click)="getStreamNetwork()">
-                    Get stream network</div>
-                <div class="button" *ngIf="huc && catchment && !stream && loadingStream">
-                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-                </div>
-            </div>
-        </div>
-
-        <!-- Aquatox section -->
-        <div class="container-item" *ngIf="stream">
-            <div class="section-item" *ngIf="jsonFlags && !baseJson" [formGroup]="moduleForm">
-                <div class="centered"><strong>Select Base Simulation</strong></div>
-                <div>Base Simulation Selection Options</div>
-                <div *ngFor='let flag of jsonFlags'><input formControlName="{{flag}}" type="checkbox" /> {{ flag }}
-                </div>
-                <div class="button" (click)="getBaseJSONByFlags()">Get Base Simulation</div>
-            </div>
-
-            <div *ngIf="baseJson" [formGroup]="pSetUpForm">
-                <div class="centered"><strong>Study Time Period</strong></div>
-                <div class="section-item" id="simulation-globals">
-                    <div class="form-row">
-                        <div>
-                            First Day
-                            <input type="date" formControlName="firstDay">
-                        </div>
-                        <div>
-                            Last Day
-                            <input type="date" formControlName="lastDay">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="vertical-center">Time Step size</div>
+                    <div *ngIf="!catchment" class="centered"><strong>Click map to select pour point</strong></div>
+                    <div *ngIf="catchment">
                         <div class="form-row">
-                            <div class="button">Hour</div>
-                            <div class="button">Day</div>
+                            <div class="vertical-center">
+                                <div>ComID {{ catchment.id }}</div>
+                            </div>
+                            <div class="button" (click)="clearCatchment()">Reset Pour Point</div>
                         </div>
                     </div>
-                    <!-- <div class="form-row">
-                        Use Alternate Step Size <input type="checkbox" formControlName="useFixStepSize" />
+
+                    <div *ngIf="catchment && !stream" [formGroup]="distanceForm">
+                        <div class="form-row">Upstream Distance (Km)<input type="number" formControlName="distance"></div>
                     </div>
-                    <div class="form-row" *ngIf="isUsingFixedStep()">
-                        Step Size <input type="number" formControlName="fixStepSize" />
+                    <div class="button" *ngIf="huc && catchment && !stream && !loadingStream" (click)="getStreamNetwork()">
+                        Get stream network</div>
+                    <div class="button" *ngIf="huc && catchment && !stream && loadingStream">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aquatox section -->
+            <div class="container-item" *ngIf="stream">
+                <div class="section-item" *ngIf="jsonFlags && !baseJson" [formGroup]="moduleForm">
+                    <div class="centered"><strong>Select Base Simulation</strong></div>
+                    <div>Base Simulation Selection Options</div>
+                    <div *ngFor='let flag of jsonFlags'><input formControlName="{{flag}}" type="checkbox" /> {{ flag }}
+                    </div>
+                    <div class="button" (click)="getBaseJSONByFlags()">Get Base Simulation</div>
+                </div>
+
+                <div *ngIf="baseJson" [formGroup]="pSetUpForm">
+                    <div class="centered"><strong>Study Time Period</strong></div>
+                    <div class="section-item" id="simulation-globals">
+                        <div class="form-row">
+                            <div>
+                                First Day
+                                <input type="date" formControlName="firstDay">
+                            </div>
+                            <div>
+                                Last Day
+                                <input type="date" formControlName="lastDay">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="vertical-center">Time Step size</div>
+                            <div class="form-row" [formGroup]="tStepForm">
+                                <div>Hour <input type="radio" name="tStep" formControlName="tStep" value="hour"></div>
+                                <div>Day <input type="radio" name="tStep" formCOntrolName="tStep" value="day"></div>
+                            </div>
+                        </div>
+                        <!-- <div class="form-row">
+                            Use Alternate Step Size <input type="checkbox" formControlName="useFixStepSize" />
+                        </div>
+                        <div class="form-row" *ngIf="isUsingFixedStep()">
+                            Step Size <input type="number" formControlName="fixStepSize" />
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="container-item" *ngIf="stream && baseJson">
+                <div class="centered"><strong>Output State Variables</strong></div>
+                <div class="section-item" *ngFor="let variable of sVariables">
+                    <div class="form-row">
+                        <div>{{ variable.PName }}</div>
+                        <div class="vertical-center">
+                            <div>
+                                <input type="number" class="input-comid" value="{{ variable.InitialCond }}" matTooltip="{{ variable.PName }}"/>
+                                {{ variable.LoadingUnit }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div class="form-row" [formGroup]="pPointForm">
+                        <div class="vertical-center">
+                            <div>Comid <input type="number" class="input-comid" formControlName="pPointComid" /></div>
+                        </div>
+                        <div class="button" (click)="getPourPoint()" matTooltip="Get Pour Point">Get Pour Point</div>
                     </div> -->
+
                 </div>
             </div>
-        </div>
 
-
-        <div class="container-item" *ngIf="stream && baseJson" [formGroup]="svForm">
-            <div class="centered"><strong>State Variables</strong></div>
-            <div class="form-row">               
-                <div>Total N<input type="checkbox" formControlName="totalN" /></div>
-                <div *ngIf="!svForm.get('totalN').value">
-                    <div>Amonia and Nitrate<input name="nType" type="radio" formControlName="nType" value="amonia_nitrate" /></div>
-                    <div>Nitrogen<input name="nType" type="radio" formControlName="nType" value="nitrogen" /></div>
-                </div>
+            <div class="container-item" *ngIf="stream && baseJson">
+                <div class="centered"><strong>Stream Segments</strong></div>
+                <div>This network has {{ numNetSegments }} segments</div>
+                <app-segment-list></app-segment-list>
+                <app-comid-select-input></app-comid-select-input>
             </div>
-            <div class="form-row">
-                <div>Total P<input type="checkbox" formControlName="totalP" /></div>
-                <div *ngIf="!svForm.get('totalP').value">
-                    <div>Phosphorus<input name="pType" type="radio" formControlName="pType" value="phosphorus" /></div>
-                    <div>Phosphate<input name="pType" type="radio" formControlName="pType" value="phosphate" /></div>
-                </div>
-            </div>
-            <div>Organic Matter</div>
         </div>
-
-        <div class="container-item" *ngIf="stream && baseJson">
-            <div class="centered"><strong>Stream Segments</strong></div>
-            <app-segment-list></app-segment-list>
-            <app-comid-select-input></app-comid-select-input>
-        </div>
-
-        <div class="container-item" *ngIf="baseJson && stream && !simulationExecuting">
-            <div class="button" (click)="initSim()">initSim</div>
+        <div *ngIf="baseJson && stream" class="section-item">
             <div class="button" (click)="clearBaseJson()">Reset Base Simulation</div>
+            <div class="button" *ngIf="!simulationExecuting" (click)="executeSimulation()">Execute Aquatox Simulation</div>
         </div>
     </div>
-    <div class="container-item" *ngIf="simulationExecuting || simStatus == 'FAILED'">
-        <div>Simulation Status: {{ simStatus }}</div>
-        <div>{{ status_message }}</div>
-    </div>
-    <div *ngIf="simComplete && simStatus !== 'FAILED'">
-        <div class="button" (click)="gotoOutput()" [class.ready]="simComplete">Examine Output</div>
-        <div class="button" (click)="downloadSimResults()" [class.ready]="simComplete">Download Data</div>
-    </div>
-    <div *ngIf="baseJson && stream">
-        <div class="button" *ngIf="!simulationExecuting" (click)="executeSimulation()">Execute Aquatox Simulation</div>
-    </div>
-    <div class="button" *ngIf="simulationExecuting">
-        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-    </div>
-    <div class="button"  *ngIf="simulationExecuting" (click)="cancelExecution()">Cancel Simulation Execution</div>
+
+    <app-execution-panel *ngIf="simulationExecuting || simComplete"></app-execution-panel>
 </div>

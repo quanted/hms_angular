@@ -2,3 +2,7 @@
     overflow-x: auto;
     margin: 0;
 }
+
+table {
+    min-width: 100%;
+}

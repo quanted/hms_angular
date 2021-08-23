@@ -7,28 +7,26 @@
     --main-button: rgb(176, 196, 222);
     --main-hover: rgba(146, 146, 146, 0.5);
     --main-active: rgb(250, 146, 146);
-    --main-ready: rgb(0, 200, 0);
+    --main-working: rgb(71, 199, 255);
+    --main-ready: rgb(0, 190, 19);
+    --main-fail: rgb(255, 0, 0);
 
     --row-gap: .19rem;
     --column-gap: .125rem;
 
-    --main-max-panel-height: 70vh;
+    --main-max-panel-height: 75vh;
 
     --main-list-short-height: 100px;
 }
 
-input[type='number'] {
-    text-align: center;
+html {
+    scroll-behavior: smooth;
 }
 
-input[type='number'].input-comid {
-    width: 100px;
-}
-
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-  -webkit-appearance: none; 
-  margin: 0; 
+body { 
+    margin: 0px;
+    height: 100vh;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
 .button {
@@ -51,12 +49,6 @@ input[type=number]::-webkit-outer-spin-button {
             box-shadow: none;
 }
 
-select,
-mat-icon:hover,
-.button {
-    cursor: pointer;
-}
-
 mat-icon:hover,
 .button:hover {
     background-color: var(--main-hover);
@@ -70,14 +62,16 @@ mat-icon:hover,
     background-color: var(--main-active);
 }
 
+.progress {
+    background-color: var(--main-working);
+}
+
 .ready {
     background-color: var(--main-ready);
 }
 
-body { 
-    margin: 0px;
-    height: 100vh;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
+.fail {
+    background-color: var(--main-fail);
 }
 
 .centered {
@@ -121,6 +115,42 @@ body {
 .list-short {
     padding-bottom: var(--row-gap);
     max-height: var(--main-list-short-height);
+}
+
+@keyframes splash {
+    from { opacity: 0.0; } 
+    to { opacity: 1.0 }
+}
+
+.splash {
+    animation: splash 1s ease-in-out infinite alternate;
+}
+
+.button,
+mat-icon:hover,
+select,
+input[type='number'],
+input[type='date'],
+input[type='radio'] {
+    cursor: pointer;
+}
+
+.comid-tooltip {
+    z-index: 9999;
+}
+
+input[type='number'] {
+    text-align: center;
+}
+
+input[type='number'].input-comid {
+    width: 100px;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
 }
 
 ::-webkit-scrollbar {

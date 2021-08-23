@@ -1,0 +1,14 @@
+.scroll {
+    overflow-y: auto;
+    max-height: 60vh;
+}
+
+.items {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.item {
+	flex: 0 0 50%;
+    box-sizing: border-box;
+}

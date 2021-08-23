@@ -1,5 +1,7 @@
 import { Injectable } from "@angular/core";
 
+import { BehaviorSubject } from "rxjs";
+
 import * as L from "leaflet";
 import * as ESRI from "esri-leaflet";
 
@@ -11,20 +13,60 @@ import { SimulationService } from "./simulation.service";
 export class LayerService {
   basemaps = [
     {
-      name: "Open Street Map",
-      layer: L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution:
-          '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      }),
+      name: "ESRI National Geographic",
+      layer: L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}",
+        {
+          attribution:
+            "Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC",
+          maxZoom: 16,
+        }
+      ),
     },
     {
-      name: "Open Topo Map",
-      layer: L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
-        attribution: '<a href="https://opentopomap.org">OpenTopoMap</a>',
-      }),
+      name: "ESRI Imagery",
+      layer: L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        {
+          attribution:
+            "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
+        }
+      ),
     },
     {
-      name: "No basemap",
+      name: "ESRI Topo",
+      layer: L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+        {
+          attribution:
+            "Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community",
+        }
+      ),
+    },
+    {
+      name: "USGS Imagery",
+      layer: L.tileLayer(
+        "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}",
+        {
+          maxZoom: 20,
+          attribution:
+            'Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological Survey</a>',
+        }
+      ),
+    },
+    {
+      name: "USGS Topo",
+      layer: L.tileLayer(
+        "https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}",
+        {
+          maxZoom: 20,
+          attribution:
+            'Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological Survey</a>',
+        }
+      ),
+    },
+    {
+      name: "No Basemap",
       layer: L.tileLayer("", {}),
     },
   ];
@@ -138,14 +180,31 @@ export class LayerService {
   selectedComId = null;
 
   map;
-  defaultBasemap = "Open Street Map";
+  defaultBasemap = "ESRI National Geographic";
 
-  startColor = "#FF0000";
-  inHucColor = "#00F0F0";
+  // selection colors
+  hucColor = "#00FF00";
+  catchmentColor = "#00FF00";
+  // stream segment colors
+  pourColor = "#FF0000";
+  inHucColor = "#0000FF";
   outHucColor = "#FF00FF";
-  selectedColor = "#0000FF";
+  selectedColor = "#FFFF00";
+  simInProgressColor = "#47C7FF";
   simCompletedColor = "#00C113";
   simFailColor = "#FF0037";
+
+  // animated water icon
+  splashIcon = L.icon({
+    iconUrl: "../../../assets/images/icon_water.png",
+    iconSize: [32, 32],
+    iconAnchor: [0, 0],
+    popupAnchor: [0, 32],
+    className: "splash",
+  });
+
+  // this isn't doing anything yet
+  layerDataSubject: BehaviorSubject<any>;
 
   constructor(private simulation: SimulationService) {
     // setup default tile maps
@@ -182,9 +241,10 @@ export class LayerService {
         show: false,
       });
     }
+    // this.layerDataSubject = new BehaviorSubject(this.layerData);
     this.simulation.interfaceData().subscribe((d) => {
-      if (d.completed_segments.length) {
-        this.updateStreamLayer(d.completed_segments);
+      if (d.sim_status.catchment_status.length) {
+        this.updateStreamLayer(d.sim_status.catchment_status);
       }
     });
   }
@@ -202,6 +262,8 @@ export class LayerService {
       if (feature.properties[name]) {
         layer.bindTooltip(feature.properties[name], {
           sticky: true,
+          open: true,
+          icon: this.splashIcon,
         });
         break;
       }
@@ -212,8 +274,8 @@ export class LayerService {
     this.map = map;
     for (let layer of this.basemapLayers) {
       if (layer.name == this.defaultBasemap) {
-        map.addLayer(layer.layer);
         layer.show = true;
+        this.toggleLayer("basemap", layer.name);
       }
     }
   }
@@ -303,7 +365,7 @@ export class LayerService {
       // first segment is pour point, add it as layer
       if (i == "0") {
         tmp_feature.setStyle({
-          color: this.startColor,
+          color: this.pourColor,
           weight: 2,
         });
         this.simLayers.push({
@@ -418,8 +480,8 @@ export class LayerService {
     }
   }
 
-  updateStreamLayer(completed_segments): void {
-    for (let segment of completed_segments) {
+  updateStreamLayer(catchment_status): void {
+    for (let segment of catchment_status) {
       this.updateSegment(segment.comid, segment.status);
     }
   }
@@ -447,9 +509,7 @@ export class LayerService {
             break;
           case "pour-point":
             layer.layer.setStyle({
-              color: (layer.inSim = true
-                ? this.selectedColor
-                : this.startColor),
+              color: (layer.inSim = true ? this.selectedColor : this.pourColor),
               weight: 2,
             });
             break;
@@ -478,6 +538,12 @@ export class LayerService {
     // update segment color
     for (let layer of this.segmentLayers) {
       if (layer.comid == comid) {
+        if (status == "IN-PROGRESS") {
+          layer.layer.setStyle({
+            color: this.simInProgressColor,
+            weight: 3,
+          });
+        }
         if (status == "COMPLETED") {
           layer.layer.setStyle({
             color: this.simCompletedColor,
@@ -508,6 +574,15 @@ export class LayerService {
   }
 
   getLayers() {
+    for (let layer of this.basemapLayers) {
+      if (layer.show) this.toggleLayer(layer.type, layer.name);
+    }
+    for (let layer of this.featureLayers) {
+      if (layer.show) this.toggleLayer(layer.type, layer.name);
+    }
+    for (let layer of this.simLayers) {
+      if (layer.show) this.toggleLayer(layer.type, layer.name);
+    }
     return {
       basemaps: this.basemapLayers,
       defaultFeatures: this.featureLayers,

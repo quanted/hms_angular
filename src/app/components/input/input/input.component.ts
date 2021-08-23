@@ -17,12 +17,14 @@ export class InputComponent implements OnInit {
   distanceForm: FormGroup;
   moduleForm: FormGroup;
   pPointForm: FormGroup;
+  tStepForm: FormGroup;
   svForm: FormGroup;
   pSetUpForm: FormGroup;
 
   huc: HUC;
   catchment: Catchment;
   stream = false;
+  numNetSegments: number;
 
   // probably change this to a single state variable and a loading spinner on map
   // instead of this per button progress bar approach
@@ -30,26 +32,19 @@ export class InputComponent implements OnInit {
   loadingCatchment = false;
   loadingStream = false;
   loadingApi = false;
+  waiting = false;
 
   jsonFlags = null;
   baseJson = false;
+
+  sVariables = [];
 
   simStatus = "";
   status_message = "";
   simulationExecuting = false;
   simComplete = false;
 
-  apiVersion;
-  apiEndpointList = [];
-  schemas;
-
-  currentEndpoint;
-  formInputs = [];
   flags = [];
-
-  waiting = false;
-
-  responseList = [];
 
   /*
   Total N
@@ -83,21 +78,13 @@ export class InputComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private hms: HmsService,
     private fb: FormBuilder,
+    private hms: HmsService,
     private simulation: SimulationService,
-    public mapService: MapService
+    private mapService: MapService
   ) {}
 
   ngOnInit(): void {
-    this.loadingApi = true;
-    this.hms.getApi().subscribe((api) => {
-      this.apiVersion = api.version;
-      this.apiEndpointList = api.apiEndpointList;
-      this.schemas = api.schemas;
-      this.loadingApi = false;
-    });
-
     this.pPointForm = this.fb.group({
       pPointComid: [null],
     });
@@ -112,24 +99,33 @@ export class InputComponent implements OnInit {
       const moduleFormFields = {};
       for (let flag of this.jsonFlags) {
         moduleFormFields[flag] = [false];
+        // select the first checkbox by default
+        if (flag == this.jsonFlags[0]) {
+          moduleFormFields[flag] = [true];
+        }
       }
       this.moduleForm = this.fb.group(moduleFormFields);
     });
 
-    this.svForm = this.fb.group({
-      totalN: [true],
-      totalP: [true],
-      nType: [null],
-      pType: [null],
+    this.tStepForm = this.fb.group({
+      tStep: ["hour"],
     });
 
     this.pSetUpForm = this.fb.group({
       firstDay: [
-        formatDate(new Date("2000-01-01T00:00:00"), "yyyy-MM-dd", "en"),
+        formatDate(
+          new Date(this.simulation.simData.pSetup.firstDay),
+          "yyyy-MM-dd",
+          "en"
+        ),
         Validators.required,
       ],
       lastDay: [
-        formatDate(new Date("2000-12-31T00:00:00"), "yyy-MM-dd", "en"),
+        formatDate(
+          new Date(this.simulation.simData.pSetup.lastDay),
+          "yyy-MM-dd",
+          "en"
+        ),
         Validators.required,
       ],
       stepSizeInDays: [null],
@@ -151,13 +147,17 @@ export class InputComponent implements OnInit {
         case "catchment":
           this.updateCatchmentInput(data[key]);
           break;
-        case "status_message":
-          this.simStatus = data["status"];
-          this.status_message = data[key];
+        case "sv":
+          if (data[key]) {
+            this.sVariables = data[key];
+          } else {
+            this.sVariables = [];
+          }
           break;
-        case "sim_completed":
-          if (data[key] === true) this.simulationExecuting = false;
-          this.simComplete = data[key];
+        case "network":
+          if (data[key] && data[key].sources) {
+            this.numNetSegments = Object.keys(data[key].sources).length;
+          }
           break;
         default:
         // console.log("input doesn't use: ", key);
@@ -190,15 +190,20 @@ export class InputComponent implements OnInit {
   }
 
   getPourPoint(): void {
-    console.log("pour point: ", this.pPointForm.get("pPointComid").value);
+    // this.hms.getStreamNetwork();
+    // this.pPointForm.get("pPointComid").value;
   }
 
   getStreamNetwork(): void {
     this.loadingStream = true;
     this.mapService
       .buildStreamNetwork(
-        this.catchment.id,
+        this.pPointForm.get("pPointComid").value
+          ? this.pPointForm.get("pPointComid").value
+          : this.catchment.id,
         this.distanceForm.get("distance").value
+          ? this.distanceForm.get("distance").value
+          : "50"
       )
       .subscribe((data) => {
         this.loadingStream = false;
@@ -211,6 +216,11 @@ export class InputComponent implements OnInit {
     this.simulation.updateSimData("flags", flags);
     this.hms.getBaseJsonByFlags(flags).subscribe((json) => {
       this.simulation.updateSimData("base_json", json);
+      const sv = [];
+      for (let key of Object.keys(json.AQTSeg.SV)) {
+        sv.push(json.AQTSeg.SV[key]);
+      }
+      this.simulation.updateSimData("sv", sv);
       this.baseJson = true;
     });
   }
@@ -224,34 +234,9 @@ export class InputComponent implements OnInit {
     return this.pSetUpForm.get("useFixStepSize").value;
   }
 
-  initSim(): void {
-    this.simulation.initializeAquatoxSimulation(this.pSetUpForm.value);
-  }
-
-  addData(): void {
-    this.simulation.addData();
-  }
-
   executeSimulation(): void {
     this.simulationExecuting = true;
-    this.simulation.executeSimulation();
-  }
-
-  cancelExecution(): void {
-    this.simulationExecuting = false;
-    this.simulation.cancelAquatoxSimulationExecution();
-  }
-
-  getSimStatus(): void {
-    this.simulation.getStatus();
-  }
-
-  gotoOutput(): void {
-    this.router.navigateByUrl("output");
-  }
-
-  downloadSimResults(): void {
-    this.simulation.downloadSimResults();
+    this.simulation.executeSimulation(this.pSetUpForm.value);
   }
 }
 

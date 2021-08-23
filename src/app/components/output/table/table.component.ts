@@ -1,7 +1,13 @@
-import { Component, OnInit, AfterViewInit, ViewChild, Input } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  ViewChild,
+  Input,
+} from "@angular/core";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatPaginator } from "@angular/material/paginator";
-import { MatSort } from '@angular/material/sort';
+import { MatSort } from "@angular/material/sort";
 
 @Component({
   selector: "app-table",
@@ -51,8 +57,10 @@ export class TableComponent implements OnInit {
     // Tell sorter Date column is a date else sort regularly
     this.dataSource.sortingDataAccessor = (item, property) => {
       switch (property) {
-        case 'Date': return new Date(item['Date']);
-        default: return item[property];
+        case "Date":
+          return new Date(item["Date"]);
+        default:
+          return item[property];
       }
     };
   }
@@ -63,16 +71,16 @@ export class TableComponent implements OnInit {
   download() {
     let names = [];
     for (let i = 0; i < this.columnNames.length; i++) {
-      names.push(this.columnNames[i].replace(/,/g, ''));
+      names.push(this.columnNames[i].replace(/,/g, ""));
     }
-    let csv = names.join(',') + '\n';
-    this.columnData.forEach(row => {
-      csv += Object.values(row).join(',') + '\r\n';
+    let csv = names.join(",") + "\n";
+    this.columnData.forEach((row) => {
+      csv += Object.values(row).join(",") + "\r\n";
     });
-    let hiddenElement = document.createElement('a');
-    hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
-    hiddenElement.target = '_blank';
-    hiddenElement.download = this.catchment + '.csv';
+    let hiddenElement = document.createElement("a");
+    hiddenElement.href = "data:text/csv;charset=utf-8," + encodeURI(csv);
+    hiddenElement.target = "_blank";
+    hiddenElement.download = this.catchment + ".csv";
     hiddenElement.click();
   }
 }
