@@ -10,7 +10,8 @@ import { SimulationService } from "src/app/services/simulation.service";
 })
 export class SegmentListComponent implements OnInit {
   boundarySegments = [];
-  userSegments = [];
+  headwaterSegments = [];
+  inNetworkSegments = [];
   selectedComId = null;
 
   constructor(
@@ -20,8 +21,9 @@ export class SegmentListComponent implements OnInit {
 
   ngOnInit(): void {
     this.simulation.interfaceData().subscribe((simData) => {
-      this.boundarySegments = simData.segment_loadings.boundary;
-      this.userSegments = simData.segment_loadings.user;
+      this.boundarySegments = simData.segments.boundary;
+      this.headwaterSegments = simData.segments.headwater;
+      this.inNetworkSegments = simData.segments.inNetwork;
       this.selectedComId = simData.selectedComId;
     });
   }

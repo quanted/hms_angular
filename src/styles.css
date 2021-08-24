@@ -55,7 +55,7 @@ body {
 
 
 .button:hover,
-.segment-status,
+.segment-status:hover ,
 mat-icon:hover {
     background-color: var(--main-hover);
 }

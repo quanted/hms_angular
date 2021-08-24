@@ -352,6 +352,7 @@ export class LayerService {
 
       if (selectedHuc == fl[i].wbd_huc12) {
         inHucSegments.push(tmp_feature);
+        this.simulation.updateSegmentList("inNetwork", fl[i].comid);
       } else {
         tmp_feature.setStyle({
           color: this.outHucColor,

@@ -14,9 +14,10 @@ export class SimulationService {
   simData = {
     pour_point_comid: null,
     selectedComId: null,
-    segment_loadings: {
-      user: [],
+    segments: {
       boundary: [],
+      headwater: [],
+      inNetwork: [],
     },
     pSetup: {
       firstDay: "2000-01-01T00:00:00", // default one month
@@ -226,10 +227,7 @@ export class SimulationService {
   }
 
   selectComId(comid): void {
-    this.simData.selectedComId = comid;
-    if (!this.simData.segment_loadings.boundary.includes(comid)) {
-      this.updateSegmentList("user", comid);
-    }
+    this.updateSimData("selectedComId", comid);
   }
 
   clearHuc(): void {
@@ -241,8 +239,9 @@ export class SimulationService {
   }
 
   clearCatchment(): void {
-    this.simData.segment_loadings.user = [];
-    this.simData.segment_loadings.boundary = [];
+    this.simData.segments.boundary = [];
+    this.simData.segments.headwater = [];
+    this.simData.segments.inNetwork = [];
     this.simData["network"] = null;
     this.simData.selectedComId = null;
     this.updateSimData("catchment", null);
@@ -250,14 +249,19 @@ export class SimulationService {
 
   updateSegmentList(type, comid): void {
     switch (type) {
-      case "user":
-        if (!this.simData.segment_loadings.user.includes(comid)) {
-          this.simData.segment_loadings.user.push(comid);
+      case "boundary":
+        if (!this.simData.segments.boundary.includes(comid)) {
+          this.simData.segments.boundary.push(comid);
         }
         break;
-      case "boundary":
-        if (!this.simData.segment_loadings.boundary.includes(comid)) {
-          this.simData.segment_loadings.boundary.push(comid);
+      case "headwater":
+        if (!this.simData.segments.headwater.includes(comid)) {
+          this.simData.segments.headwater.push(comid);
+        }
+        break;
+      case "inNetwork":
+        if (!this.simData.segments.inNetwork.includes(comid)) {
+          this.simData.segments.inNetwork.push(comid);
         }
         break;
       default:
