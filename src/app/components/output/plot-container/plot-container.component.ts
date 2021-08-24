@@ -10,20 +10,18 @@ import { OutputService } from "src/app/services/output.service";
 })
 export class PlotContainerComponent implements OnChanges {
   // Index of drop list so we can delete it later
+  @Input() index: number;
   @Input() dropListData: {
-    index: number,
-    item: {
-      selectedCatchments: string[],
-      selectedSV: string,
-      selectedChart: string
-    }
+    selectedCatchments: string[],
+    selectedSV: string,
+    selectedChart: string
   };
   // Output emitter to tell parent to delete
   @Output() deleteItem = new EventEmitter<any>();
   // Data received from the HmsService
   data: any[];
   // Parsed data for the plot
-  plotData: any[];
+  plotData: any[] = [];
   // Parsed state variables from this.data
   stateVariablesList: string[] = [];
   // Parsed catchments
@@ -46,11 +44,11 @@ export class PlotContainerComponent implements OnChanges {
   ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.dropListData) {
+    if (changes.dropListData.firstChange) {
       // Set state variables
       this.stateVariablesList = this.outputService.stateVariablesList;
-      this.selectedSV = this.dropListData.item.selectedSV;
-      this.chart = this.dropListData.item.selectedChart;
+      this.selectedSV = this.dropListData.selectedSV;
+      this.chart = this.dropListData.selectedChart;
       this.setData();
     }
   }
@@ -76,21 +74,20 @@ export class PlotContainerComponent implements OnChanges {
       v !== undefined && v[1].dates.forEach((d) => dates.push(new Date(d)));
       // Iterate over map and set plot data
       for (let [k, v] of this.outputService.catchments) {
+        console.log(k);
         // Get values for the selected state variable
         const values = [];
-        v?.[1]?.data[this.selectedSV].forEach((d) => values.push(d));
-        this.plotData = [];
+        v.data[this.selectedSV].forEach((d) => values.push(d));
         this.plotData.push({
           x: dates,
           y: values,
           mode: this.chart,
           type: this.chart,
           name: k,
-          visible: 'legendonly'
+          visible: 'false'
         });
         this.plotTitle = this.selectedSV;
       }
-      console.log(this.plotData);
     }
   }
 
@@ -125,32 +122,24 @@ export class PlotContainerComponent implements OnChanges {
     */
   }
 
-  catchmentChange(event) {
-    // Make request for catchment data
-    this.hmsService
-      .getCatchmentData(this.outputService.catchments[this.selectedCatchment])
-      .subscribe((data) => {
-        this.data = data;
-        this.setData();
-      });
-  }
-
   // Update on change of state variables
   svChange(event) {
-    this.dropListData.item.selectedSV = this.selectedSV;
+    this.dropListData.selectedSV = this.selectedSV;
     this.outputService.dropListDataSubject.next(this.dropListData);
+    this.plotData = [];
     this.setData();
   }
 
   // Update on change of chart type
   chartChange(event) {
-    this.dropListData.item.selectedChart = this.chart;
+    this.dropListData.selectedChart = this.chart;
     this.outputService.dropListDataSubject.next(this.dropListData);
+    this.plotData = [];
     this.setData();
   }
 
   // Delete the drop list item on click
   remove(event) {
-    this.deleteItem.emit(this.dropListData);
+    this.deleteItem.emit(this.index);
   }
 }

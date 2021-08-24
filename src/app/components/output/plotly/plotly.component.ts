@@ -32,7 +32,12 @@ export class PlotlyComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     // Draw on init
-    this.draw()
+    //this.draw()
+  }
+
+  ngAfterViewInit(): void {
+    // Draw on init
+    this.draw();
   }
 
   draw(): void {
@@ -71,5 +76,6 @@ export class PlotlyComponent implements OnInit, OnChanges {
     };
     // Plot 
     Plotly.newPlot(this.plot.nativeElement, this.chart);
+    window.dispatchEvent(new Event('resize'));
   }
 }

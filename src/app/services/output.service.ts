@@ -15,28 +15,23 @@ export class OutputService {
   stateVariablesList: string[] = [];
   dropListDataSubject: BehaviorSubject<any> = new BehaviorSubject(null);
 
-  // Array of drop list containers data.
-  dropListData: {
-    index: number,
-    item: {
-      selectedCatchments: string[],
-      selectedSV: string,
-      selectedChart: string
-    }
-  }[];
-
   constructor(
     private hmsService: HmsService,
     private simulationService: SimulationService,
     private cookieService: CookieService) {
     // Subscribe to changes in sim data
     this.simulationService.simDataSubject.subscribe((simData) => {
-      this.simulationService.simData["simId"] = "47bdaa9b-7d27-4486-8aa4-5501a190d7b9";
+      if (this.previousSimId === undefined) {
+        this.previousSimId = this.cookieService.get('simId');
+      }
       // Check for sim id
       if (this.simulationService.simData["simId"] !== undefined) {
         // Clear catchments if sim id has changed
-        this.previousSimId !== this.simulationService.simData["simId"]
-          && this.catchments.clear();
+        if (this.previousSimId !== this.simulationService.simData["simId"]) {
+          this.catchments.clear();
+          this.cookieService.delete("output");
+        }
+        this.previousSimId = this.simulationService.simData["simId"];
         // Check status of sim id
         this.hmsService
           .getAquatoxSimStatus(this.simulationService.simData["simId"])
@@ -60,6 +55,10 @@ export class OutputService {
               }
             });
           });
+      } else if (this.cookieService.check('simId')) {
+        // Sim id is undefined, retrieve from cookie
+        this.simulationService.simData["simId"] = this.cookieService.get("simId");
+        this.simulationService.simDataSubject.next(this.simulationService.simData);
       }
     });
   }

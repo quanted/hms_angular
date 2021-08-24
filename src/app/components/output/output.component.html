@@ -7,8 +7,8 @@
     <div class="dashboard-container">
         <div class="cdkDropListGroup" cdkDropListGroup>
             <ng-container *ngFor="let item of dropListData; let i=index">
-                <div #cdk class="cdkDropList" cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="item"
-                    (cdkDropListDropped)="drop($event)">
+                <div #cdk class="cdkDropList" cdkDropList cdkDropListOrientation="horizontal"
+                    [cdkDropListData]="{item:item,index:i}" (cdkDropListDropped)="drop($event)">
                     <div #drag class="cdkDrag" cdkDrag>
                         <div class="cdkDragPlaceholder" *cdkDragPlaceholder></div>
                         <div class="cdkDragHandle" cdkDragHandle matTooltip="Click and hold to drag container."
@@ -20,7 +20,7 @@
                                 <path d="M0 0h24v24H0z" fill="none"></path>
                             </svg>
                         </div>
-                        <app-plot-container (deleteItem)="delete($event)" [dropListData]="dropListData[i]">
+                        <app-plot-container (deleteItem)="delete($event)" [dropListData]="dropListData[i]" [index]="i">
                         </app-plot-container>
                     </div>
                 </div>
