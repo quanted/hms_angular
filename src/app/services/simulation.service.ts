@@ -23,7 +23,6 @@ export class SimulationService {
       lastDay: "2000-01-31T00:00:00", // time span
       stepSizeInDays: true,
       useFixStepSize: false,
-      fixStepSize: 1,
     },
     base_json: null,
     network: {
@@ -85,6 +84,9 @@ export class SimulationService {
       "en"
     );
 
+    this.simData.base_json.AQTSeg.PSetup.StepSizeInDays.Val =
+      pSetup.tStep == "day" ? true : false;
+
     const initData = {
       comid_input: {
         comid: this.simData.pour_point_comid.toString(),
@@ -97,6 +99,8 @@ export class SimulationService {
       simulation_dependencies: [],
       catchment_dependencies: [],
     };
+
+    console.log("init: ", this.simData.base_json.AQTSeg.PSetup);
     return this.hms.addAquatoxSimData(initData);
   }
 

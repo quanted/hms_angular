@@ -16,7 +16,7 @@
 
     --main-max-panel-height: 75vh;
 
-    --main-list-short-height: 100px;
+    --main-list-short-height: 8vh;
 }
 
 html {
@@ -29,7 +29,8 @@ body {
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-.button {
+.button,
+.segment-status {
     font-size: .75rem;
     display: grid;
     place-items: center;
@@ -37,6 +38,9 @@ body {
     border-radius: 5px;
     border: 1px solid rgb(150, 150, 150);
     background-color: var(--main-button);
+}
+
+.button {
 	-webkit-box-shadow: 0 3px 3px -2px black;
 	   -moz-box-shadow: 0 3px 3px -2px black;
 	        box-shadow: 0 3px 3px -2px black;
@@ -49,8 +53,10 @@ body {
             box-shadow: none;
 }
 
-mat-icon:hover,
-.button:hover {
+
+.button:hover,
+.segment-status,
+mat-icon:hover {
     background-color: var(--main-hover);
 }
 
@@ -128,6 +134,7 @@ mat-icon:hover,
 
 .button,
 mat-icon:hover,
+.segment-status,
 select,
 input[type='number'],
 input[type='date'],

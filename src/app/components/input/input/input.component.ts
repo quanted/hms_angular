@@ -17,7 +17,6 @@ export class InputComponent implements OnInit {
   distanceForm: FormGroup;
   moduleForm: FormGroup;
   pPointForm: FormGroup;
-  tStepForm: FormGroup;
   svForm: FormGroup;
   pSetUpForm: FormGroup;
 
@@ -107,10 +106,6 @@ export class InputComponent implements OnInit {
       this.moduleForm = this.fb.group(moduleFormFields);
     });
 
-    this.tStepForm = this.fb.group({
-      tStep: ["hour"],
-    });
-
     this.pSetUpForm = this.fb.group({
       firstDay: [
         formatDate(
@@ -128,9 +123,7 @@ export class InputComponent implements OnInit {
         ),
         Validators.required,
       ],
-      stepSizeInDays: [null],
-      useFixStepSize: [null],
-      fixStepSize: [null],
+      tStep: ["hour", Validators.required],
     });
 
     this.simulation.interfaceData().subscribe((d) => {
