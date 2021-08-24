@@ -63,3 +63,6 @@ table {
   .export:hover {
     opacity: 0.5;
   }
+  .mat-cell, .mat-footer-cell {
+    font-size: 12px;
+}

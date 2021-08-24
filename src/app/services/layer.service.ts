@@ -6,6 +6,8 @@ import * as L from "leaflet";
 import * as ESRI from "esri-leaflet";
 
 import { SimulationService } from "./simulation.service";
+import { OutputService } from "./output.service";
+
 
 @Injectable({
   providedIn: "root",
@@ -206,7 +208,10 @@ export class LayerService {
   // this isn't doing anything yet
   layerDataSubject: BehaviorSubject<any>;
 
-  constructor(private simulation: SimulationService) {
+  constructor(
+    private simulation: SimulationService,
+    private outputService: OutputService
+  ) {
     // setup default tile maps
     for (let basemap of this.basemaps) {
       this.basemapLayers.push({
