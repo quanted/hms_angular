@@ -1,20 +1,23 @@
-import { Component } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { CdkDragDrop } from "@angular/cdk/drag-drop";
 import { SimulationService } from 'src/app/services/simulation.service';
 import { CookieService } from 'ngx-cookie-service';
 import { OutputService } from 'src/app/services/output.service';
 import { BehaviorSubject } from 'rxjs';
 import { ActivatedRoute } from "@angular/router";
+import { HmsService } from "src/app/services/hms.service";
 
 @Component({
   selector: "app-output",
   templateUrl: "./output.component.html",
   styleUrls: ["./output.component.css"]
 })
-export class OutputComponent {
-  // Array of drop list containers indexes
-  MAX_CONTAINERS = 6;
+export class OutputComponent implements OnInit, OnDestroy {
 
+  catchments: any = {};
+  comid: string;
+  // Max number of containers
+  MAX_CONTAINERS = 6;
   // Array of drop list containers data.
   dropListData: any[] = [];
 
@@ -23,58 +26,74 @@ export class OutputComponent {
   constructor(
     // Importing SimulationService to keep data from url navigation
     private simulationService: SimulationService,
+    private hmsService: HmsService,
     private cookieService: CookieService,
     private outputService: OutputService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {
-    // Subscribe to catchment changes
-    this.outputService.catchmentsSubject.subscribe(() => {
-      const catchmentFromURL = this.route.snapshot.paramMap.get("comid");
-
-      if (catchmentFromURL) {
-        this.baseItem.selectedCatchments = [catchmentFromURL, this.simulationService.simData.pour_point_comid
-          ?? this.outputService.catchments.entries().next().value?.[0] ?? ""];
-      } else {
-        this.baseItem.selectedCatchments = [this.simulationService.simData.pour_point_comid
-          ?? this.outputService.catchments.entries().next().value?.[0] ?? ""];
-      }
-
-      if (this.outputService.catchments.size > 0) {
-        this.baseItem.selectedSV = Object.keys(this.outputService.catchments.entries().next().value?.[1].data)?.[0] ?? "";
-      } else {
-        this.baseItem.selectedSV = "";
-      }
-      this.baseItem.selectedChart = "scatter";
-      console.log(this.baseItem);
-      // Check cookie service for output data
-      if (this.cookieService.check("output") && this.cookieService.get("output") !== "undefined" && this.outputService.catchments.size < 1) {
-        this.dropListData = JSON.parse(this.cookieService.get("output"));
-      } else if (this.outputService.catchments.size > 0) {
-        // Set drop list data
-        this.dropListData = [
-          { ...this.baseItem }
-        ];
-        // Set cookie data
-        this.cookieService.set("output", JSON.stringify(this.dropListData));
-      }
-      // Set containers 
-      if (this.dropListData.length === 0 && this.dropListData) {
-        for (let i = 0; i < this.dropListData.length; i++) {
-          this.dropListData.push(i);
-        }
-      }
-      this.outputService.stateVariablesList.length === 0 && this.outputService.setSVList();
-    });
-
-    // Update output cookie
+    // Update output cookie everytime droplist data changes
     this.outputService.dropListDataSubject.subscribe((data) => {
-      console.log(this.dropListData);
       this.cookieService.set("output", JSON.stringify(this.dropListData));
     });
   }
 
   ngOnInit() {
+    // First, check for comid in url
+    if (this.route.snapshot.paramMap.has("comid")) {
+      this.comid = this.route.snapshot.paramMap.get("comid");
+      // Get catchment data by getting the taskid from the sim status
+      this.hmsService
+        .getAquatoxSimStatus(this.cookieService.get("simId"))
+        .subscribe((response) => {
+          if (Object.keys(response.catchments).includes(this.comid)) {
+            // Make request to retrieve catchment data and place in variable
+            this.hmsService
+              .getCatchmentData(response.catchments[this.comid].task_id)
+              .subscribe((data) => {
+                // Put all state variables into output state variables list
+                this.outputService.stateVariablesList = Object.keys(data.data);
+                // Set grid of containers
+                this.dropListData.push({
+                  selectedCatchments: [this.comid],
+                  selectedTableCatchment: this.comid,
+                  selectedSV: 0,
+                  selectedChart: "scatter"
+                }, {
+                  selectedCatchments: [this.comid],
+                  selectedTableCatchment: this.comid,
+                  selectedSV: 1,
+                  selectedChart: "scatter"
+                }, {
+                  selectedCatchments: [this.comid],
+                  selectedTableCatchment: this.comid,
+                  selectedSV: 2,
+                  selectedChart: "scatter"
+                }, {
+                  selectedCatchments: [this.comid],
+                  selectedTableCatchment: this.comid,
+                  selectedSV: 3,
+                  selectedChart: "scatter"
+                }, {
+                  selectedCatchments: [this.comid],
+                  selectedTableCatchment: this.comid,
+                  selectedSV: 0,
+                  selectedChart: "table"
+                });
+                // Update cookie 
+                this.outputService.dropListDataSubject.next(this.dropListData);
+                // Callback
+                this.simulationService.updateSimData("catchment_data",
+                  { comid: this.comid, data: data });
+              });
+          }
+        });
+    }
+  }
 
+  ngOnDestroy(): void {
+    if (this.cookieService.check("output")) {
+      this.cookieService.delete("output");
+    }
   }
 
   drop(event: CdkDragDrop<any>) {
@@ -90,7 +109,11 @@ export class OutputComponent {
   add() {
     // Check if we can add another item
     if (this.dropListData.length < this.MAX_CONTAINERS) {
-      this.dropListData.push({ ...this.baseItem });
+      this.dropListData.push({
+        selectedCatchments: [this.comid],
+        selectedSV: 0,
+        selectedChart: "scatter"
+      });
     }
     // Droplist changed, update cookie
     this.outputService.dropListDataSubject.next(this.dropListData);

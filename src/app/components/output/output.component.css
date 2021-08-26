@@ -48,7 +48,7 @@ app-footer {
   margin: 5px;
   background-color: transparent;
   position: relative;
-  min-width: 300px;
+  min-width: 400px;
   min-height: 0;
   max-height: 100%;
 }

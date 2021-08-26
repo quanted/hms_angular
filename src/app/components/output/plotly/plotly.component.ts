@@ -6,7 +6,7 @@ import * as Plotly from 'plotly.js/dist/plotly.js';
   templateUrl: './plotly.component.html',
   styleUrls: ['./plotly.component.css']
 })
-export class PlotlyComponent implements OnInit, OnChanges {
+export class PlotlyComponent implements OnChanges {
   // Get access to the plot element in the DOM
   @ViewChild("plot", { static: true }) public plot: ElementRef;
 
@@ -26,17 +26,7 @@ export class PlotlyComponent implements OnInit, OnChanges {
   chart: any;
 
   ngOnChanges(changes: SimpleChanges): void {
-    // Redraw on changes
-    this.draw();
-  }
-
-  ngOnInit(): void {
-    // Draw on init
-    //this.draw()
-  }
-
-  ngAfterViewInit(): void {
-    // Draw on init
+    //Plotly.update(this.plot.nativeElement, this.chart);
     this.draw();
   }
 

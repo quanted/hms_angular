@@ -281,6 +281,17 @@ export class SimulationService {
         this.simData.comid_inputs[data.comid].sv.push(data.value);
       } else if (key == "sim_status") {
         this.simData.sim_status = data;
+      } else if (key == "catchment_data") {
+        if (!this.simData["catchment_data"]) {
+          this.simData["catchment_data"] = [];
+        }
+        let found = false;
+        for (let catchment of this.simData["catchment_data"]) {
+          if (data.comid == catchment.comid) found = true;
+        }
+        if (!found) {
+          this.simData["catchment_data"].push(data);
+        }
       } else if (key == "sv") {
         this.simData[key] = data;
       } else if (
@@ -296,7 +307,6 @@ export class SimulationService {
       this.simData[key] = null;
     }
     this.simDataSubject.next(this.simData);
-    // console.log("POST simData: ", this.simData);
   }
 
   // returns a Subject for interface components to subscribe to
