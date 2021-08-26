@@ -13,6 +13,11 @@
     z-index: 0;
 }
 
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
 table {
     width: 100%;
     table-layout: fixed;
@@ -31,6 +36,15 @@ table {
 ::ng-deep .mat-sort-header-container{
     justify-content: center;
 }
+
+::ng-deep .mat-sort-header-content {
+  font-size: 11px;
+}
+
+tr.mat-header-row {
+  height: auto;
+}
+
 
 .mat-header-cell {
     padding-left: 20px;
@@ -64,5 +78,8 @@ table {
     opacity: 0.5;
   }
   .mat-cell, .mat-footer-cell {
-    font-size: 12px;
+    font-size: 11px;
+}
+tr.mat-row, tr.mat-footer-row {
+  height: auto;
 }
