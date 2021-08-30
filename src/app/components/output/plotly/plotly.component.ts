@@ -38,9 +38,15 @@ export class PlotlyComponent implements OnChanges {
         title: { text: this.plotTitle, font: { size: 14 } },
         xaxis: {
           title: { text: this.xAxisTitle },
+          tickfont: {
+            size: 10
+          }
         },
         yaxis: {
           title: { text: this.yAxisTitle },
+          tickfont: {
+            size: 10
+          }
         },
         margin: {
           l: 40,

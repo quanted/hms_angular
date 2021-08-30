@@ -42,23 +42,25 @@ export class PlotContainerComponent {
     private simulationService: SimulationService,
     public outputService: OutputService,
   ) {
-    this.simulationService.simDataSubject.subscribe(data => {
-      for (let key of Object.keys(data)) {
-        switch (key) {
-          case "catchment_data":
-            this.catchments = data[key];
-            this.stateVariablesList = this.outputService.stateVariablesList;
-            this.selectedSV = this.outputService.stateVariablesList[this.dropListData?.selectedSV];
-            this.chart = this.dropListData?.selectedChart;
-            this.setData();
-            break;
-          default:
-            break;
+    this.simulationService.simDataSubject
+      .subscribe(data => {
+        for (let key of Object.keys(data)) {
+          switch (key) {
+            case "catchment_data":
+              this.catchments = data[key];
+              this.stateVariablesList = this.outputService.stateVariablesList;
+              this.selectedSV = this.outputService.stateVariablesList[this.dropListData?.selectedSV];
+              this.chart = this.dropListData?.selectedChart;
+              this.setData();
+              break;
+            default:
+              break;
+          }
         }
-      }
-    });
+      });
+
     this.outputService.dropListDataSubject.subscribe(data => {
-      //this.setData();
+      this.setData();
     });
   }
 
@@ -140,7 +142,6 @@ export class PlotContainerComponent {
       }
     });
     if (index > -1) {
-      // this.catchments[0].data.dates.forEach((d) => this.tableColumnNames.push(d));
       // Loop over length of data
       for (let i = 0; i < this.catchments[index].data.dates.length; i++) {
         let obj: any = {};

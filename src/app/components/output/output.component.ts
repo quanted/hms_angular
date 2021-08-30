@@ -3,7 +3,7 @@ import { CdkDragDrop } from "@angular/cdk/drag-drop";
 import { SimulationService } from 'src/app/services/simulation.service';
 import { CookieService } from 'ngx-cookie-service';
 import { OutputService } from 'src/app/services/output.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { ActivatedRoute } from "@angular/router";
 import { HmsService } from "src/app/services/hms.service";
 
@@ -41,6 +41,33 @@ export class OutputComponent implements OnInit, OnDestroy {
     // First, check for comid in url
     if (this.route.snapshot.paramMap.has("comid")) {
       this.comid = this.route.snapshot.paramMap.get("comid");
+      // Set grid of containers
+      this.dropListData.push({
+        selectedCatchments: [this.comid],
+        selectedTableCatchment: this.comid,
+        selectedSV: 0,
+        selectedChart: "scatter"
+      }, {
+        selectedCatchments: [this.comid],
+        selectedTableCatchment: this.comid,
+        selectedSV: 1,
+        selectedChart: "scatter"
+      }, {
+        selectedCatchments: [this.comid],
+        selectedTableCatchment: this.comid,
+        selectedSV: 2,
+        selectedChart: "scatter"
+      }, {
+        selectedCatchments: [this.comid],
+        selectedTableCatchment: this.comid,
+        selectedSV: 3,
+        selectedChart: "scatter"
+      }, {
+        selectedCatchments: [this.comid],
+        selectedTableCatchment: this.comid,
+        selectedSV: 0,
+        selectedChart: "table"
+      });
       // Get catchment data by getting the taskid from the sim status
       this.hmsService
         .getAquatoxSimStatus(this.cookieService.get("simId"))
@@ -53,6 +80,7 @@ export class OutputComponent implements OnInit, OnDestroy {
                 // Put all state variables into output state variables list
                 this.outputService.stateVariablesList = Object.keys(data.data);
                 // Set grid of containers
+                this.dropListData = [];
                 this.dropListData.push({
                   selectedCatchments: [this.comid],
                   selectedTableCatchment: this.comid,
@@ -111,6 +139,7 @@ export class OutputComponent implements OnInit, OnDestroy {
     if (this.dropListData.length < this.MAX_CONTAINERS) {
       this.dropListData.push({
         selectedCatchments: [this.comid],
+        selectedTableCatchment: this.comid,
         selectedSV: 0,
         selectedChart: "scatter"
       });
