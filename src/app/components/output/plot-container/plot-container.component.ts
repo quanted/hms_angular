@@ -58,8 +58,10 @@ export class PlotContainerComponent {
         }
       });
     this.outputService.dropListDataSubject.subscribe(data => {
-      this.selectedSV = this.outputService.stateVariablesList[this.dropListData?.selectedSV];
-      this.chart = this.dropListData?.selectedChart;
+      if (!this.selectedSV) {
+        this.selectedSV = this.outputService.stateVariablesList[this.dropListData?.selectedSV];
+        this.chart = this.dropListData?.selectedChart;
+      }
       this.catchments && this.setData();
     });
   }
@@ -170,16 +172,12 @@ export class PlotContainerComponent {
   svChange(event) {
     this.dropListData.selectedSV = this.selectedSV;
     this.outputService.dropListDataSubject.next(this.dropListData);
-    //this.plotData = [];
-    //this.setData();
   }
 
   // Update on change of chart type
   chartChange(event) {
     this.dropListData.selectedChart = this.chart;
     this.outputService.dropListDataSubject.next(this.dropListData);
-    this.plotData = [];
-    this.setData();
   }
 
   // Delete the drop list item on click
