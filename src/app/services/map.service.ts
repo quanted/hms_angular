@@ -1,14 +1,9 @@
 import { Injectable } from "@angular/core";
 
-import { Observable, forkJoin } from "rxjs";
-import { map } from "rxjs/operators";
-
 import * as L from "leaflet";
 
 import { LayerService } from "src/app/services/layer.service";
-import { HmsService } from "./hms.service";
 import { SimulationService } from "./simulation.service";
-import { WatersService } from "./waters.service";
 
 @Injectable({
     providedIn: "root",
