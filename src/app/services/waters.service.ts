@@ -104,8 +104,13 @@ export class WatersService {
         params.geometry = `{"x":${lng},"y":${lat},"spatialReference":{"wkid":4326}}`;
 
         return this.http.get(`${url}${this.serialize(params)}&outFields=${this.hucOutputFields.join(",+")}`).pipe(
-            catchError((err) => {
-                return of({ error: err });
+            timeout(this.REQUEST_TIMEOUT),
+            catchError((error) => {
+                if (error instanceof TimeoutError) {
+                    return of({ error: "Request to getHucData timed out", message: error.message });
+                } else {
+                    return of({ message: error.message, error });
+                }
             })
         );
     }
@@ -117,12 +122,21 @@ export class WatersService {
         const params = { ...this.params };
         params.geometry = `{"x":${lng},"y":${lat},"spatialReference":{"wkid":4326}}`;
 
-        return this.http.get(`${url}${this.serialize(params)}&outFields=${this.catchmentOutputFields.join(",+")}`);
+        return this.http.get(`${url}${this.serialize(params)}&outFields=${this.catchmentOutputFields.join(",+")}`).pipe(
+            timeout(this.REQUEST_TIMEOUT),
+            catchError((error) => {
+                if (error instanceof TimeoutError) {
+                    return of({ error: "Request to getCatchmentData timed out", message: error.message });
+                } else {
+                    return of({ message: error.message, error });
+                }
+            })
+        );
     }
 
     // this returns the stream geometry and "event" locations
     // starting at 'comid' and ending at 'distance' upstream
-    getStreamNetworkData(comid: string, distance: string): Observable<any> {
+    getNetworkGeometry(comid: string, distance: string): Observable<any> {
         let options = {
             pNavigationType: "UT", // Upstream with tributaries
             pStartComid: comid,
@@ -139,7 +153,6 @@ export class WatersService {
 
         return this.http.get(`${environment.watersUrl}UpstreamDownstream.Service?${this.serialize(options)}`).pipe(
             map((data) => {
-                console.log("waters: ", data);
                 data = {
                     networkGeometry: { ...data },
                 };
@@ -148,11 +161,9 @@ export class WatersService {
             timeout(this.REQUEST_TIMEOUT),
             catchError((error) => {
                 if (error instanceof TimeoutError) {
-                    console.log("waters timeout: ", error);
                     return of({ error: "Request to getNetworkGeometry timed out", message: error.message });
                 } else {
-                    console.log("waters error: ", error);
-                    return of({ error });
+                    return of({ message: error.message, error });
                 }
             })
         );

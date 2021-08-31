@@ -25,12 +25,11 @@ export class HmsService {
         );
     }
 
-    getStreamNetwork(comid, distance): Observable<any> {
+    getNetworkInfo(comid, distance): Observable<any> {
         return this.http
             .get(`${environment.apiURL}/api/info/streamnetwork?comid=${comid}&maxDistance=${distance}`)
             .pipe(
                 map((data) => {
-                    console.log("hms: ", data);
                     data = {
                         networkInfo: { ...data },
                     };
@@ -39,11 +38,9 @@ export class HmsService {
                 timeout(this.REQUEST_TIMEOUT),
                 catchError((error) => {
                     if (error instanceof TimeoutError) {
-                        console.log("hms timeout: '", error);
                         return of({ error: "Request to getNetworkInfo timed out", message: error.message });
                     } else {
-                        console.log("hms error: ", error);
-                        return of({ error });
+                        return of({ message: error.message, error });
                     }
                 })
             );

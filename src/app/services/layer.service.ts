@@ -300,12 +300,19 @@ export class LayerService {
     }
 
     getHuc(coords): void {
-        this.waters.getHucData("HUC_12", coords.lat, coords.lng).subscribe((data) => {
-            if (data) {
-                this.addFeature("HUC", data);
-                this.simulation.updateSimData("selectedHuc", data);
+        this.simulation.updateSimData("waiting", true);
+        this.waters.getHucData("HUC_12", coords.lat, coords.lng).subscribe(
+            (data) => {
+                if (data) {
+                    this.addFeature("HUC", data);
+                    this.simulation.updateSimData("selectedHuc", data);
+                }
+                this.simulation.updateSimData("waiting", false);
+            },
+            (error) => {
+                console.log("error getting huc data: ", error);
             }
-        });
+        );
     }
 
     removeHuc(): void {
@@ -318,12 +325,19 @@ export class LayerService {
     }
 
     getCatchment(coords): void {
-        this.waters.getCatchmentData(coords.lat, coords.lng).subscribe((data) => {
-            if (data) {
-                this.addFeature("Catchment", data);
-                this.simulation.updateSimData("selectedCatchment", data);
+        this.simulation.updateSimData("waiting", true);
+        this.waters.getCatchmentData(coords.lat, coords.lng).subscribe(
+            (data) => {
+                if (data) {
+                    this.addFeature("Catchment", data);
+                    this.simulation.updateSimData("selectedCatchment", data);
+                }
+                this.simulation.updateSimData("waiting", false);
+            },
+            (error) => {
+                console.log("error getting catchment data: ", error);
             }
-        });
+        );
     }
 
     removeCatchment(): void {
@@ -341,14 +355,9 @@ export class LayerService {
     }
 
     buildStreamNetwork(comid: string, distance: string): void {
-        console.log("build stream: ", comid, " | ", distance);
         this.simulation.updateSimData("waiting", true);
-        forkJoin([
-            this.waters.getStreamNetworkData(comid, distance),
-            this.hms.getStreamNetwork(comid, distance),
-        ]).subscribe(
+        forkJoin([this.waters.getNetworkGeometry(comid, distance), this.hms.getNetworkInfo(comid, distance)]).subscribe(
             (networkData) => {
-                console.log("forkJoin data: ", networkData);
                 for (let data of networkData) {
                     if (data.networkData) this.simulation.updateSimData("network", data.networkData);
                     if (data.networkGeometry) this.buildStreamLayers(data.networkGeometry);

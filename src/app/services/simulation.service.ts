@@ -277,6 +277,7 @@ export class SimulationService {
             }
             if (key == "selectedCatchment") {
                 const newSimData = {
+                    comid: data.features[0].properties.FEATUREID,
                     ...data.features[0],
                 };
                 this.simData.selectedCatchment = newSimData;
