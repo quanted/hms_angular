@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 
-import { BehaviorSubject, forkJoin } from "rxjs";
+import { forkJoin } from "rxjs";
 
 import * as L from "leaflet";
 import * as ESRI from "esri-leaflet";
@@ -13,6 +13,9 @@ import { WatersService } from "./waters.service";
     providedIn: "root",
 })
 export class LayerService {
+    ZOOM_MIN = 5;
+    ZOOM_MAX = 16;
+
     basemaps = [
         {
             name: "ESRI National Geographic",
@@ -71,9 +74,11 @@ export class LayerService {
         },
     ];
 
-    features = [
+    overlays = [
         {
             name: "flowlines",
+            minZoom: 12,
+            maxZoom: this.ZOOM_MAX,
             url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/NHDSnapshot_NP21/MapServer/0",
             style: {
                 color: "#00FFFF",
@@ -84,6 +89,8 @@ export class LayerService {
         },
         {
             name: "catchments",
+            minZoom: 12,
+            maxZoom: this.ZOOM_MAX,
             url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/Catchments_NP21_Simplified/MapServer/0",
             style: {
                 color: "#008009",
@@ -94,6 +101,8 @@ export class LayerService {
         },
         {
             name: "huc12",
+            minZoom: 10,
+            maxZoom: this.ZOOM_MAX,
             url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/0",
             style: {
                 color: "#0026FF",
@@ -104,6 +113,8 @@ export class LayerService {
         },
         {
             name: "huc10",
+            minZoom: 8,
+            maxZoom: this.ZOOM_MAX,
             url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/1",
             style: {
                 color: "#4800FF",
@@ -114,6 +125,8 @@ export class LayerService {
         },
         {
             name: "huc8",
+            minZoom: this.ZOOM_MIN,
+            maxZoom: this.ZOOM_MAX,
             url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/2",
             style: {
                 color: "#B200FF",
@@ -124,6 +137,8 @@ export class LayerService {
         },
         {
             name: "huc6",
+            minZoom: this.ZOOM_MIN,
+            maxZoom: this.ZOOM_MAX,
             url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/3",
             style: {
                 color: "#FF00DC",
@@ -134,6 +149,8 @@ export class LayerService {
         },
         {
             name: "huc4",
+            minZoom: this.ZOOM_MIN,
+            maxZoom: this.ZOOM_MAX,
             url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/4",
             style: {
                 color: "#FF006E",
@@ -144,6 +161,8 @@ export class LayerService {
         },
         {
             name: "huc2",
+            minZoom: this.ZOOM_MIN,
+            maxZoom: this.ZOOM_MAX,
             url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/5",
             style: {
                 color: "#FF0000",
@@ -164,7 +183,7 @@ export class LayerService {
     basemapLayers = [
         /* "Map Name": L.tileLayer, */
     ];
-    featureLayers = [
+    overlayLayers = [
         /* "Marker": ESRI.featureLayer, */
     ];
     simLayers = [
@@ -176,6 +195,8 @@ export class LayerService {
           layer: layer, 
         } */
     ];
+
+    hucLayerNames = ["HU_12_NAME", "HU_10_NAME", "HU_8_NAME", "HU_6_NAME", "HU_4_NAME", "HU_2_NAME"];
 
     selectedComId = null;
 
@@ -203,9 +224,6 @@ export class LayerService {
         className: "splash",
     });
 
-    // this isn't doing anything yet
-    layerDataSubject: BehaviorSubject<any>;
-
     constructor(private simulation: SimulationService, private hms: HmsService, private waters: WatersService) {
         // setup default tile maps
         for (let basemap of this.basemaps) {
@@ -217,9 +235,11 @@ export class LayerService {
             });
         }
         // setup default feature layers
-        for (let feature of this.features) {
+        for (let feature of this.overlays) {
             let layer = ESRI.featureLayer({
                 url: feature.url,
+                minZoom: feature.minZoom,
+                maxZoom: feature.maxZoom,
                 onEachFeature: this.addToolTip,
             });
             layer.on("mouseover", (d) => {
@@ -234,24 +254,23 @@ export class LayerService {
                 d.layer.setStyle(feature.style);
             });
             layer.setStyle(feature.style);
-            this.featureLayers.push({
+            this.overlayLayers.push({
                 type: "feature",
                 name: feature.name,
                 layer: layer,
                 show: false,
             });
         }
-        // this.layerDataSubject = new BehaviorSubject(this.layerData);
         this.simulation.interfaceData().subscribe((simData) => {
-            if (simData.catchment_status.length) {
-                this.updateStreamLayer(simData.catchment_status);
-            }
+            // if (simData.sim_status.catchment_status.length) {
+            //     this.updateStreamLayer(simData.sim_status.catchment_status);
+            // }
         });
     }
 
     addToolTip(feature, layer): void {
-        const layerNames = ["HU_12_NAME", "HU_10_NAME", "HU_8_NAME", "HU_6_NAME", "HU_4_NAME", "HU_2_NAME"];
-        for (let name of layerNames) {
+        const hucLayerNames = ["HU_12_NAME", "HU_10_NAME", "HU_8_NAME", "HU_6_NAME", "HU_4_NAME", "HU_2_NAME"];
+        for (let name of hucLayerNames) {
             if (feature.properties[name]) {
                 layer.bindTooltip(feature.properties[name], {
                     sticky: true,
@@ -377,7 +396,7 @@ export class LayerService {
         forkJoin([this.waters.getNetworkGeometry(comid, distance), this.hms.getNetworkInfo(comid, distance)]).subscribe(
             (networkData) => {
                 for (let data of networkData) {
-                    if (data.networkData) this.simulation.updateSimData("network", data.networkData);
+                    if (data.networkInfo) this.simulation.updateSimData("network", data.networkInfo);
                     if (data.networkGeometry) this.buildStreamLayers(data.networkGeometry);
                 }
                 this.simulation.updateSimData("waiting", false);
@@ -389,7 +408,6 @@ export class LayerService {
     }
 
     buildStreamLayers(data) {
-        console.log("buildStreamLayers: ", data);
         const fl = data.output.flowlines_traversed;
         const inHucSegments = [];
         const outHucSegments = [];
@@ -517,7 +535,7 @@ export class LayerService {
                 }
                 break;
             case "feature":
-                for (let feature of this.featureLayers) {
+                for (let feature of this.overlayLayers) {
                     if (feature.name == name) {
                         feature.show = !feature.show;
                     }
@@ -621,7 +639,7 @@ export class LayerService {
     }
 
     updateStyle(name, style) {
-        for (let feature of this.featureLayers) {
+        for (let feature of this.overlayLayers) {
             if (feature.name == name) {
                 feature.layer.setStyle(style);
             }
@@ -637,7 +655,7 @@ export class LayerService {
         for (let layer of this.basemapLayers) {
             if (layer.show) this.toggleLayer(layer.type, layer.name);
         }
-        for (let layer of this.featureLayers) {
+        for (let layer of this.overlayLayers) {
             if (layer.show) this.toggleLayer(layer.type, layer.name);
         }
         for (let layer of this.simLayers) {
@@ -645,7 +663,7 @@ export class LayerService {
         }
         return {
             basemaps: this.basemapLayers,
-            defaultFeatures: this.featureLayers,
+            overlays: this.overlayLayers,
             simFeatures: this.simLayers,
         };
     }
