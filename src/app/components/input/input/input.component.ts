@@ -1,246 +1,151 @@
 import { Component, OnInit } from "@angular/core";
-import { formatDate } from "@angular/common";
 
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { Router } from "@angular/router";
 
 import { HmsService } from "src/app/services/hms.service";
-import { MapService } from "src/app/services/map.service";
 import { SimulationService } from "src/app/services/simulation.service";
+import { LayerService } from "src/app/services/layer.service";
 
 @Component({
-  selector: "app-input",
-  templateUrl: "./input.component.html",
-  styleUrls: ["./input.component.css"],
+    selector: "app-input",
+    templateUrl: "./input.component.html",
+    styleUrls: ["./input.component.css"],
 })
 export class InputComponent implements OnInit {
-  distanceForm: FormGroup;
-  moduleForm: FormGroup;
-  pPointForm: FormGroup;
-  svForm: FormGroup;
-  pSetUpForm: FormGroup;
+    distanceForm: FormGroup;
+    moduleForm: FormGroup;
+    pPointForm: FormGroup;
+    svForm: FormGroup;
+    pSetUpForm: FormGroup;
 
-  huc: HUC;
-  catchment: Catchment;
-  stream = false;
-  numNetSegments: number;
+    waiting = false;
+    simExecuting = false;
+    simCompleted = false;
 
-  // probably change this to a single state variable and a loading spinner on map
-  // instead of this per button progress bar approach
-  loadingHuc = false;
-  loadingCatchment = false;
-  loadingStream = false;
-  loadingApi = false;
-  waiting = false;
+    sv = [];
+    network = [];
 
-  jsonFlags = null;
-  baseJson = false;
+    jsonFlags = [];
+    baseJson = false;
 
-  sVariables = [];
+    sVariables;
+    numNetSegments;
+    huc;
+    catchment;
 
-  simStatus = "";
-  status_message = "";
-  simulationExecuting = false;
-  simComplete = false;
+    constructor(
+        private fb: FormBuilder,
+        private hms: HmsService,
+        private simulation: SimulationService,
+        private layerService: LayerService
+    ) {}
 
-  flags = [];
+    ngOnInit(): void {
+        this.pPointForm = this.fb.group({
+            pPointComid: [null],
+        });
 
-  /*
-  Total N
-  Total P
-  Organic Matter
+        this.distanceForm = this.fb.group({
+            distance: [this.simulation.getUpstreamDistance()],
+        });
 
-  Amonia
-  Nitrate
-  Total P
-  Organic Matter
+        this.moduleForm = this.fb.group({});
+        this.hms.getATXJsonFlags().subscribe((flags) => {
+            this.jsonFlags = flags;
+            const moduleFormFields = {};
+            for (let flag of this.jsonFlags) {
+                moduleFormFields[flag] = [false];
+                // select the first checkbox by default
+                if (flag == this.jsonFlags[0]) {
+                    moduleFormFields[flag] = [true];
+                }
+            }
+            this.moduleForm = this.fb.group(moduleFormFields);
+        });
 
-  Amonia
-  Nitrate
-  Phosphate- dissoved PO4
-  Organic matter 
+        this.pSetUpForm = this.fb.group({
+            firstDay: [this.simulation.getFirstDay(), Validators.required],
+            lastDay: [this.simulation.getLastDay(), Validators.required],
+            tStep: [this.simulation.getTimeStep(), Validators.required],
+        });
 
-  Nitrogen
-  Phosphorus
-  Organic Matter
+        this.simulation.interfaceData().subscribe((data) => {
+            this.updateInterface(data);
+        });
+    }
 
-  Total N
-  Dissolved Phosphate (PO4)
-  Organic Matter
+    // updateInterface(simData): void {
+    //     console.log("interfaceUpdate: ", simData);
+    //     this.waiting = simData.waiting;
+    //     this.selectedHuc = simData.selectedHuc;
+    //     this.selectedCatchment = simData.selectedCatchment;
+    //     this.baseJson = simData.base_json;
+    //     this.sv = simData.sv;
+    //     this.network = simData.network;
+    //     this.jsonFlags = simData.jsonFlags;
+    //     this.baseJson = simData.base_json;
+    //     this.simExecuting = simData.sim_executing;
+    //     this.simCompleted = simData.sim_completed;
+    // }
 
-  "$type": "TNH4Obj", "PName": "Total Ammonia as N",
-  "$type": "TNO3Obj", "PName": "Nitrate as N",
-  "$type": "TPO4Obj", "PName": "Total Soluble P",
-  "$type": "TCO2Obj", "PName": "Carbon dioxide",
-  "$type": "TO2Obj", "PName": "Oxygen",
-  */
+    updateInterface(data): void {
+        console.log("interfaceUpdate: ", data);
 
-  constructor(
-    private router: Router,
-    private fb: FormBuilder,
-    private hms: HmsService,
-    private simulation: SimulationService,
-    private mapService: MapService
-  ) {}
-
-  ngOnInit(): void {
-    this.pPointForm = this.fb.group({
-      pPointComid: [null],
-    });
-
-    this.distanceForm = this.fb.group({
-      distance: ["50"],
-    });
-
-    this.moduleForm = this.fb.group({});
-    this.hms.getATXJsonFlags().subscribe((flags) => {
-      this.jsonFlags = flags;
-      const moduleFormFields = {};
-      for (let flag of this.jsonFlags) {
-        moduleFormFields[flag] = [false];
-        // select the first checkbox by default
-        if (flag == this.jsonFlags[0]) {
-          moduleFormFields[flag] = [true];
+        for (let key of Object.keys(data)) {
+            switch (key) {
+                case "waiting":
+                    this.waiting = data[key];
+                    break;
+                case "selectedHuc":
+                    this.huc = data[key];
+                    break;
+                case "selectedCatchment":
+                    this.catchment = data[key];
+                    break;
+                case "sv":
+                    if (data[key]) {
+                        this.sVariables = data[key];
+                    } else {
+                        this.sVariables = [];
+                    }
+                    break;
+                case "network":
+                    if (data[key] && data[key].sources) {
+                        this.numNetSegments = Object.keys(data[key].sources).length;
+                    }
+                    break;
+                default:
+                // console.log("input doesn't use: ", key);
+            }
         }
-      }
-      this.moduleForm = this.fb.group(moduleFormFields);
-    });
-
-    this.pSetUpForm = this.fb.group({
-      firstDay: [
-        formatDate(
-          new Date(this.simulation.simData.pSetup.firstDay),
-          "yyyy-MM-dd",
-          "en"
-        ),
-        Validators.required,
-      ],
-      lastDay: [
-        formatDate(
-          new Date(this.simulation.simData.pSetup.lastDay),
-          "yyy-MM-dd",
-          "en"
-        ),
-        Validators.required,
-      ],
-      tStep: ["hour", Validators.required],
-    });
-
-    this.simulation.interfaceData().subscribe((d) => {
-      this.updateInterface(d);
-    });
-  }
-
-  updateInterface(data): void {
-    for (let key of Object.keys(data)) {
-      switch (key) {
-        case "huc":
-          this.updateHucInput(data[key]);
-          break;
-        case "catchment":
-          this.updateCatchmentInput(data[key]);
-          break;
-        case "sv":
-          if (data[key]) {
-            this.sVariables = data[key];
-          } else {
-            this.sVariables = [];
-          }
-          break;
-        case "network":
-          if (data[key] && data[key].sources) {
-            this.numNetSegments = Object.keys(data[key].sources).length;
-          }
-          break;
-        default:
-        // console.log("input doesn't use: ", key);
-      }
     }
-  }
 
-  updateHucInput(huc): void {
-    this.huc = huc;
-  }
-
-  clearHuc(): void {
-    this.mapService.removeFeature("huc", this.huc.id);
-    this.simulation.clearHuc();
-    this.huc = null;
-    if (this.catchment) {
-      this.clearCatchment();
+    getCatchment(): void {
+        // this.pPointForm.get("pPointComid").value;
+        // this.layerService.getCatchmentByComId()
     }
-  }
 
-  updateCatchmentInput(catchment): void {
-    this.catchment = catchment;
-  }
+    getStreamNetwork(): void {
+        this.layerService.buildStreamNetwork(this.simulation.getPourPoint(), this.distanceForm.get("distance").value);
+    }
 
-  clearCatchment(): void {
-    this.mapService.removeFeature("catchment", this.catchment.id);
-    this.simulation.clearCatchment();
-    this.catchment = null;
-    this.stream = false;
-  }
+    clearHuc(): void {
+        this.layerService.removeFeature("huc");
+    }
 
-  getPourPoint(): void {
-    // this.hms.getStreamNetwork();
-    // this.pPointForm.get("pPointComid").value;
-  }
+    clearCatchment(): void {
+        this.layerService.removeFeature("catchment");
+    }
 
-  getStreamNetwork(): void {
-    this.loadingStream = true;
-    this.mapService
-      .buildStreamNetwork(
-        this.pPointForm.get("pPointComid").value
-          ? this.pPointForm.get("pPointComid").value
-          : this.catchment.id,
-        this.distanceForm.get("distance").value
-          ? this.distanceForm.get("distance").value
-          : "50"
-      )
-      .subscribe((data) => {
-        this.loadingStream = false;
-        if (data) this.stream = true;
-      });
-  }
+    getBaseJSONByFlags(): void {
+        this.simulation.getBaseJsonByFlags(this.moduleForm.value);
+    }
 
-  getBaseJSONByFlags(): void {
-    const flags = this.moduleForm.value;
-    this.simulation.updateSimData("flags", flags);
-    this.hms.getBaseJsonByFlags(flags).subscribe((json) => {
-      this.simulation.updateSimData("base_json", json);
-      const sv = [];
-      for (let key of Object.keys(json.AQTSeg.SV)) {
-        sv.push(json.AQTSeg.SV[key]);
-      }
-      this.simulation.updateSimData("sv", sv);
-      this.baseJson = true;
-    });
-  }
+    clearBaseJson(): void {
+        this.simulation.updateSimData("base_json", null);
+    }
 
-  clearBaseJson(): void {
-    this.baseJson = false;
-    this.simulation.updateSimData("base_json", null);
-  }
-
-  isUsingFixedStep(): boolean {
-    return this.pSetUpForm.get("useFixStepSize").value;
-  }
-
-  executeSimulation(): void {
-    this.simulationExecuting = true;
-    this.simulation.executeSimulation(this.pSetUpForm.value);
-  }
-}
-
-interface HUC {
-  areaAcres: string;
-  areaSqKm: string;
-  id: string;
-  name: string;
-}
-
-interface Catchment {
-  areaSqKm: string;
-  id: string;
+    executeSimulation(): void {
+        this.simulation.executeSimulation(this.pSetUpForm.value);
+    }
 }

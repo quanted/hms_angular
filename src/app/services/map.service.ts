@@ -29,14 +29,16 @@ export class MapService {
             this.handleClick(mapClickEvent);
         });
         this.layerService.setupLayers(this.map);
+
+        // move this to css
         document.getElementById("map").style.cursor = "crosshair";
     }
 
     handleClick(mapClickEvent): void {
-        if (!this.simulation.hucSelected) {
+        if (!this.simulation.isHucSelected()) {
             this.getHuc(mapClickEvent.latlng);
         } else {
-            if (this.simulation.hucSelected && !this.simulation.catchmentSelected) {
+            if (this.simulation.isHucSelected() && !this.simulation.isCatchmentSelected()) {
                 this.getCatchment(mapClickEvent.latlng);
             }
         }

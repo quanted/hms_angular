@@ -1,6 +1,6 @@
 <div class="input-container">
     <strong class="centered">Aquatox WebWorkflow Alpha v0.1.0</strong>
-    <div *ngIf="!simulationExecuting && !simComplete">
+    <div *ngIf="!simExecuting && !simCompleted">
         <div class="scroll-pane">
             <!-- AOI section -->
             <div class="container-item">
@@ -40,9 +40,9 @@
                     <div *ngIf="catchment && !stream" [formGroup]="distanceForm">
                         <div class="form-row">Upstream Distance (Km)<input type="number" formControlName="distance"></div>
                     </div>
-                    <div class="button" *ngIf="huc && catchment && !stream && !loadingStream" (click)="getStreamNetwork()">
+                    <div class="button" *ngIf="huc && catchment && !stream && !waiting" (click)="getStreamNetwork()">
                         Get stream network</div>
-                    <div class="button" *ngIf="huc && catchment && !stream && loadingStream">
+                    <div class="button" *ngIf="huc && catchment && waiting">
                         <mat-progress-bar mode="indeterminate"></mat-progress-bar>
                     </div>
                 </div>
@@ -125,5 +125,5 @@
         </div>
     </div>
 
-    <app-execution-panel *ngIf="simulationExecuting || simComplete"></app-execution-panel>
+    <app-execution-panel *ngIf="simExecuting || simCompleted"></app-execution-panel>
 </div>

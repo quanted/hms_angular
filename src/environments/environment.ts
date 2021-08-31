@@ -3,12 +3,14 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false,
-  apiURL: "http://localhost:8080/hms/rest",
-  swaggerURL: "http://localhost:8080/hms/api_doc/swagger/",
+    production: false,
 
-  // apiURL: "https://ceamdev.ceeopdev.net/hms/rest",
-  // swaggerURL: "https://ceamdev.ceeopdev.net/hms/api_doc/swagger/",
+    apiURL: "http://localhost:8080/hms/rest",
+
+    // apiURL: "https://ceamdev.ceeopdev.net/hms/rest",
+
+    watersUrl: "https://ofmpub.epa.gov/waters10/",
+    NHDPlusUrl: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/",
 };
 
 /*

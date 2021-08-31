@@ -1,15 +1,16 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 
-import { Observable, of } from "rxjs";
-import { catchError, map } from "rxjs/operators";
+import { Observable, of, TimeoutError } from "rxjs";
+import { catchError, map, timeout } from "rxjs/operators";
+
+import { environment } from "../../environments/environment";
 
 @Injectable({
     providedIn: "root",
 })
 export class WatersService {
-    watersUrl = "https://ofmpub.epa.gov/waters10/";
-    NHDPlusUrl = "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/";
+    REQUEST_TIMEOUT = 20000; // 1000 = 1 second
 
     constructor(private http: HttpClient) {}
 
@@ -93,7 +94,7 @@ export class WatersService {
     ];
 
     getHucData(hucType, lat, lng): Observable<any> {
-        let url = this.NHDPlusUrl;
+        let url = environment.NHDPlusUrl;
 
         if (hucType === "HUC_12") {
             url += "WBD_NP21_Simplified/MapServer/0/query?";
@@ -110,22 +111,18 @@ export class WatersService {
     }
 
     getCatchmentData(lat, lng): Observable<any> {
-        let url = this.NHDPlusUrl;
+        let url = environment.NHDPlusUrl;
         url += "Catchments_NP21_Simplified/MapServer/0/query?";
 
         const params = { ...this.params };
         params.geometry = `{"x":${lng},"y":${lat},"spatialReference":{"wkid":4326}}`;
 
-        return this.http.get(`${url}${this.serialize(params)}&outFields=${this.catchmentOutputFields.join(",+")}`).pipe(
-            catchError((err) => {
-                return of({ error: err });
-            })
-        );
+        return this.http.get(`${url}${this.serialize(params)}&outFields=${this.catchmentOutputFields.join(",+")}`);
     }
 
     // this returns the stream geometry and "event" locations
     // starting at 'comid' and ending at 'distance' upstream
-    getStreamNetworkData(comid, distance): Observable<any> {
+    getStreamNetworkData(comid: string, distance: string): Observable<any> {
         let options = {
             pNavigationType: "UT", // Upstream with tributaries
             pStartComid: comid,
@@ -140,9 +137,23 @@ export class WatersService {
             optOutCS: "SRSNAME=urn:ogc:def:crs:OGC::CRS84",
         };
 
-        return this.http.get(`${this.watersUrl}UpstreamDownstream.Service?${this.serialize(options)}`).pipe(
-            catchError((err) => {
-                return of({ error: err });
+        return this.http.get(`${environment.watersUrl}UpstreamDownstream.Service?${this.serialize(options)}`).pipe(
+            map((data) => {
+                console.log("waters: ", data);
+                data = {
+                    networkGeometry: { ...data },
+                };
+                return data;
+            }),
+            timeout(this.REQUEST_TIMEOUT),
+            catchError((error) => {
+                if (error instanceof TimeoutError) {
+                    console.log("waters timeout: ", error);
+                    return of({ error: "Request to getNetworkGeometry timed out", message: error.message });
+                } else {
+                    console.log("waters error: ", error);
+                    return of({ error });
+                }
             })
         );
     }

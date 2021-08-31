@@ -1,7 +1,8 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 
-import { Observable } from "rxjs";
+import { Observable, of, TimeoutError } from "rxjs";
+import { catchError, map, timeout } from "rxjs/operators";
 
 import { environment } from "../../environments/environment";
 
@@ -9,6 +10,8 @@ import { environment } from "../../environments/environment";
     providedIn: "root",
 })
 export class HmsService {
+    REQUEST_TIMEOUT = 60000; // 1000 = 1 second
+
     constructor(private http: HttpClient) {}
 
     getATXJsonFlags(): Observable<any> {
@@ -23,7 +26,27 @@ export class HmsService {
     }
 
     getStreamNetwork(comid, distance): Observable<any> {
-        return this.http.get(`${environment.apiURL}/api/info/streamnetwork?comid=${comid}&maxDistance=${distance}`);
+        return this.http
+            .get(`${environment.apiURL}/api/info/streamnetwork?comid=${comid}&maxDistance=${distance}`)
+            .pipe(
+                map((data) => {
+                    console.log("hms: ", data);
+                    data = {
+                        networkInfo: { ...data },
+                    };
+                    return data;
+                }),
+                timeout(this.REQUEST_TIMEOUT),
+                catchError((error) => {
+                    if (error instanceof TimeoutError) {
+                        console.log("hms timeout: '", error);
+                        return of({ error: "Request to getNetworkInfo timed out", message: error.message });
+                    } else {
+                        console.log("hms error: ", error);
+                        return of({ error });
+                    }
+                })
+            );
     }
 
     addAquatoxSimData(simulation): Observable<any> {
