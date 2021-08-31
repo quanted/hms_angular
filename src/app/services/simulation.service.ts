@@ -73,6 +73,7 @@ export class SimulationService {
     }
 
     executeSimulation(pSetup): void {
+        this.updateSimData("sim_executing", true);
         this.initializeAquatoxSimulation(pSetup).subscribe((response) => {
             this.updateSimData("simId", response["_id"]);
 
@@ -113,8 +114,6 @@ export class SimulationService {
             simulation_dependencies: [],
             catchment_dependencies: [],
         };
-
-        console.log("init: ", this.simData.base_json.AQTSeg.PSetup);
         return this.hms.addAquatoxSimData(initData);
     }
 
@@ -166,29 +165,14 @@ export class SimulationService {
         if (this.simData["simId"]) {
             this.statusCheck = setInterval(() => {
                 console.log("checking status...");
-                this.hms.getAquatoxSimStatus(this.simData["simId"]).subscribe((response) => {
-                    const catchment_status = [];
-                    for (let comid of Object.keys(response.catchments)) {
-                        let cStatus = {
-                            comid,
-                            status: response.catchments[comid].status,
-                        };
-                        if (cStatus.status == "IN-PROGRESS") cStatus["in_progress"] = true;
-                        if (cStatus.status == "COMPLETED") cStatus["completed"] = true;
-                        if (cStatus.status == "FAILED") cStatus["failed"] = true;
-                        catchment_status.push(cStatus);
-                    }
-                    let simStatus = {
-                        status: response.status,
-                        status_message: response.message,
-                        catchment_status,
-                    };
+                this.hms.getAquatoxSimStatus(this.simData["simId"]).subscribe((simStatus) => {
                     this.updateSimData("sim_status", simStatus);
                     if (
                         !this.simData.sim_completed &&
-                        (response.status == "COMPLETED" || response.status == "FAILED")
+                        (simStatus.status == "COMPLETED" || simStatus.status == "FAILED")
                     ) {
                         this.updateSimData("sim_completed", true);
+                        this.updateSimData("sim_executing", false);
                         console.log("simulation complete");
                         this.endStatusCheck();
                     }
@@ -282,6 +266,21 @@ export class SimulationService {
                 };
                 this.simData.selectedCatchment = newSimData;
                 this.simData.network.pour_point_comid = newSimData.properties.FEATUREID;
+            } else if (key == "network") {
+                this.simData.network.network = data.network;
+                this.simData.network.order = data.order;
+                const sources = {};
+                for (let key of Object.keys(data.sources)) {
+                    if (key != "boundaries") {
+                        sources[key] = data.sources[key];
+                    }
+                }
+                this.simData.network.sources = sources;
+            } else if (key == "base_json") {
+                console.log("PSetup: ", data.AQTSeg.PSetup);
+                this.simData.Location.Locale = data.AQTSeg.Location.Locale;
+                this.simData.Location.Remin = data.AQTSeg.Location.Remin;
+                this.simData.base_json = data;
             } else if (key == "sv") {
                 this.simData[key] = data;
             } else if (typeof data === "string" || typeof data === "number" || typeof data === "boolean") {
@@ -293,6 +292,7 @@ export class SimulationService {
             this.simData[key] = null;
         }
         this.simDataSubject.next(this.simData);
+        console.log("simData: ", this.simData);
     }
 
     getDefaultCatchmentDependencies() {

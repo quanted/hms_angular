@@ -7,9 +7,13 @@ export class DefaultSimData {
         simId: null,
         status: "Starting...",
         status_message: "Initializing...",
+        sim_status: {
+            status: "",
+            message: "",
+            catchments: [],
+        },
         sim_executing: false,
         sim_completed: false,
-        catchment_status: [],
         network: {
             pour_point_comid: null,
             segments: {
@@ -19,6 +23,7 @@ export class DefaultSimData {
             },
             order: null,
             sources: null,
+            network: null,
             catchment_data: [],
         },
         Location: {
