@@ -8,7 +8,6 @@ import { CookieService } from "ngx-cookie-service";
 import { HmsService } from "./hms.service";
 
 import { DefaultSimData } from "../models/DefaultSimData";
-import { ThisReceiver } from "@angular/compiler";
 
 @Injectable({
     providedIn: "root",
