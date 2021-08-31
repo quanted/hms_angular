@@ -321,7 +321,25 @@ export class LayerService {
     }
 
     getCatchmentByComId(comid): void {
-        console.log("getByComid: ", comid);
+        this.simulation.updateSimData("waiting", true);
+        this.hms.getCatchmentInfo(comid).subscribe(
+            (data) => {
+                if (data.catchmentInfo) {
+                    this.simulation.updateSimData("waiting", false);
+                    // now get the huc by coods
+                    const coords = {
+                        lat: data.catchmentInfo.metadata.CentroidLatitude,
+                        lng: data.catchmentInfo.metadata.CentroidLongitude,
+                    };
+                    this.getHuc(coords);
+                    this.getCatchment(coords);
+                }
+            },
+            (error) => {
+                console.log("error getting catchment data: ", error);
+                this.simulation.updateSimData("waiting", false);
+            }
+        );
     }
 
     getCatchment(coords): void {

@@ -121,8 +121,7 @@ export class InputComponent implements OnInit {
     }
 
     getCatchment(): void {
-        // this.pPointForm.get("pPointComid").value;
-        // this.layerService.getCatchmentByComId()
+        this.layerService.getCatchmentByComId(this.pPointForm.get("pPointComid").value);
     }
 
     getStreamNetwork(): void {
