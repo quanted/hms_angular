@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
+import { Component, EventEmitter, HostListener, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
+import { Subscription } from "rxjs";
 import { OutputService } from "src/app/services/output.service";
 import { SimulationService } from "src/app/services/simulation.service";
 
@@ -16,7 +17,7 @@ export class PlotContainerComponent {
     selectedSV: string,
     selectedChart: string
   };
-
+  simDataSubscription: Subscription;
   catchments: any;
   // Output emitter to tell parent to delete
   @Output() deleteItem = new EventEmitter<any>();
@@ -42,15 +43,13 @@ export class PlotContainerComponent {
     private simulationService: SimulationService,
     public outputService: OutputService,
   ) {
-    this.simulationService.simDataSubject
+    this.simDataSubscription = this.simulationService.simDataSubject
       .subscribe(data => {
         for (let key of Object.keys(data)) {
           switch (key) {
             case "catchment_data":
               this.catchments = data[key];
               this.stateVariablesList = this.outputService.stateVariablesList;
-              this.selectedSV = this.outputService.stateVariablesList[this.dropListData?.selectedSV];
-              this.chart = this.dropListData?.selectedChart;
               this.setData();
               break;
             default:
@@ -58,9 +57,10 @@ export class PlotContainerComponent {
           }
         }
       });
-
     this.outputService.dropListDataSubject.subscribe(data => {
-      this.setData();
+      this.selectedSV = this.outputService.stateVariablesList[this.dropListData?.selectedSV];
+      this.chart = this.dropListData?.selectedChart;
+      this.catchments && this.setData();
     });
   }
 
@@ -72,12 +72,18 @@ export class PlotContainerComponent {
           this.stateVariablesList = this.outputService.stateVariablesList;
           this.selectedSV = this.outputService.stateVariablesList[this.dropListData?.selectedSV];
           this.chart = this.dropListData?.selectedChart;
-          this.setData();
+          this.catchments && this.setData();
           break;
         default:
           break;
       }
     }
+  }
+
+  @HostListener('unloaded')
+  ngOnDestroy() {
+    // Unsubscribe from the simulation data 
+    this.simDataSubscription.unsubscribe();
   }
 
   setData() {
@@ -93,23 +99,24 @@ export class PlotContainerComponent {
    * which updates the @Input() data in the plotly component.
    */
   setPlotData() {
+    this.plotData = [];
     // Get first entry to set dates
     // Set dates for all data to reuse
     const dates = [];
+    console.log(this.catchments);
     this.catchments[0].data.dates.forEach((d) => dates.push(new Date(d)));
     // Iterate over map and set plot data
     for (let catchment of this.catchments) {
       // Get values for the selected state variable
       const values = [];
       catchment.data.data?.[this.selectedSV]?.forEach((d) => values.push(d));
-      this.plotData = [];
       this.plotData.push({
         x: dates,
         y: values,
         mode: this.chart,
         type: this.chart,
         name: catchment.comid,
-        visible: 'true',
+        visible: this.dropListData?.selectedCatchments.includes(catchment.comid) ? 'true' : 'legendonly',
         marker: {
           size: 4
         }
@@ -131,29 +138,30 @@ export class PlotContainerComponent {
 
     // Set column names
     this.tableColumnNames.push("Date");
-    Object.keys(this.catchments[0].data.data).forEach((key) => {
-      this.tableColumnNames.push(key);
-    });
-
-    let index = -1;
-    this.catchments.forEach((catchment) => {
-      if (catchment.comid === this.selectedCatchment) {
-        index = this.catchments.indexOf(catchment);
-      }
-    });
-    if (index > -1) {
-      // Loop over length of data
-      for (let i = 0; i < this.catchments[index].data.dates.length; i++) {
-        let obj: any = {};
-        // Loop over state variables
-        for (let j = 1; j < this.tableColumnNames.length; j++) {
-          obj[this.tableColumnNames[0]] = new Date(this.catchments
-            ?.[index]?.data?.dates[i]).toString().split("GMT")[0];
-          obj[this.tableColumnNames[j]] = this.catchments[index]
-            ?.data?.data[this.tableColumnNames[j]][i];
+    if (this.catchments) {
+      Object.keys(this.catchments[0].data.data).forEach((key) => {
+        this.tableColumnNames.push(key);
+      });
+      let index = -1;
+      this.catchments.forEach((catchment) => {
+        if (catchment.comid === this.selectedCatchment) {
+          index = this.catchments.indexOf(catchment);
         }
-        // Push to table data
-        this.tableColumnData.push(obj);
+      });
+      if (index > -1) {
+        // Loop over length of data
+        for (let i = 0; i < this.catchments[index].data.dates.length; i++) {
+          let obj: any = {};
+          // Loop over state variables
+          for (let j = 1; j < this.tableColumnNames.length; j++) {
+            obj[this.tableColumnNames[0]] = new Date(this.catchments
+              ?.[index]?.data?.dates[i]).toString().split("GMT")[0];
+            obj[this.tableColumnNames[j]] = this.catchments[index]
+              ?.data?.data[this.tableColumnNames[j]][i];
+          }
+          // Push to table data
+          this.tableColumnData.push(obj);
+        }
       }
     }
   }
@@ -162,8 +170,8 @@ export class PlotContainerComponent {
   svChange(event) {
     this.dropListData.selectedSV = this.selectedSV;
     this.outputService.dropListDataSubject.next(this.dropListData);
-    this.plotData = [];
-    this.setData();
+    //this.plotData = [];
+    //this.setData();
   }
 
   // Update on change of chart type

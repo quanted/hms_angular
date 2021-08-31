@@ -283,8 +283,9 @@ export class SimulationService {
         this.simData.sim_status = data;
       } else if (key == "catchment_data") {
         if (!this.simData["catchment_data"]) {
-          this.simData["catchment_data"] = [];
+          this.simData["catchment_data"] = data;
         }
+        /*
         let found = false;
         for (let catchment of this.simData["catchment_data"]) {
           if (data.comid == catchment.comid) found = true;
@@ -292,6 +293,7 @@ export class SimulationService {
         if (!found) {
           this.simData["catchment_data"].push(data);
         }
+        */
       } else if (key == "sv") {
         this.simData[key] = data;
       } else if (
