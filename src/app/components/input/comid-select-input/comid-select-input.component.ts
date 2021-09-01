@@ -10,146 +10,142 @@ import { MatTableDataSource } from "@angular/material/table";
 import { LayerService } from "src/app/services/layer.service";
 
 @Component({
-  selector: "app-comid-select-input",
-  templateUrl: "./comid-select-input.component.html",
-  styleUrls: ["./comid-select-input.component.css"],
+    selector: "app-comid-select-input",
+    templateUrl: "./comid-select-input.component.html",
+    styleUrls: ["./comid-select-input.component.css"],
 })
 export class ComidSelectInputComponent implements OnInit {
-  inputForm: FormGroup;
-  svIndex = []; /* Get from service */
+    inputForm: FormGroup;
+    svIndex = []; /* Get from service */
 
-  addingParameter = false;
-  addingSource = false;
-  parameters = [];
-  sources = [];
+    addingParameter = false;
+    addingSource = false;
+    parameters = [];
+    sources = [];
 
-  useConstLoadings = true;
+    useConstLoadings = true;
 
-  uploadedTimeSeries = false;
+    uploadedTimeSeries = false;
 
-  dataCSV = "";
+    dataCSV = "";
 
-  columnData = [];
-  columnNames = [];
+    columnData = [];
+    columnNames = [];
 
-  selectedComId = null;
+    selectedComId = null;
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  dataSource = new MatTableDataSource();
+    @ViewChild(MatPaginator) paginator: MatPaginator;
+    dataSource = new MatTableDataSource();
 
-  constructor(
-    private fb: FormBuilder,
-    private simulation: SimulationService,
-    private layerService: LayerService
-  ) {}
+    constructor(private fb: FormBuilder, private simulation: SimulationService, private layerService: LayerService) {}
 
-  ngOnInit(): void {
-    this.inputForm = this.fb.group({
-      constLoading: [""],
-      loadingMulti: [""],
-      altLoadings: [""],
-      comid: [""],
-    });
+    ngOnInit(): void {
+        this.inputForm = this.fb.group({
+            constLoading: [""],
+            loadingMulti: [""],
+            altLoadings: [""],
+            comid: [""],
+        });
 
-    this.simulation.interfaceData().subscribe((data) => {
-      for (let key of Object.keys(data)) {
-        switch (key) {
-          case "selectedComId":
-            this.initializeSegmentValues(data);
-            break;
-        }
-      }
-    });
-  }
-
-  initializeSegmentValues(simData): void {
-    if (this.selectedComId !== simData.selectedComId) {
-      this.cancelAdd();
+        this.simulation.interfaceData().subscribe((data) => {
+            for (let key of Object.keys(data)) {
+                switch (key) {
+                    case "selectedComId":
+                        this.initializeSegmentValues(data);
+                        break;
+                }
+            }
+        });
     }
-    this.selectedComId = simData.selectedComId;
-    this.inputForm.get("comid").setValue(simData.selectedComId);
-    if (simData.comid_inputs[this.selectedComId]) {
-      this.parameters = [];
-      this.sources = [];
-      const tempArry = simData.comid_inputs[this.selectedComId].sv;
-      for (let sv of tempArry) {
-        if (sv == "new parameter object") this.parameters.push(sv);
-        if (sv == "new source object") this.sources.push(sv);
-      }
-    } else {
-      this.parameters = [];
-      this.sources = [];
+
+    initializeSegmentValues(simData): void {
+        // if (this.selectedComId !== simData.selectedComId) {
+        //   this.cancelAdd();
+        // }
+        // this.selectedComId = simData.selectedComId;
+        // this.inputForm.get("comid").setValue(simData.selectedComId);
+        // if (simData.comid_inputs[this.selectedComId]) {
+        //   this.parameters = [];
+        //   this.sources = [];
+        //   const tempArry = simData.comid_inputs[this.selectedComId].sv;
+        //   for (let sv of tempArry) {
+        //     if (sv == "new parameter object") this.parameters.push(sv);
+        //     if (sv == "new source object") this.sources.push(sv);
+        //   }
+        // } else {
+        //   this.parameters = [];
+        //   this.sources = [];
+        // }
     }
-  }
 
-  onFileChange($event) {
-    this.uploadedTimeSeries = true;
-    let file = $event.target.files[0];
-    var reader = new FileReader();
-    reader.readAsText(file);
-    reader.onload = (e) => {
-      let csv: string = reader.result as string;
+    onFileChange($event) {
+        this.uploadedTimeSeries = true;
+        let file = $event.target.files[0];
+        var reader = new FileReader();
+        reader.readAsText(file);
+        reader.onload = (e) => {
+            let csv: string = reader.result as string;
 
-      this.dataCSV = csv;
-      const columnData = this.dataCSV.split("\n");
-      this.columnNames = columnData[0].split(",");
+            this.dataCSV = csv;
+            const columnData = this.dataCSV.split("\n");
+            this.columnNames = columnData[0].split(",");
 
-      for (let i = 1; i < columnData.length; i++) {
-        const row = columnData[i].split(",");
-        const record = {};
-        for (let j = 0; j < this.columnNames.length; j++) {
-          record[this.columnNames[j]] = row[j];
-        }
-        this.columnData.push(record);
-      }
+            for (let i = 1; i < columnData.length; i++) {
+                const row = columnData[i].split(",");
+                const record = {};
+                for (let j = 0; j < this.columnNames.length; j++) {
+                    record[this.columnNames[j]] = row[j];
+                }
+                this.columnData.push(record);
+            }
 
-      this.dataSource.data = this.columnData;
-      this.dataSource.paginator = this.paginator;
-    };
-  }
+            this.dataSource.data = this.columnData;
+            this.dataSource.paginator = this.paginator;
+        };
+    }
 
-  selectSegment(): void {
-    this.layerService.selectSegment(this.inputForm.get("comid").value);
-  }
+    selectSegment(): void {
+        this.layerService.selectSegment(this.inputForm.get("comid").value);
+    }
 
-  addParameter(): void {
-    this.addingParameter = true;
-    this.addingSource = false;
-  }
+    addParameter(): void {
+        this.addingParameter = true;
+        this.addingSource = false;
+    }
 
-  addSource(): void {
-    this.addingParameter = false;
-    this.addingSource = true;
-  }
+    addSource(): void {
+        this.addingParameter = false;
+        this.addingSource = true;
+    }
 
-  insertParameter() {
-    this.addingParameter = false;
-    // this.hmsService.validateCSV(this.dataCSV).subscribe();
-    this.simulation.updateSimData("comid_inputs", {
-      comid: this.selectedComId,
-      type: "parameter",
-      value: "new parameter object",
-    });
-  }
+    insertParameter() {
+        this.addingParameter = false;
+        // this.hmsService.validateCSV(this.dataCSV).subscribe();
+        this.simulation.updateSimData("comid_inputs", {
+            comid: this.selectedComId,
+            type: "parameter",
+            value: "new parameter object",
+        });
+    }
 
-  insertSource() {
-    this.addingSource = false;
-    // this.hmsService.validateCSV(this.dataCSV).subscribe();
-    this.simulation.updateSimData("comid_inputs", {
-      comid: this.selectedComId,
-      type: "source",
-      value: "new source object",
-    });
-  }
+    insertSource() {
+        this.addingSource = false;
+        // this.hmsService.validateCSV(this.dataCSV).subscribe();
+        this.simulation.updateSimData("comid_inputs", {
+            comid: this.selectedComId,
+            type: "source",
+            value: "new source object",
+        });
+    }
 
-  cancelAdd(): void {
-    this.addingParameter = false;
-    this.addingSource = false;
-    this.uploadedTimeSeries = false;
+    cancelAdd(): void {
+        this.addingParameter = false;
+        this.addingSource = false;
+        this.uploadedTimeSeries = false;
 
-    this.dataCSV = "";
+        this.dataCSV = "";
 
-    this.columnData = [];
-    this.columnNames = [];
-  }
+        this.columnData = [];
+        this.columnNames = [];
+    }
 }

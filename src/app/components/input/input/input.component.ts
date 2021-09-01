@@ -15,8 +15,29 @@ export class InputComponent implements OnInit {
     distanceForm: FormGroup;
     moduleForm: FormGroup;
     pPointForm: FormGroup;
-    svForm: FormGroup;
     pSetUpForm: FormGroup;
+    pSetupAdvancedForm: FormGroup;
+    localeForm: FormGroup;
+    localeAdvancedForm: FormGroup;
+    reminForm: FormGroup;
+    reminAdvancedForm: FormGroup;
+    svForm: FormGroup;
+
+    basicPSetupFields = ["FirstDay", "LastDay", "UseFixStepSize", "FixStepSize", "StepSizeInDays"];
+
+    // these are one that were discussed being exposed to the user
+    // but they seem like advanced would be more appropriate?
+    // "SaveBRates", // save derivative rates false to save space
+    // "AverageOutput", // trapiziodal integration
+
+    basicLocaleFields = ["no basic parameters"];
+
+    basicReminFields = [
+        { param: "DecayMax_Lab" },
+        { param: "DecayMax_Refr" },
+        { param: "KNitri" },
+        { param: "KDenitri_Wat" },
+    ];
 
     waiting = false;
     simExecuting = false;
@@ -67,6 +88,17 @@ export class InputComponent implements OnInit {
             firstDay: [this.simulation.getFirstDay(), Validators.required],
             lastDay: [this.simulation.getLastDay(), Validators.required],
             tStep: [this.simulation.getTimeStep(), Validators.required],
+            useFixStepSize: [null],
+            fixStepSize: [null],
+        });
+
+        this.localeForm = this.fb.group({});
+
+        this.reminForm = this.fb.group({
+            DecayMax_Lab: [],
+            DecayMax_Refr: [],
+            KNitri: [],
+            KDenitri_Wat: [],
         });
 
         this.simulation.interfaceData().subscribe((data) => {
@@ -89,8 +121,6 @@ export class InputComponent implements OnInit {
     // }
 
     updateInterface(data): void {
-        console.log("interfaceUpdate: ", data);
-
         for (let key of Object.keys(data)) {
             switch (key) {
                 case "waiting":
@@ -102,17 +132,20 @@ export class InputComponent implements OnInit {
                 case "selectedCatchment":
                     this.catchment = data[key];
                     break;
-                case "sv":
-                    if (data[key]) {
-                        this.sVariables = data[key];
-                    } else {
-                        this.sVariables = [];
-                    }
-                    break;
                 case "network":
-                    if (data[key] && data[key].sources) {
-                        this.numNetSegments = Object.keys(data[key].sources).length;
-                    }
+                    this.network = data[key];
+                    break;
+                case "base_json":
+                    this.baseJson = data[key];
+                    break;
+                case "sv":
+                    this.sVariables = data[key];
+                    break;
+                case "sim_executing":
+                    this.simExecuting = data[key];
+                    break;
+                case "sim_completed":
+                    this.simCompleted = data[key];
                     break;
                 default:
                 // console.log("input doesn't use: ", key);

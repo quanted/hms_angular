@@ -10,7 +10,7 @@
         
         <div class="container-item">
             <div>Overlays</div>
-            <app-layer-control *ngFor="let feature of defaultFeatures" [feature]="feature"></app-layer-control>
+            <app-layer-control *ngFor="let overlay of overlays" [feature]="overlay"></app-layer-control>
         </div>
     
         <div class="container-item" *ngIf="simFeatures.length" >

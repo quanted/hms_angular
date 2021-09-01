@@ -37,10 +37,10 @@
                         </div>
                     </div>
 
-                    <div *ngIf="catchment && !stream" [formGroup]="distanceForm">
+                    <div *ngIf="catchment && !network.network" [formGroup]="distanceForm">
                         <div class="form-row">Upstream Distance (Km)<input type="number" formControlName="distance"></div>
                     </div>
-                    <div class="button" *ngIf="huc && catchment && !stream && !waiting" (click)="getStreamNetwork()">
+                    <div class="button" *ngIf="huc && catchment && !network.network && !waiting" (click)="getStreamNetwork()">
                         Get stream network</div>
                     <div class="button" *ngIf="huc && catchment && waiting">
                         <mat-progress-bar mode="indeterminate"></mat-progress-bar>
@@ -49,7 +49,7 @@
             </div>
 
             <!-- Aquatox section -->
-            <div class="container-item" *ngIf="stream">
+            <div class="container-item" *ngIf="network.network">
                 <div class="section-item" *ngIf="jsonFlags && !baseJson" [formGroup]="moduleForm">
                     <div class="centered"><strong>Select Base Simulation</strong></div>
                     <div>Base Simulation Selection Options</div>
@@ -58,9 +58,10 @@
                     <div class="button" (click)="getBaseJSONByFlags()">Get Base Simulation</div>
                 </div>
 
+                <!-- PSetup section -->
                 <div *ngIf="baseJson" [formGroup]="pSetUpForm">
-                    <div class="centered"><strong>Study Time Period</strong></div>
-                    <div class="section-item" id="simulation-globals">
+                    <div class="centered"><strong>Study Setup</strong></div>
+                    <div class="section-item">
                         <div class="form-row">
                             <div>
                                 First Day
@@ -78,21 +79,48 @@
                                 <div>Day <input type="radio" name="tStep" formControlName="tStep" value="day"></div>
                             </div>
                         </div>
-                        <!-- <div class="form-row">
+                        <div class="form-row">
                             Use Alternate Step Size <input type="checkbox" formControlName="useFixStepSize" />
                         </div>
-                        <div class="form-row" *ngIf="isUsingFixedStep()">
+                        <div class="form-row" *ngIf="">
                             Step Size <input type="number" formControlName="fixStepSize" />
-                        </div> -->
+                        </div>
+                        <div>Advanced<mat-icon class="icon-panel-toggle" matTooltip="See Advanced Options">expand_more</mat-icon></div>
                     </div>
+                </div>
+
+                <!-- Locale section -->
+                <div *ngIf="baseJson" [formGroup]="localeForm">
+                    <div class="centered"><strong>Locale</strong></div>
+                    <div class="section-item">
+                        <div class="form-row">
+                        </div>
+                        <div>Advanced<mat-icon class="icon-panel-toggle" matTooltip="See Advanced Options">expand_more</mat-icon></div>
+                    </div>
+                </div>
+
+                <!-- Remin section -->
+                <div *ngIf="baseJson" [formGroup]="reminForm">
+                    <div class="centered"><strong>Remin</strong></div>
+                    <div class="section-item">
+                        <div class="form-row" *ngFor="let reminField of basicReminFields">
+                            <div>{{ reminField.param }}</div>
+                            <div class="vertical-center">
+                                <div>
+                                    <input type="number" class="input-comid" formControlName="{{ reminField.param }}" matTooltip="{{ reminField.param }}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>Advanced<mat-icon class="icon-panel-toggle" matTooltip="See Advanced Options">expand_more</mat-icon></div>
                 </div>
             </div>
 
 
-            <div class="container-item" *ngIf="stream && baseJson">
+            <div class="container-item" *ngIf="network.network && baseJson">
                 <div class="centered"><strong>Output State Variables</strong></div>
-                <div class="section-item" *ngFor="let variable of sVariables">
-                    <div class="form-row">
+                <div class="section-item">
+                    <div class="form-row" *ngFor="let variable of sVariables">
                         <div>{{ variable.PName }}</div>
                         <div class="vertical-center">
                             <div>
@@ -101,27 +129,19 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- <div class="form-row" [formGroup]="pPointForm">
-                        <div class="vertical-center">
-                            <div>Comid <input type="number" class="input-comid" formControlName="pPointComid" /></div>
-                        </div>
-                        <div class="button" (click)="getPourPoint()" matTooltip="Get Pour Point">Get Pour Point</div>
-                    </div> -->
-
                 </div>
             </div>
 
-            <div class="container-item" *ngIf="stream && baseJson">
+            <div class="container-item" *ngIf="network.network && baseJson">
                 <div class="centered"><strong>Stream Segments</strong></div>
                 <div>This network has {{ numNetSegments }} segments</div>
                 <app-segment-list></app-segment-list>
                 <app-comid-select-input></app-comid-select-input>
             </div>
         </div>
-        <div *ngIf="baseJson && stream" class="section-item">
+        <div *ngIf="baseJson && network.network" class="section-item">
             <div class="button" (click)="clearBaseJson()">Reset Base Simulation</div>
-            <div class="button" *ngIf="!simulationExecuting" (click)="executeSimulation()">Execute Aquatox Simulation</div>
+            <div class="button" *ngIf="!simExecuting" (click)="executeSimulation()">Execute Aquatox Simulation</div>
         </div>
     </div>
 
