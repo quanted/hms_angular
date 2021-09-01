@@ -8,7 +8,6 @@ import { CookieService } from "ngx-cookie-service";
 import { HmsService } from "./hms.service";
 
 import { DefaultSimData } from "../models/DefaultSimData";
-import { typeWithParameters } from "@angular/compiler/src/render3/util";
 
 @Injectable({
     providedIn: "root",
@@ -168,6 +167,11 @@ export class SimulationService {
                 console.log("checking status...");
                 this.hms.getAquatoxSimStatus(this.simData["simId"]).subscribe((simStatus) => {
                     this.updateSimData("sim_status", simStatus);
+                    for (let comid of <any>Object.keys(simStatus.catchments)) {
+                        if (simStatus.catchments[comid].status == "COMPLETED") {
+                            this.addSimResults(comid, simStatus.catchments[comid].task_id);
+                        }
+                    }
                     if (
                         !this.simData.sim_completed &&
                         (simStatus.status == "COMPLETED" || simStatus.status == "FAILED")
@@ -181,6 +185,15 @@ export class SimulationService {
             }, this.STATUS_CHECK_INTERVAL);
         } else {
             this.updateSimData("status_message", "No simId for this simulation");
+        }
+    }
+
+    addSimResults(comid, taskId): void {
+        if (this.simData.network.catchment_data[comid] == null) {
+            this.hms.getCatchmentData(taskId).subscribe((catchmentData) => {
+                this.simData.network.catchment_data[comid] = catchmentData;
+                this.updateSimData();
+            });
         }
     }
 
@@ -278,7 +291,6 @@ export class SimulationService {
                 }
                 this.simData.network.sources = sources;
             } else if (key == "base_json") {
-                console.log("PSetup: ", data.AQTSeg.PSetup);
                 this.simData.Location.Locale = data.AQTSeg.Location.Locale;
                 this.simData.Location.Remin = data.AQTSeg.Location.Remin;
                 this.simData.base_json = data;
@@ -293,7 +305,7 @@ export class SimulationService {
             this.simData[key] = null;
         }
         this.simDataSubject.next(this.simData);
-        // console.log("simData: ", this.simData);
+        console.log("simData: ", this.simData);
     }
 
     getDefaultCatchmentDependencies() {
@@ -313,5 +325,10 @@ export class SimulationService {
                 timeLocalized: "false",
             },
         };
+    }
+
+    resetSimulation(): void {
+        this.simData = { ...DefaultSimData.defaultSimData };
+        this.updateSimData();
     }
 }
