@@ -8,6 +8,7 @@ import { CookieService } from "ngx-cookie-service";
 import { HmsService } from "./hms.service";
 
 import { DefaultSimData } from "../models/DefaultSimData";
+import { typeWithParameters } from "@angular/compiler/src/render3/util";
 
 @Injectable({
     providedIn: "root",
@@ -196,6 +197,10 @@ export class SimulationService {
         });
     }
 
+    getCatchmentStatus(): Object[] {
+        return this.simData.sim_status.catchments;
+    }
+
     downloadSimResults(): void {
         this.hms.downloadAquatoxSimResults(this.simData["simId"]).subscribe((data) => {
             const blob = new Blob([data], {
@@ -292,7 +297,7 @@ export class SimulationService {
             this.simData[key] = null;
         }
         this.simDataSubject.next(this.simData);
-        console.log("simData: ", this.simData);
+        // console.log("simData: ", this.simData);
     }
 
     getDefaultCatchmentDependencies() {
