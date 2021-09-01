@@ -39,6 +39,10 @@ export class OutputComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this.simulationService.interfaceData().subscribe((simData) => {
+            console.log("output component simData: ", simData);
+        });
+
         // First, check for comid in url
         if (this.route.snapshot.paramMap.has("comid")) {
             this.loading = true;
