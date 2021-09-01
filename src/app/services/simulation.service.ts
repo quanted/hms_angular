@@ -197,10 +197,6 @@ export class SimulationService {
         });
     }
 
-    getCatchmentStatus(): Object[] {
-        return this.simData.sim_status.catchments;
-    }
-
     downloadSimResults(): void {
         this.hms.downloadAquatoxSimResults(this.simData["simId"]).subscribe((data) => {
             const blob = new Blob([data], {
