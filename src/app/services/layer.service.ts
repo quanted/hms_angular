@@ -13,7 +13,7 @@ import { WatersService } from "./waters.service";
     providedIn: "root",
 })
 export class LayerService {
-    ZOOM_MIN = 5;
+    ZOOM_MIN = 6;
     ZOOM_MAX = 16;
 
     basemaps = [
@@ -24,7 +24,7 @@ export class LayerService {
                 {
                     attribution:
                         "Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC",
-                    maxZoom: 16,
+                    maxZoom: this.ZOOM_MAX,
                 }
             ),
         },
@@ -35,6 +35,7 @@ export class LayerService {
                 {
                     attribution:
                         "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
+                    maxZoom: this.ZOOM_MAX,
                 }
             ),
         },
@@ -45,6 +46,7 @@ export class LayerService {
                 {
                     attribution:
                         "Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community",
+                    maxZoom: this.ZOOM_MAX,
                 }
             ),
         },
@@ -53,8 +55,8 @@ export class LayerService {
             layer: L.tileLayer(
                 "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}",
                 {
-                    maxZoom: 20,
                     attribution: 'Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological Survey</a>',
+                    maxZoom: this.ZOOM_MAX,
                 }
             ),
         },
@@ -63,8 +65,8 @@ export class LayerService {
             layer: L.tileLayer(
                 "https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}",
                 {
-                    maxZoom: 20,
                     attribution: 'Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological Survey</a>',
+                    maxZoom: this.ZOOM_MAX,
                 }
             ),
         },
