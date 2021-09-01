@@ -43,7 +43,7 @@ export class ExecutionPanelComponent implements OnInit {
     }
 
     gotoOutput(): void {
-        this.router.navigateByUrl(`output/${this.simulation.getPourPoint}`);
+        this.router.navigateByUrl(`output/${this.simulation.getPourPoint()}`);
     }
 
     downloadSimResults(): void {
