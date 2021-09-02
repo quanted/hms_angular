@@ -20,9 +20,8 @@ export class OutputComponent implements OnInit, OnDestroy {
     MAX_CONTAINERS = 6;
     // Array of drop list containers data.
     dropListData: any[] = [];
-
-    baseItem: any = {};
     loading = false;
+    simData: any;
 
     constructor(
         // Importing SimulationService to keep data from url navigation
@@ -32,6 +31,9 @@ export class OutputComponent implements OnInit, OnDestroy {
         private outputService: OutputService,
         private route: ActivatedRoute
     ) {
+        this.simulationService.interfaceData().subscribe((simData) => {
+            this.simData = simData;
+        });
         // Update output cookie everytime droplist data changes
         this.outputService.dropListDataSubject.subscribe((data) => {
             this.cookieService.set("output", JSON.stringify(this.dropListData));
@@ -39,81 +41,30 @@ export class OutputComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.simulationService.interfaceData().subscribe((simData) => {
-            console.log("output component simData: ", simData);
-        });
-
         // First, check for comid in url
         if (this.route.snapshot.paramMap.has("comid")) {
             this.loading = true;
             this.comid = this.route.snapshot.paramMap.get("comid");
             this.setDefaultDropListData();
-
-            // Get catchment data by getting the taskid from the sim status
-            this.hmsService.getAquatoxSimStatus(this.cookieService.get("simId")).subscribe((response) => {
-                if (response.catchments) {
-                    // Build array of async requests
-                    let reqObj: any = {};
-                    Object.keys(response.catchments).forEach((key) => {
-                        reqObj[`${key}`] = this.hmsService.getCatchmentData(response.catchments[key].task_id);
-                    });
-                    // Get all catchment data
-                    forkJoin(reqObj)
-                        .pipe(finalize(() => this.setData()))
-                        .subscribe((res) => {
-                            this.catchments = res;
-                        });
-                }
-            });
-
-            // First, check for comid in url
-            if (this.route.snapshot.paramMap.has("comid")) {
-                this.comid = this.route.snapshot.paramMap.get("comid");
+            // Have catchment data, set data
+            if (this.simData.network.catchment_data.size > 0) {
+                this.loading = false;
+                this.simulationService.updateSimData();
+            } else {
                 // Get catchment data by getting the taskid from the sim status
                 this.hmsService.getAquatoxSimStatus(this.cookieService.get("simId")).subscribe((response) => {
-                    if (Object.keys(response.catchments).includes(this.comid)) {
-                        // Make request to retrieve catchment data and place in variable
-                        this.hmsService.getCatchmentData(response.catchments[this.comid].task_id).subscribe((data) => {
-                            // Put all state variables into output state variables list
-                            this.outputService.stateVariablesList = Object.keys(data.data);
-                            // Set grid of containers
-                            this.dropListData.push(
-                                {
-                                    selectedCatchments: [this.comid],
-                                    selectedTableCatchment: this.comid,
-                                    selectedSV: 0,
-                                    selectedChart: "scatter",
-                                },
-                                {
-                                    selectedCatchments: [this.comid],
-                                    selectedTableCatchment: this.comid,
-                                    selectedSV: 1,
-                                    selectedChart: "scatter",
-                                },
-                                {
-                                    selectedCatchments: [this.comid],
-                                    selectedTableCatchment: this.comid,
-                                    selectedSV: 2,
-                                    selectedChart: "scatter",
-                                },
-                                {
-                                    selectedCatchments: [this.comid],
-                                    selectedTableCatchment: this.comid,
-                                    selectedSV: 3,
-                                    selectedChart: "scatter",
-                                },
-                                {
-                                    selectedCatchments: [this.comid],
-                                    selectedTableCatchment: this.comid,
-                                    selectedSV: 0,
-                                    selectedChart: "table",
-                                }
-                            );
-                            // Update cookie
-                            this.outputService.dropListDataSubject.next(this.dropListData);
-                            // Callback
-                            this.simulationService.updateSimData("catchment_data", { comid: this.comid, data: data });
+                    if (response.catchments) {
+                        // Build array of async requests
+                        let reqObj: any = {};
+                        Object.keys(response.catchments).forEach((key) => {
+                            reqObj[`${key}`] = this.hmsService.getCatchmentData(response.catchments[key].task_id);
                         });
+                        // Get all catchment data
+                        forkJoin(reqObj)
+                            .pipe(finalize(() => this.setData()))
+                            .subscribe((res) => {
+                                this.catchments = res;
+                            });
                     }
                 });
             }
@@ -129,13 +80,8 @@ export class OutputComponent implements OnInit, OnDestroy {
                     comid: key,
                     data: this.catchments[`${key}`],
                 });
-                // Put all state variables into output state variables list
-                this.outputService.stateVariablesList = Object.keys(this.catchments[`${key}`].data);
             });
-            // Callback
-            this.simulationService.updateSimData("catchment_data", obj);
-            // Update cookie
-            this.outputService.dropListDataSubject.next(this.dropListData);
+            this.simulationService.setCatchmentData(obj);
         }
     }
 
@@ -210,6 +156,8 @@ export class OutputComponent implements OnInit, OnDestroy {
                 selectedChart: "table",
             }
         );
+        // Update cookie
+        this.outputService.dropListDataSubject.next(this.dropListData);
     }
 
     @HostListener("unloaded")

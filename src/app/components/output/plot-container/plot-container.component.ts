@@ -43,10 +43,11 @@ export class PlotContainerComponent {
         this.simulationService.interfaceData().subscribe((data) => {
             for (let key of Object.keys(data)) {
                 switch (key) {
-                    case "catchment_data":
-                        this.catchments = data[key];
-                        this.stateVariablesList = this.outputService.stateVariablesList;
-                        this.selectedSV = this.outputService.stateVariablesList[this.dropListData?.selectedSV];
+                    case "network":
+                        this.catchments = data[key].catchment_data;
+                        this.stateVariablesList = Object.keys(this.catchments.values().next().value?.data ?? {});
+                        this.selectedSV = this.stateVariablesList[this.dropListData?.selectedSV];
+                        this.selectedCatchment = this.dropListData?.selectedTableCatchment;
                         this.chart = this.dropListData?.selectedChart;
                         this.setData();
                         break;
@@ -56,30 +57,18 @@ export class PlotContainerComponent {
             }
         });
         this.outputService.dropListDataSubject.subscribe((data) => {
-            //this.setData();
+            this.catchments && this.dropListData && this.setData();
         });
     }
 
     ngOnInit() {
-        // for (let key of Object.keys(this.simulationService.simData)) {
-        //   switch (key) {
-        //     case "catchment_data":
-        //       this.catchments = this.simulationService.simData[key];
-        //       this.stateVariablesList = this.outputService.stateVariablesList;
-        //       this.selectedSV = this.outputService.stateVariablesList[this.dropListData?.selectedSV];
-        //       this.chart = this.dropListData?.selectedChart;
-        //       this.setData();
-        //       break;
-        //     default:
-        //       break;
-        //   }
-        // }
+        !this.catchments && this.simulationService.updateSimData();
     }
 
     @HostListener("unloaded")
     ngOnDestroy() {
         // Unsubscribe from the simulation data
-        this.simulationService.interfaceData();
+        this.simulationService.interfaceData().unsubscribe();
     }
 
     setData() {
@@ -89,34 +78,34 @@ export class PlotContainerComponent {
             this.setPlotData();
         }
     }
+
     /**
      * Parses the data received from the HmsService and sets the plot data
      * which updates the @Input() data in the plotly component.
      */
     setPlotData() {
         this.plotData = [];
-        // Get first entry to set dates
-        // Set dates for all data to reuse
         const dates = [];
-        console.log(this.catchments);
-        this.catchments[0].data.dates.forEach((d) => dates.push(new Date(d)));
         // Iterate over map and set plot data
-        for (let catchment of this.catchments) {
+        for (let [comid, data] of this.catchments) {
+            if (dates.length === 0)
+                data.dates.forEach((d) => dates.push(new Date(d)));
             // Get values for the selected state variable
             const values = [];
-            catchment.data.data?.[this.selectedSV]?.forEach((d) => values.push(d));
+            data.data?.[this.selectedSV]?.forEach((d) => values.push(d));
             this.plotData.push({
                 x: dates,
                 y: values,
                 mode: this.chart,
                 type: this.chart,
-                name: catchment.comid,
-                visible: this.dropListData?.selectedCatchments.includes(catchment.comid) ? "true" : "legendonly",
+                name: comid,
+                visible: this.dropListData?.selectedCatchments.includes(comid) ? "true" : "legendonly",
                 marker: {
                     size: 4,
                 },
             });
         }
+        this.plotTitle = this.selectedSV;
     }
 
     /**
@@ -128,34 +117,26 @@ export class PlotContainerComponent {
         // Reset tables values
         this.tableColumnNames = [];
         this.tableColumnData = [];
-        this.selectedCatchment = this.dropListData?.selectedTableCatchment;
 
         // Set column names
         this.tableColumnNames.push("Date");
         if (this.catchments) {
-            Object.keys(this.catchments[0].data.data).forEach((key) => {
+            Object.keys(this.catchments.values().next().value?.data ?? {}).forEach((key) => {
                 this.tableColumnNames.push(key);
             });
-            let index = -1;
-            this.catchments.forEach((catchment) => {
-                if (catchment.comid === this.selectedCatchment) {
-                    index = this.catchments.indexOf(catchment);
+            const dates = this.catchments.values().next().value?.dates;
+            // Loop over length of data
+            for (let i = 0; i < dates.length; i++) {
+                let obj: any = {};
+                // Loop over state variables
+                for (let j = 1; j < this.tableColumnNames.length; j++) {
+                    obj[this.tableColumnNames[0]] = new Date(this.catchments.get(this.selectedCatchment).dates[i])
+                        .toString()
+                        .split("GMT")[0];
+                    obj[this.tableColumnNames[j]] = this.catchments.get(this.selectedCatchment).data[this.tableColumnNames[j]][i];
                 }
-            });
-            if (index > -1) {
-                // Loop over length of data
-                for (let i = 0; i < this.catchments[index].data.dates.length; i++) {
-                    let obj: any = {};
-                    // Loop over state variables
-                    for (let j = 1; j < this.tableColumnNames.length; j++) {
-                        obj[this.tableColumnNames[0]] = new Date(this.catchments?.[index]?.data?.dates[i])
-                            .toString()
-                            .split("GMT")[0];
-                        obj[this.tableColumnNames[j]] = this.catchments[index]?.data?.data[this.tableColumnNames[j]][i];
-                    }
-                    // Push to table data
-                    this.tableColumnData.push(obj);
-                }
+                // Push to table data
+                this.tableColumnData.push(obj);
             }
         }
     }
