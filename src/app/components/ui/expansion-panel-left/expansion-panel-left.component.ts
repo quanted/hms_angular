@@ -1,4 +1,5 @@
 import { Component, Input } from "@angular/core";
+import { CookieService } from "ngx-cookie-service";
 
 @Component({
     selector: "app-expansion-panel-left",
@@ -10,9 +11,15 @@ export class ExpansionPanelLeftComponent {
 
     tooltipPosition = "right";
 
-    constructor() {}
+    showAbout = true;
 
-    ngOnInit(): void {}
+    constructor(private cookieService: CookieService) {}
+
+    ngOnInit(): void {
+        if (this.cookieService.check("confirmation-about")) {
+            this.showAbout = false;
+        }
+    }
 
     openPanel(): void {
         this.open = true;
@@ -27,7 +34,12 @@ export class ExpansionPanelLeftComponent {
     }
 
     aboutAQT(): void {
-        console.log("about Aquatox WebWorkflow");
+        this.showAbout = true;
+    }
+
+    closeAbout(): void {
+        this.showAbout = false;
+        this.cookieService.set("confirmation-about", "true");
     }
 
     openHelp(): void {

@@ -10,3 +10,11 @@
     margin: 0;
     padding-top: .5rem;
 }
+
+#about {
+    position: absolute;
+    z-index: 999;
+    inset: 0;
+    min-width: 500px;
+    max-height: var(--main-max-panel-height);
+}

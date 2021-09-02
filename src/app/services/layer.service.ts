@@ -13,7 +13,7 @@ import { WatersService } from "./waters.service";
     providedIn: "root",
 })
 export class LayerService {
-    ZOOM_MIN = 6;
+    ZOOM_MIN = 4;
     ZOOM_MAX = 16;
 
     basemaps = [
@@ -127,7 +127,7 @@ export class LayerService {
         },
         {
             name: "huc8",
-            minZoom: this.ZOOM_MIN,
+            minZoom: 6,
             maxZoom: this.ZOOM_MAX,
             url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/2",
             style: {
