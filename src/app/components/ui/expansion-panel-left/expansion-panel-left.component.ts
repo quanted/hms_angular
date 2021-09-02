@@ -1,25 +1,36 @@
 import { Component, Input } from "@angular/core";
 
 @Component({
-  selector: "app-expansion-panel-left",
-  templateUrl: "./expansion-panel-left.component.html",
-  styleUrls: ["./expansion-panel-left.component.css"],
+    selector: "app-expansion-panel-left",
+    templateUrl: "./expansion-panel-left.component.html",
+    styleUrls: ["./expansion-panel-left.component.css"],
 })
 export class ExpansionPanelLeftComponent {
-  @Input() open: boolean;
+    @Input() open: boolean;
 
-  tooltipPosition = "right";
+    tooltipPosition = "right";
 
-  constructor() { }
+    constructor() {}
 
-  ngOnInit(): void {
-  }
+    ngOnInit(): void {}
 
-  openPanel(): void {
-    this.open = true;
-  }
+    openPanel(): void {
+        this.open = true;
+    }
 
-  closePanel(): void {
-    this.open = false;
-  }
+    closePanel(): void {
+        this.open = false;
+    }
+
+    backToHMS(): void {
+        window.open("https://ceamdev.ceeopdev.net/hms/", "_self");
+    }
+
+    aboutAQT(): void {
+        console.log("about Aquatox WebWorkflow");
+    }
+
+    openHelp(): void {
+        console.log("open Aquatox help");
+    }
 }

@@ -28,19 +28,19 @@ export class SimulationService {
         return this.simDataSubject;
     }
 
-    getFirstDay(): string {
-        return formatDate(new Date(this.simData.PSetup.firstDay), "yyy-MM-dd", "en");
+    getDefaultFirstDay(): string {
+        return formatDate(new Date(DefaultSimData.defaultSimData.PSetup.firstDay), "yyy-MM-dd", "en");
     }
 
-    getLastDay(): string {
-        return formatDate(new Date(this.simData.PSetup.lastDay), "yyy-MM-dd", "en");
+    getDefaultLastDay(): string {
+        return formatDate(new Date(DefaultSimData.defaultSimData.PSetup.lastDay), "yyy-MM-dd", "en");
     }
 
-    getUpstreamDistance(): string {
+    getDefaultUpstreamDistance(): string {
         return "50";
     }
 
-    getTimeStep(): string {
+    getDefaultTimeStep(): string {
         return "hour";
     }
 
@@ -305,7 +305,7 @@ export class SimulationService {
             this.simData[key] = null;
         }
         this.simDataSubject.next(this.simData);
-        console.log("simData: ", this.simData);
+        // console.log("simData: ", this.simData);
     }
 
     getDefaultCatchmentDependencies() {

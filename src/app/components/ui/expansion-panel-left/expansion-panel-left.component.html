@@ -1,15 +1,33 @@
 <div class="panel-left">
-    <div *ngIf="open" class="panel-left-open">
-        <app-input></app-input>
-        <div (click)="closePanel()">
-            <mat-icon class="icon-panel-toggle" matTooltip="Hide Simulation Interface"
-                [matTooltipPosition]="tooltipPosition">chevron_left</mat-icon>
+    <div *ngIf="open">
+        <div class="panel-left-open">
+            <div class="form-row">
+                <div class="segment-status" (click)="backToHMS()">Back to HMS</div>
+                <div class="form-row">
+                    <div class="segment-status" (click)="aboutAQT()">About</div>
+                    <div class="segment-status" (click)="openHelp()">Help</div>
+                </div>
+            </div>
+            <div (click)="closePanel()">
+                <mat-icon class="icon-panel-toggle collapse-icon-left" matTooltip="Hide Simulation Interface"
+                    [matTooltipPosition]="tooltipPosition">chevron_left</mat-icon>
+            </div>
         </div>
+        <app-input></app-input>
     </div>
     <div *ngIf="!open">
-        <div (click)="openPanel()">
-            <mat-icon class="icon-panel-toggle" matTooltip="Show Simulation Interface"
-                [matTooltipPosition]="tooltipPosition">chevron_right</mat-icon>
+        <div class="panel-left-open">
+            <div class="form-row">
+                <div class="segment-status" (click)="backToHMS()">Back to HMS</div>
+                <div class="form-row">
+                    <div class="segment-status" (click)="aboutAQT()">About</div>
+                    <div class="segment-status" (click)="openHelp()">Help</div>
+                </div>
+            </div>
+            <div (click)="openPanel()">
+                <mat-icon class="icon-panel-toggle collapse-icon-left" matTooltip="Show Simulation Interface"
+                    [matTooltipPosition]="tooltipPosition">chevron_right</mat-icon>
+            </div>
         </div>
     </div>
 </div>

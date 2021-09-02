@@ -397,9 +397,14 @@ export class LayerService {
         this.simulation.updateSimData("waiting", true);
         forkJoin([this.waters.getNetworkGeometry(comid, distance), this.hms.getNetworkInfo(comid, distance)]).subscribe(
             (networkData) => {
-                for (let data of networkData) {
-                    if (data.networkInfo) this.simulation.updateSimData("network", data.networkInfo);
-                    if (data.networkGeometry) this.buildStreamLayers(data.networkGeometry);
+                if (networkData[0].error || networkData[1].error) {
+                    console.log("error: ", networkData[0].error);
+                    console.log("error: ", networkData[1].error);
+                } else {
+                    for (let data of networkData) {
+                        if (data.networkInfo) this.simulation.updateSimData("network", data.networkInfo);
+                        if (data.networkGeometry) this.buildStreamLayers(data.networkGeometry);
+                    }
                 }
                 this.simulation.updateSimData("waiting", false);
             },

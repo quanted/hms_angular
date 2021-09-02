@@ -4,7 +4,13 @@
         <div class="scroll-pane">
             <!-- AOI section -->
             <div class="container-item">
-                <div class="centered"><strong>Study Area</strong></div>
+                <div class="section-heading">
+                    <div id="this is just here as a spacer"></div>
+                    <strong class="section-heading-center">Study Area</strong>
+                    <div>
+                        <mat-icon class="icon-panel-toggle float-right" matTooltipPosition="right" matTooltip="Collapse section">expand_less</mat-icon>
+                    </div>
+                </div>
                 <div class="section-item" *ngIf="!huc">
                     <div class="form-row" [formGroup]="pPointForm">
                         <div class="vertical-center">
@@ -14,10 +20,10 @@
                     </div>
                     <div class="centered">- or -</div>
                     <div class="centered">
-                        <strong>Click map to select </strong>
-                        <select>
+                        <strong>Click map to select HUC 12</strong>
+                        <!-- <select>
                             <option value="12">HUC 12</option>
-                        </select>
+                        </select> -->
                     </div>
                 </div>
                 <div class="section-item" *ngIf="huc">
@@ -42,7 +48,7 @@
                     </div>
                     <div class="button" *ngIf="huc && catchment && !network.network && !waiting" (click)="getStreamNetwork()">
                         Get stream network</div>
-                    <div class="button" *ngIf="huc && catchment && waiting">
+                    <div class="button" *ngIf="waiting">
                         <mat-progress-bar mode="indeterminate"></mat-progress-bar>
                     </div>
                 </div>
@@ -60,7 +66,13 @@
 
                 <!-- PSetup section -->
                 <div *ngIf="baseJson" [formGroup]="pSetUpForm">
-                    <div class="centered"><strong>Study Setup</strong></div>
+                    <div class="section-heading">
+                        <div id="this is just here as a spacer"></div>
+                        <strong class="section-heading-center">Simulation Setup</strong>
+                        <div>
+                            <mat-icon class="icon-panel-toggle float-right" matTooltipPosition="right" matTooltip="Collapse section">expand_less</mat-icon>
+                        </div>
+                    </div>
                     <div class="section-item">
                         <div class="form-row">
                             <div>
@@ -118,7 +130,13 @@
 
 
             <div class="container-item" *ngIf="network.network && baseJson">
-                <div class="centered"><strong>Output State Variables</strong></div>
+                <div class="section-heading">
+                    <div id="this is just here as a spacer"></div>
+                    <strong class="section-heading-center">Output State Variables</strong>
+                    <div>
+                        <mat-icon class="icon-panel-toggle float-right" matTooltipPosition="right" matTooltip="Collapse section">expand_less</mat-icon>
+                    </div>
+                </div>
                 <div class="section-item">
                     <div class="form-row" *ngFor="let variable of sVariables">
                         <div>{{ variable.PName }}</div>
@@ -133,7 +151,13 @@
             </div>
 
             <div class="container-item" *ngIf="network.network && baseJson">
-                <div class="centered"><strong>Stream Segments</strong></div>
+                <div class="section-heading">
+                    <div id="this is just here as a spacer"></div>
+                    <strong class="section-heading-center">Stream Segment Loadings</strong>
+                    <div>
+                        <mat-icon class="icon-panel-toggle float-right" matTooltipPosition="right" matTooltip="Collapse section">expand_less</mat-icon>
+                    </div>
+                </div>
                 <div>This network has {{ numNetSegments }} segments</div>
                 <app-segment-list></app-segment-list>
                 <app-comid-select-input></app-comid-select-input>

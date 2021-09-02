@@ -2,6 +2,24 @@
     width: 425px;
     display: grid;
     row-gap: var(--row-gap);
+    background: var(--main-background);
+}
+
+.section-heading {
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
+}
+
+.section-heading-left {
+
+}
+
+.section-heading-center {
+    text-align: center;
+}
+
+.float-right {
+    float: right;
 }
 
 #mat-progress-bar {

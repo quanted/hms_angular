@@ -2,11 +2,19 @@
     display: grid;
     grid-template-rows: auto 1fr;
     margin: .25rem;
+    background-color: var(--main-background);
 }
 
 .panel-left-open {
     display: grid;
     grid-template-columns: 1fr auto;
+}
+
+.collapse-icon-left {
+    position: absolute;
+    top: 0;
+    right: -1.5rem;
+    margin-top: .25rem;
 }
 
 app-input, app-output-panel-left {

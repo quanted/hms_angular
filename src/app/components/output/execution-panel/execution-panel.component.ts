@@ -51,6 +51,6 @@ export class ExecutionPanelComponent implements OnInit {
     }
 
     backToInput(): void {
-        // reset sim status to return to input panel
+        // return to input panel
     }
 }

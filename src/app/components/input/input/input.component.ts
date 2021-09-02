@@ -23,20 +23,56 @@ export class InputComponent implements OnInit {
     reminAdvancedForm: FormGroup;
     svForm: FormGroup;
 
-    basicPSetupFields = ["FirstDay", "LastDay", "UseFixStepSize", "FixStepSize", "StepSizeInDays"];
+    basicPSetupFields = [
+        {
+            param: "FirstDay",
+            displayName: "First Day",
+        },
+        {
+            param: "LastDay",
+            displayName: "Last Day",
+        },
+        {
+            param: "UseFixStepSize",
+            displayName: "Use Fixed Step Size",
+        },
+        {
+            param: "FixStepSize",
+            displayName: "Fixed Step Size",
+        },
+        {
+            param: "StepSizeInDays",
+            displayName: "Step Size in Days",
+        },
+        {
+            param: "SaveBRates", // save derivative rates false to save space
+            displayName: "Save Derivitive Rates",
+        },
+        {
+            param: "AverageOutput", // trapiziodal integration
+            displayName: "Average Output",
+        },
+    ];
 
-    // these are one that were discussed being exposed to the user
-    // but they seem like advanced would be more appropriate?
-    // "SaveBRates", // save derivative rates false to save space
-    // "AverageOutput", // trapiziodal integration
-
-    basicLocaleFields = ["no basic parameters"];
+    basicLocaleFields = [{ param: "SiteName", displayName: "Site Name" }];
 
     basicReminFields = [
-        { param: "DecayMax_Lab" },
-        { param: "DecayMax_Refr" },
-        { param: "KNitri" },
-        { param: "KDenitri_Wat" },
+        {
+            param: "DecayMax_Lab",
+            displayName: "Decay Max Lab",
+        },
+        {
+            param: "DecayMax_Refr",
+            displayName: "Decay Max Refr",
+        },
+        {
+            param: "KNitri",
+            displayName: "K Nitri",
+        },
+        {
+            param: "KDenitri_Wat",
+            displayName: "K Denitri - Water",
+        },
     ];
 
     waiting = false;
@@ -67,7 +103,7 @@ export class InputComponent implements OnInit {
         });
 
         this.distanceForm = this.fb.group({
-            distance: [this.simulation.getUpstreamDistance()],
+            distance: [this.simulation.getDefaultUpstreamDistance()],
         });
 
         this.moduleForm = this.fb.group({});
@@ -85,9 +121,9 @@ export class InputComponent implements OnInit {
         });
 
         this.pSetUpForm = this.fb.group({
-            firstDay: [this.simulation.getFirstDay(), Validators.required],
-            lastDay: [this.simulation.getLastDay(), Validators.required],
-            tStep: [this.simulation.getTimeStep(), Validators.required],
+            firstDay: [this.simulation.getDefaultFirstDay(), Validators.required],
+            lastDay: [this.simulation.getDefaultLastDay(), Validators.required],
+            tStep: [this.simulation.getDefaultTimeStep(), Validators.required],
             useFixStepSize: [null],
             fixStepSize: [null],
         });
