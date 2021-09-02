@@ -47,6 +47,10 @@ body {
 	        box-shadow: 0 3px 3px -2px black;
 }
 
+.button.map-options {
+    min-width: 0;
+}
+
 .button:active {
     transform: translateY(2px);
     -webkit-box-shadow: none;
