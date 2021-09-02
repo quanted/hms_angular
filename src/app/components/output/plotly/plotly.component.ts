@@ -26,11 +26,15 @@ export class PlotlyComponent implements OnChanges {
   chart: any;
 
   ngOnChanges(changes: SimpleChanges): void {
-    //Plotly.update(this.plot.nativeElement, this.chart);
-    this.draw();
+    if (changes.data.firstChange) {
+      this.draw();
+    } else if (!changes.data.firstChange) {
+      this.setChart();
+      Plotly.react(this.plot.nativeElement, this.chart);
+    }
   }
 
-  draw(): void {
+  setChart() {
     // Set plot specific properties
     this.chart = {
       data: this.data,
@@ -70,6 +74,9 @@ export class PlotlyComponent implements OnChanges {
         style: { width: "100%", height: "100%" },
       },
     };
+  }
+  draw(): void {
+    this.setChart();
     // Plot 
     Plotly.newPlot(this.plot.nativeElement, this.chart);
     window.dispatchEvent(new Event('resize'));
