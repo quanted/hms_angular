@@ -191,10 +191,17 @@ export class SimulationService {
     addSimResults(comid, taskId): void {
         if (this.simData.network.catchment_data[comid] == null) {
             this.hms.getCatchmentData(taskId).subscribe((catchmentData) => {
-                this.simData.network.catchment_data[comid] = catchmentData;
+                this.simData.network.catchment_data.set(comid, catchmentData);
                 this.updateSimData();
             });
         }
+    }
+
+    setCatchmentData(data: any[]): void {
+        for (let i = 0; i < data.length; i++) {
+            this.simData.network.catchment_data.set(data[i].comid, data[i].data);
+        }
+        this.updateSimData();
     }
 
     endStatusCheck(): void {

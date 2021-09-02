@@ -1,3 +1,5 @@
+import { AnonymousSubject } from "rxjs/internal/Subject";
+
 export class DefaultSimData {
     static defaultSimData = {
         selectedHuc: null,
@@ -24,7 +26,7 @@ export class DefaultSimData {
             order: null,
             sources: null,
             network: null,
-            catchment_data: [],
+            catchment_data: new Map<string, any>(),
         },
         Location: {
             Locale: {},
