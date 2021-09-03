@@ -4,12 +4,6 @@
         <mat-icon class="add" (click)="add()" matTooltip="Add a new container to the dashboard."
             matTooltipPosition="after">add_box</mat-icon>
     </div>
-    <div class="spinner-container " *ngIf="loading">
-        <div class="spinner-flex">
-            <mat-spinner></mat-spinner>
-            <p>Retrieving data for simID: {{this.cookieService.get("simId")}}</p>
-        </div>
-    </div>
     <div class="dashboard-container">
         <div class="cdkDropListGroup" cdkDropListGroup>
             <ng-container *ngFor="let item of dropListData; let i=index">
@@ -26,7 +20,8 @@
                                 <path d="M0 0h24v24H0z" fill="none"></path>
                             </svg>
                         </div>
-                        <app-plot-container (deleteItem)="delete($event)" [dropListData]="dropListData[i]" [index]="i">
+                        <app-plot-container (deleteItem)="delete($event)" [dropListData]="dropListData[i]" [index]="i"
+                            [simData]="simData">
                         </app-plot-container>
                     </div>
                 </div>

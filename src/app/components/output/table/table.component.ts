@@ -4,6 +4,9 @@ import {
   AfterViewInit,
   ViewChild,
   Input,
+  SimpleChange,
+  SimpleChanges,
+  OnChanges,
 } from "@angular/core";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatPaginator } from "@angular/material/paginator";
@@ -14,7 +17,7 @@ import { MatSort } from "@angular/material/sort";
   templateUrl: "./table.component.html",
   styleUrls: ["./table.component.css"],
 })
-export class TableComponent implements OnInit {
+export class TableComponent implements OnChanges {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   /* Material table expects:
@@ -33,20 +36,10 @@ export class TableComponent implements OnInit {
   }[];
   dataSource = new MatTableDataSource();
 
-  ngOnInit(): void {
-    this.dataSource.data = this.columnData;
-  }
-
-  ngAfterViewInit(): void {
-    // Must set these after view init
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
-    this.customSort();
-  }
-
-  ngOnChanges(): void {
-    // Must rest these again when the data changes
+  ngOnChanges(changes: SimpleChanges): void {
+    // Must reset these again when the data changes
     this.dataSource = new MatTableDataSource();
+    this.dataSource.data = this.columnData;
     this.dataSource.data = this.columnData;
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;

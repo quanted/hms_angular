@@ -25,8 +25,7 @@
     </div>
     <div [ngClass]="{container: plotData, errorContainer: !plotData}">
         <app-plotly *ngIf="plotData && chart !== 'table'" [data]="plotData" [plotTitle]="plotTitle"></app-plotly>
-        <app-table *ngIf="plotData && chart === 'table'" [columnNames]="tableColumnNames" [columnData]="tableColumnData"
-            [catchment]="selectedCatchment"></app-table>
-        <!--<div *ngIf="!plotData" class="error">Error retrieving simulation data.</div>-->
+        <app-table *ngIf="tableColumnData && tableColumnNames && chart === 'table'" [columnNames]="tableColumnNames"
+            [columnData]="tableColumnData" [catchment]="selectedCatchment"></app-table>
     </div>
 </div>

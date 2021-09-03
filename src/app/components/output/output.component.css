@@ -67,27 +67,3 @@ app-footer {
   height: 24px;
   z-index: 10;
 }
-
-.spinner-container {
-  position: absolute;
-  z-index: 100;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.spinner-flex {
-  padding: 20px;;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  align-items: center;
-  min-width: 300px;
-  min-height: 200px;
-  background-color: white;
-  box-shadow: 0px 0px 36px 1px rgba(120,120,120,0.75);
--webkit-box-shadow: 0px 0px 36px 1px rgba(120,120,120,0.75);
--moz-box-shadow: 0px 0px 36px 1px rgba(120,120,120,0.75);
-}

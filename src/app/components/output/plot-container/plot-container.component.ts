@@ -1,5 +1,4 @@
-import { Component, EventEmitter, HostListener, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
-import { Subscription } from "rxjs";
+import { Component, EventEmitter, HostListener, Input, OnChanges, Output, SimpleChange, SimpleChanges } from "@angular/core";
 import { OutputService } from "src/app/services/output.service";
 import { SimulationService } from "src/app/services/simulation.service";
 
@@ -8,7 +7,7 @@ import { SimulationService } from "src/app/services/simulation.service";
     templateUrl: "./plot-container.component.html",
     styleUrls: ["./plot-container.component.css"],
 })
-export class PlotContainerComponent {
+export class PlotContainerComponent implements OnChanges {
     // Index of drop list so we can delete it later
     @Input() index: number;
     @Input() dropListData: {
@@ -17,7 +16,7 @@ export class PlotContainerComponent {
         selectedSV: string;
         selectedChart: string;
     };
-
+    @Input() simData: any;
     catchments: any;
     // Output emitter to tell parent to delete
     @Output() deleteItem = new EventEmitter<any>();
@@ -34,41 +33,36 @@ export class PlotContainerComponent {
     // Plot title set by State Variables selection
     plotTitle: string;
     // Chart types set by chart type selection
-    chart: string = "table";
+    chart: string;
     // Table column setup variables
-    tableColumnNames: string[] = [];
-    tableColumnData: any[] = [];
+    tableColumnNames: string[];
+    tableColumnData: any[];
 
     constructor(private simulationService: SimulationService, public outputService: OutputService) {
-        this.simulationService.interfaceData().subscribe((data) => {
-            for (let key of Object.keys(data)) {
+        this.outputService.dropListDataSubject.subscribe((data) => {
+            this.catchments && this.setData();
+        });
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes.hasOwnProperty("simData") && this.simData) {
+            for (let key of Object.keys(this.simData)) {
                 switch (key) {
                     case "network":
-                        this.catchments = data[key].catchment_data;
-                        this.stateVariablesList = Object.keys(this.catchments.values().next().value?.data ?? {});
-                        this.selectedSV = this.stateVariablesList[this.dropListData?.selectedSV];
-                        this.selectedCatchment = this.dropListData?.selectedTableCatchment;
-                        this.chart = this.dropListData?.selectedChart;
-                        this.setData();
+                        if (this.dropListData && this.simData[key].catchment_data.size > 0) {
+                            this.catchments = this.simData[key].catchment_data;
+                            this.stateVariablesList = Object.keys(this.catchments.values().next().value?.data ?? {});
+                            this.selectedSV = this.stateVariablesList[this.dropListData.selectedSV];
+                            this.selectedCatchment = this.dropListData.selectedTableCatchment;
+                            this.chart = this.dropListData.selectedChart;
+                            this.setData();
+                        }
                         break;
                     default:
                         break;
                 }
             }
-        });
-        this.outputService.dropListDataSubject.subscribe((data) => {
-            this.catchments && this.dropListData && this.setData();
-        });
-    }
-
-    ngOnInit() {
-        !this.catchments && this.simulationService.updateSimData();
-    }
-
-    @HostListener("unloaded")
-    ngOnDestroy() {
-        // Unsubscribe from the simulation data
-        this.simulationService.interfaceData().unsubscribe();
+        }
     }
 
     setData() {
@@ -120,11 +114,11 @@ export class PlotContainerComponent {
 
         // Set column names
         this.tableColumnNames.push("Date");
-        if (this.catchments) {
-            Object.keys(this.catchments.values().next().value?.data ?? {}).forEach((key) => {
+        if (this.catchments.size > 0) {
+            Object.keys(this.catchments.values().next().value.data).forEach((key) => {
                 this.tableColumnNames.push(key);
             });
-            const dates = this.catchments.values().next().value?.dates;
+            const dates = this.catchments.values().next().value.dates;
             // Loop over length of data
             for (let i = 0; i < dates.length; i++) {
                 let obj: any = {};
