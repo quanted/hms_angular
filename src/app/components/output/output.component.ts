@@ -36,7 +36,11 @@ export class OutputComponent implements OnInit, OnDestroy {
         // Subscribe to simulationService to get data
         this.simulationService.interfaceData().subscribe((simData) => {
             // If catchment added to simData or simData not yet set, update
-            if (!this.simData || simData.network.catchment_data.size > this.simData.network.catchment_data.size) {
+            if (
+                !this.simData ||
+                Object.keys(simData.network.catchment_data).length >
+                    Object.keys(this.simData.network.catchment_data).length
+            ) {
                 this.simData = simData;
             }
         });
