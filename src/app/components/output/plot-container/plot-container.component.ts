@@ -16,8 +16,7 @@ export class PlotContainerComponent implements OnChanges {
         selectedSV: string;
         selectedChart: string;
     };
-    @Input() simData: any;
-    catchments: any;
+    @Input() catchment_data: any;
     // Output emitter to tell parent to delete
     @Output() deleteItem = new EventEmitter<any>();
     // Parsed data for the plot
@@ -35,32 +34,35 @@ export class PlotContainerComponent implements OnChanges {
     // Chart types set by chart type selection
     chart: string;
     // Table column setup variables
-    tableColumnNames: string[];
-    tableColumnData: any[];
+    tableColumnNames: string[] = [];
+    tableColumnData: any[] = [];
+    dates: Date[] = [];
 
     constructor(private simulationService: SimulationService, public outputService: OutputService) {
         this.outputService.dropListDataSubject.subscribe((data) => {
-            this.catchments && this.setData();
+            this.catchment_data && this.setData();
         });
     }
 
     ngOnChanges(changes: SimpleChanges) {
-        if (changes.hasOwnProperty("simData") && this.simData) {
-            for (let key of Object.keys(this.simData)) {
-                switch (key) {
-                    case "network":
-                        if (this.dropListData && this.simData[key].catchment_data.size > 0) {
-                            this.catchments = this.simData[key].catchment_data;
-                            this.stateVariablesList = Object.keys(this.catchments.values().next().value?.data ?? {});
-                            this.selectedSV = this.stateVariablesList[this.dropListData.selectedSV];
-                            this.selectedCatchment = this.dropListData.selectedTableCatchment;
-                            this.chart = this.dropListData.selectedChart;
-                            this.setData();
-                        }
-                        break;
-                    default:
-                        break;
-                }
+        if (changes.hasOwnProperty("catchment_data") && this.catchment_data) {
+            if (this.dropListData && Object.keys(this.catchment_data).length > 0) {
+                this.catchmentList = Object.keys(this.catchment_data);
+                const firstComid = this.catchmentList[0];
+                this.stateVariablesList = Object.keys(this.catchment_data[firstComid].data);
+
+                // Set table column names
+                this.tableColumnNames = [];
+                this.tableColumnNames.push("Date");
+                this.tableColumnNames = this.tableColumnNames.concat(this.stateVariablesList);
+                // Set dates
+                this.dates = [];
+                this.catchment_data[firstComid].dates.forEach((d) => this.dates.push(new Date(d)));
+
+                this.selectedSV = this.stateVariablesList[this.dropListData.selectedSV];
+                this.selectedCatchment = this.dropListData.selectedTableCatchment;
+                this.chart = this.dropListData.selectedChart;
+                this.setData();
             }
         }
     }
@@ -79,16 +81,13 @@ export class PlotContainerComponent implements OnChanges {
      */
     setPlotData() {
         this.plotData = [];
-        const dates = [];
         // Iterate over map and set plot data
-        for (let [comid, data] of this.catchments) {
-            if (dates.length === 0)
-                data.dates.forEach((d) => dates.push(new Date(d)));
+        for (let [comid, data] of Object.entries(this.catchment_data)) {
             // Get values for the selected state variable
             const values = [];
-            data.data?.[this.selectedSV]?.forEach((d) => values.push(d));
+            data["data"]?.[this.selectedSV]?.forEach((d) => values.push(d));
             this.plotData.push({
-                x: dates,
+                x: this.dates,
                 y: values,
                 mode: this.chart,
                 type: this.chart,
@@ -109,25 +108,16 @@ export class PlotContainerComponent implements OnChanges {
      */
     setTableData() {
         // Reset tables values
-        this.tableColumnNames = [];
         this.tableColumnData = [];
 
-        // Set column names
-        this.tableColumnNames.push("Date");
-        if (this.catchments.size > 0) {
-            Object.keys(this.catchments.values().next().value.data).forEach((key) => {
-                this.tableColumnNames.push(key);
-            });
-            const dates = this.catchments.values().next().value.dates;
+        if (Object.keys(this.catchment_data).length > 0) {
             // Loop over length of data
-            for (let i = 0; i < dates.length; i++) {
+            for (let i = 0; i < this.dates.length; i++) {
                 let obj: any = {};
                 // Loop over state variables
                 for (let j = 1; j < this.tableColumnNames.length; j++) {
-                    obj[this.tableColumnNames[0]] = new Date(this.catchments.get(this.selectedCatchment).dates[i])
-                        .toString()
-                        .split("GMT")[0];
-                    obj[this.tableColumnNames[j]] = this.catchments.get(this.selectedCatchment).data[this.tableColumnNames[j]][i];
+                    obj[this.tableColumnNames[0]] = this.dates[i].toString().split("GMT")[0];
+                    obj[this.tableColumnNames[j]] = this.catchment_data[this.selectedCatchment].data[this.tableColumnNames[j]][i];
                 }
                 // Push to table data
                 this.tableColumnData.push(obj);
@@ -144,6 +134,11 @@ export class PlotContainerComponent implements OnChanges {
     // Update on change of chart type
     chartChange(event) {
         this.dropListData.selectedChart = this.chart;
+        this.outputService.dropListDataSubject.next(this.dropListData);
+    }
+
+    catchmentChange(event) {
+        this.dropListData.selectedTableCatchment = this.selectedCatchment;
         this.outputService.dropListDataSubject.next(this.dropListData);
     }
 

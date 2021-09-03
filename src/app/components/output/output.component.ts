@@ -11,7 +11,7 @@ import { ActivatedRoute } from "@angular/router";
     styleUrls: ["./output.component.css"],
 })
 export class OutputComponent implements OnInit, OnDestroy {
-    catchments: any = {};
+    catchment_data: any;
     comid: string;
     // Max number of containers
     MAX_CONTAINERS = 6;
@@ -25,7 +25,7 @@ export class OutputComponent implements OnInit, OnDestroy {
         private cookieService: CookieService,
         private outputService: OutputService,
         private route: ActivatedRoute
-    ) {}
+    ) { }
 
     ngOnInit() {
         // Get comid and set droplist data
@@ -35,13 +35,13 @@ export class OutputComponent implements OnInit, OnDestroy {
         }
         // Subscribe to simulationService to get data
         this.simulationService.interfaceData().subscribe((simData) => {
-            // If catchment added to simData or simData not yet set, update
+            // If catchment added to simData or catchment_data not yet set, update
             if (
-                !this.simData ||
-                Object.keys(simData.network.catchment_data).length >
-                    Object.keys(this.simData.network.catchment_data).length
+                !this.catchment_data ||
+                Object.keys(this.simData.network.catchment_data).length >
+                Object.keys(this.catchment_data).length
             ) {
-                this.simData = simData;
+                this.catchment_data = simData.network.catchment_data;
             }
         });
     }

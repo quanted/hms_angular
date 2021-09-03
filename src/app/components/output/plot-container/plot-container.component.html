@@ -10,6 +10,13 @@
                     <mat-option *ngFor="let sv of stateVariablesList" [value]="sv">{{sv}}</mat-option>
                 </mat-select>
             </mat-form-field>
+            <mat-form-field class="menu-field" *ngIf="catchmentList && chart == 'table'"
+                (click)="$event.stopPropagation()">
+                <mat-label>Catchments</mat-label>
+                <mat-select [(ngModel)]="selectedCatchment" (selectionChange)="catchmentChange($event)">
+                    <mat-option *ngFor="let catchment of catchmentList" [value]="catchment">{{catchment}}</mat-option>
+                </mat-select>
+            </mat-form-field>
             <mat-form-field class="menu-field" (click)="$event.stopPropagation()">
                 <mat-label>Chart Type</mat-label>
                 <mat-select [(ngModel)]="chart" (selectionChange)="chartChange($event)">
@@ -25,7 +32,7 @@
     </div>
     <div [ngClass]="{container: plotData, errorContainer: !plotData}">
         <app-plotly *ngIf="plotData && chart !== 'table'" [data]="plotData" [plotTitle]="plotTitle"></app-plotly>
-        <app-table *ngIf="tableColumnData && tableColumnNames && chart === 'table'" [columnNames]="tableColumnNames"
-            [columnData]="tableColumnData" [catchment]="selectedCatchment"></app-table>
+        <app-table *ngIf="chart === 'table'" [columnNames]="tableColumnNames" [columnData]="tableColumnData"
+            [catchment]="selectedCatchment"></app-table>
     </div>
 </div>
