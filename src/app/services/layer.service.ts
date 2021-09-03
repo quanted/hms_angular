@@ -40,7 +40,7 @@ export class LayerService {
             ),
         },
         {
-            name: "ESRI Topo",
+            name: "ESRI Topographic",
             layer: L.tileLayer(
                 "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
                 {
@@ -61,7 +61,7 @@ export class LayerService {
             ),
         },
         {
-            name: "USGS Topo",
+            name: "USGS Topographic",
             layer: L.tileLayer(
                 "https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}",
                 {
@@ -78,7 +78,7 @@ export class LayerService {
 
     overlays = [
         {
-            name: "flowlines",
+            name: "Flowlines",
             minZoom: 12,
             maxZoom: this.ZOOM_MAX,
             url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/NHDSnapshot_NP21/MapServer/0",
@@ -90,7 +90,7 @@ export class LayerService {
             },
         },
         {
-            name: "catchments",
+            name: "Catchments",
             minZoom: 12,
             maxZoom: this.ZOOM_MAX,
             url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/Catchments_NP21_Simplified/MapServer/0",
@@ -102,7 +102,7 @@ export class LayerService {
             },
         },
         {
-            name: "huc12",
+            name: "Huc 12",
             minZoom: 10,
             maxZoom: this.ZOOM_MAX,
             url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/0",
@@ -114,7 +114,7 @@ export class LayerService {
             },
         },
         {
-            name: "huc10",
+            name: "Huc 10",
             minZoom: 8,
             maxZoom: this.ZOOM_MAX,
             url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/1",
@@ -126,7 +126,7 @@ export class LayerService {
             },
         },
         {
-            name: "huc8",
+            name: "Huc8",
             minZoom: 6,
             maxZoom: this.ZOOM_MAX,
             url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/2",
@@ -138,7 +138,7 @@ export class LayerService {
             },
         },
         {
-            name: "huc6",
+            name: "Huc 6",
             minZoom: this.ZOOM_MIN,
             maxZoom: this.ZOOM_MAX,
             url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/3",
@@ -150,7 +150,7 @@ export class LayerService {
             },
         },
         {
-            name: "huc4",
+            name: "Huc 4",
             minZoom: this.ZOOM_MIN,
             maxZoom: this.ZOOM_MAX,
             url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/4",
@@ -162,7 +162,7 @@ export class LayerService {
             },
         },
         {
-            name: "huc2",
+            name: "Huc 2",
             minZoom: this.ZOOM_MIN,
             maxZoom: this.ZOOM_MAX,
             url: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/WBD_NP21_Simplified/MapServer/5",

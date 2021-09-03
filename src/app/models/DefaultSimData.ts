@@ -26,7 +26,7 @@ export class DefaultSimData {
             order: null,
             sources: null,
             network: null,
-            catchment_data: new Map<string, any>(),
+            catchment_data: {},
         },
         Location: {
             Locale: {},

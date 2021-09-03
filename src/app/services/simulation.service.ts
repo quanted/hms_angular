@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, OnInit } from "@angular/core";
 import { formatDate } from "@angular/common";
 
 import { BehaviorSubject, forkJoin, Observable } from "rxjs";
@@ -12,7 +12,7 @@ import { DefaultSimData } from "../models/DefaultSimData";
 @Injectable({
     providedIn: "root",
 })
-export class SimulationService {
+export class SimulationService implements OnInit {
     private simData = { ...DefaultSimData.defaultSimData };
     private simDataSubject: BehaviorSubject<any>;
 
@@ -21,6 +21,11 @@ export class SimulationService {
 
     constructor(private hms: HmsService, private cookieService: CookieService) {
         this.simDataSubject = new BehaviorSubject(this.simData);
+    }
+
+    ngOnInit(): void {
+        if (this.cookieService.check("simId") && !this.simData.simId) {
+        }
     }
 
     // returns a Subject for interface components to subscribe to
@@ -162,12 +167,12 @@ export class SimulationService {
     }
 
     startStatusCheck(): void {
-        if (this.simData["simId"]) {
+        if (this.simData.simId) {
             this.statusCheck = setInterval(() => {
                 console.log("checking status...");
-                this.hms.getAquatoxSimStatus(this.simData["simId"]).subscribe((simStatus) => {
+                this.hms.getAquatoxSimStatus(this.simData.simId).subscribe((simStatus) => {
                     this.updateSimData("sim_status", simStatus);
-                    for (let comid of <any>Object.keys(simStatus.catchments)) {
+                    for (let comid of Object.keys(simStatus.catchments)) {
                         if (simStatus.catchments[comid].status == "COMPLETED") {
                             this.addSimResults(comid, simStatus.catchments[comid].task_id);
                         }
@@ -191,17 +196,10 @@ export class SimulationService {
     addSimResults(comid, taskId): void {
         if (this.simData.network.catchment_data[comid] == null) {
             this.hms.getCatchmentData(taskId).subscribe((catchmentData) => {
-                this.simData.network.catchment_data.set(comid, catchmentData);
+                this.simData.network.catchment_data[comid] = catchmentData;
                 this.updateSimData();
             });
         }
-    }
-
-    setCatchmentData(data: any[]): void {
-        for (let i = 0; i < data.length; i++) {
-            this.simData.network.catchment_data.set(data[i].comid, data[i].data);
-        }
-        this.updateSimData();
     }
 
     endStatusCheck(): void {
@@ -312,7 +310,7 @@ export class SimulationService {
             this.simData[key] = null;
         }
         this.simDataSubject.next(this.simData);
-        // console.log("simData: ", this.simData);
+        console.log("simData: ", this.simData);
     }
 
     getDefaultCatchmentDependencies() {
