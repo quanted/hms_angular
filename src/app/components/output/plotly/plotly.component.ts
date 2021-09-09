@@ -1,4 +1,5 @@
 import { Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { axisBottom } from 'd3-axis';
 import * as Plotly from 'plotly.js/dist/plotly.js';
 
 @Component({
@@ -24,12 +25,13 @@ export class PlotlyComponent implements OnChanges {
   }[];
   // Any to hold the plot specific properties
   chart: any;
+  showLegend = false;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.data.firstChange) {
       this.draw();
-    } else if (!changes.data.firstChange) {
-      this.setChart();
+    } else {
+      this.chart.layout.title.text = this.plotTitle;
       Plotly.react(this.plot.nativeElement, this.chart);
     }
   }
@@ -57,15 +59,10 @@ export class PlotlyComponent implements OnChanges {
           r: 30,
           b: 35,
           t: 40,
-          pad: 0
         },
         autosize: true,
-        showlegend: true,
-        legend: {
-          x: 1,
-          xanchor: 'right',
-          y: 0.9
-        }
+        showlegend: this.showLegend,
+
       },
       config: {
         responsive: true,
@@ -80,5 +77,11 @@ export class PlotlyComponent implements OnChanges {
     // Plot 
     Plotly.newPlot(this.plot.nativeElement, this.chart);
     window.dispatchEvent(new Event('resize'));
+  }
+
+  toggleLegend(event) {
+    this.showLegend = this.showLegend ? false : true;
+    this.chart.layout.showlegend = this.showLegend;
+    Plotly.react(this.plot.nativeElement, this.chart);
   }
 }

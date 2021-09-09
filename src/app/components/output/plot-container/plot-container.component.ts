@@ -10,12 +10,14 @@ import { SimulationService } from "src/app/services/simulation.service";
 export class PlotContainerComponent implements OnChanges {
     // Index of drop list so we can delete it later
     @Input() index: number;
+    // Specific data for setting this container
     @Input() dropListData: {
         selectedCatchments: string[];
         selectedTableCatchment: string;
         selectedSV: string;
         selectedChart: string;
     };
+    // Data input from output component
     @Input() catchment_data: any;
     // Output emitter to tell parent to delete
     @Output() deleteItem = new EventEmitter<any>();
@@ -38,14 +40,16 @@ export class PlotContainerComponent implements OnChanges {
     tableColumnData: any[] = [];
     dates: Date[] = [];
 
-    constructor(private simulationService: SimulationService, public outputService: OutputService) {
+    constructor(public outputService: OutputService) {
         this.outputService.dropListDataSubject.subscribe((data) => {
             this.catchment_data && this.setData();
         });
     }
 
     ngOnChanges(changes: SimpleChanges) {
+        // Check that the catchment_data has changed and that catchment_data not undefined 
         if (changes.hasOwnProperty("catchment_data") && this.catchment_data) {
+            // Check that 
             if (this.dropListData && Object.keys(this.catchment_data).length > 0) {
                 this.catchmentList = Object.keys(this.catchment_data);
                 const firstComid = this.catchmentList[0];
@@ -137,6 +141,7 @@ export class PlotContainerComponent implements OnChanges {
         this.outputService.dropListDataSubject.next(this.dropListData);
     }
 
+    // Update on catchment selection change
     catchmentChange(event) {
         this.dropListData.selectedTableCatchment = this.selectedCatchment;
         this.outputService.dropListDataSubject.next(this.dropListData);

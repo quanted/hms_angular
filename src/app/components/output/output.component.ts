@@ -1,7 +1,6 @@
-import { Component, HostListener, OnDestroy, OnInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { CdkDragDrop } from "@angular/cdk/drag-drop";
 import { SimulationService } from "src/app/services/simulation.service";
-import { CookieService } from "ngx-cookie-service";
 import { OutputService } from "src/app/services/output.service";
 import { ActivatedRoute } from "@angular/router";
 
@@ -10,19 +9,19 @@ import { ActivatedRoute } from "@angular/router";
     templateUrl: "./output.component.html",
     styleUrls: ["./output.component.css"],
 })
-export class OutputComponent implements OnInit, OnDestroy {
+export class OutputComponent implements OnInit {
+    // Catchment data retrieved from simulation service
     catchment_data: any;
+    // Comid retrieved as url param
     comid: string;
     // Max number of containers
     MAX_CONTAINERS = 6;
     // Array of drop list containers data.
     dropListData: any[] = [];
-    simData: any;
 
     constructor(
         // Importing SimulationService to keep data from url navigation
         private simulationService: SimulationService,
-        private cookieService: CookieService,
         private outputService: OutputService,
         private route: ActivatedRoute
     ) { }
@@ -38,7 +37,7 @@ export class OutputComponent implements OnInit, OnDestroy {
             // If catchment added to simData or catchment_data not yet set, update
             if (
                 !this.catchment_data ||
-                Object.keys(this.simData.network.catchment_data).length >
+                Object.keys(simData.network.catchment_data).length >
                 Object.keys(this.catchment_data).length
             ) {
                 this.catchment_data = simData.network.catchment_data;
@@ -84,8 +83,8 @@ export class OutputComponent implements OnInit, OnDestroy {
     }
 
     setDefaultDropListData() {
-        this.dropListData = [];
         // Set grid of containers
+        this.dropListData = [];
         this.dropListData.push(
             {
                 selectedCatchments: [this.comid],
@@ -118,12 +117,5 @@ export class OutputComponent implements OnInit, OnDestroy {
                 selectedChart: "table",
             }
         );
-    }
-
-    @HostListener("unloaded")
-    ngOnDestroy(): void {
-        if (this.cookieService.check("output")) {
-            this.cookieService.delete("output");
-        }
     }
 }

@@ -1,6 +1,11 @@
 <body>
     <app-header></app-header>
     <div class="task-bar">
+        <div class="row">
+            <mat-icon class="segment-status back">chevron_left</mat-icon>
+            <div class="segment-status">About</div>
+            <div class="segment-status">Help</div>
+        </div>
         <mat-icon class="add" (click)="add()" matTooltip="Add a new container to the dashboard."
             matTooltipPosition="after">add_box</mat-icon>
     </div>
