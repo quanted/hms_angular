@@ -18,6 +18,7 @@ export class OutputComponent implements OnInit {
     MAX_CONTAINERS = 6;
     // Array of drop list containers data.
     dropListData: any[] = [];
+    showAbout = false;
 
     constructor(
         // Importing SimulationService to keep data from url navigation
@@ -117,5 +118,17 @@ export class OutputComponent implements OnInit {
                 selectedChart: "table",
             }
         );
+    }
+
+    aboutAQT(): void {
+        this.showAbout = true;
+    }
+
+    closeAbout(): void {
+        this.showAbout = false;
+    }
+
+    openHelp(): void {
+        console.log("open Aquatox help");
     }
 }
