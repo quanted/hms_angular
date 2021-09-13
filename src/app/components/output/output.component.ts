@@ -3,6 +3,7 @@ import { CdkDragDrop } from "@angular/cdk/drag-drop";
 import { SimulationService } from "src/app/services/simulation.service";
 import { OutputService } from "src/app/services/output.service";
 import { ActivatedRoute } from "@angular/router";
+import { Location } from '@angular/common';
 
 @Component({
     selector: "app-output",
@@ -18,13 +19,15 @@ export class OutputComponent implements OnInit {
     MAX_CONTAINERS = 6;
     // Array of drop list containers data.
     dropListData: any[] = [];
+    // Show the about section
     showAbout = false;
 
     constructor(
         // Importing SimulationService to keep data from url navigation
         private simulationService: SimulationService,
         private outputService: OutputService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private location: Location
     ) { }
 
     ngOnInit() {
@@ -118,6 +121,10 @@ export class OutputComponent implements OnInit {
                 selectedChart: "table",
             }
         );
+    }
+
+    back(): void {
+        this.location.back();
     }
 
     aboutAQT(): void {

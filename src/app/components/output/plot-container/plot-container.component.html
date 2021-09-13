@@ -30,8 +30,9 @@
                 matTooltip="Remove this container from the view." matTooltipPosition="after">Remove</button>
         </mat-menu>
     </div>
-    <div [ngClass]="{container: plotData, errorContainer: !plotData}">
-        <app-plotly *ngIf="plotData && chart !== 'table'" [data]="plotData" [plotTitle]="plotTitle"></app-plotly>
+    <div [ngClass]="showLegend ? 'container-legend' : 'container'">
+        <app-plotly (toggleCSS)="toggleCSS()" *ngIf="plotData && chart !== 'table'" [data]="plotData"
+            [plotTitle]="plotTitle"></app-plotly>
         <app-table *ngIf="chart === 'table'" [columnNames]="tableColumnNames" [columnData]="tableColumnData"
             [catchment]="selectedCatchment"></app-table>
     </div>

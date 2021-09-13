@@ -14,7 +14,7 @@ export class PlotContainerComponent implements OnChanges {
     @Input() dropListData: {
         selectedCatchments: string[];
         selectedTableCatchment: string;
-        selectedSV: string;
+        selectedSV: number;
         selectedChart: string;
     };
     // Data input from output component
@@ -39,10 +39,13 @@ export class PlotContainerComponent implements OnChanges {
     tableColumnNames: string[] = [];
     tableColumnData: any[] = [];
     dates: Date[] = [];
+    showLegend = false;
 
     constructor(public outputService: OutputService) {
         this.outputService.dropListDataSubject.subscribe((data) => {
-            this.catchment_data && this.setData();
+            if (this.dropListData == data && this.catchment_data) {
+                this.setData();
+            }
         });
     }
 
@@ -89,14 +92,14 @@ export class PlotContainerComponent implements OnChanges {
         for (let [comid, data] of Object.entries(this.catchment_data)) {
             // Get values for the selected state variable
             const values = [];
-            data["data"]?.[this.selectedSV]?.forEach((d) => values.push(d));
+            data["data"][this.selectedSV].forEach((d) => values.push(d));
             this.plotData.push({
                 x: this.dates,
                 y: values,
                 mode: this.chart,
                 type: this.chart,
                 name: comid,
-                visible: this.dropListData?.selectedCatchments.includes(comid) ? "true" : "legendonly",
+                visible: this.dropListData.selectedCatchments.includes(comid) ? "true" : "legendonly",
                 marker: {
                     size: 4,
                 },
@@ -131,7 +134,7 @@ export class PlotContainerComponent implements OnChanges {
 
     // Update on change of state variables
     svChange(event) {
-        this.dropListData.selectedSV = this.selectedSV;
+        this.dropListData.selectedSV = this.stateVariablesList.indexOf(this.selectedSV);
         this.outputService.dropListDataSubject.next(this.dropListData);
     }
 
@@ -150,5 +153,10 @@ export class PlotContainerComponent implements OnChanges {
     // Delete the drop list item on click
     remove(event) {
         this.deleteItem.emit(this.index);
+    }
+
+    toggleCSS() {
+        this.showLegend = !this.showLegend;
+        window.dispatchEvent(new Event("resize"));
     }
 }

@@ -1,5 +1,4 @@
-import { Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { axisBottom } from 'd3-axis';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import * as Plotly from 'plotly.js/dist/plotly.js';
 
 @Component({
@@ -23,6 +22,7 @@ export class PlotlyComponent implements OnChanges {
     type: string,
     name: string,
   }[];
+  @Output() toggleCSS: EventEmitter<boolean> = new EventEmitter<boolean>();
   // Any to hold the plot specific properties
   chart: any;
   showLegend = false;
@@ -32,6 +32,7 @@ export class PlotlyComponent implements OnChanges {
       this.draw();
     } else {
       this.chart.layout.title.text = this.plotTitle;
+      this.chart.data = this.data;
       Plotly.react(this.plot.nativeElement, this.chart);
     }
   }
@@ -72,6 +73,7 @@ export class PlotlyComponent implements OnChanges {
       },
     };
   }
+
   draw(): void {
     this.setChart();
     // Plot 
@@ -80,7 +82,8 @@ export class PlotlyComponent implements OnChanges {
   }
 
   toggleLegend(event) {
-    this.showLegend = this.showLegend ? false : true;
+    this.showLegend = !this.showLegend;
+    this.toggleCSS.emit();
     this.chart.layout.showlegend = this.showLegend;
     Plotly.react(this.plot.nativeElement, this.chart);
   }

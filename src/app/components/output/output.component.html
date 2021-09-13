@@ -1,16 +1,18 @@
 <body>
     <app-header></app-header>
     <div class="task-bar">
-        <div class="row">
-            <mat-icon class="segment-status back">chevron_left</mat-icon>
+        <div class="row-left">
+            <mat-icon class="segment-status back" (click)="back()">chevron_left</mat-icon>
             <div class="segment-status" (click)="aboutAQT()">About</div>
             <div class="segment-status" (click)="openHelp()">Help</div>
         </div>
-        <mat-icon class="add" (click)="add()" matTooltip="Add a new container to the dashboard."
-            matTooltipPosition="after">add_box</mat-icon>
+        <div class="row-right">
+            <mat-icon class="add" (click)="add()" matTooltip="Add a new container to the dashboard."
+                matTooltipPosition="after">add_box</mat-icon>
+        </div>
     </div>
-    <app-about *ngIf="showAbout" (closeMe)="closeAbout()"></app-about>
-    <div *ngIf="!showAbout" class="dashboard-container">
+    <app-about [input]="false" *ngIf="showAbout" (closeMe)="closeAbout()"></app-about>
+    <div [ngClass]="showAbout ? 'hide' : 'dashboard-container'">
         <div class="cdkDropListGroup" cdkDropListGroup>
             <ng-container *ngFor="let item of dropListData; let i=index">
                 <div #cdk class="cdkDropList" cdkDropList cdkDropListOrientation="horizontal"
