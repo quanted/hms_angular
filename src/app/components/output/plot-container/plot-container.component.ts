@@ -1,15 +1,12 @@
 import {
     Component,
     EventEmitter,
-    HostListener,
     Input,
     OnChanges,
     Output,
-    SimpleChange,
     SimpleChanges,
 } from "@angular/core";
 import { OutputService } from "src/app/services/output.service";
-import { SimulationService } from "src/app/services/simulation.service";
 
 @Component({
     selector: "app-plot-container",
@@ -47,7 +44,9 @@ export class PlotContainerComponent implements OnChanges {
     // Table column setup variables
     tableColumnNames: string[] = [];
     tableColumnData: any[] = [];
+    // Dates for the plot and table
     dates: Date[] = [];
+    // Sets plot css based on showing legend or not
     showLegend = false;
 
     constructor(public outputService: OutputService) {
@@ -83,6 +82,9 @@ export class PlotContainerComponent implements OnChanges {
         }
     }
 
+    /**
+     * Set plot or table data based on the selected chart type.
+     */
     setData() {
         if (this.chart === "table") {
             this.setTableData();
@@ -165,6 +167,7 @@ export class PlotContainerComponent implements OnChanges {
         this.deleteItem.emit(this.index);
     }
 
+    // Toggle plot css on click
     toggleCSS() {
         this.showLegend = !this.showLegend;
         window.dispatchEvent(new Event("resize"));
