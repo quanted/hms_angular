@@ -203,17 +203,20 @@ export class LayerService {
     defaultBasemap = "ESRI National Geographic";
 
     // selection colors
-    hucColor = "#00FF00";
-    catchmentColor = "#00FF00";
+    hucColor = "#000000";
+    catchmentColor = "#000000";
     // stream segment colors
-    pourPointColor = "#FF0000";
+    pourPointColor = "#0042FF";
     inNetworkColor = "#0000FF";
-    headwaterColor = "#00FFFF";
-    boundaryColor = "#FF00FF";
+    headwaterColor = "#4200FF";
+    boundaryColor = "#FF4200";
     selectedColor = "#FFFF00";
     simInProgressColor = "#47C7FF";
     simCompletedColor = "#00C113";
     simFailColor = "#FF0037";
+
+    segmentLineSize = 3;
+    selectedSegmentSize = 4;
 
     // animated water icon
     splashIcon = L.icon({
@@ -294,9 +297,9 @@ export class LayerService {
         const layer = L.geoJSON(feature, {
             interactive: false,
             style: {
-                color: "#0000ff",
+                color: id == "HUC" ? this.hucColor : this.catchmentColor,
                 weight: 2,
-                fillColor: "#0000ff",
+                fillColor: id == "HUC" ? this.hucColor : this.catchmentColor,
                 fillOpacity: 0,
             },
         }).addTo(this.map);
@@ -346,7 +349,7 @@ export class LayerService {
 
             const layerStyle = {
                 color: this.pourPointColor,
-                weight: 2,
+                weight: this.segmentLineSize,
             };
 
             const segmentLayer = this.createSimLayer(pourPoint, layerStyle);
@@ -359,7 +362,7 @@ export class LayerService {
 
             pourPointLayer["options"]["style"] = {
                 color: this.headwaterColor,
-                weight: 2,
+                weight: this.segmentLineSize,
             };
 
             this.simLayers.push({
@@ -376,7 +379,7 @@ export class LayerService {
 
             const layerStyle = {
                 color: this.inNetworkColor,
-                weight: 2,
+                weight: this.segmentLineSize,
             };
 
             for (let segment of inNetwork) {
@@ -390,7 +393,7 @@ export class LayerService {
             }
             inNetworkLayer["options"]["style"] = {
                 color: this.inNetworkColor,
-                weight: 2,
+                weight: this.segmentLineSize,
             };
             this.simLayers.push({
                 type: "simfeature-line",
@@ -406,7 +409,7 @@ export class LayerService {
 
             const layerStyle = {
                 color: this.headwaterColor,
-                weight: 2,
+                weight: this.segmentLineSize,
             };
 
             for (let segment of headwater) {
@@ -420,7 +423,7 @@ export class LayerService {
             }
             headwaterLayer["options"]["style"] = {
                 color: this.headwaterColor,
-                weight: 2,
+                weight: this.segmentLineSize,
             };
             this.simLayers.push({
                 type: "simfeature-line",
@@ -436,7 +439,7 @@ export class LayerService {
 
             const layerStyle = {
                 color: this.boundaryColor,
-                weight: 2,
+                weight: this.segmentLineSize,
             };
 
             for (let segment of boundary) {
@@ -450,7 +453,7 @@ export class LayerService {
             }
             boundaryLayer["options"]["style"] = {
                 color: this.boundaryColor,
-                weight: 2,
+                weight: this.segmentLineSize,
             };
             this.simLayers.push({
                 type: "simfeature-line",
@@ -474,7 +477,7 @@ export class LayerService {
             }
             stationLayer["options"]["style"] = {
                 color: this.boundaryColor,
-                weight: 2,
+                weight: this.segmentLineSize,
             };
             this.simLayers.push({
                 type: "simfeature-line",
@@ -559,25 +562,25 @@ export class LayerService {
                     case "inNetwork":
                         layer.layer.setStyle({
                             color: (layer.inSim = true ? this.selectedColor : this.inNetworkColor),
-                            weight: 2,
+                            weight: this.segmentLineSize,
                         });
                         break;
                     case "boundary":
                         layer.layer.setStyle({
                             color: (layer.inSim = true ? this.selectedColor : this.boundaryColor),
-                            weight: 2,
+                            weight: this.segmentLineSize,
                         });
                         break;
                     case "headwater":
                         layer.layer.setStyle({
                             color: (layer.inSim = true ? this.selectedColor : this.headwaterColor),
-                            weight: 2,
+                            weight: this.segmentLineSize,
                         });
                         break;
                     case "pourPoint":
                         layer.layer.setStyle({
                             color: (layer.inSim = true ? this.selectedColor : this.pourPointColor),
-                            weight: 2,
+                            weight: this.segmentLineSize,
                         });
                         break;
                     default:
@@ -588,7 +591,7 @@ export class LayerService {
                 layer.inSim = true;
                 layer.layer.setStyle({
                     color: this.selectedColor,
-                    weight: 4,
+                    weight: this.selectedSegmentSize,
                 });
                 found = true;
             }
@@ -606,19 +609,19 @@ export class LayerService {
                 if (status == "IN-PROGRESS") {
                     layer.layer.setStyle({
                         color: this.simInProgressColor,
-                        weight: 3,
+                        weight: this.selectedSegmentSize,
                     });
                 }
                 if (status == "COMPLETED") {
                     layer.layer.setStyle({
                         color: this.simCompletedColor,
-                        weight: 3,
+                        weight: this.selectedSegmentSize,
                     });
                 }
                 if (status == "FAILED") {
                     layer.layer.setStyle({
                         color: this.simFailColor,
-                        weight: 3,
+                        weight: this.selectedSegmentSize,
                     });
                 }
             }
