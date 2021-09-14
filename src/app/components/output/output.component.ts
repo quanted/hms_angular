@@ -1,31 +1,34 @@
-import { Component, HostListener, OnDestroy, OnInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { CdkDragDrop } from "@angular/cdk/drag-drop";
 import { SimulationService } from "src/app/services/simulation.service";
-import { CookieService } from "ngx-cookie-service";
 import { OutputService } from "src/app/services/output.service";
 import { ActivatedRoute } from "@angular/router";
+import { Location } from '@angular/common';
 
 @Component({
     selector: "app-output",
     templateUrl: "./output.component.html",
     styleUrls: ["./output.component.css"],
 })
-export class OutputComponent implements OnInit, OnDestroy {
-    catchments: any = {};
+export class OutputComponent implements OnInit {
+    // Catchment data retrieved from simulation service
+    catchment_data: any;
+    // Comid retrieved as url param
     comid: string;
     // Max number of containers
     MAX_CONTAINERS = 6;
     // Array of drop list containers data.
     dropListData: any[] = [];
-    simData: any;
+    // Show the about section
+    showAbout = false;
 
     constructor(
         // Importing SimulationService to keep data from url navigation
         private simulationService: SimulationService,
-        private cookieService: CookieService,
         private outputService: OutputService,
-        private route: ActivatedRoute
-    ) {}
+        private route: ActivatedRoute,
+        private location: Location
+    ) { }
 
     ngOnInit() {
         // Get comid and set droplist data
@@ -35,13 +38,13 @@ export class OutputComponent implements OnInit, OnDestroy {
         }
         // Subscribe to simulationService to get data
         this.simulationService.interfaceData().subscribe((simData) => {
-            // If catchment added to simData or simData not yet set, update
+            // If catchment added to simData or catchment_data not yet set, update
             if (
-                !this.simData ||
+                !this.catchment_data ||
                 Object.keys(simData.network.catchment_data).length >
-                    Object.keys(this.simData.network.catchment_data).length
+                Object.keys(this.catchment_data).length
             ) {
-                this.simData = simData;
+                this.catchment_data = simData.network.catchment_data;
             }
         });
     }
@@ -84,8 +87,8 @@ export class OutputComponent implements OnInit, OnDestroy {
     }
 
     setDefaultDropListData() {
-        this.dropListData = [];
         // Set grid of containers
+        this.dropListData = [];
         this.dropListData.push(
             {
                 selectedCatchments: [this.comid],
@@ -120,10 +123,19 @@ export class OutputComponent implements OnInit, OnDestroy {
         );
     }
 
-    @HostListener("unloaded")
-    ngOnDestroy(): void {
-        if (this.cookieService.check("output")) {
-            this.cookieService.delete("output");
-        }
+    back(): void {
+        this.location.back();
+    }
+
+    aboutAQT(): void {
+        this.showAbout = true;
+    }
+
+    closeAbout(): void {
+        this.showAbout = false;
+    }
+
+    openHelp(): void {
+        console.log("open Aquatox help");
     }
 }

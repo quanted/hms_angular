@@ -11,6 +11,30 @@ app-footer {
 .task-bar {
     width: 95%;
     margin: 0 auto 5px auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.row-left {
+  display: flex;
+  flex-direction: row;
+}
+
+.row-right {
+  display: flex;
+  flex-direction: row;
+}
+
+.back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: x-large;
+}
+
+.segment-status {
+  margin: 0 1px 0 1px;
 }
 
 .add {
@@ -25,10 +49,14 @@ app-footer {
     margin: 0 20px 20px 20px;
 }
 
+.hide {
+  display: none;
+}
+
 .cdkDropListGroup {
   display: flex;
   justify-content: space-between;
-  flex-wrap: wrap; /* NEW */
+  flex-wrap: wrap;
   width: 100%;
   height: 100%;
 }

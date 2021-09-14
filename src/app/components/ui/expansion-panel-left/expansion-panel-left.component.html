@@ -30,5 +30,5 @@
             </div>
         </div>
     </div>
-    <app-about *ngIf="showAbout" (closeMe)="closeAbout()"></app-about>
+    <app-about [input]="true" *ngIf="showAbout" (closeMe)="closeAbout()"></app-about>
 </div>

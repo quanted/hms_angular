@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import * as Plotly from 'plotly.js/dist/plotly.js';
 
 @Component({
@@ -22,14 +22,17 @@ export class PlotlyComponent implements OnChanges {
     type: string,
     name: string,
   }[];
+  @Output() toggleCSS: EventEmitter<boolean> = new EventEmitter<boolean>();
   // Any to hold the plot specific properties
   chart: any;
+  showLegend = false;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.data.firstChange) {
       this.draw();
-    } else if (!changes.data.firstChange) {
-      this.setChart();
+    } else {
+      this.chart.layout.title.text = this.plotTitle;
+      this.chart.data = this.data;
       Plotly.react(this.plot.nativeElement, this.chart);
     }
   }
@@ -57,15 +60,10 @@ export class PlotlyComponent implements OnChanges {
           r: 30,
           b: 35,
           t: 40,
-          pad: 0
         },
         autosize: true,
-        showlegend: true,
-        legend: {
-          x: 1,
-          xanchor: 'right',
-          y: 0.9
-        }
+        showlegend: this.showLegend,
+
       },
       config: {
         responsive: true,
@@ -75,10 +73,18 @@ export class PlotlyComponent implements OnChanges {
       },
     };
   }
+
   draw(): void {
     this.setChart();
     // Plot 
     Plotly.newPlot(this.plot.nativeElement, this.chart);
     window.dispatchEvent(new Event('resize'));
+  }
+
+  toggleLegend(event) {
+    this.showLegend = !this.showLegend;
+    this.toggleCSS.emit();
+    this.chart.layout.showlegend = this.showLegend;
+    Plotly.react(this.plot.nativeElement, this.chart);
   }
 }
