@@ -9,18 +9,22 @@ import { SimulationService } from "src/app/services/simulation.service";
     styleUrls: ["./segment-list.component.css"],
 })
 export class SegmentListComponent implements OnInit {
+    pourPoint = null;
     boundarySegments = [];
     headwaterSegments = [];
     inNetworkSegments = [];
+    totalNumSegments = null;
     selectedComId = null;
 
     constructor(private simulation: SimulationService, private layerService: LayerService) {}
 
     ngOnInit(): void {
         this.simulation.interfaceData().subscribe((simData) => {
+            this.pourPoint = simData.network.segments.pourPoint;
             this.boundarySegments = simData.network.segments.boundary;
             this.headwaterSegments = simData.network.segments.headwater;
             this.inNetworkSegments = simData.network.segments.inNetwork;
+            this.totalNumSegments = simData.network.segments.totalNumSegments;
             this.selectedComId = simData.selectedComId;
         });
     }

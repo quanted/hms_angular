@@ -1,4 +1,13 @@
-import { Component, EventEmitter, HostListener, Input, OnChanges, Output, SimpleChange, SimpleChanges } from "@angular/core";
+import {
+    Component,
+    EventEmitter,
+    HostListener,
+    Input,
+    OnChanges,
+    Output,
+    SimpleChange,
+    SimpleChanges,
+} from "@angular/core";
 import { OutputService } from "src/app/services/output.service";
 import { SimulationService } from "src/app/services/simulation.service";
 
@@ -41,6 +50,7 @@ export class PlotContainerComponent implements OnChanges {
     constructor(private simulationService: SimulationService, public outputService: OutputService) {
         this.outputService.dropListDataSubject.subscribe((data) => {
             this.catchments && this.setData();
+            console.log("dlds: ", this.catchments && this.setData());
         });
     }
 
@@ -49,7 +59,7 @@ export class PlotContainerComponent implements OnChanges {
             for (let key of Object.keys(this.simData)) {
                 switch (key) {
                     case "network":
-                        if (this.dropListData && this.simData[key].catchment_data.size > 0) {
+                        if (this.dropListData && Object.keys(this.simData[key].catchment_data).length > 0) {
                             this.catchments = this.simData[key].catchment_data;
                             this.stateVariablesList = Object.keys(this.catchments.values().next().value?.data ?? {});
                             this.selectedSV = this.stateVariablesList[this.dropListData.selectedSV];
@@ -82,8 +92,7 @@ export class PlotContainerComponent implements OnChanges {
         const dates = [];
         // Iterate over map and set plot data
         for (let [comid, data] of this.catchments) {
-            if (dates.length === 0)
-                data.dates.forEach((d) => dates.push(new Date(d)));
+            if (dates.length === 0) data.dates.forEach((d) => dates.push(new Date(d)));
             // Get values for the selected state variable
             const values = [];
             data.data?.[this.selectedSV]?.forEach((d) => values.push(d));
@@ -127,7 +136,9 @@ export class PlotContainerComponent implements OnChanges {
                     obj[this.tableColumnNames[0]] = new Date(this.catchments.get(this.selectedCatchment).dates[i])
                         .toString()
                         .split("GMT")[0];
-                    obj[this.tableColumnNames[j]] = this.catchments.get(this.selectedCatchment).data[this.tableColumnNames[j]][i];
+                    obj[this.tableColumnNames[j]] = this.catchments.get(this.selectedCatchment).data[
+                        this.tableColumnNames[j]
+                    ][i];
                 }
                 // Push to table data
                 this.tableColumnData.push(obj);

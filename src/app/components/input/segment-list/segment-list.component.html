@@ -1,23 +1,29 @@
 <div class="list">
+    <div>This network has a total of {{ totalNumSegments }} segments</div>
     <div>Boundary Segments</div>
     <div *ngIf="!boundarySegments.length"><strong>This network has no boundary segments</strong></div>
     <div class="scroll-pane list-short" *ngIf="boundarySegments.length">
-        <div class="button" *ngFor="let segment of boundarySegments" [class.active]="isActive(segment)"  (click)="selectSegment(segment)">
-            <div class="vertical-center">ComID {{ segment }}</div>
+        <div class="button" *ngFor="let segment of boundarySegments" [class.active]="isActive(segment.comid)"  (click)="selectSegment(segment.comid)">
+            <div class="vertical-center">ComID {{ segment.comid }}</div>
         </div>
     </div>
-    <!-- <div>Headwater Segments</div>
+    <div>Headwater Segments</div>
     <div *ngIf="!headwaterSegments.length"><strong>This network has no headwater segments</strong></div>
     <div class="scroll-pane list-short" *ngIf="headwaterSegments.length">
-        <div class="button" *ngFor="let segment of headwaterSegments" [class.active]="isActive(segment)" (click)="selectSegment(segment)">
-            <div class="vertical-center">ComID {{ segment }}</div>
+        <div class="button" *ngFor="let segment of headwaterSegments" [class.active]="isActive(segment.comid)" (click)="selectSegment(segment.comid)">
+            <div class="vertical-center">ComID {{ segment.comid }}</div>
         </div>
-    </div> -->
+    </div>
     <div>In-Network Segments</div>
     <div *ngIf="!inNetworkSegments.length"><strong>This network has no segments</strong></div>
     <div class="scroll-pane list-short" *ngIf="inNetworkSegments.length">
-        <div class="button" *ngFor="let segment of inNetworkSegments" [class.active]="isActive(segment)" (click)="selectSegment(segment)">
-            <div class="vertical-center">ComID {{ segment }}</div>
+        <div class="button" *ngFor="let segment of inNetworkSegments" [class.active]="isActive(segment.comid)" (click)="selectSegment(segment.comid)">
+            <div class="vertical-center">ComID {{ segment.comid }}</div>
         </div>
+    </div>
+    <div>Pour Point</div>
+    <div *ngIf="!pourPoint"><strong>This network has no pour point</strong></div>
+    <div *ngIf="pourPoint" class="button" [class.active]="isActive(pourPoint.comid)" (click)="selectSegment(pourPoint.comid)">
+        <div class="vertical-center">ComID {{ pourPoint.comid }}</div>
     </div>
 </div>

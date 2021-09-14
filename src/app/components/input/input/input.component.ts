@@ -190,11 +190,11 @@ export class InputComponent implements OnInit {
     }
 
     getCatchment(): void {
-        this.layerService.getCatchmentByComId(this.pPointForm.get("pPointComid").value);
+        this.simulation.getCatchmentByComId(this.pPointForm.get("pPointComid").value);
     }
 
     getStreamNetwork(): void {
-        this.layerService.buildStreamNetwork(this.simulation.getPourPoint(), this.distanceForm.get("distance").value);
+        this.simulation.buildStreamNetwork(this.simulation.getPourPoint(), this.distanceForm.get("distance").value);
     }
 
     clearHuc(): void {
@@ -215,5 +215,9 @@ export class InputComponent implements OnInit {
 
     executeSimulation(): void {
         this.simulation.executeSimulation(this.pSetUpForm.value);
+    }
+
+    resetSimulation(): void {
+        this.simulation.resetSimulation();
     }
 }

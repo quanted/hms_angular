@@ -18,10 +18,13 @@ export class DefaultSimData {
         sim_completed: false,
         network: {
             pour_point_comid: null,
+            upstream_distance: null,
             segments: {
+                pourPoint: null,
                 boundary: [],
                 headwater: [],
                 inNetwork: [],
+                totalNumSegments: null,
             },
             order: null,
             sources: null,
@@ -32,7 +35,7 @@ export class DefaultSimData {
             Locale: {},
             Remin: {},
         },
-        jsonFlags: [],
+        json_flags: [],
         base_json: null,
         PSetup: {
             firstDay: "2000-01-01T00:00:00", // default one month
@@ -40,5 +43,6 @@ export class DefaultSimData {
             stepSizeInDays: true,
             useFixStepSize: false,
         },
+        sv: null,
     };
 }

@@ -47,10 +47,11 @@
                         <div class="form-row">Upstream Distance (Km)<input type="number" formControlName="distance"></div>
                     </div>
                     <div class="button" *ngIf="huc && catchment && !network.network && !waiting" (click)="getStreamNetwork()">
-                        Get stream network</div>
-                    <div class="button" *ngIf="waiting">
-                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        Get stream network
                     </div>
+                </div>
+                <div class="button" *ngIf="waiting">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
                 </div>
             </div>
 
@@ -158,7 +159,6 @@
                         <mat-icon class="icon-panel-toggle float-right" matTooltipPosition="right" matTooltip="Collapse section">expand_less</mat-icon>
                     </div>
                 </div>
-                <div>This network has {{ numNetSegments }} segments</div>
                 <app-segment-list></app-segment-list>
                 <app-comid-select-input></app-comid-select-input>
             </div>
@@ -170,4 +170,6 @@
     </div>
 
     <app-execution-panel *ngIf="simExecuting || simCompleted"></app-execution-panel>
+
+    <div class="button" (click)="resetSimulation()">reset simulation</div>
 </div>

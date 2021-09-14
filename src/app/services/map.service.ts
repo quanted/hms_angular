@@ -40,10 +40,10 @@ export class MapService {
     }
 
     getHuc(coords): void {
-        this.layerService.getHuc(coords);
+        this.simulation.getHuc(coords);
     }
 
     getCatchment(coords): void {
-        this.layerService.getCatchment(coords);
+        this.simulation.getCatchment(coords);
     }
 }

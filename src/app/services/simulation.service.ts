@@ -1,4 +1,4 @@
-import { Injectable, OnInit } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { formatDate } from "@angular/common";
 
 import { BehaviorSubject, forkJoin, Observable } from "rxjs";
@@ -6,25 +6,36 @@ import { BehaviorSubject, forkJoin, Observable } from "rxjs";
 import { CookieService } from "ngx-cookie-service";
 
 import { HmsService } from "./hms.service";
+import { WatersService } from "./waters.service";
 
 import { DefaultSimData } from "../models/DefaultSimData";
+import { LayerService } from "./layer.service";
 
 @Injectable({
     providedIn: "root",
 })
-export class SimulationService implements OnInit {
+export class SimulationService {
     private simData = { ...DefaultSimData.defaultSimData };
     private simDataSubject: BehaviorSubject<any>;
 
     STATUS_CHECK_INTERVAL = 1000; // 1000 = 1 second interval
     statusCheck: ReturnType<typeof setInterval>; // interval that checks with backend and updates sim status
 
-    constructor(private hms: HmsService, private cookieService: CookieService) {
+    constructor(
+        private hms: HmsService,
+        private waters: WatersService,
+        private layerService: LayerService,
+        private cookieService: CookieService
+    ) {
         this.simDataSubject = new BehaviorSubject(this.simData);
-    }
 
-    ngOnInit(): void {
-        if (this.cookieService.check("simId") && !this.simData.simId) {
+        this.layerService.clickListener().subscribe((comid) => {
+            console.log("click! ", comid);
+            this.updateSimData("selectedComId", comid);
+        });
+
+        if (this.cookieService.check("sim_setup")) {
+            this.rebuildSimData();
         }
     }
 
@@ -66,14 +77,17 @@ export class SimulationService implements OnInit {
     }
 
     getBaseJsonByFlags(flags: any): void {
-        this.updateSimData("json_flags", flags);
+        this.updateSimData("waiting", true);
         this.hms.getBaseJsonByFlags(flags).subscribe((json) => {
-            this.updateSimData("base_json", json);
+            this.simData.json_flags = flags;
+            this.simData.base_json = json;
+            this.updateState("json_flags", flags);
             const sv = [];
             for (let key of Object.keys(json.AQTSeg.SV)) {
                 sv.push(json.AQTSeg.SV[key]);
             }
-            this.updateSimData("sv", sv);
+            this.simData.sv = sv;
+            this.updateSimData("waiting", false);
         });
     }
 
@@ -81,10 +95,7 @@ export class SimulationService implements OnInit {
         this.updateSimData("sim_executing", true);
         this.initializeAquatoxSimulation(pSetup).subscribe((response) => {
             this.updateSimData("simId", response["_id"]);
-
-            this.cookieService.set("simId", response["_id"]);
-            this.cookieService.set("pPoint", this.simData.network.pour_point_comid);
-            this.cookieService.set("network", JSON.stringify(this.simData.network));
+            this.updateState("simId", response["_id"]);
 
             this.addCatchmentDependencies().subscribe((response) => {
                 this.hms.executeAquatoxSimulation(this.simData["simId"]).subscribe((response) => {
@@ -169,7 +180,6 @@ export class SimulationService implements OnInit {
     startStatusCheck(): void {
         if (this.simData.simId) {
             this.statusCheck = setInterval(() => {
-                console.log("checking status...");
                 this.hms.getAquatoxSimStatus(this.simData.simId).subscribe((simStatus) => {
                     this.updateSimData("sim_status", simStatus);
                     for (let comid of Object.keys(simStatus.catchments)) {
@@ -183,7 +193,6 @@ export class SimulationService implements OnInit {
                     ) {
                         this.updateSimData("sim_completed", true);
                         this.updateSimData("sim_executing", false);
-                        console.log("simulation complete");
                         this.endStatusCheck();
                     }
                 });
@@ -227,6 +236,140 @@ export class SimulationService implements OnInit {
 
     selectComId(comid): void {
         this.updateSimData("selectedComId", comid);
+    }
+
+    getCatchmentByComId(comid): void {
+        // get catchment info
+        this.updateSimData("waiting", true);
+        this.hms.getCatchmentInfo(comid).subscribe(
+            (data) => {
+                if (data.catchmentInfo?.metadata) {
+                    this.simData.network.pour_point_comid = comid;
+                    this.updateState("pour_point_comid", comid);
+                    // now get the huc by coods
+                    const coords = {
+                        lat: data.catchmentInfo.metadata.CentroidLatitude,
+                        lng: data.catchmentInfo.metadata.CentroidLongitude,
+                    };
+                    this.getHuc(coords);
+                    this.getCatchment(coords);
+                }
+            },
+            (error) => {
+                console.log("error getting catchment data: ", error);
+            }
+        );
+    }
+
+    getHuc(coords): void {
+        this.updateSimData("waiting", true);
+        this.waters.getHucData("HUC_12", coords.lat, coords.lng).subscribe(
+            (data) => {
+                if (data) {
+                    this.layerService.addFeature("HUC", data);
+                    this.updateSimData("selectedHuc", data);
+                    this.updateState("huc", coords);
+                }
+                this.updateSimData("waiting", false);
+            },
+            (error) => {
+                console.log("error getting huc data: ", error);
+            }
+        );
+    }
+
+    getCatchment(coords): void {
+        this.updateSimData("waiting", true);
+        this.waters.getCatchmentData(coords.lat, coords.lng).subscribe(
+            (data) => {
+                if (data) {
+                    this.layerService.addFeature("Catchment", data);
+                    this.updateSimData("selectedCatchment", data);
+                    this.updateState("pour_point_comid", data.features[0].properties.FEATUREID);
+                }
+                this.updateSimData("waiting", false);
+            },
+            (error) => {
+                console.log("error getting catchment data: ", error);
+            }
+        );
+    }
+
+    buildStreamNetwork(comid: string, distance: string): void {
+        this.updateSimData("waiting", true);
+        forkJoin([this.waters.getNetworkGeometry(comid, distance), this.hms.getNetworkInfo(comid, distance)]).subscribe(
+            (networkData) => {
+                if (networkData[0].error || networkData[1].error) {
+                    console.log("error: ", networkData[0].error);
+                    console.log("error: ", networkData[1].error);
+                } else {
+                    let geom = null;
+                    let info = null;
+                    for (let data of networkData) {
+                        if (data.networkInfo) info = data.networkInfo;
+                        if (data.networkGeometry) geom = data.networkGeometry;
+                    }
+                    if (geom && info) {
+                        this.updateState("upstream_distance", distance);
+                        this.simData.network.order = info.order;
+                        this.simData.network.sources = info.sources;
+                        this.simData.network.network = info.network;
+                        this.prepareNetworkGeometry(geom, info);
+                    }
+                }
+
+                this.updateSimData("waiting", false);
+            },
+            (error) => {
+                console.log("forkJoin error: ", error);
+            }
+        );
+    }
+
+    prepareNetworkGeometry(data, info): void {
+        const selectedHuc = this.simData.selectedHuc.properties.HUC_12;
+        const pourPointComid = data.output.resolved_starts[0].comid;
+        const flowlines = data.output.flowlines_traversed;
+
+        const segments = {
+            pourPoint: null,
+            boundary: [],
+            headwater: [],
+            inNetwork: [],
+            eventsEncountered: data.output.events_encountered,
+        };
+
+        for (let segment of flowlines) {
+            if (segment.comid === pourPointComid) {
+                segments.pourPoint = segment;
+                // if it's in network and
+                // if it doesn't have any sources it's a headwater
+            } else if (segment.wbd_huc12 == selectedHuc && !info.sources[segment.comid].length) {
+                segments.headwater.push(segment);
+                // else if it's in the aoi huc
+            } else if (segment.wbd_huc12 == selectedHuc) {
+                segments.inNetwork.push(segment);
+            } else {
+                // loop through the inNetwork segments and see if this comid is a source
+                // if so add it to the boundary segments
+                for (let inNetworkSegment of segments.inNetwork) {
+                    if (info.sources[inNetworkSegment.comid].includes(segment.comid.toString())) {
+                        segments.boundary.push(segment);
+                    }
+                }
+            }
+        }
+        this.simData.network.segments.pourPoint = segments.pourPoint;
+        this.simData.network.segments.boundary = segments.boundary;
+        this.simData.network.segments.headwater = segments.headwater;
+        this.simData.network.segments.inNetwork = segments.inNetwork;
+        this.simData.network.segments.totalNumSegments = [
+            segments.pourPoint,
+            ...segments.boundary,
+            ...segments.inNetwork,
+            ...segments.headwater,
+        ].length;
+        this.layerService.buildStreamLayers(segments);
     }
 
     clearHuc(): void {
@@ -310,7 +453,7 @@ export class SimulationService implements OnInit {
             this.simData[key] = null;
         }
         this.simDataSubject.next(this.simData);
-        console.log("simData: ", this.simData);
+        // console.log("simData: ", this.simData);
     }
 
     getDefaultCatchmentDependencies() {
@@ -332,8 +475,59 @@ export class SimulationService implements OnInit {
         };
     }
 
+    rebuildSimData(): void {
+        /** stuff needed to rebuild sim state
+         *  simState: {
+         *      pour_point_comid,
+         *      upstream_distance,
+         *      json_flags,
+         *      simId,
+         *  }
+         */
+        const lastState = this.getState();
+        console.log("lastState: ", lastState);
+        if (lastState) {
+            if (lastState.pour_point_comid) {
+                this.simData.network.pour_point_comid = lastState.pour_point_comid;
+                this.getCatchmentByComId(lastState.pour_point_comid);
+            } else if (lastState.huc) {
+                this.getHuc(lastState.huc);
+            }
+            if (lastState.pour_point_comid && lastState.upstream_distance) {
+                this.simData.network.upstream_distance = lastState.upstream_distance;
+                this.buildStreamNetwork(this.simData.network.pour_point_comid, lastState.upstream_distance);
+            }
+            if (lastState.simId) {
+                this.simData.simId = lastState.simId;
+                this.startStatusCheck();
+                // need to set the input form based on the simulations json stored in the db
+            } else if (lastState.json_flags) {
+                this.getBaseJsonByFlags(lastState.json_flags);
+            }
+        }
+    }
+
+    getState(): any {
+        const state = this.cookieService.get("sim_setup");
+        if (state) {
+            return JSON.parse(state);
+        }
+        return null;
+    }
+
+    updateState(param, value): void {
+        let state;
+        if (this.cookieService.get("sim_setup")) {
+            state = JSON.parse(this.cookieService.get("sim_setup"));
+        } else state = {};
+
+        state[param] = value;
+        this.cookieService.set("sim_setup", JSON.stringify(state));
+    }
+
     resetSimulation(): void {
         this.simData = { ...DefaultSimData.defaultSimData };
+        this.cookieService.delete("sim_setup");
         this.updateSimData();
     }
 }

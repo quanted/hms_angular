@@ -1,11 +1,10 @@
 import { Injectable } from "@angular/core";
 
-import { forkJoin } from "rxjs";
+import { BehaviorSubject, forkJoin } from "rxjs";
 
 import * as L from "leaflet";
 import * as ESRI from "esri-leaflet";
 
-import { SimulationService } from "./simulation.service";
 import { HmsService } from "./hms.service";
 import { WatersService } from "./waters.service";
 
@@ -198,8 +197,6 @@ export class LayerService {
         } */
     ];
 
-    hucLayerNames = ["HU_12_NAME", "HU_10_NAME", "HU_8_NAME", "HU_6_NAME", "HU_4_NAME", "HU_2_NAME"];
-
     selectedComId = null;
 
     map;
@@ -209,9 +206,10 @@ export class LayerService {
     hucColor = "#00FF00";
     catchmentColor = "#00FF00";
     // stream segment colors
-    pourColor = "#FF0000";
-    inHucColor = "#0000FF";
-    outHucColor = "#FF00FF";
+    pourPointColor = "#FF0000";
+    inNetworkColor = "#0000FF";
+    headwaterColor = "#00FFFF";
+    boundaryColor = "#FF00FF";
     selectedColor = "#FFFF00";
     simInProgressColor = "#47C7FF";
     simCompletedColor = "#00C113";
@@ -226,7 +224,10 @@ export class LayerService {
         className: "splash",
     });
 
-    constructor(private simulation: SimulationService, private hms: HmsService, private waters: WatersService) {
+    private clickListenerSubject: BehaviorSubject<any>;
+
+    constructor(private hms: HmsService, private waters: WatersService) {
+        this.clickListenerSubject = new BehaviorSubject<any>(null);
         // setup default tile maps
         for (let basemap of this.basemaps) {
             this.basemapLayers.push({
@@ -263,11 +264,6 @@ export class LayerService {
                 show: false,
             });
         }
-        this.simulation.interfaceData().subscribe((simData) => {
-            // if (simData.sim_status.catchment_status.length) {
-            //     this.updateStreamLayer(simData.sim_status.catchment_status);
-            // }
-        });
     }
 
     addToolTip(feature, layer): void {
@@ -320,63 +316,8 @@ export class LayerService {
         }
     }
 
-    getHuc(coords): void {
-        this.simulation.updateSimData("waiting", true);
-        this.waters.getHucData("HUC_12", coords.lat, coords.lng).subscribe(
-            (data) => {
-                if (data) {
-                    this.addFeature("HUC", data);
-                    this.simulation.updateSimData("selectedHuc", data);
-                }
-                this.simulation.updateSimData("waiting", false);
-            },
-            (error) => {
-                console.log("error getting huc data: ", error);
-            }
-        );
-    }
-
     removeHuc(): void {
         this.removeFeature("HUC");
-        this.simulation.updateSimData("selectedHuc", null);
-    }
-
-    getCatchmentByComId(comid): void {
-        this.simulation.updateSimData("waiting", true);
-        this.hms.getCatchmentInfo(comid).subscribe(
-            (data) => {
-                if (data.catchmentInfo) {
-                    this.simulation.updateSimData("waiting", false);
-                    // now get the huc by coods
-                    const coords = {
-                        lat: data.catchmentInfo.metadata.CentroidLatitude,
-                        lng: data.catchmentInfo.metadata.CentroidLongitude,
-                    };
-                    this.getHuc(coords);
-                    this.getCatchment(coords);
-                }
-            },
-            (error) => {
-                console.log("error getting catchment data: ", error);
-                this.simulation.updateSimData("waiting", false);
-            }
-        );
-    }
-
-    getCatchment(coords): void {
-        this.simulation.updateSimData("waiting", true);
-        this.waters.getCatchmentData(coords.lat, coords.lng).subscribe(
-            (data) => {
-                if (data) {
-                    this.addFeature("Catchment", data);
-                    this.simulation.updateSimData("selectedCatchment", data);
-                }
-                this.simulation.updateSimData("waiting", false);
-            },
-            (error) => {
-                console.log("error getting catchment data: ", error);
-            }
-        );
     }
 
     removeCatchment(): void {
@@ -390,118 +331,133 @@ export class LayerService {
             this.map.removeLayer(segmentLayer.layer);
         }
         this.segmentLayers = [];
-        this.simulation.updateSimData("selectedHuc", null);
     }
 
-    buildStreamNetwork(comid: string, distance: string): void {
-        this.simulation.updateSimData("waiting", true);
-        forkJoin([this.waters.getNetworkGeometry(comid, distance), this.hms.getNetworkInfo(comid, distance)]).subscribe(
-            (networkData) => {
-                if (networkData[0].error || networkData[1].error) {
-                    console.log("error: ", networkData[0].error);
-                    console.log("error: ", networkData[1].error);
-                } else {
-                    for (let data of networkData) {
-                        if (data.networkInfo) this.simulation.updateSimData("network", data.networkInfo);
-                        if (data.networkGeometry) this.buildStreamLayers(data.networkGeometry);
-                    }
-                }
-                this.simulation.updateSimData("waiting", false);
-            },
-            (error) => {
-                console.log("forkJoin error: ", error);
-            }
-        );
-    }
+    buildStreamLayers(streamData) {
+        console.log("build-segments: ", streamData);
 
-    buildStreamLayers(data) {
-        const fl = data.output.flowlines_traversed;
-        const inHucSegments = [];
-        const outHucSegments = [];
-        const selectedHuc = this.simulation.getSelectedHuc();
+        if (streamData.pourPoint) {
+            const pourPointLayer = L.featureGroup().addTo(this.map);
+            const pourPoint = streamData.pourPoint;
 
-        for (let i in fl) {
-            let tmp_feature = L.geoJSON(fl[i].shape, {
-                style: {
-                    color: this.inHucColor,
-                    weight: 2,
-                },
-            });
-            tmp_feature.on("click", (e) => {
-                this.selectSegment(fl[i].comid);
-            });
-            tmp_feature.bindTooltip(`comID: ${fl[i].comid}`, {
-                sticky: true,
-            });
-
-            const selectedLayerProps = {
-                comid: fl[i].comid,
-                name: "in-huc-segment",
-                layer: tmp_feature,
+            const layerStyle = {
+                color: this.pourPointColor,
+                weight: 2,
             };
 
-            if (selectedHuc == fl[i].wbd_huc12) {
-                inHucSegments.push(tmp_feature);
-                this.simulation.updateSegmentList("inNetwork", fl[i].comid);
-            } else {
-                tmp_feature.setStyle({
-                    color: this.outHucColor,
-                    weight: 2,
-                });
-                selectedLayerProps.name = "out-huc-segment";
-                outHucSegments.push(tmp_feature);
-                this.simulation.updateSegmentList("boundary", fl[i].comid);
-            }
+            const segmentLayer = this.createSimLayer(pourPoint, layerStyle);
+            this.segmentLayers.push({
+                comid: pourPoint.comid,
+                layer: segmentLayer,
+                name: "pourPoint",
+            });
+            segmentLayer.addTo(pourPointLayer);
 
-            // first segment is pour point, add it as layer
-            if (i == "0") {
-                tmp_feature.setStyle({
-                    color: this.pourColor,
-                    weight: 2,
-                });
-                this.simLayers.push({
-                    type: "simfeature-line",
-                    name: "Pour Point",
-                    layer: tmp_feature,
-                    inSim: false, // has the user added this segment/added loadings to segment
-                    show: true,
-                });
-                selectedLayerProps.name = "pour-point";
-            }
-            this.segmentLayers.push(selectedLayerProps);
+            pourPointLayer["options"]["style"] = {
+                color: this.headwaterColor,
+                weight: 2,
+            };
+
+            this.simLayers.push({
+                type: "simfeature-line",
+                name: "Pour Point",
+                layer: pourPointLayer,
+                show: true,
+            });
         }
 
-        if (inHucSegments.length) {
-            const streamLayer = L.featureGroup(inHucSegments).addTo(this.map);
-            streamLayer["options"]["style"] = {
-                color: this.inHucColor,
+        if (streamData.inNetwork.length) {
+            const inNetworkLayer = L.featureGroup().addTo(this.map);
+            const inNetwork = streamData.inNetwork;
+
+            const layerStyle = {
+                color: this.inNetworkColor,
+                weight: 2,
+            };
+
+            for (let segment of inNetwork) {
+                const segmentLayer = this.createSimLayer(segment, layerStyle);
+                this.segmentLayers.push({
+                    comid: segment.comid,
+                    layer: segmentLayer,
+                    name: "inNetwork",
+                });
+                segmentLayer.addTo(inNetworkLayer);
+            }
+            inNetworkLayer["options"]["style"] = {
+                color: this.inNetworkColor,
                 weight: 2,
             };
             this.simLayers.push({
                 type: "simfeature-line",
                 name: "Network",
-                layer: streamLayer,
+                layer: inNetworkLayer,
                 show: true,
             });
         }
 
-        if (outHucSegments.length) {
-            const boundryLayer = L.featureGroup(outHucSegments).addTo(this.map);
-            boundryLayer["options"]["style"] = {
-                color: this.outHucColor,
+        if (streamData.headwater.length) {
+            const headwaterLayer = L.featureGroup().addTo(this.map);
+            const headwater = streamData.headwater;
+
+            const layerStyle = {
+                color: this.headwaterColor,
+                weight: 2,
+            };
+
+            for (let segment of headwater) {
+                const segmentLayer = this.createSimLayer(segment, layerStyle);
+                this.segmentLayers.push({
+                    comid: segment.comid,
+                    layer: segmentLayer,
+                    name: "headwater",
+                });
+                segmentLayer.addTo(headwaterLayer);
+            }
+            headwaterLayer["options"]["style"] = {
+                color: this.headwaterColor,
                 weight: 2,
             };
             this.simLayers.push({
                 type: "simfeature-line",
-                name: "Boundry",
-                layer: boundryLayer,
+                name: "Headwaters",
+                layer: headwaterLayer,
                 show: true,
             });
         }
 
-        // build station layer
-        const stations = data.output.events_encountered;
-        if (stations) {
+        if (streamData.boundary.length) {
+            const boundaryLayer = L.featureGroup().addTo(this.map);
+            const boundary = streamData.boundary;
+
+            const layerStyle = {
+                color: this.boundaryColor,
+                weight: 2,
+            };
+
+            for (let segment of boundary) {
+                const segmentLayer = this.createSimLayer(segment, layerStyle);
+                this.segmentLayers.push({
+                    comid: segment.comid,
+                    layer: segmentLayer,
+                    name: "boundary",
+                });
+                segmentLayer.addTo(boundaryLayer);
+            }
+            boundaryLayer["options"]["style"] = {
+                color: this.boundaryColor,
+                weight: 2,
+            };
+            this.simLayers.push({
+                type: "simfeature-line",
+                name: "Boundary",
+                layer: boundaryLayer,
+                show: true,
+            });
+        }
+
+        if (streamData.eventsEncountered) {
+            const stations = streamData.eventsEncountered;
             const stationLayer = L.geoJSON().addTo(this.map);
             for (let i = 0; i < stations.length; i++) {
                 const sEvent = stations[i];
@@ -513,18 +469,32 @@ export class LayerService {
                     .addTo(stationLayer);
             }
             stationLayer["options"]["style"] = {
-                color: this.outHucColor,
+                color: this.boundaryColor,
                 weight: 2,
-                fillColor: this.outHucColor,
-                fillOpacity: 1,
             };
             this.simLayers.push({
-                type: "simfeature",
+                type: "simfeature-line",
                 name: "Stations",
                 layer: stationLayer,
                 show: true,
             });
         }
+    }
+
+    createSimLayer(segmentData, style): any {
+        const simLayer = L.geoJSON(segmentData.shape, {
+            style,
+        });
+        simLayer.on("click", (e) => {
+            this.selectSegment(segmentData.comid);
+        });
+        simLayer.on("hover", (e) => {
+            console.log("hover: ", e);
+        });
+        simLayer.bindTooltip(`comID: ${segmentData.comid}`, {
+            sticky: true,
+        });
+        return simLayer;
     }
 
     toggleLayer(type, name): void {
@@ -582,21 +552,27 @@ export class LayerService {
         for (let layer of this.segmentLayers) {
             if (layer.comid === this.selectedComId) {
                 switch (layer.name) {
-                    case "in-huc-segment":
+                    case "inNetwork":
                         layer.layer.setStyle({
-                            color: (layer.inSim = true ? this.selectedColor : this.inHucColor),
+                            color: (layer.inSim = true ? this.selectedColor : this.inNetworkColor),
                             weight: 2,
                         });
                         break;
-                    case "out-huc-segment":
+                    case "boundary":
                         layer.layer.setStyle({
-                            color: (layer.inSim = true ? this.selectedColor : this.outHucColor),
+                            color: (layer.inSim = true ? this.selectedColor : this.boundaryColor),
                             weight: 2,
                         });
                         break;
-                    case "pour-point":
+                    case "headwater":
                         layer.layer.setStyle({
-                            color: (layer.inSim = true ? this.selectedColor : this.pourColor),
+                            color: (layer.inSim = true ? this.selectedColor : this.headwaterColor),
+                            weight: 2,
+                        });
+                        break;
+                    case "pourPoint":
+                        layer.layer.setStyle({
+                            color: (layer.inSim = true ? this.selectedColor : this.pourPointColor),
                             weight: 2,
                         });
                         break;
@@ -614,8 +590,8 @@ export class LayerService {
             }
         }
         if (found) {
+            this.clickListenerSubject.next(comid);
             this.selectedComId = comid;
-            this.simulation.selectComId(comid);
         }
     }
 
@@ -673,5 +649,9 @@ export class LayerService {
             overlays: this.overlayLayers,
             simFeatures: this.simLayers,
         };
+    }
+
+    clickListener(): BehaviorSubject<any> {
+        return this.clickListenerSubject;
     }
 }
