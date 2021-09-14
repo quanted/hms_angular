@@ -181,28 +181,30 @@ export class SimulationService {
         if (this.simData.simId) {
             this.statusCheck = setInterval(() => {
                 this.hms.getAquatoxSimStatus(this.simData.simId).subscribe((simStatus) => {
-                    const segmentStatusList = [];
-                    for (let segment of Object.keys(simStatus.catchments)) {
-                        segmentStatusList.push({
-                            comid: segment,
-                            status: simStatus.catchments[segment].status,
-                        });
-                    }
-                    simStatus.catchments = segmentStatusList;
-                    this.updateSimData("sim_status", simStatus);
-                    this.layerService.updateStreamLayer(simStatus.catchments);
-                    for (let comid of Object.keys(simStatus.catchments)) {
-                        if (simStatus.catchments[comid].status == "COMPLETED") {
-                            this.addSimResults(comid, simStatus.catchments[comid].task_id);
+                    if (simStatus.catchments) {
+                        const segmentStatusList = [];
+                        for (let segment of Object.keys(simStatus.catchments)) {
+                            segmentStatusList.push({
+                                comid: segment,
+                                status: simStatus.catchments[segment].status,
+                            });
                         }
-                    }
-                    if (
-                        !this.simData.sim_completed &&
-                        (simStatus.status == "COMPLETED" || simStatus.status == "FAILED")
-                    ) {
-                        this.updateSimData("sim_completed", true);
-                        this.updateSimData("sim_executing", false);
-                        this.endStatusCheck();
+                        simStatus.catchments = segmentStatusList;
+                        this.updateSimData("sim_status", simStatus);
+                        this.layerService.updateStreamLayer(simStatus.catchments);
+                        for (let comid of Object.keys(simStatus.catchments)) {
+                            if (simStatus.catchments[comid].status == "COMPLETED") {
+                                this.addSimResults(comid, simStatus.catchments[comid].task_id);
+                            }
+                        }
+                        if (
+                            !this.simData.sim_completed &&
+                            (simStatus.status == "COMPLETED" || simStatus.status == "FAILED")
+                        ) {
+                            this.updateSimData("sim_completed", true);
+                            this.updateSimData("sim_executing", false);
+                            this.endStatusCheck();
+                        }
                     }
                 });
             }, this.STATUS_CHECK_INTERVAL);
@@ -466,6 +468,15 @@ export class SimulationService {
                 timeLocalized: "false",
             },
         };
+    }
+
+    updateSegmentLoadings(comid, loading): void {
+        if (!this.simData.network.catchment_loadings[comid]) {
+            this.simData.network.catchment_loadings[comid] = [];
+        }
+        this.simData.network.catchment_loadings[comid].push(loading);
+        console.log("simData.loading updated: ", this.simData);
+        this.updateSimData();
     }
 
     rebuildSimData(): void {

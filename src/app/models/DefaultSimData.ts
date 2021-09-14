@@ -29,6 +29,7 @@ export class DefaultSimData {
             order: null,
             sources: null,
             network: null,
+            catchment_loadings: {},
             catchment_data: {},
         },
         Location: {

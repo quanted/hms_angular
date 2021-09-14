@@ -63,18 +63,20 @@ export class ComidSelectInputComponent implements OnInit {
             this.cancelAdd();
         }
         this.selectedComId = simData.selectedComId;
-        this.inputForm.get("comid").setValue(simData.selectedComId);
-        if (simData.network.catchment_data[this.selectedComId]) {
-            this.parameters = [];
-            this.sources = [];
-            const tempArry = simData.network.catchment_data[this.selectedComId].sv;
-            for (let sv of tempArry) {
-                if (sv == "new parameter object") this.parameters.push(sv);
-                if (sv == "new source object") this.sources.push(sv);
+        if (this.selectedComId) {
+            this.inputForm.get("comid").setValue(simData.selectedComId);
+            if (simData.network.catchment_loadings[this.selectedComId]) {
+                this.parameters = [];
+                this.sources = [];
+                const segmentLoadings = simData.network.catchment_loadings[this.selectedComId];
+                for (let loading of segmentLoadings) {
+                    if (loading.type == "parameter") this.parameters.push(loading);
+                    if (loading.type == "source") this.sources.push(loading);
+                }
+            } else {
+                this.parameters = [];
+                this.sources = [];
             }
-        } else {
-            this.parameters = [];
-            this.sources = [];
         }
     }
 
@@ -121,8 +123,7 @@ export class ComidSelectInputComponent implements OnInit {
     insertParameter() {
         this.addingParameter = false;
         // this.hmsService.validateCSV(this.dataCSV).subscribe();
-        this.simulation.updateSimData("comid_inputs", {
-            comid: this.selectedComId,
+        this.simulation.updateSegmentLoadings(this.selectedComId, {
             type: "parameter",
             value: "new parameter object",
         });
@@ -131,8 +132,7 @@ export class ComidSelectInputComponent implements OnInit {
     insertSource() {
         this.addingSource = false;
         // this.hmsService.validateCSV(this.dataCSV).subscribe();
-        this.simulation.updateSimData("comid_inputs", {
-            comid: this.selectedComId,
+        this.simulation.updateSegmentLoadings(this.selectedComId, {
             type: "source",
             value: "new source object",
         });

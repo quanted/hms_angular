@@ -14,7 +14,7 @@
     <div class="scroll-pane list-short" *ngIf="parameters.length">
       <div *ngFor="let parameter of parameters" class="button">
         <div class="form-row">
-          <div class="vertical-center">{{ parameter }}</div><mat-icon title="Remove Parameter">delete</mat-icon>
+          <div class="vertical-center">{{ parameter.value }}</div><mat-icon title="Remove Parameter">delete</mat-icon>
         </div>
       </div>
     </div>
@@ -25,7 +25,7 @@
     <div class="scroll-pane list-short" *ngIf="sources.length">
       <div *ngFor="let source of sources" class="button">
         <div class="form-row">
-          <div class="vertical-center">{{ source }}</div><mat-icon title="Remove Source">delete</mat-icon>
+          <div class="vertical-center">{{ source.value }}</div><mat-icon title="Remove Source">delete</mat-icon>
         </div>
       </div>
     </div>
