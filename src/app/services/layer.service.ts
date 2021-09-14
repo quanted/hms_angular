@@ -291,20 +291,25 @@ export class LayerService {
     }
 
     addFeature(id, feature) {
+        const layer = L.geoJSON(feature, {
+            interactive: false,
+            style: {
+                color: "#0000ff",
+                weight: 2,
+                fillColor: "#0000ff",
+                fillOpacity: 0,
+            },
+        }).addTo(this.map);
+
         this.simLayers.push({
             type: "simfeature",
             name: id,
-            layer: L.geoJSON(feature, {
-                interactive: false,
-                style: {
-                    color: "#0000ff",
-                    weight: 2,
-                    fillColor: "#0000ff",
-                    fillOpacity: 0,
-                },
-            }).addTo(this.map),
+            layer,
             show: true,
         });
+        if (id == "HUC") {
+            this.map.fitBounds(layer.getBounds());
+        }
     }
 
     removeFeature(id) {
