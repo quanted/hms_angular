@@ -11,6 +11,7 @@ import { WatersService } from "./waters.service";
 import { DefaultSimData } from "../models/DefaultSimData";
 import { LayerService } from "./layer.service";
 import { timeThursdays } from "d3-time";
+import { last } from "rxjs/operators";
 
 @Injectable({
     providedIn: "root",
@@ -182,16 +183,6 @@ export class SimulationService {
             this.statusCheck = setInterval(() => {
                 this.hms.getAquatoxSimStatus(this.simData.simId).subscribe((simStatus) => {
                     if (simStatus.catchments) {
-                        const segmentStatusList = [];
-                        for (let segment of Object.keys(simStatus.catchments)) {
-                            segmentStatusList.push({
-                                comid: segment,
-                                status: simStatus.catchments[segment].status,
-                            });
-                        }
-                        simStatus.catchments = segmentStatusList;
-                        this.updateSimData("sim_status", simStatus);
-                        this.layerService.updateStreamLayer(simStatus.catchments);
                         for (let comid of Object.keys(simStatus.catchments)) {
                             if (simStatus.catchments[comid].status == "COMPLETED") {
                                 this.addSimResults(comid, simStatus.catchments[comid].task_id);
@@ -205,6 +196,16 @@ export class SimulationService {
                             this.updateSimData("sim_executing", false);
                             this.endStatusCheck();
                         }
+                        const segmentStatusList = [];
+                        for (let segment of Object.keys(simStatus.catchments)) {
+                            segmentStatusList.push({
+                                comid: segment,
+                                ...simStatus.catchments[segment],
+                            });
+                        }
+                        simStatus.catchments = segmentStatusList;
+                        this.updateSimData("sim_status", simStatus);
+                        this.layerService.updateStreamLayer(simStatus.catchments);
                     }
                 });
             }, this.STATUS_CHECK_INTERVAL);
@@ -214,7 +215,7 @@ export class SimulationService {
     }
 
     addSimResults(comid, taskId): void {
-        if (this.simData.network.catchment_data[comid] == null) {
+        if (!this.simData.network.catchment_data[comid]) {
             this.hms.getCatchmentData(taskId).subscribe((catchmentData) => {
                 this.simData.network.catchment_data[comid] = catchmentData;
                 this.updateSimData();
@@ -231,7 +232,6 @@ export class SimulationService {
         this.hms.getAquatoxSimStatus(this.simData["simId"]).subscribe((response) => {
             let status = response.status;
             if (!status) status = response.error;
-            console.log(`Status: ${status}`, response);
         });
     }
 
@@ -399,7 +399,7 @@ export class SimulationService {
         this.simData.network.sources = null;
         this.simData.network.order = null;
         this.simData.network.network = null;
-        this.simData.network.catchment_data = null;
+        this.simData.network.catchment_data = {};
         this.simData.selectedComId = null;
         this.updateSimData("selectedCatchment", null);
         this.updateState("pour_point_comid", null);
@@ -475,7 +475,6 @@ export class SimulationService {
             this.simData.network.catchment_loadings[comid] = [];
         }
         this.simData.network.catchment_loadings[comid].push(loading);
-        console.log("simData.loading updated: ", this.simData);
         this.updateSimData();
     }
 
@@ -499,6 +498,7 @@ export class SimulationService {
                 this.getHuc(lastState.huc);
             }
             if (lastState.simId) {
+                this.simData.network.pour_point_comid = lastState.pour_point_comid;
                 this.simData.simId = lastState.simId;
                 this.startStatusCheck();
             }
@@ -509,7 +509,6 @@ export class SimulationService {
     }
 
     rebuildStreamNetwork(comid, distance): void {
-        console.log("rebuild stream network!");
         this.updateSimData("waiting", true);
         this.hms.getCatchmentInfo(comid).subscribe(
             (data) => {

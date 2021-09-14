@@ -206,9 +206,9 @@ export class LayerService {
     hucColor = "#000000";
     catchmentColor = "#000000";
     // stream segment colors
-    pourPointColor = "#0042FF";
-    inNetworkColor = "#0000FF";
-    headwaterColor = "#4200FF";
+    pourPointColor = "#ADEAEA";
+    inNetworkColor = "#63D1F4";
+    headwaterColor = "#0198E1";
     boundaryColor = "#FF4200";
     selectedColor = "#FFFF00";
     simInProgressColor = "#47C7FF";

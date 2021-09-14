@@ -4,7 +4,6 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 
 import { HmsService } from "src/app/services/hms.service";
 import { SimulationService } from "src/app/services/simulation.service";
-import { LayerService } from "src/app/services/layer.service";
 
 @Component({
     selector: "app-input",
@@ -79,23 +78,16 @@ export class InputComponent implements OnInit {
     simExecuting = false;
     simCompleted = false;
 
-    sv = [];
+    huc;
+    catchment;
     network = [];
 
     jsonFlags = [];
     baseJson = false;
 
     sVariables;
-    numNetSegments;
-    huc;
-    catchment;
 
-    constructor(
-        private fb: FormBuilder,
-        private hms: HmsService,
-        private simulation: SimulationService,
-        private layerService: LayerService
-    ) {}
+    constructor(private fb: FormBuilder, private hms: HmsService, private simulation: SimulationService) {}
 
     ngOnInit(): void {
         this.pPointForm = this.fb.group({
@@ -128,7 +120,9 @@ export class InputComponent implements OnInit {
             fixStepSize: [null],
         });
 
-        this.localeForm = this.fb.group({});
+        this.localeForm = this.fb.group({
+            SiteName: [""],
+        });
 
         this.reminForm = this.fb.group({
             DecayMax_Lab: [],
@@ -137,56 +131,21 @@ export class InputComponent implements OnInit {
             KDenitri_Wat: [],
         });
 
-        this.simulation.interfaceData().subscribe((data) => {
-            this.updateInterface(data);
+        this.simulation.interfaceData().subscribe((simData) => {
+            this.updateInterface(simData);
         });
     }
 
-    // updateInterface(simData): void {
-    //     console.log("interfaceUpdate: ", simData);
-    //     this.waiting = simData.waiting;
-    //     this.selectedHuc = simData.selectedHuc;
-    //     this.selectedCatchment = simData.selectedCatchment;
-    //     this.baseJson = simData.base_json;
-    //     this.sv = simData.sv;
-    //     this.network = simData.network;
-    //     this.jsonFlags = simData.jsonFlags;
-    //     this.baseJson = simData.base_json;
-    //     this.simExecuting = simData.sim_executing;
-    //     this.simCompleted = simData.sim_completed;
-    // }
-
-    updateInterface(data): void {
-        for (let key of Object.keys(data)) {
-            switch (key) {
-                case "waiting":
-                    this.waiting = data[key];
-                    break;
-                case "selectedHuc":
-                    this.huc = data[key];
-                    break;
-                case "selectedCatchment":
-                    this.catchment = data[key];
-                    break;
-                case "network":
-                    this.network = data[key];
-                    break;
-                case "base_json":
-                    this.baseJson = data[key];
-                    break;
-                case "sv":
-                    this.sVariables = data[key];
-                    break;
-                case "sim_executing":
-                    this.simExecuting = data[key];
-                    break;
-                case "sim_completed":
-                    this.simCompleted = data[key];
-                    break;
-                default:
-                // console.log("input doesn't use: ", key);
-            }
-        }
+    updateInterface(simData): void {
+        this.waiting = simData.waiting;
+        this.huc = simData.selectedHuc;
+        this.catchment = simData.selectedCatchment;
+        this.baseJson = simData.base_json;
+        this.sVariables = simData.sv;
+        this.network = simData.network;
+        this.baseJson = simData.base_json;
+        this.simExecuting = simData.sim_executing;
+        this.simCompleted = simData.sim_completed;
     }
 
     getCatchment(): void {

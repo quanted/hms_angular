@@ -3,7 +3,7 @@ import { CdkDragDrop } from "@angular/cdk/drag-drop";
 import { SimulationService } from "src/app/services/simulation.service";
 import { OutputService } from "src/app/services/output.service";
 import { ActivatedRoute } from "@angular/router";
-import { Location } from '@angular/common';
+import { Location } from "@angular/common";
 
 @Component({
     selector: "app-output",
@@ -28,7 +28,7 @@ export class OutputComponent implements OnInit {
         private outputService: OutputService,
         private route: ActivatedRoute,
         private location: Location
-    ) { }
+    ) {}
 
     ngOnInit() {
         // Get comid and set droplist data
@@ -41,8 +41,7 @@ export class OutputComponent implements OnInit {
             // If catchment added to simData or catchment_data not yet set, update
             if (
                 !this.catchment_data ||
-                Object.keys(simData.network.catchment_data).length >
-                Object.keys(this.catchment_data).length
+                Object.keys(simData.network.catchment_data).length > Object.keys(this.catchment_data).length
             ) {
                 this.catchment_data = simData.network.catchment_data;
             }

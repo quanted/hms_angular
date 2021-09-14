@@ -105,6 +105,14 @@
                 <!-- Locale section -->
                 <div *ngIf="baseJson" [formGroup]="localeForm">
                     <div class="centered"><strong>Locale</strong></div>
+                    <div class="form-row">
+                        <div>
+                            Site Name
+                        </div>
+                        <div>
+                            <input type="text" formControlName="SiteName">
+                        </div>
+                    </div>
                     <div class="section-item">
                         <div class="form-row">
                         </div>
@@ -169,7 +177,8 @@
         </div>
     </div>
 
-    <app-execution-panel *ngIf="simExecuting || simCompleted"></app-execution-panel>
-
-    <div class="button" (click)="resetSimulation()">reset simulation</div>
+    <div *ngIf="simExecuting || simCompleted">
+        <app-execution-panel></app-execution-panel>
+        <div class="button" (click)="resetSimulation()">reset simulation</div>
+    </div>
 </div>

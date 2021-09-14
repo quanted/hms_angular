@@ -21,7 +21,7 @@ export class SegmentStatusListComponent implements OnInit {
         });
     }
 
-    gotoData(comId): void {
-        this.router.navigateByUrl(`output/${comId}`);
+    gotoData(comid): void {
+        this.router.navigateByUrl(`output/${comid}`);
     }
 }
