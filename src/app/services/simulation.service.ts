@@ -225,7 +225,6 @@ export class SimulationService {
 
     endStatusCheck(): void {
         clearInterval(this.statusCheck);
-        console.log("end status checking...");
     }
 
     getStatus(): void {
@@ -321,14 +320,11 @@ export class SimulationService {
                         if (data.networkGeometry) geom = data.networkGeometry;
                     }
                     if (geom && info) {
+                        console.log("info: ", info);
                         this.updateState("upstream_distance", distance);
-                        this.simData.network.order = info.order;
-                        this.simData.network.sources = info.sources;
-                        this.simData.network.network = info.network;
                         this.prepareNetworkGeometry(geom, info);
                     }
                 }
-
                 this.updateSimData("waiting", false);
             },
             (error) => {
@@ -341,6 +337,12 @@ export class SimulationService {
         const selectedHuc = this.simData.selectedHuc.properties.HUC_12;
         const pourPointComid = data.output.resolved_starts[0].comid;
         const flowlines = data.output.flowlines_traversed;
+
+        // order and sources need to be filtered down to just in huc and boundary segments
+        // order and sources goes to the backend
+        this.simData.network.order = info.order;
+        this.simData.network.sources = info.sources;
+        this.simData.network.network = info.network;
 
         const segments = {
             pourPoint: null,
@@ -448,7 +450,7 @@ export class SimulationService {
             this.simData[key] = null;
         }
         this.simDataSubject.next(this.simData);
-        // console.log("simData: ", this.simData);
+        console.log("simData: ", this.simData);
     }
 
     getDefaultCatchmentDependencies() {
@@ -549,7 +551,7 @@ export class SimulationService {
                 }
 
                 if (data.catchmentInfo.ERROR) {
-                    console.log("ERROR: ", data.catchmentInfo.ERROR);
+                    console.log("ERROR REBUILDING STREAM NETWORK: ", data.catchmentInfo.ERROR);
                     this.updateSimData("waiting", false);
                 }
             },

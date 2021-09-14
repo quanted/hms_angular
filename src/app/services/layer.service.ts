@@ -211,7 +211,7 @@ export class LayerService {
     headwaterColor = "#0198E1";
     boundaryColor = "#FF4200";
     selectedColor = "#FFFF00";
-    simInProgressColor = "#47C7FF";
+    simInProgressColor = "#FFB01F";
     simCompletedColor = "#00C113";
     simFailColor = "#FF0037";
 
