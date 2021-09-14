@@ -325,6 +325,7 @@ export class LayerService {
         this.removeFeature("Pour Point");
         this.removeFeature("Network");
         this.removeFeature("Boundry");
+        this.removeFeature("Headwaters");
         this.removeFeature("Stations");
         this.selectedComId = null;
         for (let segmentLayer of this.segmentLayers) {
@@ -334,8 +335,6 @@ export class LayerService {
     }
 
     buildStreamLayers(streamData) {
-        console.log("build-segments: ", streamData);
-
         if (streamData.pourPoint) {
             const pourPointLayer = L.featureGroup().addTo(this.map);
             const pourPoint = streamData.pourPoint;

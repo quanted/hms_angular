@@ -1,22 +1,22 @@
-<div class="list">
+<div>
     <div>This network has a total of {{ totalNumSegments }} segments</div>
     <div>Boundary Segments</div>
     <div *ngIf="!boundarySegments.length"><strong>This network has no boundary segments</strong></div>
-    <div class="scroll-pane list-short" *ngIf="boundarySegments.length">
+    <div class="list-short" *ngIf="boundarySegments.length">
         <div class="button" *ngFor="let segment of boundarySegments" [class.active]="isActive(segment.comid)"  (click)="selectSegment(segment.comid)">
             <div class="vertical-center">ComID {{ segment.comid }}</div>
         </div>
     </div>
     <div>Headwater Segments</div>
     <div *ngIf="!headwaterSegments.length"><strong>This network has no headwater segments</strong></div>
-    <div class="scroll-pane list-short" *ngIf="headwaterSegments.length">
+    <div class="list-short" *ngIf="headwaterSegments.length">
         <div class="button" *ngFor="let segment of headwaterSegments" [class.active]="isActive(segment.comid)" (click)="selectSegment(segment.comid)">
             <div class="vertical-center">ComID {{ segment.comid }}</div>
         </div>
     </div>
     <div>In-Network Segments</div>
     <div *ngIf="!inNetworkSegments.length"><strong>This network has no segments</strong></div>
-    <div class="scroll-pane list-short" *ngIf="inNetworkSegments.length">
+    <div class="list-short" *ngIf="inNetworkSegments.length">
         <div class="button" *ngFor="let segment of inNetworkSegments" [class.active]="isActive(segment.comid)" (click)="selectSegment(segment.comid)">
             <div class="vertical-center">ComID {{ segment.comid }}</div>
         </div>

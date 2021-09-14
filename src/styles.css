@@ -124,6 +124,7 @@ mat-icon:hover {
 }
 
 .list-short {
+    overflow-y: auto;
     padding-bottom: var(--row-gap);
     max-height: var(--main-list-short-height);
 }

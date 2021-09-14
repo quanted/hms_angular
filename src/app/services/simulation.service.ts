@@ -10,6 +10,7 @@ import { WatersService } from "./waters.service";
 
 import { DefaultSimData } from "../models/DefaultSimData";
 import { LayerService } from "./layer.service";
+import { timeThursdays } from "d3-time";
 
 @Injectable({
     providedIn: "root",
@@ -30,7 +31,6 @@ export class SimulationService {
         this.simDataSubject = new BehaviorSubject(this.simData);
 
         this.layerService.clickListener().subscribe((comid) => {
-            console.log("click! ", comid);
             this.updateSimData("selectedComId", comid);
         });
 
@@ -373,43 +373,27 @@ export class SimulationService {
     }
 
     clearHuc(): void {
-        this.simData["coords"] = {
-            lat: null,
-            lng: null,
-        };
-        this.updateSimData("huc", null);
+        this.updateSimData("selectedHuc", null);
+        this.updateState("huc", null);
+        this.clearCatchment();
+        this.layerService.removeHuc();
     }
 
     clearCatchment(): void {
         this.simData.network.segments.boundary = [];
         this.simData.network.segments.headwater = [];
         this.simData.network.segments.inNetwork = [];
-        this.simData["network"] = null;
+        this.simData.network.segments.pourPoint = null;
+        this.simData.network.segments.totalNumSegments = null;
+        this.simData.network.sources = null;
+        this.simData.network.order = null;
+        this.simData.network.network = null;
+        this.simData.network.catchment_data = null;
         this.simData.selectedComId = null;
-        this.updateSimData("catchment", null);
-    }
-
-    updateSegmentList(type, comid): void {
-        switch (type) {
-            case "boundary":
-                if (!this.simData.network.segments.boundary.includes(comid)) {
-                    this.simData.network.segments.boundary.push(comid);
-                }
-                break;
-            case "headwater":
-                if (!this.simData.network.segments.headwater.includes(comid)) {
-                    this.simData.network.segments.headwater.push(comid);
-                }
-                break;
-            case "inNetwork":
-                if (!this.simData.network.segments.inNetwork.includes(comid)) {
-                    this.simData.network.segments.inNetwork.push(comid);
-                }
-                break;
-            default:
-                console.log(`updateSegmentList.UNKNOWN_SEGMENT_TYPE: ${type}`);
-        }
-        this.updateSimData();
+        this.updateSimData("selectedCatchment", null);
+        this.updateState("pour_point_comid", null);
+        this.updateState("upstream_distance", null);
+        this.layerService.removeCatchment();
     }
 
     updateSimData(key?, data?): void {
@@ -485,26 +469,75 @@ export class SimulationService {
          *  }
          */
         const lastState = this.getState();
-        console.log("lastState: ", lastState);
         if (lastState) {
-            if (lastState.pour_point_comid) {
+            if (lastState.upstream_distance) {
+                this.rebuildStreamNetwork(lastState.pour_point_comid, lastState.upstream_distance);
+            } else if (lastState.pour_point_comid) {
                 this.simData.network.pour_point_comid = lastState.pour_point_comid;
                 this.getCatchmentByComId(lastState.pour_point_comid);
             } else if (lastState.huc) {
                 this.getHuc(lastState.huc);
             }
-            if (lastState.pour_point_comid && lastState.upstream_distance) {
-                this.simData.network.upstream_distance = lastState.upstream_distance;
-                this.buildStreamNetwork(this.simData.network.pour_point_comid, lastState.upstream_distance);
-            }
             if (lastState.simId) {
                 this.simData.simId = lastState.simId;
                 this.startStatusCheck();
-                // need to set the input form based on the simulations json stored in the db
-            } else if (lastState.json_flags) {
-                this.getBaseJsonByFlags(lastState.json_flags);
+            }
+            if (lastState.json_flags) {
+                this.simData.json_flags = lastState.json_flags;
             }
         }
+    }
+
+    rebuildStreamNetwork(comid, distance): void {
+        console.log("rebuild stream network!");
+        this.updateSimData("waiting", true);
+        this.hms.getCatchmentInfo(comid).subscribe(
+            (data) => {
+                if (data.catchmentInfo?.metadata) {
+                    this.simData.network.pour_point_comid = comid;
+                    // now get the huc by coods
+                    const coords = {
+                        lat: data.catchmentInfo.metadata.CentroidLatitude,
+                        lng: data.catchmentInfo.metadata.CentroidLongitude,
+                    };
+
+                    this.waters.getHucData("HUC_12", coords.lat, coords.lng).subscribe(
+                        (data) => {
+                            if (data) {
+                                this.layerService.addFeature("HUC", data);
+                                this.updateSimData("selectedHuc", data);
+                                this.updateState("huc", coords);
+                            }
+
+                            this.waters.getCatchmentData(coords.lat, coords.lng).subscribe(
+                                (data) => {
+                                    if (data) {
+                                        this.layerService.addFeature("Catchment", data);
+                                        this.updateSimData("selectedCatchment", data);
+                                        this.updateState("pour_point_comid", data.features[0].properties.FEATUREID);
+                                    }
+                                    this.buildStreamNetwork(comid, distance);
+                                },
+                                (error) => {
+                                    console.log("error getting catchment data: ", error);
+                                }
+                            );
+                        },
+                        (error) => {
+                            console.log("error getting huc data: ", error);
+                        }
+                    );
+                }
+
+                if (data.catchmentInfo.ERROR) {
+                    console.log("ERROR: ", data.catchmentInfo.ERROR);
+                    this.updateSimData("waiting", false);
+                }
+            },
+            (error) => {
+                console.log("error getting catchment data: ", error);
+            }
+        );
     }
 
     getState(): any {
@@ -528,6 +561,7 @@ export class SimulationService {
     resetSimulation(): void {
         this.simData = { ...DefaultSimData.defaultSimData };
         this.cookieService.delete("sim_setup");
+        this.clearHuc();
         this.updateSimData();
     }
 }

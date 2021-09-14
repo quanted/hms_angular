@@ -198,11 +198,11 @@ export class InputComponent implements OnInit {
     }
 
     clearHuc(): void {
-        this.layerService.removeFeature("huc");
+        this.simulation.clearHuc();
     }
 
     clearCatchment(): void {
-        this.layerService.removeFeature("catchment");
+        this.simulation.clearCatchment();
     }
 
     getBaseJSONByFlags(): void {

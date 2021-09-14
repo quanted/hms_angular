@@ -59,23 +59,23 @@ export class ComidSelectInputComponent implements OnInit {
     }
 
     initializeSegmentValues(simData): void {
-        // if (this.selectedComId !== simData.selectedComId) {
-        //   this.cancelAdd();
-        // }
-        // this.selectedComId = simData.selectedComId;
-        // this.inputForm.get("comid").setValue(simData.selectedComId);
-        // if (simData.comid_inputs[this.selectedComId]) {
-        //   this.parameters = [];
-        //   this.sources = [];
-        //   const tempArry = simData.comid_inputs[this.selectedComId].sv;
-        //   for (let sv of tempArry) {
-        //     if (sv == "new parameter object") this.parameters.push(sv);
-        //     if (sv == "new source object") this.sources.push(sv);
-        //   }
-        // } else {
-        //   this.parameters = [];
-        //   this.sources = [];
-        // }
+        if (this.selectedComId !== simData.selectedComId) {
+            this.cancelAdd();
+        }
+        this.selectedComId = simData.selectedComId;
+        this.inputForm.get("comid").setValue(simData.selectedComId);
+        if (simData.network.catchment_data[this.selectedComId]) {
+            this.parameters = [];
+            this.sources = [];
+            const tempArry = simData.network.catchment_data[this.selectedComId].sv;
+            for (let sv of tempArry) {
+                if (sv == "new parameter object") this.parameters.push(sv);
+                if (sv == "new source object") this.sources.push(sv);
+            }
+        } else {
+            this.parameters = [];
+            this.sources = [];
+        }
     }
 
     onFileChange($event) {
