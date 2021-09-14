@@ -549,8 +549,10 @@ export class LayerService {
     }
 
     updateStreamLayer(catchment_status): void {
-        for (let segment of catchment_status) {
-            this.updateSegment(segment.comid, segment.status);
+        if (catchment_status) {
+            for (let segment of catchment_status) {
+                this.updateSegment(segment.comid, segment.status);
+            }
         }
     }
 

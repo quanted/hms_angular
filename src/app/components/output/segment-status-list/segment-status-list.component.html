@@ -3,7 +3,7 @@
     <div class="scroll">
         <div class="items">
             <div class="segment-status item" *ngFor="let segment of segmentList" (click)="gotoData(segment.comid)"
-            [class.progress]="segment.in_progress" [class.ready]="segment.completed" [class.fail]="segment.failed">
+            [ngClass]="{ 'progress' : segment.status == 'IN-PROGRESS', 'ready' : segment.status == 'COMPLETED', 'fail' : segment.status == 'FAILED' }">
                 {{ segment.comid }} {{ segment.status }}
             </div>
         </div>

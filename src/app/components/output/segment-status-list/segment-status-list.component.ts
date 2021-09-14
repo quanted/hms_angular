@@ -9,13 +9,15 @@ import { SimulationService } from "src/app/services/simulation.service";
     styleUrls: ["./segment-status-list.component.css"],
 })
 export class SegmentStatusListComponent implements OnInit {
-    segmentList;
+    segmentList = [];
 
     constructor(private simulation: SimulationService, private router: Router) {}
 
     ngOnInit(): void {
         this.simulation.interfaceData().subscribe((simData) => {
-            this.segmentList = simData.network.sources;
+            if (simData.sim_status.catchments) {
+                this.segmentList = simData.sim_status.catchments;
+            }
         });
     }
 
