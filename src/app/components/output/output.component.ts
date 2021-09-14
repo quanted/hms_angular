@@ -28,7 +28,7 @@ export class OutputComponent implements OnInit {
         private outputService: OutputService,
         private route: ActivatedRoute,
         private location: Location
-    ) {}
+    ) { }
 
     ngOnInit() {
         // Get comid and set droplist data
@@ -43,7 +43,8 @@ export class OutputComponent implements OnInit {
                 !this.catchment_data ||
                 Object.keys(simData.network.catchment_data).length > Object.keys(this.catchment_data).length
             ) {
-                this.catchment_data = simData.network.catchment_data;
+                // Deep copy new object to catchment_data to fire change detection 
+                this.catchment_data = { ...simData.network.catchment_data };
             }
         });
     }
