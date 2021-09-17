@@ -510,13 +510,14 @@ export class SimulationService {
             } else if (lastState.huc) {
                 this.getHuc(lastState.huc);
             }
+            if (lastState.json_flags) {
+                this.simData.json_flags = lastState.json_flags;
+                this.getBaseJsonByFlags(lastState.json_flags);
+            }
             if (lastState.simId) {
                 this.simData.network.pour_point_comid = lastState.pour_point_comid;
                 this.simData.simId = lastState.simId;
                 this.startStatusCheck();
-            }
-            if (lastState.json_flags) {
-                this.simData.json_flags = lastState.json_flags;
             }
         }
     }

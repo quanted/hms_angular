@@ -101,6 +101,38 @@ export class InputComponent implements OnInit {
 
     advancedReminFields = [];
 
+    basicSVFields = [
+        {
+            param: "TNH4Obj",
+            displayName: "Total Ammonia as N",
+            longName: "Total Ammonia as N",
+            unit: "mg/L",
+        },
+        {
+            param: "TNO3Obj",
+            displayName: "Nitrate as N",
+            longName: "Nitrate as N",
+            unit: "mg/L",
+        },
+        {
+            param: "TCO2Obj",
+            displayName: "Carbon dioxide",
+            longName: "Carbon dioxide",
+            unit: "mg/L",
+        },
+        {
+            param: "TO2Obj",
+            displayName: "Oxygen",
+            longName: "Oxygen",
+            unit: "mg/L",
+        },
+    ];
+
+    advancedSVFields = [];
+
+    // for future use
+    SiteTypes = ["Pond", "Stream", "Reservr1D", "Lake", "Enclosure", "Estuary", "TribInput", "Marine"];
+
     waiting = false;
     simExecuting = false;
     simCompleted = false;
@@ -117,6 +149,7 @@ export class InputComponent implements OnInit {
     showPSetupAdvanced = false;
     showLocaleAdvanced = false;
     showReminAdvanced = false;
+    showSVAdvanced = false;
 
     sVariables;
 
@@ -144,10 +177,10 @@ export class InputComponent implements OnInit {
         });
 
         this.pSetUpForm = this.fb.group({
-            // studyName is for the front end to use as a reference
+            // simulationName is for the front end to use as a reference
             // to track user simulation in the browser cookie
             // it is NOT used by the Aquatox simulation
-            studyName: [null],
+            simulationName: [null],
 
             firstDay: [this.simulation.getDefaultFirstDay(), Validators.required],
             lastDay: [this.simulation.getDefaultLastDay(), Validators.required],
@@ -159,12 +192,17 @@ export class InputComponent implements OnInit {
         // not being used
         this.localeForm = this.fb.group({});
 
-        this.reminForm = this.fb.group({
-            DecayMax_Lab: [],
-            DecayMax_Refr: [],
-            KNitri: [],
-            KDenitri_Wat: [],
-        });
+        const reminFields = {};
+        for (let field of this.basicReminFields) {
+            reminFields[field.param] = [];
+        }
+        this.reminForm = this.fb.group(reminFields);
+
+        const svFields = {};
+        for (let field of this.basicSVFields) {
+            svFields[field.param] = [];
+        }
+        this.svForm = this.fb.group(svFields);
 
         this.simulation.interfaceData().subscribe((simData) => {
             this.updateInterface(simData);
@@ -181,8 +219,17 @@ export class InputComponent implements OnInit {
                 this.reminForm.get(variable.param).setValue(remin[variable.param].Val);
             }
         }
-        this.sVariables = simData.sv;
+        if (simData.sv) {
+            for (let variable of this.basicSVFields) {
+                for (let defaultParam of simData.sv) {
+                    if (variable.param == defaultParam.$type) {
+                        this.svForm.get(variable.param).setValue(defaultParam.InitialCond);
+                    }
+                }
+            }
+        }
         this.network = simData.network;
+        this.jsonFlags = simData.json_flags;
         this.baseJson = simData.base_json;
         this.simExecuting = simData.sim_executing;
         this.simCompleted = simData.sim_completed;
@@ -193,7 +240,7 @@ export class InputComponent implements OnInit {
     }
 
     getStreamNetwork(): void {
-        if (this.aoiForm.get("endComid")) {
+        if (this.aoiForm.get("endComid").value) {
             this.simulation.buildNetworkWithEndComid(
                 this.simulation.getPourPoint(),
                 this.aoiForm.get("endComid").value
@@ -219,7 +266,7 @@ export class InputComponent implements OnInit {
         this.simulation.updateSimData("base_json", null);
     }
 
-    applySimVariables(json): void {
+    applySettings(): void {
         // this will add the in-form values to the base_json
     }
 
@@ -229,7 +276,6 @@ export class InputComponent implements OnInit {
     }
 
     toggleAdvanced(section): void {
-        console.log("toggle: ", section);
         switch (section) {
             case "pSetup":
                 this.showPSetupAdvanced = !this.showPSetupAdvanced;
@@ -239,6 +285,9 @@ export class InputComponent implements OnInit {
                 break;
             case "remin":
                 this.showReminAdvanced = !this.showReminAdvanced;
+                break;
+            case "sv":
+                this.showSVAdvanced = !this.showSVAdvanced;
                 break;
             default:
                 return;

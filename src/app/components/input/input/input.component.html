@@ -75,10 +75,10 @@
                     </div>
                     <div class="form-row">
                         <div>
-                            Study Name
+                            Simulation Name
                         </div>
                         <div>
-                            <input type="text" formControlName="studyName">
+                            <input type="text" formControlName="simulationName">
                         </div>
                     </div>
                     <div class="section-item">
@@ -163,7 +163,8 @@
                             <div>{{ reminField.displayName }}</div>
                             <div class="vertical-center">
                                 <div>
-                                    <input type="number" class="input-number" formControlName="{{ reminField.param }}" matTooltip="{{ reminField.longName }}"/> {{ reminField.unit }}
+                                    <input type="number" class="input-number" formControlName="{{ reminField.param }}" matTooltip="{{ reminField.longName }}"/> 
+                                    {{ reminField.unit }}
                                 </div>
                             </div>
                         </div>
@@ -175,7 +176,8 @@
                             <div>{{ reminField.displayName }}</div>
                             <div class="vertical-center">
                                 <div>
-                                    <input type="number" class="input-number" formControlName="{{ reminField.param }}" matTooltip="{{ reminField.longName }}"/> {{ reminField.unit }}
+                                    <input type="number" class="input-number" formControlName="{{ reminField.param }}" matTooltip="{{ reminField.longName }}"/> 
+                                    {{ reminField.unit }}
                                 </div>
                             </div>
                         </div>
@@ -184,29 +186,43 @@
                         <div class="centered">There are currently no advanced options available</div>
                     </div>
                 </div>
-            </div>
 
-
-            <div class="container-item" *ngIf="network.network && baseJson">
-                <div class="section-heading">
-                    <div id="this is just here as a spacer"></div>
-                    <strong class="section-heading-center">State Variable Initial Values</strong>
-                    <div>
-                        <mat-icon class="icon-panel-toggle float-right" matTooltipPosition="right" matTooltip="Collapse section">expand_less</mat-icon>
-                    </div>
-                </div>
-                <div class="section-item">
-                    <div class="form-row" *ngFor="let variable of sVariables">
-                        <div>{{ variable.PName }}</div>
-                        <div class="vertical-center">
-                            <div>
-                                <input type="number" class="input-number" value="{{ variable.InitialCond }}" matTooltip="{{ variable.PName }}"/>
-                                {{ variable.LoadingUnit }}
+                <!-- S.V. Section -->
+                <div *ngIf="network.network && baseJson" [formGroup]="svForm">
+                    <div class="centered"><strong>State Variable Initial Values</strong></div>
+                    <div class="section-item">
+                        <div class="form-row" *ngFor="let svField of basicSVFields">
+                            <div>{{ svField.displayName }}</div>
+                            <div class="vertical-center">
+                                <div>
+                                    <input type="number" class="input-number" formControlName="{{ svField.param }}" matTooltip="{{ svField.longName }}"/>
+                                    {{ svField.unit }}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <div>Advanced<mat-icon class="icon-panel-toggle" matTooltip="See Advanced Options NOT YET IMPLEMENTED"
+                    (click)="toggleAdvanced('sv')">expand_more</mat-icon></div>
+                <div class="section-item" *ngIf="showSVAdvanced">
+                    <div class="form-row" *ngFor="let svField of advancedSVFields">
+                        <div>{{ svField.displayName }}</div>
+                        <div class="vertical-center">
+                            <div>
+                                <input type="number" class="input-number" formControlName="{{ svField.param }}" matTooltip="{{ svField.longName }}"/> 
+                                {{ svField.unit }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-item" *ngIf="showSVAdvanced && !advancedSVFields.length">
+                    <div class="centered">There are currently no advanced options available</div>
+                </div>
+                <div class="button" (click)="applySettings()">Apply Settings</div>
             </div>
+
+
+            
 
             <div class="container-item" *ngIf="network.network && baseJson">
                 <div class="section-heading">
