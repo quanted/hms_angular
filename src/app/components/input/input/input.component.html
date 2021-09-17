@@ -64,161 +64,164 @@
                     <div class="button" (click)="getBaseJSONByFlags()">Setup Simulation</div>
                 </div>
 
-                <!-- PSetup section -->
-                <div *ngIf="baseJson" [formGroup]="pSetUpForm">
-                    <div class="section-heading">
-                        <div id="this is just here as a spacer"></div>
-                        <strong class="section-heading-center">Simulation Setup</strong>
-                        <div>
-                            <mat-icon class="icon-panel-toggle float-right" matTooltipPosition="right" matTooltip="Collapse section">expand_less</mat-icon>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div>
-                            Simulation Name
-                        </div>
-                        <div>
-                            <input type="text" formControlName="simulationName">
-                        </div>
-                    </div>
-                    <div class="section-item">
-                        <div class="form-row">
+                <!-- Global Setup -->
+                <div *ngIf="jsonFlags && baseJson">
+                    <!-- PSetup section -->
+                    <div [formGroup]="pSetUpForm">
+                        <div class="section-heading">
+                            <div id="this is just here as a spacer"></div>
+                            <strong class="section-heading-center">Simulation Setup</strong>
                             <div>
-                                First Day
-                                <input type="date" formControlName="firstDay">
-                            </div>
-                            <div>
-                                Last Day
-                                <input type="date" formControlName="lastDay">
+                                <mat-icon class="icon-panel-toggle float-right" matTooltipPosition="right" matTooltip="Collapse section">expand_less</mat-icon>
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="vertical-center">Simulation Output</div>
+                            <div>
+                                Simulation Name
+                            </div>
+                            <div>
+                                <input type="text" formControlName="simulationName">
+                            </div>
+                        </div>
+                        <div class="section-item">
                             <div class="form-row">
-                                <div>Hour <input type="radio" name="tStep" formControlName="tStep" value="hour"></div>
-                                <div>Day <input type="radio" name="tStep" formControlName="tStep" value="day"></div>
+                                <div>
+                                    First Day
+                                    <input type="date" formControlName="firstDay">
+                                </div>
+                                <div>
+                                    Last Day
+                                    <input type="date" formControlName="lastDay">
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-row">
-                            Use Alternate Step Size <input type="checkbox" formControlName="useFixStepSize" (click)="toggleAltStep()" />
-                        </div>
-                        <div class="form-row" *ngIf="useFixStepSize">
-                            Step Size <input type="number" class="input-number" formControlName="fixStepSize" />
-                        </div>
-                        <div>Advanced<mat-icon class="icon-panel-toggle" matTooltip="See Advanced Options NOT YET IMPLEMENTED" 
-                            (click)="toggleAdvanced('pSetup')">expand_more</mat-icon></div>
-                        <div class="section-item" *ngIf="showPSetupAdvanced && advancedPSetupFields.length">
-                            <div class="form-row" *ngFor="let pSetupField of advancedPSetupFields">
-                                <div>{{ pSetupField.displayName }}</div>
-                                <div class="vertical-center">
-                                    <div>
-                                        <input type="number" class="input-number" formControlName="{{ pSetupField.param }}" matTooltip="{{ pSetupField.param }}"/>
+                            <div class="form-row">
+                                <div class="vertical-center">Simulation Output</div>
+                                <div class="form-row">
+                                    <div>Hour <input type="radio" name="tStep" formControlName="tStep" value="hour"></div>
+                                    <div>Day <input type="radio" name="tStep" formControlName="tStep" value="day"></div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                Use Alternate Step Size <input type="checkbox" formControlName="useFixStepSize" (click)="toggleAltStep()" />
+                            </div>
+                            <div class="form-row" *ngIf="useFixStepSize">
+                                Step Size <input type="number" class="input-number" formControlName="fixStepSize" />
+                            </div>
+                            <div>Advanced<mat-icon class="icon-panel-toggle" matTooltip="See Advanced Options NOT YET IMPLEMENTED" 
+                                (click)="toggleAdvanced('pSetup')">expand_more</mat-icon></div>
+                            <div class="section-item" *ngIf="showPSetupAdvanced && advancedPSetupFields.length">
+                                <div class="form-row" *ngFor="let pSetupField of advancedPSetupFields">
+                                    <div>{{ pSetupField.displayName }}</div>
+                                    <div class="vertical-center">
+                                        <div>
+                                            <input type="number" class="input-number" formControlName="{{ pSetupField.param }}" matTooltip="{{ pSetupField.param }}"/>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="section-item" *ngIf="showPSetupAdvanced && !advancedPSetupFields.length">
-                            <div class="centered">There are currently no advanced options available</div>
+                            <div class="section-item" *ngIf="showPSetupAdvanced && !advancedPSetupFields.length">
+                                <div class="centered">There are currently no advanced options available</div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Locale section -->
-                <!-- <div *ngIf="baseJson" [formGroup]="localeForm">
-                    <div class="centered"><strong>Locale</strong></div>
-                    <div class="form-row">
-                        <div>
-                            Site Name
-                        </div>
-                        <div>
-                            <input type="text" formControlName="SiteName">
-                        </div>
-                    </div>
-                    <div class="section-item">
+                    <!-- Locale section -->
+                    <!-- <div [formGroup]="localeForm">
+                        <div class="centered"><strong>Locale</strong></div>
                         <div class="form-row">
+                            <div>
+                                Site Name
+                            </div>
+                            <div>
+                                <input type="text" formControlName="SiteName">
+                            </div>
+                        </div>
+                        <div class="section-item">
+                            <div class="form-row">
+                            </div>
+                            <div>Advanced<mat-icon class="icon-panel-toggle" matTooltip="See Advanced Options NOT YET IMPLEMENTED"
+                                (click)="toggleAdvanced('locale')">expand_more</mat-icon></div>
+                            <div class="section-item" *ngIf="showLocaleAdvanced">
+                                <div class="form-row" *ngFor="let localeField of advancedLocaleFields">
+                                    <div>{{ localeField.displayName }}</div>
+                                    <div class="vertical-center">
+                                        <div>
+                                            <input type="number" class="input-number" formControlName="{{ localeField.param }}" matTooltip="{{ localeField.param }}"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="section-item" *ngIf="showLocaleAdvanced && !advancedLocaleFields.length">
+                                <div class="centered">There are currently no advanced options available</div>
+                            </div>
+                        </div>
+                    </div> -->
+
+                    <!-- Remin section -->
+                    <div [formGroup]="reminForm">
+                        <div class="centered"><strong>Organic Matter Rates</strong></div>
+                        <div class="section-item">
+                            <div class="form-row" *ngFor="let reminField of basicReminFields">
+                                <div>{{ reminField.displayName }}</div>
+                                <div class="vertical-center">
+                                    <div>
+                                        <input type="number" class="input-number" formControlName="{{ reminField.param }}" matTooltip="{{ reminField.longName }}"/> 
+                                        {{ reminField.unit }}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div>Advanced<mat-icon class="icon-panel-toggle" matTooltip="See Advanced Options NOT YET IMPLEMENTED"
-                            (click)="toggleAdvanced('locale')">expand_more</mat-icon></div>
-                        <div class="section-item" *ngIf="showLocaleAdvanced">
-                            <div class="form-row" *ngFor="let localeField of advancedLocaleFields">
-                                <div>{{ localeField.displayName }}</div>
+                            (click)="toggleAdvanced('remin')">expand_more</mat-icon></div>
+                        <div class="section-item" *ngIf="showReminAdvanced">
+                            <div class="form-row" *ngFor="let reminField of advancedReminFields">
+                                <div>{{ reminField.displayName }}</div>
                                 <div class="vertical-center">
                                     <div>
-                                        <input type="number" class="input-number" formControlName="{{ localeField.param }}" matTooltip="{{ localeField.param }}"/>
+                                        <input type="number" class="input-number" formControlName="{{ reminField.param }}" matTooltip="{{ reminField.longName }}"/> 
+                                        {{ reminField.unit }}
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="section-item" *ngIf="showLocaleAdvanced && !advancedLocaleFields.length">
+                        <div class="section-item" *ngIf="showReminAdvanced && !advancedReminFields.length">
                             <div class="centered">There are currently no advanced options available</div>
                         </div>
                     </div>
-                </div> -->
 
-                <!-- Remin section -->
-                <div *ngIf="baseJson" [formGroup]="reminForm">
-                    <div class="centered"><strong>Organic Matter Rates</strong></div>
-                    <div class="section-item">
-                        <div class="form-row" *ngFor="let reminField of basicReminFields">
-                            <div>{{ reminField.displayName }}</div>
-                            <div class="vertical-center">
-                                <div>
-                                    <input type="number" class="input-number" formControlName="{{ reminField.param }}" matTooltip="{{ reminField.longName }}"/> 
-                                    {{ reminField.unit }}
+                    <!-- S.V. Section -->
+                    <div [formGroup]="svForm">
+                        <div class="centered"><strong>State Variable Initial Values</strong></div>
+                        <div class="section-item">
+                            <div class="form-row" *ngFor="let svField of basicSVFields">
+                                <div>{{ svField.displayName }}</div>
+                                <div class="vertical-center">
+                                    <div>
+                                        <input type="number" class="input-number" formControlName="{{ svField.param }}" matTooltip="{{ svField.longName }}"/>
+                                        {{ svField.unit }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div>Advanced<mat-icon class="icon-panel-toggle" matTooltip="See Advanced Options NOT YET IMPLEMENTED"
-                        (click)="toggleAdvanced('remin')">expand_more</mat-icon></div>
-                    <div class="section-item" *ngIf="showReminAdvanced">
-                        <div class="form-row" *ngFor="let reminField of advancedReminFields">
-                            <div>{{ reminField.displayName }}</div>
-                            <div class="vertical-center">
-                                <div>
-                                    <input type="number" class="input-number" formControlName="{{ reminField.param }}" matTooltip="{{ reminField.longName }}"/> 
-                                    {{ reminField.unit }}
+                        <div>Advanced<mat-icon class="icon-panel-toggle" matTooltip="See Advanced Options NOT YET IMPLEMENTED"
+                            (click)="toggleAdvanced('sv')">expand_more</mat-icon></div>
+                        <div class="section-item" *ngIf="showSVAdvanced">
+                            <div class="form-row" *ngFor="let svField of advancedSVFields">
+                                <div>{{ svField.displayName }}</div>
+                                <div class="vertical-center">
+                                    <div>
+                                        <input type="number" class="input-number" formControlName="{{ svField.param }}" matTooltip="{{ svField.longName }}"/> 
+                                        {{ svField.unit }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="section-item" *ngIf="showReminAdvanced && !advancedReminFields.length">
-                        <div class="centered">There are currently no advanced options available</div>
-                    </div>
-                </div>
-
-                <!-- S.V. Section -->
-                <div *ngIf="network.network && baseJson" [formGroup]="svForm">
-                    <div class="centered"><strong>State Variable Initial Values</strong></div>
-                    <div class="section-item">
-                        <div class="form-row" *ngFor="let svField of basicSVFields">
-                            <div>{{ svField.displayName }}</div>
-                            <div class="vertical-center">
-                                <div>
-                                    <input type="number" class="input-number" formControlName="{{ svField.param }}" matTooltip="{{ svField.longName }}"/>
-                                    {{ svField.unit }}
-                                </div>
-                            </div>
+                        <div class="section-item" *ngIf="showSVAdvanced && !advancedSVFields.length">
+                            <div class="centered">There are currently no advanced options available</div>
                         </div>
                     </div>
+                    <div class="button" (click)="applySettings()">Apply Settings</div>
                 </div>
-                <div>Advanced<mat-icon class="icon-panel-toggle" matTooltip="See Advanced Options NOT YET IMPLEMENTED"
-                    (click)="toggleAdvanced('sv')">expand_more</mat-icon></div>
-                <div class="section-item" *ngIf="showSVAdvanced">
-                    <div class="form-row" *ngFor="let svField of advancedSVFields">
-                        <div>{{ svField.displayName }}</div>
-                        <div class="vertical-center">
-                            <div>
-                                <input type="number" class="input-number" formControlName="{{ svField.param }}" matTooltip="{{ svField.longName }}"/> 
-                                {{ svField.unit }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="section-item" *ngIf="showSVAdvanced && !advancedSVFields.length">
-                    <div class="centered">There are currently no advanced options available</div>
-                </div>
-                <div class="button" (click)="applySettings()">Apply Settings</div>
             </div>
 
 

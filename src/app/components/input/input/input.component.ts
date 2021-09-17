@@ -229,7 +229,17 @@ export class InputComponent implements OnInit {
             }
         }
         this.network = simData.network;
-        this.jsonFlags = simData.json_flags;
+        if (simData.json_flags) {
+            const moduleFormFields = {};
+            for (let flag of this.jsonFlags) {
+                moduleFormFields[flag] = [false];
+                // select the first checkbox by default
+                if (flag == this.jsonFlags[0]) {
+                    moduleFormFields[flag] = [true];
+                }
+            }
+            this.moduleForm = this.fb.group(moduleFormFields);
+        }
         this.baseJson = simData.base_json;
         this.simExecuting = simData.sim_executing;
         this.simCompleted = simData.sim_completed;

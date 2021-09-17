@@ -96,8 +96,8 @@ export class SimulationService {
     }
 
     executeSimulation(pSetup): void {
-        this.updateSimData("sim_executing", true);
         this.initializeAquatoxSimulation(pSetup).subscribe((response) => {
+            this.updateSimData("sim_executing", true);
             this.updateSimData("simId", response["_id"]);
             this.updateState("simId", response["_id"]);
 
@@ -191,14 +191,6 @@ export class SimulationService {
                                 this.addSimResults(comid, simStatus.catchments[comid].task_id);
                             }
                         }
-                        if (
-                            !this.simData.sim_completed &&
-                            (simStatus.status == "COMPLETED" || simStatus.status == "FAILED")
-                        ) {
-                            this.updateSimData("sim_completed", true);
-                            this.updateSimData("sim_executing", false);
-                            this.endStatusCheck();
-                        }
                         const segmentStatusList = [];
                         for (let segment of Object.keys(simStatus.catchments)) {
                             segmentStatusList.push({
@@ -209,6 +201,14 @@ export class SimulationService {
                         simStatus.catchments = segmentStatusList;
                         this.updateSimData("sim_status", simStatus);
                         this.layerService.updateStreamLayer(simStatus.catchments);
+                    }
+                    if (simStatus.status !== "COMPLETED" && simStatus.status !== "FAILED") {
+                        this.updateSimData("sim_completed", false);
+                        this.updateSimData("sim_executing", true);
+                    } else {
+                        this.updateSimData("sim_completed", true);
+                        this.updateSimData("sim_executing", false);
+                        this.endStatusCheck();
                     }
                 });
             }, this.STATUS_CHECK_INTERVAL);
@@ -413,6 +413,7 @@ export class SimulationService {
         this.simData.network.network = null;
         this.simData.network.catchment_data = {};
         this.simData.selectedComId = null;
+        this.simData.base_json = null;
         this.updateSimData("selectedCatchment", null);
         this.updateState("pour_point_comid", null);
         this.updateState("upstream_distance", null);
