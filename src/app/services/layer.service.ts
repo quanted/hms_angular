@@ -302,7 +302,7 @@ export class LayerService {
                 fillColor: id == "HUC" ? this.hucColor : this.catchmentColor,
                 fillOpacity: 0,
             },
-        }).addTo(this.map);
+        });
 
         this.simLayers.push({
             type: "simfeature",
@@ -310,8 +310,11 @@ export class LayerService {
             layer,
             show: true,
         });
-        if (id == "HUC") {
-            this.map.fitBounds(layer.getBounds());
+        if (this.map) {
+            layer.addTo(this.map);
+            if (id == "HUC") {
+                this.map.fitBounds(layer.getBounds());
+            }
         }
     }
 
@@ -334,7 +337,7 @@ export class LayerService {
         this.removeFeature("Network");
         this.removeFeature("Boundry");
         this.removeFeature("Headwaters");
-        this.removeFeature("Stations");
+        this.removeFeature("Monitoring Stations");
         this.selectedComId = null;
         for (let segmentLayer of this.segmentLayers) {
             this.map.removeLayer(segmentLayer.layer);
