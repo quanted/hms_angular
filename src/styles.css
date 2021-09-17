@@ -67,6 +67,7 @@ mat-icon:hover {
 
 .icon-panel-toggle {
     background-color: var(--main-transparent);
+    z-index: 9999;
 }
 
 .active {
@@ -156,7 +157,7 @@ input[type='number'] {
     text-align: center;
 }
 
-input[type='number'].input-comid {
+input[type='number'].input-number {
     width: 100px;
 }
 

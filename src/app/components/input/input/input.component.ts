@@ -11,9 +11,8 @@ import { SimulationService } from "src/app/services/simulation.service";
     styleUrls: ["./input.component.css"],
 })
 export class InputComponent implements OnInit {
-    distanceForm: FormGroup;
+    aoiForm: FormGroup;
     moduleForm: FormGroup;
-    pPointForm: FormGroup;
     pSetUpForm: FormGroup;
     pSetupAdvancedForm: FormGroup;
     localeForm: FormGroup;
@@ -26,53 +25,81 @@ export class InputComponent implements OnInit {
         {
             param: "FirstDay",
             displayName: "First Day",
+            longName: "",
+            unit: "",
         },
         {
             param: "LastDay",
             displayName: "Last Day",
+            longName: "",
+            unit: "",
         },
         {
             param: "UseFixStepSize",
             displayName: "Use Fixed Step Size",
+            longName: "",
+            unit: "",
         },
         {
             param: "FixStepSize",
             displayName: "Fixed Step Size",
+            longName: "",
+            unit: "",
         },
         {
             param: "StepSizeInDays",
             displayName: "Step Size in Days",
+            longName: "",
+            unit: "",
         },
         {
             param: "SaveBRates", // save derivative rates false to save space
             displayName: "Save Derivitive Rates",
+            longName: "",
+            unit: "",
         },
         {
             param: "AverageOutput", // trapiziodal integration
             displayName: "Average Output",
+            longName: "",
+            unit: "",
         },
     ];
 
-    basicLocaleFields = [{ param: "SiteName", displayName: "Site Name" }];
+    advancedPSetupFields = [];
+
+    basicLocaleFields = [];
+
+    advancedLocaleFields = [];
 
     basicReminFields = [
         {
             param: "DecayMax_Lab",
-            displayName: "Decay Max Lab",
+            displayName: "Max. Degrdn Rate, labile",
+            longName: "Maximum decomposition rate",
+            unit: "g/g∙d",
         },
         {
             param: "DecayMax_Refr",
-            displayName: "Decay Max Refr",
+            displayName: "Max Degrdn Rate, Refrac",
+            longName: "Maximum colonization rate under ideal conditions",
+            unit: "g/g∙d",
         },
         {
             param: "KNitri",
-            displayName: "K Nitri",
+            displayName: "KNitri, Max Rate of Nitrif.",
+            longName: "Maximum rate of nitrification",
+            unit: "1/day",
         },
         {
             param: "KDenitri_Wat",
-            displayName: "K Denitri - Water",
+            displayName: "KDenitri",
+            longName: "Maximum rate of denitrification",
+            unit: "1/day",
         },
     ];
+
+    advancedReminFields = [];
 
     waiting = false;
     simExecuting = false;
@@ -85,16 +112,20 @@ export class InputComponent implements OnInit {
     jsonFlags = [];
     baseJson = false;
 
+    useFixStepSize = false;
+
+    showPSetupAdvanced = false;
+    showLocaleAdvanced = false;
+    showReminAdvanced = false;
+
     sVariables;
 
     constructor(private fb: FormBuilder, private hms: HmsService, private simulation: SimulationService) {}
 
     ngOnInit(): void {
-        this.pPointForm = this.fb.group({
+        this.aoiForm = this.fb.group({
             pPointComid: [null],
-        });
-
-        this.distanceForm = this.fb.group({
+            endComid: [null],
             distance: [this.simulation.getDefaultUpstreamDistance()],
         });
 
@@ -113,16 +144,20 @@ export class InputComponent implements OnInit {
         });
 
         this.pSetUpForm = this.fb.group({
+            // studyName is for the front end to use as a reference
+            // to track user simulation in the browser cookie
+            // it is NOT used by the Aquatox simulation
+            studyName: [null],
+
             firstDay: [this.simulation.getDefaultFirstDay(), Validators.required],
             lastDay: [this.simulation.getDefaultLastDay(), Validators.required],
             tStep: [this.simulation.getDefaultTimeStep(), Validators.required],
-            useFixStepSize: [null],
+            useFixStepSize: [this.useFixStepSize],
             fixStepSize: [null],
         });
 
-        this.localeForm = this.fb.group({
-            SiteName: [""],
-        });
+        // not being used
+        this.localeForm = this.fb.group({});
 
         this.reminForm = this.fb.group({
             DecayMax_Lab: [],
@@ -140,7 +175,12 @@ export class InputComponent implements OnInit {
         this.waiting = simData.waiting;
         this.huc = simData.selectedHuc;
         this.catchment = simData.selectedCatchment;
-        this.baseJson = simData.base_json;
+        if (simData.base_json) {
+            const remin = simData.base_json.AQTSeg.Location.Remin;
+            for (let variable of this.basicReminFields) {
+                this.reminForm.get(variable.param).setValue(remin[variable.param].Val);
+            }
+        }
         this.sVariables = simData.sv;
         this.network = simData.network;
         this.baseJson = simData.base_json;
@@ -149,11 +189,18 @@ export class InputComponent implements OnInit {
     }
 
     getCatchment(): void {
-        this.simulation.getCatchmentByComId(this.pPointForm.get("pPointComid").value);
+        this.simulation.getCatchmentByComId(this.aoiForm.get("pPointComid").value);
     }
 
     getStreamNetwork(): void {
-        this.simulation.buildStreamNetwork(this.simulation.getPourPoint(), this.distanceForm.get("distance").value);
+        if (this.aoiForm.get("endComid")) {
+            this.simulation.buildNetworkWithEndComid(
+                this.simulation.getPourPoint(),
+                this.aoiForm.get("endComid").value
+            );
+        } else {
+            this.simulation.buildStreamNetwork(this.simulation.getPourPoint(), this.aoiForm.get("distance").value);
+        }
     }
 
     clearHuc(): void {
@@ -170,6 +217,32 @@ export class InputComponent implements OnInit {
 
     clearBaseJson(): void {
         this.simulation.updateSimData("base_json", null);
+    }
+
+    applySimVariables(json): void {
+        // this will add the in-form values to the base_json
+    }
+
+    toggleAltStep(): void {
+        // the value of the form element here is what it WAS BEFORE the control was clicked
+        this.pSetUpForm.get("useFixStepSize").value ? (this.useFixStepSize = false) : (this.useFixStepSize = true);
+    }
+
+    toggleAdvanced(section): void {
+        console.log("toggle: ", section);
+        switch (section) {
+            case "pSetup":
+                this.showPSetupAdvanced = !this.showPSetupAdvanced;
+                break;
+            case "locale":
+                this.showLocaleAdvanced = !this.showLocaleAdvanced;
+                break;
+            case "remin":
+                this.showReminAdvanced = !this.showReminAdvanced;
+                break;
+            default:
+                return;
+        }
     }
 
     executeSimulation(): void {

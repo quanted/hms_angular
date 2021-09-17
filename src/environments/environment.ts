@@ -5,9 +5,9 @@
 export const environment = {
     production: false,
 
-    apiURL: "http://localhost:8080/hms/rest",
+    // apiURL: "http://localhost:8080/hms/rest",
 
-    // apiURL: "https://ceamdev.ceeopdev.net/hms/rest",
+    apiURL: "https://ceamdev.ceeopdev.net/hms/rest",
 
     watersUrl: "https://ofmpub.epa.gov/waters10/",
     NHDPlusUrl: "https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus_NP21/",

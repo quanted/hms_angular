@@ -35,6 +35,9 @@ export class SimulationService {
             this.updateSimData("selectedComId", comid);
         });
 
+        console.log("allCookies: ", this.cookieService.getAll());
+
+        // this.cookieService.deleteAll();
         if (this.cookieService.check("sim_setup")) {
             this.rebuildSimData();
         }
@@ -305,6 +308,10 @@ export class SimulationService {
         );
     }
 
+    buildNetworkWithEndComid(startComid, endComid) {
+        console.log("not yet implemented!");
+    }
+
     buildStreamNetwork(comid: string, distance: string): void {
         this.updateSimData("waiting", true);
         forkJoin([this.waters.getNetworkGeometry(comid, distance), this.hms.getNetworkInfo(comid, distance)]).subscribe(
@@ -320,7 +327,6 @@ export class SimulationService {
                         if (data.networkGeometry) geom = data.networkGeometry;
                     }
                     if (geom && info) {
-                        console.log("info: ", info);
                         this.updateState("upstream_distance", distance);
                         this.prepareNetworkGeometry(geom, info);
                     }
@@ -365,6 +371,10 @@ export class SimulationService {
             } else {
                 // loop through the inNetwork segments and see if this comid is a source
                 // if so add it to the boundary segments
+
+                // THE inNetwork array IS NOT FULLY POUPLATED HERE
+                // it will cause issues finding the boundary segments.
+
                 for (let inNetworkSegment of segments.inNetwork) {
                     if (info.sources[inNetworkSegment.comid].includes(segment.comid.toString())) {
                         segments.boundary.push(segment);
@@ -450,7 +460,7 @@ export class SimulationService {
             this.simData[key] = null;
         }
         this.simDataSubject.next(this.simData);
-        console.log("simData: ", this.simData);
+        // console.log("simData: ", this.simData);
     }
 
     getDefaultCatchmentDependencies() {
@@ -490,6 +500,7 @@ export class SimulationService {
          *  }
          */
         const lastState = this.getState();
+        console.log("lastState: ", lastState);
         if (lastState) {
             if (lastState.upstream_distance) {
                 this.rebuildStreamNetwork(lastState.pour_point_comid, lastState.upstream_distance);
@@ -580,8 +591,8 @@ export class SimulationService {
     }
 
     resetSimulation(): void {
-        this.simData = { ...DefaultSimData.defaultSimData };
         this.cookieService.delete("sim_setup");
+        this.simData = { ...DefaultSimData.defaultSimData };
         this.clearHuc();
         this.updateSimData();
     }

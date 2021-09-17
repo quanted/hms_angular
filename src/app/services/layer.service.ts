@@ -472,7 +472,7 @@ export class LayerService {
                 L.marker([sEvent.shape.coordinates[1], sEvent.shape.coordinates[0]], {
                     icon: this.marker,
                 })
-                    .bindPopup(sFeatureId)
+                    .bindPopup(`Station ID: ${sFeatureId}`)
                     .addTo(stationLayer);
             }
             stationLayer["options"]["style"] = {
@@ -481,7 +481,7 @@ export class LayerService {
             };
             this.simLayers.push({
                 type: "simfeature-line",
-                name: "Stations",
+                name: "Monitoring Stations",
                 layer: stationLayer,
                 show: true,
             });
