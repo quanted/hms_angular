@@ -276,8 +276,14 @@ export class InputComponent implements OnInit {
         this.simulation.updateSimData("base_json", null);
     }
 
-    applySettings(): void {
-        // this will add the in-form values to the base_json
+    applyGlobalSettings(): void {
+        if (this.pSetUpForm.valid && this.reminForm.valid && this.svForm.valid) {
+            this.simulation.applyGlobalSettings({
+                pSetup: this.pSetUpForm.value,
+                remin: this.reminForm.value,
+                sv: this.svForm.value,
+            });
+        }
     }
 
     toggleAltStep(): void {
@@ -305,7 +311,7 @@ export class InputComponent implements OnInit {
     }
 
     executeSimulation(): void {
-        this.simulation.executeSimulation(this.pSetUpForm.value);
+        this.simulation.executeSimulation();
     }
 
     resetSimulation(): void {

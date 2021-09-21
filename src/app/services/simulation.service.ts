@@ -10,8 +10,6 @@ import { WatersService } from "./waters.service";
 
 import { DefaultSimData } from "../models/DefaultSimData";
 import { LayerService } from "./layer.service";
-import { timeThursdays } from "d3-time";
-import { last } from "rxjs/operators";
 
 @Injectable({
     providedIn: "root",
@@ -80,6 +78,10 @@ export class SimulationService {
         return this.simData.selectedCatchment ? true : false;
     }
 
+    isRebuilding(): boolean {
+        return this.simData.sim_rebuilding;
+    }
+
     getBaseJsonByFlags(flags: any): void {
         this.updateSimData("waiting", true);
         this.hms.getBaseJsonByFlags(flags).subscribe((json) => {
@@ -95,8 +97,54 @@ export class SimulationService {
         });
     }
 
-    executeSimulation(pSetup): void {
-        this.initializeAquatoxSimulation(pSetup).subscribe((response) => {
+    applyGlobalSettings(settings): void {
+        console.log("applyGlobal: ", settings);
+        // this is only for the frontend to use to track the simulation id
+        // it is NOT used in the simulation.
+        if (settings.pSetup.simulationName) {
+            this.simData.sim_name = settings.pSetup.simulationName;
+        }
+        // these are in a format the datepickers in the forms like
+        this.simData.PSetup.firstDay = settings.pSetup.firstDay;
+        this.simData.PSetup.lastDay = settings.pSetup.lastDay;
+
+        // these values are for the simulation
+        this.simData.base_json.AQTSeg.PSetup.FirstDay.Val = formatDate(
+            settings.pSetup.firstDay,
+            "yyyy-MM-ddTHH:mm:ss",
+            "en"
+        );
+        this.simData.base_json.AQTSeg.PSetup.LastDay.Val = formatDate(
+            settings.pSetup.lastDay,
+            "yyyy-MM-ddTHH:mm:ss",
+            "en"
+        );
+        this.simData.base_json.AQTSeg.PSetup.StepSizeInDays.Val = settings.pSetup.tStep == "day" ? true : false;
+        if (settings.pSetup.fixStepSize) {
+            this.simData.base_json.AQTSeg.PSetup.FixStepSize = settings.pSetup.fixStepSize;
+            this.simData.base_json.AQTSeg.PSetup.UseFixStepSize = true;
+        }
+
+        // set remin globals
+        for (let param of Object.keys(settings.remin)) {
+            if (this.simData.base_json.AQTSeg.Location.Remin[param]) {
+                this.simData.base_json.AQTSeg.Location.Remin[param].Val = settings.remin[param];
+            }
+        }
+
+        // set sv globals
+        for (let param of Object.keys(settings.sv)) {
+            for (let base_param of this.simData.base_json.AQTSeg.SV) {
+                if (base_param.$type == param) {
+                    base_param.InitialCond = settings.sv[param];
+                    break;
+                }
+            }
+        }
+    }
+
+    executeSimulation(): void {
+        this.initializeAquatoxSimulation().subscribe((response) => {
             this.updateSimData("sim_executing", true);
             this.updateSimData("simId", response["_id"]);
             this.updateState("simId", response["_id"]);
@@ -111,17 +159,8 @@ export class SimulationService {
         });
     }
 
-    initializeAquatoxSimulation(pSetup): Observable<any> {
+    initializeAquatoxSimulation(): Observable<any> {
         this.updateSimData("sim_completed", false);
-
-        this.simData.PSetup.firstDay = pSetup.firstDay;
-        this.simData.PSetup.lastDay = pSetup.lastDay;
-
-        this.simData.base_json.AQTSeg.PSetup.FirstDay.Val = formatDate(pSetup.firstDay, "yyyy-MM-ddTHH:mm:ss", "en");
-        this.simData.base_json.AQTSeg.PSetup.LastDay.Val = formatDate(pSetup.lastDay, "yyyy-MM-ddTHH:mm:ss", "en");
-
-        this.simData.base_json.AQTSeg.PSetup.StepSizeInDays.Val = pSetup.tStep == "day" ? true : false;
-
         const initData = {
             comid_input: {
                 comid: this.simData.network.pour_point_comid.toString(),
@@ -140,13 +179,19 @@ export class SimulationService {
     addCatchmentDependencies(): Observable<any> {
         const dependencyRequests = [];
         for (let comid of Object.keys(this.simData.network.sources)) {
-            dependencyRequests.push(this.addCatchmentDependency(comid));
+            dependencyRequests.push(this.initializeSegmentSimulation(comid));
         }
         return forkJoin(dependencyRequests);
     }
 
-    addCatchmentDependency(comid): Observable<any> {
-        const dependency = {
+    initializeSegmentSimulation(comid): Observable<any> {
+        // add segment remin, sv, and user time-series to
+        // each segments base_json
+        const loadings = this.simData.network.catchment_loadings[comid];
+        if (loadings) {
+        }
+
+        const segmentData = {
             sim_id: this.simData["simId"],
             comid_input: {
                 comid: comid.toString(),
@@ -171,7 +216,7 @@ export class SimulationService {
                 },
             ],
         };
-        return this.hms.addAquatoxSimData(dependency);
+        return this.hms.addAquatoxSimData(segmentData);
     }
 
     cancelAquatoxSimulationExecution(): void {
@@ -330,6 +375,9 @@ export class SimulationService {
                         this.updateState("upstream_distance", distance);
                         this.prepareNetworkGeometry(geom, info);
                     }
+                }
+                if (this.simData.sim_rebuilding) {
+                    this.simData.sim_rebuilding = false;
                 }
                 this.updateSimData("waiting", false);
             },
@@ -524,6 +572,7 @@ export class SimulationService {
     }
 
     rebuildStreamNetwork(comid, distance): void {
+        this.simData.sim_rebuilding = true;
         this.updateSimData("waiting", true);
         this.hms.getCatchmentInfo(comid).subscribe(
             (data) => {
@@ -554,11 +603,13 @@ export class SimulationService {
                                 },
                                 (error) => {
                                     console.log("error getting catchment data: ", error);
+                                    this.resetSimulation();
                                 }
                             );
                         },
                         (error) => {
                             console.log("error getting huc data: ", error);
+                            this.resetSimulation();
                         }
                     );
                 }
@@ -566,10 +617,12 @@ export class SimulationService {
                 if (data.catchmentInfo.ERROR) {
                     console.log("ERROR REBUILDING STREAM NETWORK: ", data.catchmentInfo.ERROR);
                     this.updateSimData("waiting", false);
+                    this.resetSimulation();
                 }
             },
             (error) => {
                 console.log("error getting catchment data: ", error);
+                this.resetSimulation();
             }
         );
     }

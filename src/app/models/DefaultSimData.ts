@@ -1,11 +1,10 @@
-import { AnonymousSubject } from "rxjs/internal/Subject";
-
 export class DefaultSimData {
     static defaultSimData = {
         selectedHuc: null,
         selectedCatchment: null,
         selectedComId: null,
         waiting: false,
+        sim_name: null,
         simId: null,
         status: "Starting...",
         status_message: "Initializing...",
@@ -16,6 +15,7 @@ export class DefaultSimData {
         },
         sim_executing: false,
         sim_completed: false,
+        sim_rebuilding: false,
         network: {
             pour_point_comid: null,
             upstream_distance: null,
@@ -44,6 +44,7 @@ export class DefaultSimData {
             stepSizeInDays: true,
             useFixStepSize: false,
         },
+        remin: null,
         sv: null,
     };
 }
