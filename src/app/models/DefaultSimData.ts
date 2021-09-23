@@ -44,7 +44,5 @@ export class DefaultSimData {
             stepSizeInDays: true,
             useFixStepSize: false,
         },
-        remin: null,
-        sv: null,
     };
 }

@@ -103,7 +103,8 @@ mat-icon:hover {
 
 .container-item,
 .section-item,
-.scroll-pane {
+.scroll-pane,
+.list-short {
     display: flex;
     flex-direction: column;
     row-gap: var(--row-gap);

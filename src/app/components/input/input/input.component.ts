@@ -21,118 +21,6 @@ export class InputComponent implements OnInit {
     reminAdvancedForm: FormGroup;
     svForm: FormGroup;
 
-    basicPSetupFields = [
-        {
-            param: "FirstDay",
-            displayName: "First Day",
-            longName: "",
-            unit: "",
-        },
-        {
-            param: "LastDay",
-            displayName: "Last Day",
-            longName: "",
-            unit: "",
-        },
-        {
-            param: "UseFixStepSize",
-            displayName: "Use Fixed Step Size",
-            longName: "",
-            unit: "",
-        },
-        {
-            param: "FixStepSize",
-            displayName: "Fixed Step Size",
-            longName: "",
-            unit: "",
-        },
-        {
-            param: "StepSizeInDays",
-            displayName: "Step Size in Days",
-            longName: "",
-            unit: "",
-        },
-        {
-            param: "SaveBRates", // save derivative rates false to save space
-            displayName: "Save Derivitive Rates",
-            longName: "",
-            unit: "",
-        },
-        {
-            param: "AverageOutput", // trapiziodal integration
-            displayName: "Average Output",
-            longName: "",
-            unit: "",
-        },
-    ];
-
-    advancedPSetupFields = [];
-
-    basicLocaleFields = [];
-
-    advancedLocaleFields = [];
-
-    basicReminFields = [
-        {
-            param: "DecayMax_Lab",
-            displayName: "Max. Degrdn Rate, labile",
-            longName: "Maximum decomposition rate",
-            unit: "g/g∙d",
-        },
-        {
-            param: "DecayMax_Refr",
-            displayName: "Max Degrdn Rate, Refrac",
-            longName: "Maximum colonization rate under ideal conditions",
-            unit: "g/g∙d",
-        },
-        {
-            param: "KNitri",
-            displayName: "KNitri, Max Rate of Nitrif.",
-            longName: "Maximum rate of nitrification",
-            unit: "1/day",
-        },
-        {
-            param: "KDenitri_Wat",
-            displayName: "KDenitri",
-            longName: "Maximum rate of denitrification",
-            unit: "1/day",
-        },
-    ];
-
-    advancedReminFields = [];
-
-    basicSVFields = [
-        {
-            param: "TNH4Obj",
-            displayName: "Total Ammonia as N",
-            longName: "Total Ammonia as N",
-            unit: "mg/L",
-        },
-        {
-            param: "TNO3Obj",
-            displayName: "Nitrate as N",
-            longName: "Nitrate as N",
-            unit: "mg/L",
-        },
-        {
-            param: "TCO2Obj",
-            displayName: "Carbon dioxide",
-            longName: "Carbon dioxide",
-            unit: "mg/L",
-        },
-        {
-            param: "TO2Obj",
-            displayName: "Oxygen",
-            longName: "Oxygen",
-            unit: "mg/L",
-        },
-    ];
-
-    advancedSVFields = [];
-
-    // for future use
-    SiteTypes = ["Pond", "Stream", "Reservr1D", "Lake", "Enclosure", "Estuary", "TribInput", "Marine"];
-
     waiting = false;
     simExecuting = false;
     simCompleted = false;
@@ -146,6 +34,9 @@ export class InputComponent implements OnInit {
 
     useFixStepSize = false;
 
+    basicFields = null;
+    advancedFields = null;
+
     showPSetupAdvanced = false;
     showLocaleAdvanced = false;
     showReminAdvanced = false;
@@ -153,12 +44,15 @@ export class InputComponent implements OnInit {
 
     sVariables;
 
-    constructor(private fb: FormBuilder, private hms: HmsService, private simulation: SimulationService) {}
+    constructor(private fb: FormBuilder, private hms: HmsService, private simulation: SimulationService) {
+        this.basicFields = this.simulation.getBasicFields();
+        this.advancedFields = this.simulation.getAdvancedFields();
+    }
 
     ngOnInit(): void {
         this.aoiForm = this.fb.group({
             pPointComid: [null],
-            endComid: [null],
+            endComid: [{ value: null, disabled: true }],
             distance: [this.simulation.getDefaultUpstreamDistance()],
         });
 
@@ -193,13 +87,13 @@ export class InputComponent implements OnInit {
         this.localeForm = this.fb.group({});
 
         const reminFields = {};
-        for (let field of this.basicReminFields) {
+        for (let field of this.basicFields.remin) {
             reminFields[field.param] = [];
         }
         this.reminForm = this.fb.group(reminFields);
 
         const svFields = {};
-        for (let field of this.basicSVFields) {
+        for (let field of this.basicFields.sv) {
             svFields[field.param] = [];
         }
         this.svForm = this.fb.group(svFields);
@@ -215,13 +109,11 @@ export class InputComponent implements OnInit {
         this.catchment = simData.selectedCatchment;
         if (simData.base_json) {
             const remin = simData.base_json.AQTSeg.Location.Remin;
-            for (let variable of this.basicReminFields) {
+            for (let variable of this.basicFields.remin) {
                 this.reminForm.get(variable.param).setValue(remin[variable.param].Val);
             }
-        }
-        if (simData.sv) {
-            for (let variable of this.basicSVFields) {
-                for (let defaultParam of simData.sv) {
+            for (let variable of this.basicFields.sv) {
+                for (let defaultParam of simData.base_json.AQTSeg.SV) {
                     if (variable.param == defaultParam.$type) {
                         this.svForm.get(variable.param).setValue(defaultParam.InitialCond);
                     }

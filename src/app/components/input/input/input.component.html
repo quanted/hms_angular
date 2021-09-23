@@ -67,7 +67,7 @@
                 <!-- Global Setup -->
                 <div *ngIf="jsonFlags && baseJson">
                     <!-- PSetup section -->
-                    <div [formGroup]="pSetUpForm">
+                    <div [formGroup]="pSetUpForm" class="section-item">
                         <div class="section-heading">
                             <div id="this is just here as a spacer"></div>
                             <strong class="section-heading-center">Simulation Setup</strong>
@@ -107,10 +107,12 @@
                             <div class="form-row" *ngIf="useFixStepSize">
                                 Step Size <input type="number" class="input-number" formControlName="fixStepSize" />
                             </div>
-                            <div>Advanced<mat-icon class="icon-panel-toggle" matTooltip="See Advanced Options NOT YET IMPLEMENTED" 
-                                (click)="toggleAdvanced('pSetup')">expand_more</mat-icon></div>
-                            <div class="section-item" *ngIf="showPSetupAdvanced && advancedPSetupFields.length">
-                                <div class="form-row" *ngFor="let pSetupField of advancedPSetupFields">
+                            <div class="advanced-settings-toggle">
+                                <div class="vertical-center">Advanced</div><mat-icon class="icon-panel-toggle" matTooltip="See Advanced Options NOT YET IMPLEMENTED" 
+                                (click)="toggleAdvanced('pSetup')">expand_more</mat-icon>
+                            </div>
+                            <div class="section-item" *ngIf="showPSetupAdvanced && advancedFields.pSetup.length">
+                                <div class="form-row" *ngFor="let pSetupField of advancedFields.pSetup">
                                     <div>{{ pSetupField.displayName }}</div>
                                     <div class="vertical-center">
                                         <div>
@@ -119,7 +121,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="section-item" *ngIf="showPSetupAdvanced && !advancedPSetupFields.length">
+                            <div class="section-item" *ngIf="showPSetupAdvanced && !advancedFields.pSetup.length">
                                 <div class="centered">There are currently no advanced options available</div>
                             </div>
                         </div>
@@ -158,10 +160,10 @@
                     </div> -->
 
                     <!-- Remin section -->
-                    <div [formGroup]="reminForm">
-                        <div class="centered"><strong>Organic Matter Rates</strong></div>
+                    <div [formGroup]="reminForm" class="section-item">
+                        <div><strong>Organic Matter Rates</strong></div>
                         <div class="section-item">
-                            <div class="form-row" *ngFor="let reminField of basicReminFields">
+                            <div class="form-row" *ngFor="let reminField of basicFields.remin">
                                 <div>{{ reminField.displayName }}</div>
                                 <div class="vertical-center">
                                     <div>
@@ -171,10 +173,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div>Advanced<mat-icon class="icon-panel-toggle" matTooltip="See Advanced Options NOT YET IMPLEMENTED"
-                            (click)="toggleAdvanced('remin')">expand_more</mat-icon></div>
+                        <div class="advanced-settings-toggle">
+                            <div class="vertical-center">Advanced</div>
+                            <mat-icon class="icon-panel-toggle" matTooltip="See Advanced Options NOT YET IMPLEMENTED"
+                            (click)="toggleAdvanced('remin')">expand_more</mat-icon>
+                        </div>
                         <div class="section-item" *ngIf="showReminAdvanced">
-                            <div class="form-row" *ngFor="let reminField of advancedReminFields">
+                            <div class="form-row" *ngFor="let reminField of advancedFields.remin">
                                 <div>{{ reminField.displayName }}</div>
                                 <div class="vertical-center">
                                     <div>
@@ -184,16 +189,16 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="section-item" *ngIf="showReminAdvanced && !advancedReminFields.length">
+                        <div class="section-item" *ngIf="showReminAdvanced && !advancedFields.remin.length">
                             <div class="centered">There are currently no advanced options available</div>
                         </div>
                     </div>
 
                     <!-- S.V. Section -->
-                    <div [formGroup]="svForm">
-                        <div class="centered"><strong>State Variable Initial Values</strong></div>
+                    <div [formGroup]="svForm" class="section-item">
+                        <div><strong>State Variable Initial Values</strong></div>
                         <div class="section-item">
-                            <div class="form-row" *ngFor="let svField of basicSVFields">
+                            <div class="form-row" *ngFor="let svField of basicFields.sv">
                                 <div>{{ svField.displayName }}</div>
                                 <div class="vertical-center">
                                     <div>
@@ -203,10 +208,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div>Advanced<mat-icon class="icon-panel-toggle" matTooltip="See Advanced Options NOT YET IMPLEMENTED"
-                            (click)="toggleAdvanced('sv')">expand_more</mat-icon></div>
+                        <div class="advanced-settings-toggle">
+                            <div class="vertical-center">Advanced</div>
+                            <mat-icon class="icon-panel-toggle" matTooltip="See Advanced Options NOT YET IMPLEMENTED"
+                            (click)="toggleAdvanced('sv')">expand_more</mat-icon>
+                        </div>
                         <div class="section-item" *ngIf="showSVAdvanced">
-                            <div class="form-row" *ngFor="let svField of advancedSVFields">
+                            <div class="form-row" *ngFor="let svField of advancedFields.sv">
                                 <div>{{ svField.displayName }}</div>
                                 <div class="vertical-center">
                                     <div>
@@ -216,16 +224,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="section-item" *ngIf="showSVAdvanced && !advancedSVFields.length">
+                        <div class="section-item" *ngIf="showSVAdvanced && !advancedFields.sv.length">
                             <div class="centered">There are currently no advanced options available</div>
                         </div>
                     </div>
                     <div class="button" (click)="applyGlobalSettings()">Apply Settings</div>
                 </div>
             </div>
-
-
-            
 
             <div class="container-item" *ngIf="network.network && baseJson">
                 <div class="section-heading">
@@ -235,7 +240,6 @@
                         <mat-icon class="icon-panel-toggle float-right" matTooltipPosition="right" matTooltip="Collapse section">expand_less</mat-icon>
                     </div>
                 </div>
-                <app-segment-list></app-segment-list>
                 <app-comid-select-input></app-comid-select-input>
             </div>
         </div>

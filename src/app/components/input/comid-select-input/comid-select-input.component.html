@@ -1,55 +1,84 @@
-<div [formGroup]="inputForm">
-  <div class="centered"><strong>Click stream segment to edit loadings</strong></div>
-  <div class="centered">- or -</div>
-  <div class="form-row">
+<div class="section-item">
+  <div class="centered"><strong>To edit segment loadings, select Comid from list, click segment on map, or use input below</strong></div>
+  <div class="form-row" [formGroup]="selectForm" >
     <div class="vertical-center">
       <div>Comid <input class="input-number" type="number" formControlName="comid" /></div>
     </div>
     <div class="button" (click)="selectSegment()">Select Segment</div>
   </div>
+  
+  <app-segment-list></app-segment-list>
 
-  <div *ngIf="selectedComId" class="segment-form">
+  <div *ngIf="selectedComId" class="segment-form section-item">
     <div class="centered"><strong>Segment {{ selectedComId }} Loadings</strong></div>
-    <div>Parameters</div>
-    <div class="scroll-pane list-short" *ngIf="parameters.length">
+
+    <div [formGroup]="reminForm" class="section-item">
+        <div><strong>Segment Organic Matter Rates</strong></div>
+        <div class="form-row" *ngFor="let reminField of basicFields.remin">
+            <div>{{ reminField.displayName }}</div>
+            <div class="vertical-center">
+                <div>
+                    <input type="number" class="input-number" formControlName="{{ reminField.param }}" matTooltip="{{ reminField.longName }}"/> 
+                    {{ reminField.unit }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div [formGroup]="svForm" class="section-item">
+        <div><strong>Segment State Variable Initial Values</strong></div>
+        <div class="form-row" *ngFor="let svField of basicFields.sv">
+            <div>{{ svField.displayName }}</div>
+            <div class="vertical-center">
+                <div>
+                    <input type="number" class="input-number" formControlName="{{ svField.param }}" matTooltip="{{ svField.longName }}"/> 
+                    {{ svField.unit }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div><strong>Parameters</strong></div>
+    <div class="scroll-pane list-short section-item" *ngIf="parameters.length">
       <div *ngFor="let parameter of parameters" class="button">
         <div class="form-row">
-          <div class="vertical-center">{{ parameter.value }}</div><mat-icon title="Remove Parameter">delete</mat-icon>
+          <div class="vertical-center">{{ parameter.type }}</div><mat-icon title="Remove Parameter">delete</mat-icon>
         </div>
       </div>
     </div>
     <div *ngIf="!parameters.length" class="centered">
-      <strong>This segment has no parameters</strong>
+      This segment has no parameters
     </div>
-    <div>Sources</div>
-    <div class="scroll-pane list-short" *ngIf="sources.length">
+    <div><strong>Sources</strong></div>
+    <div class="scroll-pane list-short section-item" *ngIf="sources.length">
       <div *ngFor="let source of sources" class="button">
         <div class="form-row">
-          <div class="vertical-center">{{ source.value }}</div><mat-icon title="Remove Source">delete</mat-icon>
+          <div class="vertical-center">{{ source.type }}</div><mat-icon title="Remove Source">delete</mat-icon>
         </div>
       </div>
     </div>
     <div *ngIf="!sources.length" class="centered">
-      <strong>This segment has no sources</strong>
+      This segment has no sources
     </div>
     <div class="form-row" *ngIf="!addingParameter && !addingSource">
       <div class="button" (click)="addParameter()">Add Parameter</div>
       <div class="button" (click)="addSource()">Add Source</div>
     </div>
+    <div class="button" (click)="addSegmentLoadings()">Apply Settings</div>
 
-    <div *ngIf="addingParameter" class="segment-form">
-      New Parameter
+    <div *ngIf="addingParameter" class="segment-form" [formGroup]="parameterForm" >
+      <strong>New Parameter</strong>
       <div class="form-row">
-        <label>Use Constant Loading?</label>
+        <label>Use Constant Loading? </label>
         <input type="checkbox" (change)="useConstLoadings = !useConstLoadings" checked>
       </div>
-      <div class="form-row">
-        <label *ngIf="useConstLoadings">Constant Loading</label>
-        <input *ngIf="useConstLoadings" formControlName="constLoading" type="text">
+      <div class="form-row" *ngIf="useConstLoadings">
+        <label>Constant Loading </label>
+        <input formControlName="constLoading" type="text">
       </div>
-      <div class="form-row">
-        <label *ngIf="!useConstLoadings">Upload Loading</label>
-        <input *ngIf="!useConstLoadings" 
+      <div class="form-row" *ngIf="!useConstLoadings">
+        <label>Upload Time Series </label>
+        <input 
           formControlName="altLoadings"
           type="file"  
           accept=".csv"
@@ -58,7 +87,7 @@
         />
       </div>
       <div class="form-row">
-        <label>Loading Multiplier</label>
+        <label>Loading Multiplier </label>
         <input formControlName="loadingMulti" type="number">
       </div>
       <div *ngIf="uploadedTimeSeries">
@@ -80,32 +109,29 @@
       </div>
       <div class="form-row">
         <div class="button" (click)="cancelAdd()">Cancel</div>
-        <div class="button" (click)="insertParameter()">Insert Loadings</div>
+        <div class="button" (click)="insertParameter()">Add Parameter</div>
       </div>
     </div>
 
-    <div *ngIf="addingSource" class="segment-form">
-      New Source
+    <div *ngIf="addingSource" class="segment-form" [formGroup]="sourceForm" >
+      <strong>New Source</strong>
       <div class="form-row">
         <div>Source Type</div>
-        <select>
+        <select formControlName="sourceType">
           <option>Point Source</option>
-          <option>Overland Flow</option>
-          <option>next</option>
-          <option>next</option>
         </select>
       </div>
       <div class="form-row">
         <label>Use Constant Loading?</label>
         <input type="checkbox" (change)="useConstLoadings = !useConstLoadings" checked>
       </div>
-      <div class="form-row">
-        <label *ngIf="useConstLoadings">Constant Loading</label>
-        <input *ngIf="useConstLoadings" formControlName="constLoading" type="text">
+      <div class="form-row" *ngIf="useConstLoadings">
+        <label>Constant Loading</label>
+        <input formControlName="constLoading" type="text">
       </div>
-      <div class="form-row">
-        <label *ngIf="!useConstLoadings">Upload Loading</label>
-        <input *ngIf="!useConstLoadings" 
+      <div class="form-row" *ngIf="!useConstLoadings">
+        <label>Upload Time Series</label>
+        <input 
           formControlName="altLoadings"
           type="file"  
           accept=".csv"
@@ -136,7 +162,7 @@
       </div>
       <div class="form-row">
         <div class="button" (click)="cancelAdd()">Cancel</div>
-        <div class="button" (click)="insertSource()">Insert Loadings</div>
+        <div class="button" (click)="insertSource()">Add Source</div>
       </div>
     </div>
   </div>

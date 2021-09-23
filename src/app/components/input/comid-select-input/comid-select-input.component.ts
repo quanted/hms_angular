@@ -1,9 +1,6 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { SimulationService } from "../../../services/simulation.service";
-import { MapService } from "../../../services/map.service";
 import { FormBuilder, FormGroup } from "@angular/forms";
-
-import { HmsService } from "src/app/services/hms.service";
 
 import { MatPaginator } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
@@ -15,69 +12,117 @@ import { LayerService } from "src/app/services/layer.service";
     styleUrls: ["./comid-select-input.component.css"],
 })
 export class ComidSelectInputComponent implements OnInit {
-    inputForm: FormGroup;
-    svIndex = []; /* Get from service */
+    selectedComId = null;
+
+    selectForm: FormGroup;
+    reminForm: FormGroup;
+    svForm: FormGroup;
+    parameterForm: FormGroup;
+    sourceForm: FormGroup;
+    basicFields = null;
+
+    parameters: SegmentParameter[] = [];
+    sources: SegmentParameter[] = [];
 
     addingParameter = false;
     addingSource = false;
-    parameters = [];
-    sources = [];
 
     useConstLoadings = true;
 
     uploadedTimeSeries = false;
+    timeSeries = null;
 
     dataCSV = "";
-
     columnData = [];
     columnNames = [];
-
-    selectedComId = null;
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     dataSource = new MatTableDataSource();
 
-    constructor(private fb: FormBuilder, private simulation: SimulationService, private layerService: LayerService) {}
+    constructor(private fb: FormBuilder, private simulation: SimulationService, private layerService: LayerService) {
+        this.basicFields = this.simulation.getBasicFields();
+    }
 
     ngOnInit(): void {
-        this.inputForm = this.fb.group({
-            constLoading: [""],
-            loadingMulti: [""],
-            altLoadings: [""],
+        this.selectForm = this.fb.group({
             comid: [""],
         });
 
+        const reminFields = {};
+        for (let field of this.basicFields.remin) {
+            reminFields[field.param] = [];
+        }
+        this.reminForm = this.fb.group(reminFields);
+
+        const svFields = {};
+        for (let field of this.basicFields.sv) {
+            svFields[field.param] = [];
+        }
+        this.svForm = this.fb.group(svFields);
+
+        this.parameterForm = this.fb.group({
+            constLoading: [""],
+            loadingMulti: [""],
+            altLoadings: [""],
+        });
+
+        this.sourceForm = this.fb.group({
+            sourceType: ["Point Source"],
+            constLoading: [""],
+            loadingMulti: [""],
+            altLoadings: [""],
+        });
+
         this.simulation.interfaceData().subscribe((data) => {
-            for (let key of Object.keys(data)) {
-                switch (key) {
-                    case "selectedComId":
-                        this.initializeSegmentValues(data);
-                        break;
-                }
-            }
+            this.initializeSegmentForm(data);
         });
     }
 
-    initializeSegmentValues(simData): void {
+    initializeSegmentForm(simData): void {
         if (this.selectedComId !== simData.selectedComId) {
             this.cancelAdd();
         }
         this.selectedComId = simData.selectedComId;
         if (this.selectedComId) {
-            this.inputForm.get("comid").setValue(simData.selectedComId);
+            this.selectForm.get("comid").setValue(simData.selectedComId);
             if (simData.network.catchment_loadings[this.selectedComId]) {
-                this.parameters = [];
-                this.sources = [];
                 const segmentLoadings = simData.network.catchment_loadings[this.selectedComId];
-                for (let loading of segmentLoadings) {
-                    if (loading.type == "parameter") this.parameters.push(loading);
-                    if (loading.type == "source") this.sources.push(loading);
+                if (segmentLoadings) {
+                    // load stored remin and sv values
+                    this.reminForm.setValue(segmentLoadings.remin);
+                    this.svForm.setValue(segmentLoadings.sv);
+                    // load parameters and sources
+                    this.parameters = segmentLoadings.parameters == null ? [] : segmentLoadings.parameters;
+                    this.sources = segmentLoadings.sources == null ? [] : segmentLoadings.sources;
                 }
             } else {
                 this.parameters = [];
                 this.sources = [];
+                if (simData.base_json) {
+                    const remin = simData.base_json.AQTSeg.Location.Remin;
+                    for (let variable of this.basicFields.remin) {
+                        this.reminForm.get(variable.param).setValue(remin[variable.param].Val);
+                    }
+                    for (let variable of this.basicFields.sv) {
+                        for (let defaultParam of simData.base_json.AQTSeg.SV) {
+                            if (variable.param == defaultParam.$type) {
+                                this.svForm.get(variable.param).setValue(defaultParam.InitialCond);
+                            }
+                        }
+                    }
+                }
             }
         }
+    }
+
+    addSegmentLoadings(): void {
+        const loadings = {
+            remin: this.reminForm.value,
+            sv: this.svForm.value,
+            properties: this.parameters,
+            sources: this.sources,
+        };
+        this.simulation.addSegmentLoadings(this.selectedComId, loadings);
     }
 
     onFileChange($event) {
@@ -103,11 +148,15 @@ export class ComidSelectInputComponent implements OnInit {
 
             this.dataSource.data = this.columnData;
             this.dataSource.paginator = this.paginator;
+
+            // build and store time-series
+            this.timeSeries = this.simulation.generateTimeSeries(columnData);
         };
     }
 
     selectSegment(): void {
-        this.layerService.selectSegment(this.inputForm.get("comid").value);
+        // this should probably be done by the simulation service
+        this.layerService.selectSegment(this.selectForm.get("comid").value);
     }
 
     addParameter(): void {
@@ -121,31 +170,44 @@ export class ComidSelectInputComponent implements OnInit {
     }
 
     insertParameter() {
-        this.addingParameter = false;
-        // this.hmsService.validateCSV(this.dataCSV).subscribe();
-        this.simulation.updateSegmentLoadings(this.selectedComId, {
-            type: "parameter",
-            value: "new parameter object",
-        });
+        const type = "Parameter";
+        const dataType = "time-series";
+        const data = this.timeSeries;
+
+        this.parameters.push(new SegmentParameter(type, dataType, data));
+        this.cancelAdd();
     }
 
     insertSource() {
-        this.addingSource = false;
-        // this.hmsService.validateCSV(this.dataCSV).subscribe();
-        this.simulation.updateSegmentLoadings(this.selectedComId, {
-            type: "source",
-            value: "new source object",
-        });
+        const type = this.sourceForm.get("sourceType").value;
+        const dataType = "time-series";
+        const data = this.timeSeries;
+
+        this.sources.push(new SegmentParameter(type, dataType, data));
+        this.cancelAdd();
     }
 
     cancelAdd(): void {
         this.addingParameter = false;
         this.addingSource = false;
         this.uploadedTimeSeries = false;
+        this.timeSeries = null;
 
         this.dataCSV = "";
 
         this.columnData = [];
         this.columnNames = [];
+    }
+}
+
+class SegmentParameter {
+    type;
+    dataType;
+    data;
+
+    constructor(type, dataType, data) {
+        this.type = type;
+        this.dataType = dataType;
+        this.data = data;
     }
 }

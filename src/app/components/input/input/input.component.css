@@ -18,6 +18,10 @@
     float: right;
 }
 
+.advanced-settings-toggle {
+    display: flex;
+}
+
 #mat-progress-bar {
     width: 95%;
     height: 2rem;

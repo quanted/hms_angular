@@ -49,8 +49,4 @@ export class ExecutionPanelComponent implements OnInit {
     downloadSimResults(): void {
         this.simulation.downloadSimResults();
     }
-
-    backToInput(): void {
-        // return to input panel
-    }
 }

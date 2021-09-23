@@ -21,6 +21,118 @@ export class SimulationService {
     STATUS_CHECK_INTERVAL = 1000; // 1000 = 1 second interval
     statusCheck: ReturnType<typeof setInterval>; // interval that checks with backend and updates sim status
 
+    basicPSetupFields = [
+        {
+            param: "FirstDay",
+            displayName: "First Day",
+            longName: "",
+            unit: "",
+        },
+        {
+            param: "LastDay",
+            displayName: "Last Day",
+            longName: "",
+            unit: "",
+        },
+        {
+            param: "UseFixStepSize",
+            displayName: "Use Fixed Step Size",
+            longName: "",
+            unit: "",
+        },
+        {
+            param: "FixStepSize",
+            displayName: "Fixed Step Size",
+            longName: "",
+            unit: "",
+        },
+        {
+            param: "StepSizeInDays",
+            displayName: "Step Size in Days",
+            longName: "",
+            unit: "",
+        },
+        {
+            param: "SaveBRates", // save derivative rates false to save space
+            displayName: "Save Derivitive Rates",
+            longName: "",
+            unit: "",
+        },
+        {
+            param: "AverageOutput", // trapiziodal integration
+            displayName: "Average Output",
+            longName: "",
+            unit: "",
+        },
+    ];
+
+    advancedPSetupFields = [];
+
+    basicLocaleFields = [];
+
+    advancedLocaleFields = [];
+
+    basicReminFields = [
+        {
+            param: "DecayMax_Lab",
+            displayName: "Max. Degrdn Rate, labile",
+            longName: "Maximum decomposition rate",
+            unit: "g/g∙d",
+        },
+        {
+            param: "DecayMax_Refr",
+            displayName: "Max Degrdn Rate, Refrac",
+            longName: "Maximum colonization rate under ideal conditions",
+            unit: "g/g∙d",
+        },
+        {
+            param: "KNitri",
+            displayName: "KNitri, Max Rate of Nitrif.",
+            longName: "Maximum rate of nitrification",
+            unit: "1/day",
+        },
+        {
+            param: "KDenitri_Wat",
+            displayName: "KDenitri",
+            longName: "Maximum rate of denitrification",
+            unit: "1/day",
+        },
+    ];
+
+    advancedReminFields = [];
+
+    basicSVFields = [
+        {
+            param: "TNH4Obj",
+            displayName: "Total Ammonia as N",
+            longName: "Total Ammonia as N",
+            unit: "mg/L",
+        },
+        {
+            param: "TNO3Obj",
+            displayName: "Nitrate as N",
+            longName: "Nitrate as N",
+            unit: "mg/L",
+        },
+        {
+            param: "TCO2Obj",
+            displayName: "Carbon dioxide",
+            longName: "Carbon dioxide",
+            unit: "mg/L",
+        },
+        {
+            param: "TO2Obj",
+            displayName: "Oxygen",
+            longName: "Oxygen",
+            unit: "mg/L",
+        },
+    ];
+
+    advancedSVFields = [];
+
+    // for future use
+    SiteTypes = ["Pond", "Stream", "Reservr1D", "Lake", "Enclosure", "Estuary", "TribInput", "Marine"];
+
     constructor(
         private hms: HmsService,
         private waters: WatersService,
@@ -33,9 +145,9 @@ export class SimulationService {
             this.updateSimData("selectedComId", comid);
         });
 
-        console.log("allCookies: ", this.cookieService.getAll());
-
+        // console.log("allCookies: ", this.cookieService.getAll());
         // this.cookieService.deleteAll();
+
         if (this.cookieService.check("sim_setup")) {
             this.rebuildSimData();
         }
@@ -88,18 +200,30 @@ export class SimulationService {
             this.simData.json_flags = flags;
             this.simData.base_json = json;
             this.updateState("json_flags", flags);
-            const sv = [];
-            for (let key of Object.keys(json.AQTSeg.SV)) {
-                sv.push(json.AQTSeg.SV[key]);
-            }
-            this.simData.sv = sv;
             this.updateSimData("waiting", false);
         });
     }
 
+    getBasicFields(): any {
+        return {
+            pSetup: this.basicPSetupFields,
+            locale: this.basicLocaleFields,
+            remin: this.basicReminFields,
+            sv: this.basicSVFields,
+        };
+    }
+
+    getAdvancedFields(): any {
+        return {
+            pSetup: this.advancedPSetupFields,
+            locale: this.advancedLocaleFields,
+            remin: this.advancedReminFields,
+            sv: this.advancedSVFields,
+        };
+    }
+
     applyGlobalSettings(settings): void {
-        console.log("applyGlobal: ", settings);
-        // this is only for the frontend to use to track the simulation id
+        // sim_name is only for the frontend to use to track the simulation id
         // it is NOT used in the simulation.
         if (settings.pSetup.simulationName) {
             this.simData.sim_name = settings.pSetup.simulationName;
@@ -108,7 +232,7 @@ export class SimulationService {
         this.simData.PSetup.firstDay = settings.pSetup.firstDay;
         this.simData.PSetup.lastDay = settings.pSetup.lastDay;
 
-        // these values are for the simulation
+        // values below are for the simulation
         this.simData.base_json.AQTSeg.PSetup.FirstDay.Val = formatDate(
             settings.pSetup.firstDay,
             "yyyy-MM-ddTHH:mm:ss",
@@ -143,15 +267,21 @@ export class SimulationService {
         }
     }
 
+    // adds a segments loadings to the simData object for retrieval when
+    // initializeSegmentSimulation is invoked
+    addSegmentLoadings(comid, loadings): void {
+        this.simData.network.catchment_loadings[comid] = loadings;
+    }
+
     executeSimulation(): void {
         this.initializeAquatoxSimulation().subscribe((response) => {
-            this.updateSimData("sim_executing", true);
             this.updateSimData("simId", response["_id"]);
             this.updateState("simId", response["_id"]);
 
             this.addCatchmentDependencies().subscribe((response) => {
                 this.hms.executeAquatoxSimulation(this.simData["simId"]).subscribe((response) => {
                     if (!response.error) {
+                        this.updateSimData("sim_executing", true);
                         this.startStatusCheck();
                     }
                 });
@@ -185,17 +315,36 @@ export class SimulationService {
     }
 
     initializeSegmentSimulation(comid): Observable<any> {
-        // add segment remin, sv, and user time-series to
-        // each segments base_json
+        // deep copy the base_json to use for this segment
+        let segment_json = JSON.parse(JSON.stringify(this.simData.base_json));
         const loadings = this.simData.network.catchment_loadings[comid];
+
         if (loadings) {
+            // add segment remin
+            for (let param of Object.keys(loadings.remin)) {
+                if (segment_json.AQTSeg.Location.Remin[param]) {
+                    segment_json.AQTSeg.Location.Remin[param].Val = loadings.remin[param];
+                }
+            }
+            // add segment sv
+            for (let param of Object.keys(loadings.sv)) {
+                for (let base_param of segment_json.AQTSeg.SV) {
+                    if (base_param.$type == param) {
+                        base_param.InitialCond = loadings.sv[param];
+                        break;
+                    }
+                }
+            }
+            // add parameters
+
+            // add sources
         }
 
         const segmentData = {
             sim_id: this.simData["simId"],
             comid_input: {
                 comid: comid.toString(),
-                input: this.simData.base_json,
+                input: segment_json,
             },
             catchment_dependencies: [
                 {
@@ -460,6 +609,7 @@ export class SimulationService {
         this.simData.network.order = null;
         this.simData.network.network = null;
         this.simData.network.catchment_data = {};
+        this.simData.network.catchment_loadings = {};
         this.simData.selectedComId = null;
         this.simData.base_json = null;
         this.updateSimData("selectedCatchment", null);
@@ -531,14 +681,6 @@ export class SimulationService {
         };
     }
 
-    updateSegmentLoadings(comid, loading): void {
-        if (!this.simData.network.catchment_loadings[comid]) {
-            this.simData.network.catchment_loadings[comid] = [];
-        }
-        this.simData.network.catchment_loadings[comid].push(loading);
-        this.updateSimData();
-    }
-
     rebuildSimData(): void {
         /** stuff needed to rebuild sim state
          *  simState: {
@@ -549,7 +691,7 @@ export class SimulationService {
          *  }
          */
         const lastState = this.getState();
-        console.log("lastState: ", lastState);
+        // console.log("lastState: ", lastState);
         if (lastState) {
             if (lastState.upstream_distance) {
                 this.rebuildStreamNetwork(lastState.pour_point_comid, lastState.upstream_distance);
@@ -650,5 +792,18 @@ export class SimulationService {
         this.simData = { ...DefaultSimData.defaultSimData };
         this.clearHuc();
         this.updateSimData();
+    }
+
+    generateTimeSeries(csvDataRows: string[]): any {
+        const timeSeries = {};
+        for (let i = 0; i < csvDataRows.length; i++) {
+            // skip the header row
+            if (i == 0) continue;
+            const dataRow = csvDataRows[i].split(",");
+            if (dataRow.length > 1) {
+                timeSeries[formatDate(dataRow[0], "yyyy-MM-ddTHH:mm:ss", "en")] = dataRow.slice(1, dataRow.length);
+            }
+        }
+        return timeSeries;
     }
 }
