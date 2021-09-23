@@ -228,9 +228,12 @@ export class LayerService {
     });
 
     private clickListenerSubject: BehaviorSubject<any>;
+    private layerErrorSubject: BehaviorSubject<any>;
 
     constructor(private hms: HmsService, private waters: WatersService) {
         this.clickListenerSubject = new BehaviorSubject<any>(null);
+        this.layerErrorSubject = new BehaviorSubject<any>(null);
+
         // setup default tile maps
         for (let basemap of this.basemaps) {
             this.basemapLayers.push({
@@ -294,26 +297,33 @@ export class LayerService {
     }
 
     addFeature(id, feature) {
-        const layer = L.geoJSON(feature, {
-            interactive: false,
-            style: {
-                color: id == "HUC" ? this.hucColor : this.catchmentColor,
-                weight: 2,
-                fillColor: id == "HUC" ? this.hucColor : this.catchmentColor,
-                fillOpacity: 0,
-            },
-        });
+        let layer;
+        try {
+            layer = L.geoJSON(feature, {
+                interactive: false,
+                style: {
+                    color: id == "HUC" ? this.hucColor : this.catchmentColor,
+                    weight: 2,
+                    fillColor: id == "HUC" ? this.hucColor : this.catchmentColor,
+                    fillOpacity: 0,
+                },
+            });
+        } catch {
+            this.layerErrorSubject.next({ error: `layer service failed to create ${id} layer` });
+        }
 
-        this.simLayers.push({
-            type: "simfeature",
-            name: id,
-            layer,
-            show: true,
-        });
-        if (this.map) {
-            layer.addTo(this.map);
-            if (id == "HUC") {
-                this.map.fitBounds(layer.getBounds());
+        if (layer) {
+            this.simLayers.push({
+                type: "simfeature",
+                name: id,
+                layer,
+                show: true,
+            });
+            if (this.map) {
+                layer.addTo(this.map);
+                if (id == "HUC" && this.map.getZoom() < 13) {
+                    this.map.fitBounds(layer.getBounds());
+                }
             }
         }
     }
@@ -665,5 +675,9 @@ export class LayerService {
 
     clickListener(): BehaviorSubject<any> {
         return this.clickListenerSubject;
+    }
+
+    layerErrorListener(): BehaviorSubject<any> {
+        return this.layerErrorSubject;
     }
 }

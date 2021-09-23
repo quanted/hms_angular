@@ -145,6 +145,13 @@ export class SimulationService {
             this.updateSimData("selectedComId", comid);
         });
 
+        this.layerService.layerErrorListener().subscribe((error) => {
+            if (error) {
+                console.log("layer error: ", error);
+                this.resetSimulation();
+            }
+        });
+
         // console.log("allCookies: ", this.cookieService.getAll());
         // this.cookieService.deleteAll();
 
@@ -336,8 +343,13 @@ export class SimulationService {
                 }
             }
             // add parameters
-
+            if (loadings.parameters.length) {
+                console.log(comid, " parameters: ", loadings.parameters);
+            }
             // add sources
+            if (loadings.sources.length) {
+                console.log(comid, " sources: ", loadings.sources);
+            }
         }
 
         const segmentData = {
@@ -513,6 +525,7 @@ export class SimulationService {
                 if (networkData[0].error || networkData[1].error) {
                     console.log("error: ", networkData[0].error);
                     console.log("error: ", networkData[1].error);
+                    this.resetSimulation();
                 } else {
                     let geom = null;
                     let info = null;
@@ -532,6 +545,7 @@ export class SimulationService {
             },
             (error) => {
                 console.log("forkJoin error: ", error);
+                this.resetSimulation();
             }
         );
     }
@@ -728,37 +742,49 @@ export class SimulationService {
 
                     this.waters.getHucData("HUC_12", coords.lat, coords.lng).subscribe(
                         (data) => {
+                            // if the error callback is called then data will be null
                             if (data) {
-                                this.layerService.addFeature("HUC", data);
-                                this.updateSimData("selectedHuc", data);
-                                this.updateState("huc", coords);
-                            }
+                                if (!data.error) {
+                                    this.layerService.addFeature("HUC", data);
+                                    this.updateSimData("selectedHuc", data);
+                                    this.updateState("huc", coords);
 
-                            this.waters.getCatchmentData(coords.lat, coords.lng).subscribe(
-                                (data) => {
-                                    if (data) {
-                                        this.layerService.addFeature("Catchment", data);
-                                        this.updateSimData("selectedCatchment", data);
-                                        this.updateState("pour_point_comid", data.features[0].properties.FEATUREID);
-                                    }
-                                    this.buildStreamNetwork(comid, distance);
-                                },
-                                (error) => {
-                                    console.log("error getting catchment data: ", error);
+                                    this.waters.getCatchmentData(coords.lat, coords.lng).subscribe(
+                                        (data) => {
+                                            if (data) {
+                                                // if the error callback is called then data will be null
+                                                if (!data.error) {
+                                                    this.layerService.addFeature("Catchment", data);
+                                                    this.updateSimData("selectedCatchment", data);
+                                                    this.updateState(
+                                                        "pour_point_comid",
+                                                        data.features[0].properties.FEATUREID
+                                                    );
+                                                    this.buildStreamNetwork(comid, distance);
+                                                } else {
+                                                    console.log("error: ", data.error);
+                                                    this.resetSimulation();
+                                                }
+                                            }
+                                        },
+                                        (error) => {
+                                            console.log("error getting catchment data: ", error);
+                                            this.resetSimulation();
+                                        }
+                                    );
+                                } else {
+                                    console.log("error: ", data.error);
                                     this.resetSimulation();
                                 }
-                            );
+                            }
                         },
                         (error) => {
                             console.log("error getting huc data: ", error);
                             this.resetSimulation();
                         }
                     );
-                }
-
-                if (data.catchmentInfo.ERROR) {
+                } else if (data.catchmentInfo.ERROR) {
                     console.log("ERROR REBUILDING STREAM NETWORK: ", data.catchmentInfo.ERROR);
-                    this.updateSimData("waiting", false);
                     this.resetSimulation();
                 }
             },
@@ -789,9 +815,9 @@ export class SimulationService {
 
     resetSimulation(): void {
         this.cookieService.delete("sim_setup");
-        this.simData = { ...DefaultSimData.defaultSimData };
+        // deep copy default object
+        this.simData = JSON.parse(JSON.stringify(DefaultSimData.defaultSimData));
         this.clearHuc();
-        this.updateSimData();
     }
 
     generateTimeSeries(csvDataRows: string[]): any {
