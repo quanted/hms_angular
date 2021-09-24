@@ -203,7 +203,9 @@ export class InputComponent implements OnInit {
     }
 
     executeSimulation(): void {
-        this.simulation.executeSimulation();
+        if (!this.simExecuting) {
+            this.simulation.executeSimulation();
+        }
     }
 
     resetSimulation(): void {
