@@ -8,6 +8,12 @@ app-footer {
     text-align: center;
 }
 
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
 .task-bar {
     width: 95%;
     margin: 0 auto 5px auto;
@@ -24,6 +30,30 @@ app-footer {
 .row-right {
   display: flex;
   flex-direction: row;
+}
+
+:host ::ng-deep .row-right .mat-form-field {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+  font-size: 10px;
+  margin-right: 10px;
+}
+
+:host ::ng-deep .row-right .mat-form-field-infix {
+  border-top: 5px;
+}
+
+:host ::ng-deep .left-panel .mat-form-field {
+  font-size: 10px;
+}
+
+:host ::ng-deep .left-panel .mat-form-field-flex {
+  background-color: var(--main-transparent);
+}
+:host ::ng-deep .row-right .mat-form-field-flex {
+  border-radius: unset;
+  background-color: var(--main-transparent);
 }
 
 .back {
@@ -44,9 +74,11 @@ app-footer {
 
 /*****************/ 
 .dashboard-container {
+  display: flex;
+  flex-direction: row;
     min-width: 0;
     min-height: 0;
-    margin: 0 20px 20px 20px;
+    margin: 0 7px 10px 7px;
 }
 
 .hide {
@@ -67,7 +99,7 @@ app-footer {
   height: 100%;
   border: none;
   background-color: white;
-  border-radius: 5px;
+  border-radius: 1px;
   box-shadow: 0px 10px 13px -7px #000000, 5px 5px 15px 5px rgba(0,0,0,0);
 }
 
@@ -87,11 +119,50 @@ app-footer {
 
 .cdkDragHandle {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 5px;
+  right: 7px;
   color: #ccc;
   cursor: move;
   width: 24px;
   height: 24px;
   z-index: 10;
+}
+
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  height: 100%;
+}
+
+.left-panel-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 5px 0px;
+  padding: 5px;
+  background-color: var(--main-color);
+}
+
+.left-panel button {
+  width: 100%;
+}
+
+.list-container {
+  margin-bottom: 10px;
+}
+
+.map-container {
+  height: 100%;
+  width: 100%;
+}
+
+.chevron {
+  margin-top: 5px;
+  margin-left: 1px;
+  background-color: var(--main-transparent);
+}
+
+.chevron:hover {
+  background-color: var(--main-hover);
 }

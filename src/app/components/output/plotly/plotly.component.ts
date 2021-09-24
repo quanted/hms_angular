@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import * as Plotly from 'plotly.js/dist/plotly.js';
 
 @Component({
@@ -22,15 +22,21 @@ export class PlotlyComponent implements OnChanges {
     type: string,
     name: string,
   }[];
+  // Emit event to toggle legend
   @Output() toggleCSS: EventEmitter<boolean> = new EventEmitter<boolean>();
+  // Emit event to add/remove selected catchment
+  @Output() toggleCatchment: EventEmitter<string> = new EventEmitter<string>();
   // Any to hold the plot specific properties
   chart: any;
+  // Legend state
   showLegend = false;
 
+  ngOnInit() {
+    this.draw();
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.data.firstChange) {
-      this.draw();
-    } else {
+    if (this.chart && this.data && this.plotTitle) {
       this.chart.layout.title.text = this.plotTitle;
       this.chart.data = this.data;
       Plotly.react(this.plot.nativeElement, this.chart);
@@ -46,13 +52,13 @@ export class PlotlyComponent implements OnChanges {
         xaxis: {
           title: { text: this.xAxisTitle },
           tickfont: {
-            size: 10
+            size: 9
           }
         },
         yaxis: {
           title: { text: this.yAxisTitle },
           tickfont: {
-            size: 10
+            size: 9
           }
         },
         margin: {
@@ -77,8 +83,16 @@ export class PlotlyComponent implements OnChanges {
   draw(): void {
     this.setChart();
     // Plot 
-    Plotly.newPlot(this.plot.nativeElement, this.chart);
-    window.dispatchEvent(new Event('resize'));
+    Plotly.newPlot(this.plot.nativeElement, this.chart).then(() => {
+      (this.plot.nativeElement as any).on('plotly_legendclick', (event) => {
+        this.toggleCatchment.emit(event.node.textContent);
+      });
+      // Sometimes plot drawn before views completely rendered. Fire
+      // resize event to fix this.
+      window.requestAnimationFrame(function () {
+        window.dispatchEvent(new Event('resize'));
+      });
+    });
   }
 
   toggleLegend(event) {

@@ -21,6 +21,15 @@ export class OutputComponent implements OnInit {
     dropListData: any[] = [];
     // Show the about section
     showAbout = false;
+    //Show panel
+    showPanel = false;
+    // List of catchments
+    catchments: {
+        catchment: string,
+        selected: boolean
+    }[] = [];
+    //
+    pourPoint: string = "";
 
     constructor(
         // Importing SimulationService to keep data from url navigation
@@ -39,12 +48,25 @@ export class OutputComponent implements OnInit {
         // Subscribe to simulationService to get data
         this.simulationService.interfaceData().subscribe((simData) => {
             // If catchment added to simData or catchment_data not yet set, update
-            if (
-                !this.catchment_data ||
-                Object.keys(simData.network.catchment_data).length > Object.keys(this.catchment_data).length
-            ) {
+            if (Object.keys(simData.network.catchment_data).length > 0 &&
+                (!this.catchment_data ||
+                    Object.keys(simData.network.catchment_data).length > Object.keys(this.catchment_data).length)) {
                 // Deep copy new object to catchment_data to fire change detection 
                 this.catchment_data = { ...simData.network.catchment_data };
+                this.pourPoint = simData.network.pour_point_comid;
+                for (let i = 0; i < Object.keys(this.catchment_data).length; i++) {
+                    if (Object.keys(this.catchment_data)[i] == this.pourPoint) {
+                        this.catchments.push({
+                            catchment: Object.keys(this.catchment_data)[i],
+                            selected: true
+                        });
+                    } else {
+                        this.catchments.push({
+                            catchment: Object.keys(this.catchment_data)[i],
+                            selected: false
+                        });
+                    }
+                }
             }
         });
     }
@@ -62,9 +84,13 @@ export class OutputComponent implements OnInit {
     add() {
         // Check if we can add another item
         if (this.dropListData.length < this.MAX_CONTAINERS) {
+            let selectedCatchments: string[] = [];
+            this.catchments.forEach(catchment => {
+                if (catchment.selected)
+                    selectedCatchments.push(catchment.catchment);
+            });
             this.dropListData.push({
-                selectedCatchments: [this.comid],
-                selectedTableCatchment: this.comid,
+                selectedCatchments: selectedCatchments,
                 selectedSV: 0,
                 selectedChart: "scatter",
             });
@@ -92,31 +118,26 @@ export class OutputComponent implements OnInit {
         this.dropListData.push(
             {
                 selectedCatchments: [this.comid],
-                selectedTableCatchment: this.comid,
                 selectedSV: 0,
                 selectedChart: "scatter",
             },
             {
                 selectedCatchments: [this.comid],
-                selectedTableCatchment: this.comid,
                 selectedSV: 1,
                 selectedChart: "scatter",
             },
             {
                 selectedCatchments: [this.comid],
-                selectedTableCatchment: this.comid,
                 selectedSV: 2,
                 selectedChart: "scatter",
             },
             {
                 selectedCatchments: [this.comid],
-                selectedTableCatchment: this.comid,
                 selectedSV: 3,
                 selectedChart: "scatter",
             },
             {
                 selectedCatchments: [this.comid],
-                selectedTableCatchment: this.comid,
                 selectedSV: 0,
                 selectedChart: "table",
             }
@@ -137,5 +158,23 @@ export class OutputComponent implements OnInit {
 
     openHelp(): void {
         console.log("open Aquatox help");
+    }
+
+    togglePanel(event) {
+        this.showPanel = !this.showPanel;
+        window.dispatchEvent(new Event("resize"));
+    }
+
+    catchmentClick(catchment: any) {
+        // Add catchment to selectedCatchments of dropListData if not already in
+        this.dropListData.forEach((dropListItem) => {
+            if (dropListItem.selectedCatchments.indexOf(catchment.catchment) === -1) {
+                dropListItem.selectedCatchments.push(catchment.catchment);
+            } else {
+                dropListItem.selectedCatchments.splice(dropListItem.selectedCatchments.indexOf(catchment.catchment), 1);
+            }
+        });
+        catchment.selected = !catchment.selected;
+        this.outputService.dropListDataSubject.next(this.dropListData);
     }
 }
