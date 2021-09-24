@@ -13,7 +13,7 @@ import { LayerService } from "src/app/services/layer.service";
 })
 export class ComidSelectInputComponent implements OnInit {
     selectedComId = null;
-    segmentType = "boundary";
+    isBoundary = false;
 
     selectForm: FormGroup;
     reminForm: FormGroup;
@@ -83,11 +83,20 @@ export class ComidSelectInputComponent implements OnInit {
     }
 
     initializeSegmentForm(simData): void {
+        console.log("simData: ", simData);
         if (this.selectedComId !== simData.selectedComId) {
             this.cancelAdd();
         }
         this.selectedComId = simData.selectedComId;
         if (this.selectedComId) {
+            for (let seg of simData.network.segments.boundary) {
+                if (this.selectedComId == seg.comid) {
+                    this.isBoundary = true;
+                    break;
+                } else {
+                    this.isBoundary = false;
+                }
+            }
             this.selectForm.get("comid").setValue(simData.selectedComId);
             if (simData.network.catchment_loadings[this.selectedComId]) {
                 const segmentLoadings = simData.network.catchment_loadings[this.selectedComId];

@@ -119,7 +119,7 @@
         <div class="form-row">
             <div>Source Origin</div>
             <select formControlName="sourceOrigin">
-                <option *ngIf="segmentType == 'boundary'">Boundary</option>
+                <option *ngIf="isBoundary">Boundary</option>
                 <option>Point Source</option>
                 <option>Overland Flow</option>
             </select>

@@ -27,12 +27,6 @@ export class HmsService {
 
     getCatchmentInfo(comid): Observable<any> {
         return this.http.get(`${environment.apiURL}/api/info/catchment?comid=${comid}`).pipe(
-            map((data) => {
-                data = {
-                    catchmentInfo: { ...data },
-                };
-                return data;
-            }),
             timeout(this.REQUEST_TIMEOUT),
             catchError((error) => {
                 if (error instanceof TimeoutError) {

@@ -562,11 +562,12 @@ export class SimulationService {
             boundary: [],
             headwater: [],
             inNetwork: [],
+            outOfNetwork: [],
+            outOfNetworkBoundarySource: [],
             eventsEncountered: data.output.events_encountered,
         };
 
-        const outsideOfSimulationSegments = [];
-
+        // sorting out the segment geometries
         for (let segment of flowlines) {
             if (segment.comid === pourPointComid) {
                 segments.pourPoint = segment;
@@ -576,14 +577,21 @@ export class SimulationService {
                 segments.headwater.push(segment);
                 // else if it's in the aoi huc
             } else if (segment.wbd_huc12 == selectedHuc) {
-                segments.inNetwork.push(segment);
+                // if it has an out-of-network source it's a boundary segment
+                let isBoundary = false;
+                for (let outOfNetworkSegment of info.boundary["out-of-network"]) {
+                    if (info.sources[segment.comid].includes(outOfNetworkSegment)) {
+                        segments.boundary.push(segment);
+                        isBoundary = true;
+                    }
+                }
+                if (!isBoundary) {
+                    segments.inNetwork.push(segment);
+                }
             } else {
-                outsideOfSimulationSegments.push(segment);
+                segments.outOfNetwork.push(segment);
             }
         }
-
-        console.log("segments: ", segments);
-        // console.log("outside: ", outsideOfSimulationSegments);
 
         this.simData.network.segments = {
             pourPoint: segments.pourPoint,
@@ -594,55 +602,6 @@ export class SimulationService {
                 .length,
         };
 
-        //console.log("oldInfo: ", info);
-
-        let newInfo = {
-            network: [],
-            order: [],
-            sources: {},
-        };
-        for (let segment of outsideOfSimulationSegments) {
-            // console.log("segment: ", segment);
-
-            // simData.network.network
-            // remove array element
-            newInfo.network = info.network.filter((segmentData) => {
-                if (segmentData[0] !== segment.comid.toString()) return true;
-            });
-
-            // simData.network.order
-            // remove element from array item and item if then empty, maintain outer array order
-            for (let orderGroup in info.order) {
-                let group = info.order[orderGroup];
-                if (group.includes(segment.comid)) {
-                    group = group.filter((comid) => {
-                        comid != segment.comid;
-                    });
-                }
-                newInfo.order[orderGroup] = group;
-            }
-            // remove empty arrays
-            newInfo.order = info.order.filter((row) => {
-                row.length > 0;
-            });
-
-            // simData.network.sources
-            // remove element from array item
-            for (let segmentComid of Object.keys(info.sources)) {
-                let sourceList = info.sources[segmentComid];
-                if (sourceList.includes(segment.comid)) {
-                    sourceList = sourceList.filter((source) => {
-                        source != segment.comid;
-                    });
-                    newInfo.sources[segmentComid] = sourceList;
-                }
-            }
-        }
-        // console.log("oldInfo: ", info);
-        // console.log("newInfo: ", newInfo);
-
-        // order and sources need to be filtered down to just in huc and boundary segments
-        // order and sources goes to the backend
         this.simData.network.order = info.order;
         this.simData.network.sources = info.sources;
         this.simData.network.network = info.network;
@@ -776,12 +735,12 @@ export class SimulationService {
         this.updateSimData("waiting", true);
         this.hms.getCatchmentInfo(comid).subscribe(
             (data) => {
-                if (data.catchmentInfo?.metadata) {
+                if (data.metadata) {
                     this.simData.network.pour_point_comid = comid;
                     // now get the huc by coods
                     const coords = {
-                        lat: data.catchmentInfo.metadata.CentroidLatitude,
-                        lng: data.catchmentInfo.metadata.CentroidLongitude,
+                        lat: data.metadata.CentroidLatitude,
+                        lng: data.metadata.CentroidLongitude,
                     };
 
                     this.waters.getHucData("HUC_12", coords.lat, coords.lng).subscribe(
@@ -827,8 +786,8 @@ export class SimulationService {
                             this.resetSimulation();
                         }
                     );
-                } else if (data.catchmentInfo.ERROR) {
-                    console.log("ERROR REBUILDING STREAM NETWORK: ", data.catchmentInfo.ERROR);
+                } else {
+                    console.log("ERROR REBUILDING STREAM NETWORK: ", data.ERROR);
                     this.resetSimulation();
                 }
             },
