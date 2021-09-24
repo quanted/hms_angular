@@ -46,7 +46,7 @@ export class HmsService {
 
     getNetworkInfo(comid, distance): Observable<any> {
         return this.http
-            .get(`${environment.apiURL}/api/info/streamnetwork?comid=${comid}&maxDistance=${distance}`)
+            .get(`${environment.apiURL}/api/info/streamnetwork?comid=${comid}&maxDistance=${distance}&huc=12`)
             .pipe(
                 map((data) => {
                     data = {
