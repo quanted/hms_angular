@@ -278,6 +278,7 @@ export class SimulationService {
     // initializeSegmentSimulation is invoked
     addSegmentLoadings(comid, loadings): void {
         this.simData.network.catchment_loadings[comid] = loadings;
+        console.log("loadings: ", this.simData.network.catchment_loadings);
     }
 
     executeSimulation(): void {
@@ -551,15 +552,10 @@ export class SimulationService {
     }
 
     prepareNetworkGeometry(data, info): void {
+        console.log("info: ", info);
         const selectedHuc = this.simData.selectedHuc.properties.HUC_12;
         const pourPointComid = data.output.resolved_starts[0].comid;
         const flowlines = data.output.flowlines_traversed;
-
-        // order and sources need to be filtered down to just in huc and boundary segments
-        // order and sources goes to the backend
-        this.simData.network.order = info.order;
-        this.simData.network.sources = info.sources;
-        this.simData.network.network = info.network;
 
         const segments = {
             pourPoint: null,
@@ -568,6 +564,8 @@ export class SimulationService {
             inNetwork: [],
             eventsEncountered: data.output.events_encountered,
         };
+
+        const outsideOfSimulationSegments = [];
 
         for (let segment of flowlines) {
             if (segment.comid === pourPointComid) {
@@ -580,29 +578,75 @@ export class SimulationService {
             } else if (segment.wbd_huc12 == selectedHuc) {
                 segments.inNetwork.push(segment);
             } else {
-                // loop through the inNetwork segments and see if this comid is a source
-                // if so add it to the boundary segments
+                outsideOfSimulationSegments.push(segment);
+            }
+        }
 
-                // THE inNetwork array IS NOT FULLY POUPLATED HERE
-                // it will cause issues finding the boundary segments.
+        console.log("segments: ", segments);
+        // console.log("outside: ", outsideOfSimulationSegments);
 
-                for (let inNetworkSegment of segments.inNetwork) {
-                    if (info.sources[inNetworkSegment.comid].includes(segment.comid.toString())) {
-                        segments.boundary.push(segment);
-                    }
+        this.simData.network.segments = {
+            pourPoint: segments.pourPoint,
+            boundary: segments.boundary,
+            headwater: segments.headwater,
+            inNetwork: segments.inNetwork,
+            totalNumSegments: [segments.pourPoint, ...segments.boundary, ...segments.inNetwork, ...segments.headwater]
+                .length,
+        };
+
+        //console.log("oldInfo: ", info);
+
+        let newInfo = {
+            network: [],
+            order: [],
+            sources: {},
+        };
+        for (let segment of outsideOfSimulationSegments) {
+            // console.log("segment: ", segment);
+
+            // simData.network.network
+            // remove array element
+            newInfo.network = info.network.filter((segmentData) => {
+                if (segmentData[0] !== segment.comid.toString()) return true;
+            });
+
+            // simData.network.order
+            // remove element from array item and item if then empty, maintain outer array order
+            for (let orderGroup in info.order) {
+                let group = info.order[orderGroup];
+                if (group.includes(segment.comid)) {
+                    group = group.filter((comid) => {
+                        comid != segment.comid;
+                    });
+                }
+                newInfo.order[orderGroup] = group;
+            }
+            // remove empty arrays
+            newInfo.order = info.order.filter((row) => {
+                row.length > 0;
+            });
+
+            // simData.network.sources
+            // remove element from array item
+            for (let segmentComid of Object.keys(info.sources)) {
+                let sourceList = info.sources[segmentComid];
+                if (sourceList.includes(segment.comid)) {
+                    sourceList = sourceList.filter((source) => {
+                        source != segment.comid;
+                    });
+                    newInfo.sources[segmentComid] = sourceList;
                 }
             }
         }
-        this.simData.network.segments.pourPoint = segments.pourPoint;
-        this.simData.network.segments.boundary = segments.boundary;
-        this.simData.network.segments.headwater = segments.headwater;
-        this.simData.network.segments.inNetwork = segments.inNetwork;
-        this.simData.network.segments.totalNumSegments = [
-            segments.pourPoint,
-            ...segments.boundary,
-            ...segments.inNetwork,
-            ...segments.headwater,
-        ].length;
+        // console.log("oldInfo: ", info);
+        // console.log("newInfo: ", newInfo);
+
+        // order and sources need to be filtered down to just in huc and boundary segments
+        // order and sources goes to the backend
+        this.simData.network.order = info.order;
+        this.simData.network.sources = info.sources;
+        this.simData.network.network = info.network;
+
         this.layerService.buildStreamLayers(segments);
     }
 

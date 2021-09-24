@@ -22,6 +22,8 @@ export class ComidSelectInputComponent implements OnInit {
     sourceForm: FormGroup;
     basicFields = null;
 
+    sourceTypes = [];
+
     parameters: SegmentParameter[] = [];
     sources: SegmentParameter[] = [];
 
@@ -69,9 +71,10 @@ export class ComidSelectInputComponent implements OnInit {
 
         this.sourceForm = this.fb.group({
             sourceOrigin: ["Point Source"],
-            constLoading: [""],
-            loadingMulti: [""],
-            altLoadings: [""],
+            sourceType: [""],
+            useConstLoadings: ["constantLoading"],
+            constLoadingValue: [null],
+            constLoadingMulti: [null],
         });
 
         this.simulation.interfaceData().subscribe((data) => {
@@ -173,21 +176,37 @@ export class ComidSelectInputComponent implements OnInit {
     insertParameter() {
         const origin = "";
         const type = "Parameter";
+        const sim$type = null;
         const dataType = "time-series";
         const data = this.timeSeries;
 
-        this.parameters.push(new SegmentParameter(origin, type, dataType, data));
+        this.parameters.push(new SegmentParameter(origin, type, sim$type, dataType, data));
         this.cancelAdd();
     }
 
     insertSource() {
+        const loadingChoice = this.sourceForm.get("useConstLoadings").value;
+
         const origin = this.sourceForm.get("sourceOrigin").value;
         const type = this.sourceForm.get("sourceType").value;
-        const dataType = "time-series";
-        const data = this.timeSeries;
+        const sim$type = null;
 
-        this.sources.push(new SegmentParameter(origin, type, dataType, data));
-        this.cancelAdd();
+        if (
+            loadingChoice == "constantLoading" &&
+            this.sourceForm.get("constLoadingValue").value !== null &&
+            this.sourceForm.get("constLoadingMulti").value !== null
+        ) {
+            const dataType = "constant";
+            const data = this.sourceForm.get("constLoadingValue").value;
+
+            this.sources.push(new SegmentParameter(origin, type, sim$type, dataType, data));
+            this.cancelAdd();
+        } else if (loadingChoice == "timeSeries" && this.timeSeries !== null) {
+            const dataType = "time-series";
+            const data = this.timeSeries;
+            this.sources.push(new SegmentParameter(origin, type, sim$type, dataType, data));
+            this.cancelAdd();
+        }
     }
 
     cancelAdd(): void {
@@ -206,12 +225,14 @@ export class ComidSelectInputComponent implements OnInit {
 class SegmentParameter {
     origin: string;
     type: string;
+    sim$type;
     dataType: string;
     data: any;
 
-    constructor(origin, type, dataType, data) {
+    constructor(origin, type, sim$type, dataType, data) {
         this.origin = origin;
         this.type = type;
+        this.sim$type = sim$type;
         this.dataType = dataType;
         this.data = data;
     }
