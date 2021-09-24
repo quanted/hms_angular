@@ -61,7 +61,7 @@
       This segment has no sources
     </div>
     <div class="form-row" *ngIf="!addingParameter && !addingSource">
-      <div class="button" (click)="addParameter()">Add Parameter</div>
+      <div class="button disabled" (click)="addParameter()">Add Parameter</div>
       <div class="button" (click)="addSource()">Add Source</div>
     </div>
     <div class="button" (click)="addSegmentLoadings()">Apply Settings</div>
@@ -117,8 +117,10 @@
       <strong>New Source</strong>
       <div class="form-row">
         <div>Source Type</div>
-        <select formControlName="sourceType">
-          <option>Point Source</option>
+        <select formControlName="sourceOrigin">
+            <option *ngIf="segmentType == 'boundary'">Boundary</option>
+            <option>Point Source</option>
+            <option>Overland Flow</option>
         </select>
       </div>
       <div class="form-row">

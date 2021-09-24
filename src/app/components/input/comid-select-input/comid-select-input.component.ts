@@ -13,6 +13,7 @@ import { LayerService } from "src/app/services/layer.service";
 })
 export class ComidSelectInputComponent implements OnInit {
     selectedComId = null;
+    segmentType = "boundary";
 
     selectForm: FormGroup;
     reminForm: FormGroup;
@@ -67,7 +68,7 @@ export class ComidSelectInputComponent implements OnInit {
         });
 
         this.sourceForm = this.fb.group({
-            sourceType: ["Point Source"],
+            sourceOrigin: ["Point Source"],
             constLoading: [""],
             loadingMulti: [""],
             altLoadings: [""],
@@ -160,8 +161,8 @@ export class ComidSelectInputComponent implements OnInit {
     }
 
     addParameter(): void {
-        this.addingParameter = true;
-        this.addingSource = false;
+        // this.addingParameter = true;
+        // this.addingSource = false;
     }
 
     addSource(): void {
@@ -170,20 +171,22 @@ export class ComidSelectInputComponent implements OnInit {
     }
 
     insertParameter() {
+        const origin = "";
         const type = "Parameter";
         const dataType = "time-series";
         const data = this.timeSeries;
 
-        this.parameters.push(new SegmentParameter(type, dataType, data));
+        this.parameters.push(new SegmentParameter(origin, type, dataType, data));
         this.cancelAdd();
     }
 
     insertSource() {
+        const origin = this.sourceForm.get("sourceOrigin").value;
         const type = this.sourceForm.get("sourceType").value;
         const dataType = "time-series";
         const data = this.timeSeries;
 
-        this.sources.push(new SegmentParameter(type, dataType, data));
+        this.sources.push(new SegmentParameter(origin, type, dataType, data));
         this.cancelAdd();
     }
 
@@ -201,11 +204,13 @@ export class ComidSelectInputComponent implements OnInit {
 }
 
 class SegmentParameter {
-    type;
-    dataType;
-    data;
+    origin: string;
+    type: string;
+    dataType: string;
+    data: any;
 
-    constructor(type, dataType, data) {
+    constructor(origin, type, dataType, data) {
+        this.origin = origin;
         this.type = type;
         this.dataType = dataType;
         this.data = data;

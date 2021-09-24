@@ -6,3 +6,8 @@
 table {
     min-width: 100%;
 }
+
+.disabled, .disabled:hover {
+    background-color: lightgray;
+    color: gray;
+}
