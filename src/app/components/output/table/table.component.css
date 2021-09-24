@@ -33,11 +33,11 @@ table {
     vertical-align: middle !important;
   }
 
-::ng-deep .mat-sort-header-container{
+:host ::ng-deep .mat-sort-header-container{
     justify-content: center;
 }
 
-::ng-deep .mat-sort-header-content {
+:host ::ng-deep .mat-sort-header-content {
   font-size: 11px;
 }
 
@@ -55,30 +55,30 @@ tr.mat-header-row {
   padding-left: 30px !important;
 }
 
-  .title {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: "Open Sans", verdana, arial, sans-serif;
-    font-size: 14px;
-    fill: rgb(68, 68, 68);
-    opacity: 1;
-    font-weight: normal;
-    white-space: pre;
-    padding: 5px;
-  }
+.title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Open Sans", verdana, arial, sans-serif;
+  font-size: 14px;
+  fill: rgb(68, 68, 68);
+  opacity: 1;
+  font-weight: normal;
+  white-space: pre;
+  padding: 5px;
+}
 
-  .export{
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-  }
+.export{
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}
 
-  .export:hover {
-    opacity: 0.5;
-  }
-  .mat-cell, .mat-footer-cell {
-    font-size: 11px;
+.export:hover {
+  opacity: 0.5;
+}
+.mat-cell, .mat-footer-cell {
+  font-size: 11px;
 }
 tr.mat-row, tr.mat-footer-row {
   height: auto;
