@@ -240,7 +240,7 @@
                 <app-comid-select-input></app-comid-select-input>
             </div>
         </div>
-        <div *ngIf="baseJson && network.network" class="section-item">
+        <div *ngIf="baseJson && network.network && !waiting" class="section-item">
             <div class="button" (click)="clearBaseJson()">Reset Simulation</div>
             <div class="button" *ngIf="!simExecuting" (click)="executeSimulation()">Execute Simulation</div>
         </div>

@@ -283,6 +283,7 @@ export class SimulationService {
 
     executeSimulation(): void {
         if (!this.simData.sim_executing) {
+            this.updateSimData("waiting", true);
             this.initializeAquatoxSimulation().subscribe((response) => {
                 this.updateSimData("simId", response["_id"]);
                 this.updateState("simId", response["_id"]);
@@ -290,6 +291,7 @@ export class SimulationService {
                 this.addCatchmentDependencies().subscribe((response) => {
                     this.hms.executeAquatoxSimulation(this.simData["simId"]).subscribe((response) => {
                         if (!response.error) {
+                            this.simData.waiting = false;
                             this.updateSimData("sim_executing", true);
                             this.startStatusCheck();
                         }
