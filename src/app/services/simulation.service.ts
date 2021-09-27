@@ -174,7 +174,7 @@ export class SimulationService {
     }
 
     getDefaultUpstreamDistance(): string {
-        return "50";
+        return "20";
     }
 
     getDefaultTimeStep(): string {
@@ -282,19 +282,21 @@ export class SimulationService {
     }
 
     executeSimulation(): void {
-        this.initializeAquatoxSimulation().subscribe((response) => {
-            this.updateSimData("simId", response["_id"]);
-            this.updateState("simId", response["_id"]);
+        if (!this.simData.sim_executing) {
+            this.initializeAquatoxSimulation().subscribe((response) => {
+                this.updateSimData("simId", response["_id"]);
+                this.updateState("simId", response["_id"]);
 
-            this.addCatchmentDependencies().subscribe((response) => {
-                this.hms.executeAquatoxSimulation(this.simData["simId"]).subscribe((response) => {
-                    if (!response.error) {
-                        this.updateSimData("sim_executing", true);
-                        this.startStatusCheck();
-                    }
+                this.addCatchmentDependencies().subscribe((response) => {
+                    this.hms.executeAquatoxSimulation(this.simData["simId"]).subscribe((response) => {
+                        if (!response.error) {
+                            this.updateSimData("sim_executing", true);
+                            this.startStatusCheck();
+                        }
+                    });
                 });
             });
-        });
+        }
     }
 
     initializeAquatoxSimulation(): Observable<any> {
@@ -445,12 +447,16 @@ export class SimulationService {
     }
 
     downloadSimResults(): void {
+        this.simData.downloading = true;
+        this.updateSimData("waiting", true);
         this.hms.downloadAquatoxSimResults(this.simData["simId"]).subscribe((data) => {
             const blob = new Blob([data], {
                 type: "application/zip",
             });
             const url = window.URL.createObjectURL(blob);
             window.open(url, "_self");
+            this.simData.downloading = false;
+            this.updateSimData("waiting", false);
         });
     }
 

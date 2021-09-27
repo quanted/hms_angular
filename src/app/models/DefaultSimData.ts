@@ -4,6 +4,7 @@ export class DefaultSimData {
         selectedCatchment: null,
         selectedComId: null,
         waiting: false,
+        downloading: false,
         sim_name: null,
         simId: null,
         status: "Starting...",

@@ -14,6 +14,9 @@ export class ExecutionPanelComponent implements OnInit {
     simulationExecuting;
     simComplete;
 
+    waiting = false;
+    downloading = false;
+
     constructor(private simulation: SimulationService, private router: Router) {}
 
     ngOnInit(): void {
@@ -36,6 +39,8 @@ export class ExecutionPanelComponent implements OnInit {
                     break;
             }
         }
+        this.downloading = simData.downloading;
+        this.waiting = simData.waiting;
     }
 
     cancelExecution(): void {
@@ -47,6 +52,8 @@ export class ExecutionPanelComponent implements OnInit {
     }
 
     downloadSimResults(): void {
-        this.simulation.downloadSimResults();
+        if (!this.downloading) {
+            this.simulation.downloadSimResults();
+        }
     }
 }

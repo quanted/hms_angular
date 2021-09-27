@@ -49,9 +49,6 @@
                         Get Stream Network
                     </div>
                 </div>
-                <div class="button" *ngIf="waiting">
-                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-                </div>
             </div>
 
             <!-- Aquatox section -->
@@ -246,6 +243,9 @@
         <div *ngIf="baseJson && network.network" class="section-item">
             <div class="button" (click)="clearBaseJson()">Reset Simulation</div>
             <div class="button" *ngIf="!simExecuting" (click)="executeSimulation()">Execute Simulation</div>
+        </div>
+        <div class="button" *ngIf="waiting">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
         </div>
     </div>
 

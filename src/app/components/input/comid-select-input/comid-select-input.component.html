@@ -10,7 +10,7 @@
   <app-segment-list></app-segment-list>
 
   <div *ngIf="selectedComId" class="segment-form section-item">
-    <div class="centered"><strong>Segment {{ selectedComId }} Loadings</strong></div>
+    <div class="centered"><strong>Segment {{ selectedComId }}</strong></div>
 
     <div [formGroup]="reminForm" class="section-item">
         <div><strong>Segment Organic Matter Rates</strong></div>
@@ -50,7 +50,7 @@
       This segment has no parameters
     </div> -->
 
-    <div><strong>Sources</strong></div>
+    <div><strong>Loadings</strong></div>
     <div class="scroll-pane list-short section-item" *ngIf="sources.length">
       <div *ngFor="let source of sources" class="button">
         <div class="form-row">
@@ -59,13 +59,13 @@
       </div>
     </div>
     <div *ngIf="!sources.length" class="centered">
-      This segment has no additional sources
+      This segment has no additional loadings
     </div>
     <div class="form-row" *ngIf="!addingParameter && !addingSource">
       <div class="button disabled" (click)="addParameter()">Add Parameter</div>
-      <div class="button" (click)="addSource()">Add Source</div>
+      <div class="button" (click)="addSource()">Add Loading</div>
     </div>
-    <div class="button" (click)="addSegmentLoadings()">Apply Settings</div>
+    <div *ngIf="!addingSource && !addingParameter" class="button" (click)="addSegmentLoadings()">Apply Settings</div>
 
     <div *ngIf="addingParameter" class="segment-form" [formGroup]="parameterForm" >
       <strong>New Parameter</strong>
@@ -115,9 +115,9 @@
     </div>
 
     <div *ngIf="addingSource" class="segment-form" [formGroup]="sourceForm" >
-        <strong>New Source</strong>
+        <strong>New Loading</strong>
         <div class="form-row">
-            <div>Source Origin</div>
+            <div>Loading Origin</div>
             <select formControlName="sourceOrigin">
                 <option *ngIf="isBoundary">Boundary</option>
                 <option>Point Source</option>
@@ -125,7 +125,7 @@
             </select>
         </div>
         <div class="form-row">
-            <div>Source Type</div>
+            <div>Loading Type</div>
             <select formControlName="sourceType">
                 <option *ngFor="let type of sourceTypes">{{ type }}</option> 
             </select>
@@ -172,7 +172,7 @@
         </div>
         <div class="form-row">
             <div class="button" (click)="cancelAdd()">Cancel</div>
-            <div class="button" (click)="insertSource()">Add Source</div>
+            <div class="button" (click)="insertSource()">Add Loading</div>
         </div>
     </div>
 </div>
