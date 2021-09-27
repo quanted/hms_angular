@@ -1,6 +1,6 @@
 <div class="grid-container">
     <strong class="centered">Map Layers</strong>
-    <div class="scroll-pane">
+    <div class="scroll-pane-right">
         <div class="container-item">
             <div>Basemaps</div>
             <div *ngFor="let map of basemaps" class="button" [class.active]=map.show (click)="toggleBasemap(map)" matTooltip="Select Basemap">

@@ -120,9 +120,14 @@ mat-icon:hover {
     margin: 0px;
 }
 
-.scroll-pane {
+.scroll-pane,
+.scroll-pane-right {
     overflow-y: auto;
     max-height: var(--main-max-panel-height);
+}
+
+.scroll-pane-right {
+    max-height: 80vh;
 }
 
 .list-short {
