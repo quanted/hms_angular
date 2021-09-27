@@ -44,7 +44,7 @@ export class PlotContainerComponent implements OnChanges {
     // Dates for the plot and table
     dates: Date[] = [];
     // Sets plot css based on showing legend or not
-    showLegend = false;
+    showLegend: boolean = false;
 
     constructor(public outputService: OutputService) {
         this.outputService.dropListDataSubject.subscribe((data) => {
@@ -140,7 +140,7 @@ export class PlotContainerComponent implements OnChanges {
                         obj[this.tableColumnNames[0]] = this.dates[i].toString().split("GMT")[0];
                         obj[this.tableColumnNames[1]] = this.dropListData.selectedCatchments[j];
                         obj[this.tableColumnNames[k]] =
-                            this.catchment_data[this.dropListData.selectedCatchments[j]].data[this.tableColumnNames[k]][j];
+                            this.catchment_data[this.dropListData.selectedCatchments[j]]?.data[this.tableColumnNames[k]][j];
                     }
                     // Push to table data
                     this.tableColumnData.push(obj);

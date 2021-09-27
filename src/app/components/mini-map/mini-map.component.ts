@@ -4,7 +4,8 @@ import { MiniMapService } from 'src/app/services/mini-map.service';
 @Component({
   selector: 'app-mini-map',
   templateUrl: './mini-map.component.html',
-  styleUrls: ['./mini-map.component.css']
+  styleUrls: ['./mini-map.component.css'],
+  providers: [MiniMapService]
 })
 export class MiniMapComponent implements OnInit {
 
