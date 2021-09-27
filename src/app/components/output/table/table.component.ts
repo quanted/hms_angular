@@ -29,7 +29,6 @@ export class TableComponent implements OnChanges {
       { key1: value, key2: value, ... }
     ] 
   */
-  @Input() catchment: string;
   @Input() columnNames: string[];
   @Input() columnData: {
     [key: string]: any;
@@ -73,7 +72,7 @@ export class TableComponent implements OnChanges {
     let hiddenElement = document.createElement("a");
     hiddenElement.href = "data:text/csv;charset=utf-8," + encodeURI(csv);
     hiddenElement.target = "_blank";
-    hiddenElement.download = this.catchment + ".csv";
+    hiddenElement.download = "table.csv";
     hiddenElement.click();
   }
 }

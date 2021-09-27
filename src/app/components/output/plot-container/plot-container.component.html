@@ -10,13 +10,6 @@
                     <mat-option *ngFor="let sv of stateVariablesList" [value]="sv">{{sv}}</mat-option>
                 </mat-select>
             </mat-form-field>
-            <mat-form-field class="menu-field" *ngIf="catchmentList && chart == 'table'"
-                (click)="$event.stopPropagation()">
-                <mat-label>Catchments</mat-label>
-                <mat-select [(ngModel)]="selectedCatchment" (selectionChange)="catchmentChange($event)">
-                    <mat-option *ngFor="let catchment of catchmentList" [value]="catchment">{{catchment}}</mat-option>
-                </mat-select>
-            </mat-form-field>
             <mat-form-field class="menu-field" (click)="$event.stopPropagation()">
                 <mat-label>Chart Type</mat-label>
                 <mat-select [(ngModel)]="chart" (selectionChange)="chartChange($event)">
@@ -31,9 +24,9 @@
         </mat-menu>
     </div>
     <div [ngClass]="showLegend ? 'container-legend' : 'container'">
-        <app-plotly (toggleCSS)="toggleCSS()" *ngIf="plotData && chart !== 'table'" [data]="plotData"
-            [plotTitle]="plotTitle"></app-plotly>
-        <app-table *ngIf="chart === 'table'" [columnNames]="tableColumnNames" [columnData]="tableColumnData"
-            [catchment]="selectedCatchment"></app-table>
+        <app-plotly (toggleCSS)="toggleCSS()" (toggleCatchment)="addOrRemoveSelectedCatchment($event)"
+            *ngIf="plotData && chart !== 'table'" [data]="plotData" [plotTitle]="plotTitle"></app-plotly>
+        <app-table *ngIf="chart === 'table'" [columnNames]="tableColumnNames" [columnData]="tableColumnData">
+        </app-table>
     </div>
 </div>

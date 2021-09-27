@@ -52,6 +52,7 @@ import { PlotlyComponent } from "./components/output/plotly/plotly.component";
 import { PlotContainerComponent } from "./components/output/plot-container/plot-container.component";
 import { ExecutionPanelComponent } from './components/output/execution-panel/execution-panel.component';
 import { SegmentStatusListComponent } from './components/output/segment-status-list/segment-status-list.component';
+import { MiniMapComponent } from './components/mini-map/mini-map.component';
 
 @NgModule({
   declarations: [
@@ -74,7 +75,8 @@ import { SegmentStatusListComponent } from './components/output/segment-status-l
     PlotlyComponent,
     PlotContainerComponent,
     ExecutionPanelComponent,
-    SegmentStatusListComponent
+    SegmentStatusListComponent,
+    MiniMapComponent
   ],
   imports: [
     BrowserModule,

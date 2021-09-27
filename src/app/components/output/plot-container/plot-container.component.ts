@@ -19,7 +19,6 @@ export class PlotContainerComponent implements OnChanges {
     // Specific data for setting this container
     @Input() dropListData: {
         selectedCatchments: string[];
-        selectedTableCatchment: string;
         selectedSV: number;
         selectedChart: string;
     };
@@ -33,8 +32,6 @@ export class PlotContainerComponent implements OnChanges {
     stateVariablesList: string[] = [];
     // Parsed catchments
     catchmentList: string[] = [];
-    // Selected catchment set by catchments selection
-    selectedCatchment: string;
     // Selected State Variable set by sv selection
     selectedSV: string;
     // Plot title set by State Variables selection
@@ -51,7 +48,11 @@ export class PlotContainerComponent implements OnChanges {
 
     constructor(public outputService: OutputService) {
         this.outputService.dropListDataSubject.subscribe((data) => {
-            if (this.dropListData == data && this.catchment_data) {
+            if (data && typeof data === "object" && this.catchment_data) {
+                this.setData();
+            }
+            if (this.catchment_data
+                && Object.keys(this.catchment_data).length > 0) {
                 this.setData();
             }
         });
@@ -69,13 +70,13 @@ export class PlotContainerComponent implements OnChanges {
                 // Set table column names
                 this.tableColumnNames = [];
                 this.tableColumnNames.push("Date");
+                this.tableColumnNames.push("Catchment");
                 this.tableColumnNames = this.tableColumnNames.concat(this.stateVariablesList);
                 // Set dates
                 this.dates = [];
                 this.catchment_data[firstComid].dates.forEach((d) => this.dates.push(new Date(d)));
 
                 this.selectedSV = this.stateVariablesList[this.dropListData.selectedSV];
-                this.selectedCatchment = this.dropListData.selectedTableCatchment;
                 this.chart = this.dropListData.selectedChart;
                 this.setData();
             }
@@ -129,17 +130,21 @@ export class PlotContainerComponent implements OnChanges {
         this.tableColumnData = [];
 
         if (Object.keys(this.catchment_data).length > 0) {
-            // Loop over length of data
+            // Loop over each catchment 
             for (let i = 0; i < this.dates.length; i++) {
-                let obj: any = {};
-                // Loop over state variables
-                for (let j = 1; j < this.tableColumnNames.length; j++) {
-                    obj[this.tableColumnNames[0]] = this.dates[i].toString().split("GMT")[0];
-                    obj[this.tableColumnNames[j]] =
-                        this.catchment_data[this.selectedCatchment].data[this.tableColumnNames[j]][i];
+                // Loop over length of data
+                for (let j = 0; j < this.dropListData.selectedCatchments.length; j++) {
+                    let obj: any = {};
+                    // Loop over state variables
+                    for (let k = 2; k < this.tableColumnNames.length; k++) {
+                        obj[this.tableColumnNames[0]] = this.dates[i].toString().split("GMT")[0];
+                        obj[this.tableColumnNames[1]] = this.dropListData.selectedCatchments[j];
+                        obj[this.tableColumnNames[k]] =
+                            this.catchment_data[this.dropListData.selectedCatchments[j]].data[this.tableColumnNames[k]][j];
+                    }
+                    // Push to table data
+                    this.tableColumnData.push(obj);
                 }
-                // Push to table data
-                this.tableColumnData.push(obj);
             }
         }
     }
@@ -156,15 +161,17 @@ export class PlotContainerComponent implements OnChanges {
         this.outputService.dropListDataSubject.next(this.dropListData);
     }
 
-    // Update on catchment selection change
-    catchmentChange(event) {
-        this.dropListData.selectedTableCatchment = this.selectedCatchment;
-        this.outputService.dropListDataSubject.next(this.dropListData);
-    }
-
     // Delete the drop list item on click
     remove(event) {
         this.deleteItem.emit(this.index);
+    }
+
+    addOrRemoveSelectedCatchment(catchment: string) {
+        if (this.dropListData.selectedCatchments.includes(catchment)) {
+            this.dropListData.selectedCatchments.splice(this.dropListData.selectedCatchments.indexOf(catchment), 1);
+        } else {
+            this.dropListData.selectedCatchments.push(catchment);
+        }
     }
 
     // Toggle plot css on click

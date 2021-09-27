@@ -4,7 +4,6 @@
         <div class="row-left">
             <mat-icon class="segment-status back" (click)="back()">chevron_left</mat-icon>
             <div class="segment-status" (click)="aboutAQT()">About</div>
-            <div class="segment-status" (click)="openHelp()">Help</div>
         </div>
         <div class="row-right">
             <mat-icon class="add" (click)="add()" matTooltip="Add a new container to the dashboard."
@@ -13,6 +12,27 @@
     </div>
     <app-about [input]="false" *ngIf="showAbout" (closeMe)="closeAbout()"></app-about>
     <div [ngClass]="showAbout ? 'hide' : 'dashboard-container'">
+        <div [ngClass]="showPanel ? 'left-panel' : 'hide'">
+            <div class="left-panel-container">
+                <div class="list-container">
+                    <ul>
+                        <li *ngFor="let catchment of catchments">
+                            <button [ngClass]="catchment.selected ? 'active' : ''"
+                                (click)="catchmentClick(catchment)">{{catchment.catchment == pourPoint ?
+                                catchment.catchment + " (Pour
+                                Point)" : catchment.catchment}}</button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="map-container">
+                    <app-mini-map></app-mini-map>
+                </div>
+            </div>
+        </div>
+        <mat-icon matTooltip="Show/Hide panel." matTooltipPosition="after" class="toggle-button"
+            (click)="togglePanel($event)" class="chevron">
+            {{showPanel ? "chevron_left" : "chevron_right"}}
+        </mat-icon>
         <div class="cdkDropListGroup" cdkDropListGroup>
             <ng-container *ngFor="let item of dropListData; let i=index">
                 <div #cdk class="cdkDropList" cdkDropList cdkDropListOrientation="horizontal"
