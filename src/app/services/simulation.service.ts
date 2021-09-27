@@ -463,13 +463,13 @@ export class SimulationService {
         this.updateSimData("waiting", true);
         this.hms.getCatchmentInfo(comid).subscribe(
             (data) => {
-                if (data.catchmentInfo?.metadata) {
+                if (data.metadata) {
                     this.simData.network.pour_point_comid = comid;
                     this.updateState("pour_point_comid", comid);
                     // now get the huc by coods
                     const coords = {
-                        lat: data.catchmentInfo.metadata.CentroidLatitude,
-                        lng: data.catchmentInfo.metadata.CentroidLongitude,
+                        lat: data.metadata.CentroidLatitude,
+                        lng: data.metadata.CentroidLongitude,
                     };
                     this.getHuc(coords);
                     this.getCatchment(coords);

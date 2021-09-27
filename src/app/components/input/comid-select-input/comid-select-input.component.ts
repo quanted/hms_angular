@@ -83,7 +83,6 @@ export class ComidSelectInputComponent implements OnInit {
     }
 
     initializeSegmentForm(simData): void {
-        console.log("simData: ", simData);
         if (this.selectedComId !== simData.selectedComId) {
             this.cancelAdd();
         }

@@ -59,7 +59,7 @@
       </div>
     </div>
     <div *ngIf="!sources.length" class="centered">
-      This segment has no sources
+      This segment has no additional sources
     </div>
     <div class="form-row" *ngIf="!addingParameter && !addingSource">
       <div class="button disabled" (click)="addParameter()">Add Parameter</div>
@@ -136,12 +136,12 @@
         </div>
         <div class="section-item" *ngIf="sourceForm.get('useConstLoadings').value == 'constantLoading'">
             <div class="form-row">
-                <div><label>Constant Loading</label></div>
+                <div><label>Constant Loading Value</label></div>
                 <input formControlName="constLoadingValue" type="number" class="input-number">
             </div>
             <div class="form-row">
                 <div><label>Loading Multiplier</label></div>
-                <input formControlName="constLoadingMulti" type="number">
+                <input formControlName="constLoadingMulti" type="number" class="input-number">
             </div>
         </div>
         <div class="form-row" *ngIf="sourceForm.get('useConstLoadings').value == 'timeSeries'">
