@@ -127,6 +127,8 @@ mat-icon:hover {
 }
 
 .scroll-pane-right {
+    display: grid;
+    row-gap: var(--row-gap);
     max-height: 80vh;
 }
 

@@ -2,6 +2,14 @@
     display: grid;
     grid-template-rows: auto 1fr;
     margin: .25rem;
+    background-color: var(--main-background);
+}
+
+.collapse-icon-right {
+    position: absolute;
+    top: 0;
+    left: -1.5rem;
+    margin-top: .25rem;
 }
 
 .panel-right-open {
