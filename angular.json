@@ -22,7 +22,6 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/base_jsons"
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
