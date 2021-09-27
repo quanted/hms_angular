@@ -91,9 +91,11 @@ export class ComidSelectInputComponent implements OnInit {
             for (let seg of simData.network.segments.boundary) {
                 if (this.selectedComId == seg.comid) {
                     this.isBoundary = true;
+                    this.sourceForm.get("sourceOrigin").setValue("Boundary");
                     break;
                 } else {
                     this.isBoundary = false;
+                    this.sourceForm.get("sourceOrigin").setValue("Point Source");
                 }
             }
             this.selectForm.get("comid").setValue(simData.selectedComId);
