@@ -534,6 +534,10 @@ export class SimulationService {
                         if (data.networkInfo) info = data.networkInfo;
                         if (data.networkGeometry) geom = data.networkGeometry;
                     }
+                    if (!info.sources) {
+                        this.updateSimData("waiting", false);
+                        return;
+                    }
                     if (geom && info) {
                         this.updateState("upstream_distance", distance);
                         this.prepareNetworkGeometry(geom, info);
