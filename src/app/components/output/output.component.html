@@ -14,6 +14,10 @@
     <div [ngClass]="showAbout ? 'hide' : 'dashboard-container'">
         <div [ngClass]="showPanel ? 'left-panel' : 'hide'">
             <div class="left-panel-container">
+                <div>
+                    <label>Select All</label>
+                    <input ng-model="toggleAllCatchments" type="checkbox" id="show-all" (change)="toggleAll()">
+                </div>
                 <div class="list-container">
                     <ul>
                         <li *ngFor="let catchment of catchments">
@@ -24,9 +28,11 @@
                         </li>
                     </ul>
                 </div>
+                <!--
                 <div class="map-container">
                     <app-mini-map></app-mini-map>
                 </div>
+                -->
             </div>
         </div>
         <mat-icon matTooltip="Show/Hide panel." matTooltipPosition="after" class="toggle-button"

@@ -30,6 +30,8 @@ export class OutputComponent implements OnInit {
     }[] = [];
     //
     pourPoint: string = "";
+    // Toggle all catchments
+    toggleAllCatchments: boolean;
 
     constructor(
         // Importing SimulationService to keep data from url navigation
@@ -47,6 +49,7 @@ export class OutputComponent implements OnInit {
         }
         // Subscribe to simulationService to get data
         this.simulationService.interfaceData().subscribe((simData) => {
+            console.log(simData);
             // If catchment added to simData or catchment_data not yet set, update
             if (Object.keys(simData.network.catchment_data).length > 0 &&
                 (!this.catchment_data ||
@@ -54,8 +57,9 @@ export class OutputComponent implements OnInit {
                 // Deep copy new object to catchment_data to fire change detection 
                 this.catchment_data = { ...simData.network.catchment_data };
                 this.pourPoint = simData.network.pour_point_comid;
+                this.catchments = [];
                 for (let i = 0; i < Object.keys(this.catchment_data).length; i++) {
-                    if (Object.keys(this.catchment_data)[i] == this.pourPoint) {
+                    if (Object.keys(this.catchment_data)[i] == this.comid) {
                         this.catchments.push({
                             catchment: Object.keys(this.catchment_data)[i],
                             selected: true
@@ -166,15 +170,46 @@ export class OutputComponent implements OnInit {
     }
 
     catchmentClick(catchment: any) {
-        // Add catchment to selectedCatchments of dropListData if not already in
-        this.dropListData.forEach((dropListItem) => {
-            if (dropListItem.selectedCatchments.indexOf(catchment.catchment) === -1) {
-                dropListItem.selectedCatchments.push(catchment.catchment);
-            } else {
-                dropListItem.selectedCatchments.splice(dropListItem.selectedCatchments.indexOf(catchment.catchment), 1);
-            }
-        });
         catchment.selected = !catchment.selected;
+        // Add catchment to selectedCatchments of dropListData if not already in
+        if (catchment.selected) {
+            this.dropListData.forEach((dropListItem) => {
+                if (dropListItem.selectedCatchments.indexOf(catchment.catchment) === -1) {
+                    dropListItem.selectedCatchments.push(catchment.catchment);
+                }
+            });
+        } else {
+            this.dropListData.forEach((dropListItem) => {
+                if (dropListItem.selectedCatchments.indexOf(catchment.catchment) !== -1) {
+                    dropListItem.selectedCatchments.splice(dropListItem.selectedCatchments.indexOf(catchment.catchment), 1);
+                }
+            });
+        }
+        this.outputService.dropListDataSubject.next(this.dropListData);
+    }
+
+    toggleAll() {
+        this.toggleAllCatchments = !this.toggleAllCatchments;
+        if (this.toggleAllCatchments) {
+            this.catchments.forEach(catchment => {
+                catchment.selected = true;
+            });
+            // Add every catchment to selectedCatchments of dropListData
+            this.dropListData.forEach((dropListItem) => {
+                dropListItem.selectedCatchments = [];
+                this.catchments.forEach(catchment => {
+                    dropListItem.selectedCatchments.push(catchment.catchment);
+                });
+            });
+        } else {
+            this.catchments.forEach(catchment => {
+                catchment.selected = false;
+            });
+            // Remove every catchment from selectedCatchments of dropListData
+            this.dropListData.forEach((dropListItem) => {
+                dropListItem.selectedCatchments = [];
+            });
+        }
         this.outputService.dropListDataSubject.next(this.dropListData);
     }
 }

@@ -32,30 +32,6 @@ ul {
   flex-direction: row;
 }
 
-:host ::ng-deep .row-right .mat-form-field {
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%);
-  font-size: 10px;
-  margin-right: 10px;
-}
-
-:host ::ng-deep .row-right .mat-form-field-infix {
-  border-top: 5px;
-}
-
-:host ::ng-deep .left-panel .mat-form-field {
-  font-size: 10px;
-}
-
-:host ::ng-deep .left-panel .mat-form-field-flex {
-  background-color: var(--main-transparent);
-}
-:host ::ng-deep .row-right .mat-form-field-flex {
-  border-radius: unset;
-  background-color: var(--main-transparent);
-}
-
 .back {
   display: flex;
   align-items: center;
@@ -131,15 +107,17 @@ ul {
 .left-panel {
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
   width: 200px;
   height: 100%;
+  padding: 5px 0;
 }
 
 .left-panel-container {
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
   height: 100%;
-  margin: 5px 0px;
   padding: 5px;
   background-color: var(--main-color);
 }
@@ -149,12 +127,15 @@ ul {
 }
 
 .list-container {
-  margin-bottom: 10px;
+  margin: 10px 0;
+  overflow-y: auto;
+  flex: 1
 }
 
 .map-container {
   height: 100%;
   width: 100%;
+  flex: 1;
 }
 
 .chevron {
