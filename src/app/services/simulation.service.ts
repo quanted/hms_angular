@@ -282,6 +282,7 @@ export class SimulationService {
     }
 
     executeSimulation(): void {
+        console.log("execute!");
         if (!this.simData.sim_executing) {
             this.updateSimData("waiting", true);
             this.initializeAquatoxSimulation().subscribe((response) => {
@@ -386,9 +387,12 @@ export class SimulationService {
     }
 
     cancelAquatoxSimulationExecution(): void {
+        this.endStatusCheck();
+        this.simData.waiting = false;
+        this.simData.sim_executing = false;
+        this.updateSimData("sim_completed", false);
         this.hms.cancelAquatoxSimulationExecution(this.simData["simId"]).subscribe((response) => {
-            this.updateSimData("sim_completed", true);
-            this.endStatusCheck();
+            console.log("cancel: ", response);
         });
     }
 
@@ -829,9 +833,12 @@ export class SimulationService {
     }
 
     resetSimulation(): void {
+        this.endStatusCheck();
         this.cookieService.delete("sim_setup");
         // deep copy default object
         this.simData = JSON.parse(JSON.stringify(DefaultSimData.defaultSimData));
+        this.simDataSubject.next(this.simData);
+
         this.clearHuc();
     }
 
