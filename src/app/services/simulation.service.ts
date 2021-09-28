@@ -839,6 +839,8 @@ export class SimulationService {
         this.simData = JSON.parse(JSON.stringify(DefaultSimData.defaultSimData));
         this.simDataSubject.next(this.simData);
 
+        this.cancelAquatoxSimulationExecution();
+
         this.clearHuc();
     }
 
