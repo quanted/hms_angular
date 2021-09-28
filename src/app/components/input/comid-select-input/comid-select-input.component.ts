@@ -22,7 +22,27 @@ export class ComidSelectInputComponent implements OnInit {
     sourceForm: FormGroup;
     basicFields = null;
 
-    sourceTypes = [];
+    // Total Soluble P in mg/L or  (as Non-Point-Source load, use Alt_Loadings[2]) or
+    // Total P in mg/L   (set "TP_NPS" to true)
+
+    // Total Ammonia as N in mg/L (Alt_Loadings[2] for NPS) and Nitrate as N in mg/L (Alt_Loadings[2] for NPS)  or
+    // Total N in mg/L (set "TN_NPS" in "TNO3Obj" to true)
+
+    // Organic Matter in mg/L ("DataType" = 2) or
+    // Organic Carbon in mg/L ("DataType" = 1) or
+    // CBOD in mg/L ("DataType" = 0)
+    // Optional:  Percent_Part -- particulate vs. dissolved breakdown
+    // Optional: Percent_Refr -- refractory (slow reacting) vs. labile (fast reacting) breakdown
+
+    sourceTypes = [
+        "Total Soluble P in mg/L",
+        "Total P in mg/L",
+        "Total Ammonia as N in mg/L",
+        "Total N in mg/L",
+        "Organic Matter in mg/L",
+        "Organic Carbon in mg/L",
+        "CBOD in mg/L",
+    ];
 
     parameters: SegmentParameter[] = [];
     sources: SegmentParameter[] = [];
@@ -31,6 +51,7 @@ export class ComidSelectInputComponent implements OnInit {
     addingSource = false;
 
     useConstLoadings = true;
+    loadingRate = "Constant";
 
     uploadedTimeSeries = false;
     timeSeries = null;
@@ -71,10 +92,10 @@ export class ComidSelectInputComponent implements OnInit {
 
         this.sourceForm = this.fb.group({
             sourceOrigin: ["Point Source"],
-            sourceType: [""],
-            useConstLoadings: ["constantLoading"],
-            constLoadingValue: [null],
-            constLoadingMulti: [null],
+            sourceType: ["Total Soluble P in mg/L"],
+            useConstLoadings: ["Constant"],
+            constLoadingValue: [1],
+            constLoadingMulti: [1],
         });
 
         this.simulation.interfaceData().subscribe((data) => {
@@ -173,6 +194,11 @@ export class ComidSelectInputComponent implements OnInit {
         this.layerService.selectSegment(this.selectForm.get("comid").value);
     }
 
+    selectRate(): void {
+        console.log("sForm: ", this.sourceForm.get("useConstLoadings").value);
+        this.loadingRate = this.sourceForm.get("useConstLoadings").value;
+    }
+
     addParameter(): void {
         // this.addingParameter = true;
         // this.addingSource = false;
@@ -187,7 +213,7 @@ export class ComidSelectInputComponent implements OnInit {
         const origin = "";
         const type = "Parameter";
         const sim$type = null;
-        const dataType = "time-series";
+        const dataType = "Time-series";
         const data = this.timeSeries;
 
         this.parameters.push(new SegmentParameter(origin, type, sim$type, dataType, data));
@@ -199,20 +225,20 @@ export class ComidSelectInputComponent implements OnInit {
 
         const origin = this.sourceForm.get("sourceOrigin").value;
         const type = this.sourceForm.get("sourceType").value;
-        const sim$type = null;
+        const sim$type = this.sourceForm.get("");
 
         if (
-            loadingChoice == "constantLoading" &&
+            loadingChoice == "Constant" &&
             this.sourceForm.get("constLoadingValue").value !== null &&
             this.sourceForm.get("constLoadingMulti").value !== null
         ) {
-            const dataType = "constant";
+            const dataType = "Constant";
             const data = this.sourceForm.get("constLoadingValue").value;
 
             this.sources.push(new SegmentParameter(origin, type, sim$type, dataType, data));
             this.cancelAdd();
-        } else if (loadingChoice == "timeSeries" && this.timeSeries !== null) {
-            const dataType = "time-series";
+        } else if (loadingChoice == "Time-series" && this.timeSeries !== null) {
+            const dataType = "Time-series";
             const data = this.timeSeries;
             this.sources.push(new SegmentParameter(origin, type, sim$type, dataType, data));
             this.cancelAdd();
@@ -235,7 +261,7 @@ export class ComidSelectInputComponent implements OnInit {
 class SegmentParameter {
     origin: string;
     type: string;
-    sim$type;
+    sim$type: string;
     dataType: string;
     data: any;
 

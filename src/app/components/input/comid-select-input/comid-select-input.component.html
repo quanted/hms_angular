@@ -53,9 +53,7 @@
     <div><strong>Loadings</strong></div>
     <div class="scroll-pane list-short section-item" *ngIf="sources.length">
       <div *ngFor="let source of sources" class="button">
-        <div class="form-row">
-          <div class="vertical-center">{{ source.origin }} {{ source.type || "missing type"}} {{ source.dataType }}</div><mat-icon title="Remove Source">delete</mat-icon>
-        </div>
+          <div class="vertical-center">{{ source.origin }} {{ source.dataType }}: {{ source.type }}</div><!--<mat-icon title="Remove Source">delete</mat-icon>-->
       </div>
     </div>
     <div *ngIf="!sources.length" class="centered">
@@ -131,10 +129,13 @@
             </select>
         </div>
         <div class="form-row">
-            <div>Constant Loading <input type="radio" name="useConstLoadings" formControlName="useConstLoadings" value="constantLoading"></div>
-            <div>Time-series Loading <input type="radio" name="useConstLoadings" formControlName="useConstLoadings" value="timeSeries"></div>
+            <div>Loading Rate</div>
+            <select formControlName="useConstLoadings" (click)="selectRate()">
+                <option>Constant</option>
+                <option>Time-series</option>
+            </select>
         </div>
-        <div class="section-item" *ngIf="sourceForm.get('useConstLoadings').value == 'constantLoading'">
+        <div class="section-item" *ngIf="loadingRate == 'Constant'">
             <div class="form-row">
                 <div><label>Constant Loading Value</label></div>
                 <input formControlName="constLoadingValue" type="number" class="input-number">
@@ -144,7 +145,7 @@
                 <input formControlName="constLoadingMulti" type="number" class="input-number">
             </div>
         </div>
-        <div class="form-row" *ngIf="sourceForm.get('useConstLoadings').value == 'timeSeries'">
+        <div class="form-row" *ngIf="loadingRate == 'Time-series'">
             <label>Upload Time Series</label>
             <input 
             type="file"  
