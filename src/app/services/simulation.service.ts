@@ -349,11 +349,11 @@ export class SimulationService {
                 }
             }
             // add parameters
-            if (loadings.parameters.length) {
+            if (loadings.parameters?.length) {
                 console.log(comid, " parameters: ", loadings.parameters);
             }
             // add sources
-            if (loadings.sources.length) {
+            if (loadings.sources?.length) {
                 console.log(comid, " sources: ", loadings.sources);
             }
         }
