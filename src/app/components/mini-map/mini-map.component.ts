@@ -1,18 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MiniMapService } from 'src/app/services/mini-map.service';
 
 @Component({
   selector: 'app-mini-map',
   templateUrl: './mini-map.component.html',
   styleUrls: ['./mini-map.component.css'],
-  providers: [MiniMapService]
 })
-export class MiniMapComponent implements OnInit {
+export class MiniMapComponent {
 
   constructor(private miniMap: MiniMapService) { }
-
-  ngOnInit(): void {
-    this.miniMap.initMap();
-  }
-
 }

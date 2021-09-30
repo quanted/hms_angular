@@ -728,6 +728,7 @@ export class SimulationService {
         // console.log("lastState: ", lastState);
         if (lastState) {
             if (lastState.upstream_distance) {
+                this.simData.network.upstream_distance = lastState.upstream_distance;
                 this.rebuildStreamNetwork(lastState.pour_point_comid, lastState.upstream_distance);
             } else if (lastState.pour_point_comid) {
                 this.simData.network.pour_point_comid = lastState.pour_point_comid;

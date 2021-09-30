@@ -4,11 +4,13 @@ import { SimulationService } from "src/app/services/simulation.service";
 import { OutputService } from "src/app/services/output.service";
 import { ActivatedRoute } from "@angular/router";
 import { Location } from "@angular/common";
+import { MiniMapService } from "src/app/services/mini-map.service";
 
 @Component({
     selector: "app-output",
     templateUrl: "./output.component.html",
     styleUrls: ["./output.component.css"],
+    providers: [MiniMapService]
 })
 export class OutputComponent implements OnInit {
     // Catchment data retrieved from simulation service
@@ -38,7 +40,8 @@ export class OutputComponent implements OnInit {
         private simulationService: SimulationService,
         private outputService: OutputService,
         private route: ActivatedRoute,
-        private location: Location
+        private location: Location,
+        private miniMap: MiniMapService
     ) { }
 
     ngOnInit() {
@@ -49,7 +52,8 @@ export class OutputComponent implements OnInit {
         }
         // Subscribe to simulationService to get data
         this.simulationService.interfaceData().subscribe((simData) => {
-            console.log(simData);
+            // Build mini map
+            this.miniMap.initMap(simData);
             // If catchment added to simData or catchment_data not yet set, update
             if (Object.keys(simData.network.catchment_data).length > 0 &&
                 (!this.catchment_data ||
