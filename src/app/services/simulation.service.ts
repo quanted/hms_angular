@@ -281,22 +281,38 @@ export class SimulationService {
         console.log("loadings: ", this.simData.network.catchment_loadings);
     }
 
+    // errors will return a json dict {"error": error_message}
     executeSimulation(): void {
         if (!this.simData.sim_executing) {
             this.updateSimData("waiting", true);
             this.initializeAquatoxSimulation().subscribe((response) => {
-                this.updateSimData("simId", response["_id"]);
-                this.updateState("simId", response["_id"]);
+                if (response.error) {
+                    // TODO: HANDLE ERROR
+                    console.log("error>>> ", response.error);
+                    this.updateSimData("waiting", false);
+                } else {
+                    this.updateSimData("simId", response["_id"]);
+                    this.updateState("simId", response["_id"]);
 
-                this.addCatchmentDependencies().subscribe((response) => {
-                    this.hms.executeAquatoxSimulation(this.simData["simId"]).subscribe((response) => {
-                        if (!response.error) {
-                            this.simData.waiting = false;
-                            this.updateSimData("sim_executing", true);
-                            this.startStatusCheck();
+                    this.addCatchmentDependencies().subscribe((response) => {
+                        if (response.error) {
+                            // TODO: HANDLE ERROR
+                            console.log("error>>> ", response.error);
+                            this.updateSimData("waiting", false);
+                        } else {
+                            this.hms.executeAquatoxSimulation(this.simData["simId"]).subscribe((response) => {
+                                if (response.error) {
+                                    // TODO: HANDLE ERROR
+                                    console.log("error>>> ", response.error);
+                                } else {
+                                    this.updateSimData("sim_executing", true);
+                                    this.startStatusCheck();
+                                }
+                                this.updateSimData("waiting", false);
+                            });
                         }
                     });
-                });
+                }
             });
         }
     }
