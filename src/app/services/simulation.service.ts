@@ -304,6 +304,8 @@ export class SimulationService {
                                 if (response.error) {
                                     // TODO: HANDLE ERROR
                                     console.log("error>>> ", response.error);
+                                    // re-submit the execution request n times
+                                    // this.resubmitExecutionRequest();
                                 } else {
                                     this.updateSimData("sim_executing", true);
                                     this.startStatusCheck();
@@ -432,7 +434,11 @@ export class SimulationService {
                         this.updateSimData("sim_status", simStatus);
                         this.layerService.updateStreamLayer(simStatus.catchments);
                     }
-                    if (simStatus.status !== "COMPLETED" && simStatus.status !== "FAILED") {
+                    if (
+                        simStatus.status !== "COMPLETED" &&
+                        simStatus.status !== "FAILED" &&
+                        simStatus.status !== "INCOMPLETE"
+                    ) {
                         this.updateSimData("sim_completed", false);
                         this.updateSimData("sim_executing", true);
                     } else {
