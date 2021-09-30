@@ -282,7 +282,6 @@ export class SimulationService {
     }
 
     executeSimulation(): void {
-        console.log("execute!");
         if (!this.simData.sim_executing) {
             this.updateSimData("waiting", true);
             this.initializeAquatoxSimulation().subscribe((response) => {
@@ -597,7 +596,9 @@ export class SimulationService {
                 let isBoundary = false;
                 for (let outOfNetworkSegment of info.boundary["out-of-network"]) {
                     if (info.sources[segment.comid].includes(outOfNetworkSegment)) {
-                        segments.boundary.push(segment);
+                        if (!segments.boundary.includes(segment)) {
+                            segments.boundary.push(segment);
+                        }
                         isBoundary = true;
                     }
                 }
