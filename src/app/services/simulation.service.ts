@@ -204,10 +204,16 @@ export class SimulationService {
     getBaseJsonByFlags(flags: any): void {
         this.updateSimData("waiting", true);
         this.hms.getBaseJsonByFlags(flags).subscribe((json) => {
-            this.simData.json_flags = flags;
-            this.simData.base_json = json;
-            this.updateState("json_flags", flags);
-            this.updateSimData("waiting", false);
+            if (json.error) {
+                // TODO: Handle error
+                console.log("error>>> ", json.error);
+                this.updateSimData("waiting", false);
+            } else {
+                this.simData.json_flags = flags;
+                this.simData.base_json = json;
+                this.updateState("json_flags", flags);
+                this.updateSimData("waiting", false);
+            }
         });
     }
 

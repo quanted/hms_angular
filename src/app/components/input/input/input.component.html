@@ -99,10 +99,10 @@
                                 </div>
                             </div>
                             <div class="form-row">
-                                Use Alternate Step Size <input type="checkbox" formControlName="useFixStepSize" (click)="toggleAltStep()" />
+                                Custom Solver Step Size <input type="checkbox" formControlName="useFixStepSize" (click)="toggleAltStep()" />
                             </div>
                             <div class="form-row" *ngIf="useFixStepSize">
-                                Step Size <input type="number" class="input-number" formControlName="fixStepSize" />
+                                Solver Step Size of (0.1-1.0)<div><input type="number" class="input-number" formControlName="fixStepSize" /> / day</div>
                             </div>
                             <div class="advanced-settings-toggle">
                                 <div class="vertical-center">Advanced</div><mat-icon class="icon-panel-toggle" matTooltip="See Advanced Options NOT YET IMPLEMENTED" 

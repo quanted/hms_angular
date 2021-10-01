@@ -345,7 +345,7 @@ export class LayerService {
         this.removeFeature("Catchment");
         this.removeFeature("Pour Point");
         this.removeFeature("Network");
-        this.removeFeature("Boundry");
+        this.removeFeature("Boundary");
         this.removeFeature("Headwaters");
         this.removeFeature("Monitoring Stations");
         this.selectedComId = null;
