@@ -1,0 +1,111 @@
+<div class="container">
+    <ul class="about-section">
+        <li>
+            <h1><a href="#target">About</a></h1>
+            <p>
+                This page visualizes the data retrieved after running an HMS simulation. Various graphs
+                are displayed, as well as a table with the data, in an editable containerized fashion.
+            </p>
+        </li>
+        <li>
+            <h3>Properties</h3>
+            <table>
+                <tr>
+                    <th>Property</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>Left Panel</td>
+                    <td>
+                        Located on the left of the page and accessed via an arrow button.
+                        Expandable left panel that contains a clickable list of the available data from
+                        the simulation and a mini map of the simulation location. Selecting data from the list or map
+                        will add the data to every container.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Containers</td>
+                    <td>
+                        Configurable containers that can be used to display data from the simulation.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Add Button</td>
+                    <td>
+                        Located on the top right of the page. Adds a new container to the page.
+                    </td>
+                </tr>
+            </table>
+        </li>
+        <li>
+            <h3>Containers</h3>
+            <p>
+                Included on this page are a number of configurable containers.
+                These containers can be configured with different graphs or a table.
+                Containers can be added or removed from the page and are drag/droppable as well.
+            </p>
+        </li>
+        <ul>
+            <li>
+                <h4>Container Properties</h4>
+                <table>
+                    <tr>
+                        <th>Property</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td>Menu</td>
+                        <td>Located at the top left of the container. Expands and allows for selection of
+                            chart type, and the ability to remove a container.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Drag Handle</td>
+                        <td>Located at the top right of the container. Allows for the container to be dragged
+                            to a different position.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Graph</td>
+                        <td>
+                            Located in the center of the container and visualizes selected data. Includes tools to
+                            analyze the data at the top of the graph under the title when hovered over. Selection of
+                            different graphs can be done by accessing the menu. Changing selected data can be done in
+                            the left panel or the legend panel.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Legend Button</td>
+                        <td>
+                            Located on the right center of the container. Expands and collapses the legend panel.
+                            Allows for the selection of different data to be displayed in the graph.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Table</td>
+                        <td>
+                            Located in the center of the container and visualizes selected data.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Export Button</td>
+                        <td>
+                            Located on the bottom left of the container and only displayed when the table is.
+                            Exports the table to a CSV file.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Paginator</td>
+                        <td>
+                            Located in the bottom right of the container and only displayed when the table is.
+                            Displays a selected number of rows per page on the table.
+                        </td>
+                    </tr>
+                </table>
+            </li>
+        </ul>
+    </ul>
+    <div class="about-bottom">
+        <div class="button" (click)="close()">Got it</div>
+    </div>
+</div>

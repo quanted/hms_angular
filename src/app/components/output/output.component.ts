@@ -168,7 +168,7 @@ export class OutputComponent implements OnInit {
     }
 
     aboutAQT(): void {
-        this.showAbout = true;
+        this.showAbout = !this.showAbout;
     }
 
     closeAbout(): void {

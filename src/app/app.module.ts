@@ -53,6 +53,7 @@ import { PlotContainerComponent } from "./components/output/plot-container/plot-
 import { ExecutionPanelComponent } from './components/output/execution-panel/execution-panel.component';
 import { SegmentStatusListComponent } from './components/output/segment-status-list/segment-status-list.component';
 import { MiniMapComponent } from './components/mini-map/mini-map.component';
+import { AboutOutputComponent } from './components/output/about-output/about-output.component';
 
 @NgModule({
   declarations: [
@@ -76,7 +77,8 @@ import { MiniMapComponent } from './components/mini-map/mini-map.component';
     PlotContainerComponent,
     ExecutionPanelComponent,
     SegmentStatusListComponent,
-    MiniMapComponent
+    MiniMapComponent,
+    AboutOutputComponent
   ],
   imports: [
     BrowserModule,
