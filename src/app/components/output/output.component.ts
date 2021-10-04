@@ -34,6 +34,8 @@ export class OutputComponent implements OnInit {
     pourPoint: string = "";
     // Toggle all catchments
     toggleAllCatchments: boolean;
+    //
+    mapInit: boolean = false;
 
     constructor(
         // Importing SimulationService to keep data from url navigation
@@ -45,6 +47,12 @@ export class OutputComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+        // Subscribe to mini map click event
+        this.miniMap.comidClickSubject.subscribe((comid: string) => {
+            const catchment = this.catchments.find(c => c.catchment == comid);
+            if (catchment)
+                this.catchmentClick(catchment);
+        });
         // Get comid and set droplist data
         if (this.route.snapshot.paramMap.has("comid")) {
             this.comid = this.route.snapshot.paramMap.get("comid");
@@ -53,7 +61,10 @@ export class OutputComponent implements OnInit {
         // Subscribe to simulationService to get data
         this.simulationService.interfaceData().subscribe((simData) => {
             // Build mini map
-            this.miniMap.initMap(simData);
+            if (!this.mapInit && simData.network.order && simData.network.order.length > 0) {
+                this.miniMap.initMap(simData);
+                this.mapInit = true;
+            }
             // If catchment added to simData or catchment_data not yet set, update
             if (Object.keys(simData.network.catchment_data).length > 0 &&
                 (!this.catchment_data ||
@@ -157,7 +168,7 @@ export class OutputComponent implements OnInit {
     }
 
     aboutAQT(): void {
-        this.showAbout = true;
+        this.showAbout = !this.showAbout;
     }
 
     closeAbout(): void {
@@ -189,6 +200,8 @@ export class OutputComponent implements OnInit {
                 }
             });
         }
+        // Toggle catchment on mini map
+        this.miniMap.selectSegment(catchment);
         this.outputService.dropListDataSubject.next(this.dropListData);
     }
 
@@ -214,6 +227,11 @@ export class OutputComponent implements OnInit {
                 dropListItem.selectedCatchments = [];
             });
         }
+        // Toggle catchments on mini map
+        this.catchments.forEach(catchment => {
+            this.miniMap.selectSegment(catchment);
+        });
+        // this.miniMap.selectSegments(this.catchments);
         this.outputService.dropListDataSubject.next(this.dropListData);
     }
 }

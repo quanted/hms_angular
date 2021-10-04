@@ -3,6 +3,8 @@ import { HmsService } from './hms.service';
 import { WatersService } from './waters.service';
 import { LayerService } from './layer.service';
 import * as L from "leaflet";
+import { Subject } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 
 @Injectable({
@@ -11,32 +13,37 @@ import * as L from "leaflet";
 export class MiniMapService {
   map: L.Map;
   simData: any;
+  segmentLayers: any[];
+  comidClickSubject = new Subject<string>();
+  comid: string;
 
   constructor(
     private hms: HmsService,
     private waters: WatersService,
-    private layerService: LayerService) { }
+    private layerService: LayerService,
+    private route: ActivatedRoute) { }
 
   initMap(simData: any): void {
+    // Get comid and set droplist data
+    if (this.route.snapshot.paramMap.has("comid")) {
+      this.comid = this.route.snapshot.paramMap.get("comid");
+    }
     this.simData = simData;
+    // If map already exists, remove 
     if (this.map) {
       this.map.remove();
     }
-    this.map = L.map("mini-map", {
-      center: [38.5, -96], // US geographical center
-      zoom: 10,
-      minZoom: 5,
-      zoomControl: false,
-      attributionControl: false
-    });
-    this.map.on("click", (mapClickEvent) => {
-      this.handleClick(mapClickEvent);
-    });
-    this.setupLayers();
-  }
-
-  handleClick(mapClickEvent): void {
-    console.log("click")
+    // Check that DOM element with id mini map exists before creating map
+    if (document.getElementById("mini-map")) {
+      this.map = L.map("mini-map", {
+        center: [38.5, -96], // US geographical center
+        zoom: 10,
+        minZoom: 5,
+        zoomControl: false,
+        attributionControl: false
+      });
+      this.setupLayers();
+    }
   }
 
   setupLayers() {
@@ -62,7 +69,7 @@ export class MiniMapService {
               // if the error callback is called then data will be null
               if (data) {
                 if (!data.error) {
-                  this.addFeature(data);
+                  this.addHUC(data);
                 }
               }
             });
@@ -71,6 +78,9 @@ export class MiniMapService {
   }
 
   buildStreamLayers() {
+    this.segmentLayers = [];
+
+    // Pour point
     if (this.simData.network.segments.pourPoint) {
       const pourPointLayer = L.featureGroup().addTo(this.map);
       const pourPoint = this.simData.network.segments.pourPoint;
@@ -80,10 +90,16 @@ export class MiniMapService {
         weight: this.layerService.segmentLineSize,
       };
 
-      const segmentLayer = this.layerService.createSimLayer(pourPoint, layerStyle);
+      const segmentLayer = this.createSimLayer(pourPoint, { ...layerStyle });
+      this.segmentLayers.push({
+        comid: pourPoint.comid,
+        layer: segmentLayer,
+        name: "pourPoint",
+      });
       segmentLayer.addTo(pourPointLayer);
     }
 
+    // inNetwork
     if (this.simData.network.segments.inNetwork.length) {
       const inNetworkLayer = L.featureGroup().addTo(this.map);
       const inNetwork = this.simData.network.segments.inNetwork;
@@ -94,7 +110,12 @@ export class MiniMapService {
       };
 
       for (let segment of inNetwork) {
-        const segmentLayer = this.layerService.createSimLayer(segment, layerStyle);
+        const segmentLayer = this.createSimLayer(segment, { ...layerStyle });
+        this.segmentLayers.push({
+          comid: segment.comid,
+          layer: segmentLayer,
+          name: "inNetwork",
+        });
         segmentLayer.addTo(inNetworkLayer);
       }
       inNetworkLayer["options"]["style"] = {
@@ -103,6 +124,7 @@ export class MiniMapService {
       };
     }
 
+    // headwater
     if (this.simData.network.segments.headwater.length) {
       const headwaterLayer = L.featureGroup().addTo(this.map);
       const headwater = this.simData.network.segments.headwater;
@@ -113,7 +135,12 @@ export class MiniMapService {
       };
 
       for (let segment of headwater) {
-        const segmentLayer = this.layerService.createSimLayer(segment, layerStyle);
+        const segmentLayer = this.createSimLayer(segment, { ...layerStyle });
+        this.segmentLayers.push({
+          comid: segment.comid,
+          layer: segmentLayer,
+          name: "headwater",
+        });
         segmentLayer.addTo(headwaterLayer);
       }
       headwaterLayer["options"]["style"] = {
@@ -122,6 +149,7 @@ export class MiniMapService {
       };
     }
 
+    // boundary
     if (this.simData.network.segments.boundary.length) {
       const boundaryLayer = L.featureGroup().addTo(this.map);
       const boundary = this.simData.network.segments.boundary;
@@ -132,13 +160,18 @@ export class MiniMapService {
       };
 
       for (let segment of boundary) {
-        const segmentLayer = this.layerService.createSimLayer(segment, layerStyle);
+        const segmentLayer = this.createSimLayer(segment, { ...layerStyle });
+        this.segmentLayers.push({
+          comid: segment.comid,
+          layer: segmentLayer,
+          name: "boundary",
+        });
         segmentLayer.addTo(boundaryLayer);
       }
     }
   }
 
-  addFeature(feature) {
+  addHUC(feature) {
     let layer;
     layer = L.geoJSON(feature, {
       interactive: false,
@@ -152,5 +185,52 @@ export class MiniMapService {
     layer.addTo(this.map);
     this.map.setMaxBounds(layer.getBounds());
     this.buildStreamLayers();
+  }
+
+  createSimLayer(segmentData, style): any {
+    if (segmentData.comid == this.comid)
+      style.color = this.layerService.selectedColor;
+    const simLayer = L.geoJSON(segmentData.shape, {
+      style,
+    });
+    simLayer.on("click", (e) => {
+      this.comidClickSubject.next(segmentData.comid);
+    });
+    simLayer.bindTooltip(`comID: ${segmentData.comid}`, {
+      sticky: true,
+    });
+    return simLayer;
+  }
+
+  selectSegment(catchment: any): void {
+    const layer = this.segmentLayers.find(layer => layer.comid == catchment.catchment);
+    switch (layer.name) {
+      case "inNetwork":
+        layer.layer.setStyle({
+          color: catchment.selected ? this.layerService.selectedColor : this.layerService.inNetworkColor,
+          weight: this.layerService.segmentLineSize,
+        });
+        break;
+      case "boundary":
+        layer.layer.setStyle({
+          color: catchment.selected ? this.layerService.selectedColor : this.layerService.boundaryColor,
+          weight: this.layerService.segmentLineSize,
+        });
+        break;
+      case "headwater":
+        layer.layer.setStyle({
+          color: catchment.selected ? this.layerService.selectedColor : this.layerService.headwaterColor,
+          weight: this.layerService.segmentLineSize,
+        });
+        break;
+      case "pourPoint":
+        layer.layer.setStyle({
+          color: catchment.selected ? this.layerService.selectedColor : this.layerService.pourPointColor,
+          weight: this.layerService.segmentLineSize,
+        });
+        break;
+      default:
+        console.log(`ERROR: selectSegment.UNKNOWN_LAYER_NAME ${layer.name}`);
+    }
   }
 }
