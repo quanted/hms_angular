@@ -211,6 +211,16 @@ export class SimulationService {
             } else {
                 this.simData.json_flags = flags;
                 this.simData.base_json = json;
+                this.simData.base_json.AQTSeg.PSetup.FirstDay.Val = formatDate(
+                    this.simData.PSetup.firstDay,
+                    "yyyy-MM-ddTHH:mm:ss",
+                    "en"
+                );
+                this.simData.base_json.AQTSeg.PSetup.LastDay.Val = formatDate(
+                    this.simData.PSetup.lastDay,
+                    "yyyy-MM-ddTHH:mm:ss",
+                    "en"
+                );
                 this.updateState("json_flags", flags);
                 this.updateSimData("waiting", false);
             }
@@ -288,6 +298,7 @@ export class SimulationService {
     }
 
     // errors will return a json dict {"error": error_message}
+    // this whole thing needs to be flatMapped
     executeSimulation(): void {
         if (!this.simData.sim_executing) {
             this.updateSimData("waiting", true);
@@ -415,7 +426,7 @@ export class SimulationService {
         this.simData.sim_executing = false;
         this.updateSimData("sim_completed", false);
         this.hms.cancelAquatoxSimulationExecution(this.simData["simId"]).subscribe((response) => {
-            console.log("cancel: ", response);
+            // console.log("cancel: ", response);
         });
     }
 
@@ -595,7 +606,6 @@ export class SimulationService {
     }
 
     prepareNetworkGeometry(data, info): void {
-        console.log("info: ", info);
         const selectedHuc = this.simData.selectedHuc.properties.HUC_12;
         const pourPointComid = data.output.resolved_starts[0].comid;
         const flowlines = data.output.flowlines_traversed;
