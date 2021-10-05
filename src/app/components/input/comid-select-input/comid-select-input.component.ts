@@ -294,7 +294,6 @@ export class ComidSelectInputComponent implements OnInit {
     }
 
     removeSource(sourceToRemove): void {
-        console.log("remove ", sourceToRemove);
         this.sources = this.sources.filter((source) => {
             if (source.sim$type !== sourceToRemove.sim$type) return source;
         });
