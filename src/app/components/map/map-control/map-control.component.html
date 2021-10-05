@@ -14,7 +14,10 @@
         </div>
     
         <div class="container-item" *ngIf="simFeatures.length" >
-            <div>Study Area</div>
+            <div class="form-row">
+                <div class="vertical-center">Study Area</div>
+                <div class="button" (click)="centerOnAOI()">Center Map</div>
+            </div>
             <app-layer-control *ngFor="let feature of simFeatures" [feature]="feature"></app-layer-control>
         </div>
     </div>

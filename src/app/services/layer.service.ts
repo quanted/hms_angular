@@ -576,25 +576,25 @@ export class LayerService {
                 switch (layer.name) {
                     case "inNetwork":
                         layer.layer.setStyle({
-                            color: (layer.inSim ? this.selectedColor : this.inNetworkColor),
+                            color: layer.inSim ? this.selectedColor : this.inNetworkColor,
                             weight: this.segmentLineSize,
                         });
                         break;
                     case "boundary":
                         layer.layer.setStyle({
-                            color: (layer.inSim ? this.selectedColor : this.boundaryColor),
+                            color: layer.inSim ? this.selectedColor : this.boundaryColor,
                             weight: this.segmentLineSize,
                         });
                         break;
                     case "headwater":
                         layer.layer.setStyle({
-                            color: (layer.inSim ? this.selectedColor : this.headwaterColor),
+                            color: layer.inSim ? this.selectedColor : this.headwaterColor,
                             weight: this.segmentLineSize,
                         });
                         break;
                     case "pourPoint":
                         layer.layer.setStyle({
-                            color: (layer.inSim ? this.selectedColor : this.pourPointColor),
+                            color: layer.inSim ? this.selectedColor : this.pourPointColor,
                             weight: this.segmentLineSize,
                         });
                         break;
@@ -679,5 +679,12 @@ export class LayerService {
 
     layerErrorListener(): BehaviorSubject<any> {
         return this.layerErrorSubject;
+    }
+
+    centerMap(): void {
+        let hucLayer = this.simLayers.find((layer) => {
+            return layer.name === "HUC";
+        });
+        this.map.fitBounds(hucLayer.layer.getBounds());
     }
 }

@@ -24,4 +24,8 @@ export class MapControlComponent implements OnInit {
     toggleBasemap(controlButton): void {
         this.layerService.toggleLayer(controlButton.type, controlButton.name);
     }
+
+    centerOnAOI(): void {
+        this.layerService.centerMap();
+    }
 }
