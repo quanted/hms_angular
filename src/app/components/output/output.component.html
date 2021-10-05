@@ -21,8 +21,9 @@
                 <div class="list-container">
                     <ul>
                         <li *ngFor="let catchment of catchments">
-                            <button [ngClass]="catchment.selected ? 'active' : ''"
-                                (click)="catchmentClick(catchment)">{{catchment.catchment == pourPoint ?
+                            <button [ngClass]="catchment.selected ? 'active' : ''" (click)="catchmentClick(catchment)"
+                                (mouseover)="catchmentMouseOn(catchment)" (mouseout)="catchmentMouseOut(catchment)">
+                                {{catchment.catchment == pourPoint ?
                                 catchment.catchment + " (Pour
                                 Point)" : catchment.catchment}}</button>
                         </li>
