@@ -5,9 +5,14 @@
     background-color: var(--main-background);
 }
 
-.panel-left-open {
+.panel-left-open,
+.panel-left-closed {
     display: grid;
     grid-template-columns: 1fr auto;
+}
+
+.panel-left-closed {
+    width: 200px;
 }
 
 .collapse-icon-left {
