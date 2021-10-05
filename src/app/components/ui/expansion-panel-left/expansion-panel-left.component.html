@@ -1,12 +1,9 @@
 <div class="panel-left">
-    <div *ngIf="open">
+    <div *ngIf="open && !showAbout">
         <div class="panel-left-open">
             <div class="form-row">
                 <div class="segment-status" (click)="backToHMS()">Back to HMS</div>
-                <div class="form-row">
-                    <div class="segment-status" (click)="aboutAQT()">About</div>
-                    <div class="segment-status" (click)="openHelp()">Help</div>
-                </div>
+                <div class="segment-status" (click)="aboutAQT()">About</div>
             </div>
             <div (click)="closePanel()">
                 <mat-icon class="icon-panel-toggle collapse-icon-left" matTooltip="Hide Simulation Interface"
@@ -15,14 +12,11 @@
         </div>
         <app-input></app-input>
     </div>
-    <div *ngIf="!open">
+    <div *ngIf="!open && !showAbout">
         <div class="panel-left-open">
             <div class="form-row">
                 <div class="segment-status" (click)="backToHMS()">Back to HMS</div>
-                <div class="form-row">
-                    <div class="segment-status" (click)="aboutAQT()">About</div>
-                    <div class="segment-status" (click)="openHelp()">Help</div>
-                </div>
+                <div class="segment-status" (click)="aboutAQT()">About</div>
             </div>
             <div (click)="openPanel()">
                 <mat-icon class="icon-panel-toggle collapse-icon-left" matTooltip="Show Simulation Interface"
@@ -30,5 +24,7 @@
             </div>
         </div>
     </div>
-    <app-about [input]="true" *ngIf="showAbout" (closeMe)="closeAbout()"></app-about>
+    <div *ngIf="showAbout">
+        <app-about [input]="true" *ngIf="showAbout" (closeMe)="closeAbout()"></app-about>
+    </div>
 </div>
