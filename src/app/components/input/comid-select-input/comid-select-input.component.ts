@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup } from "@angular/forms";
 import { MatPaginator } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { LayerService } from "src/app/services/layer.service";
+import { registerLocaleData } from "@angular/common";
 
 @Component({
     selector: "app-comid-select-input",
@@ -35,13 +36,48 @@ export class ComidSelectInputComponent implements OnInit {
     // Optional: Percent_Refr -- refractory (slow reacting) vs. labile (fast reacting) breakdown
 
     sourceTypes = [
-        "Total Soluble P in mg/L",
-        "Total P in mg/L",
-        "Total Ammonia as N in mg/L",
-        "Total N in mg/L",
-        "Organic Matter in mg/L",
-        "Organic Carbon in mg/L",
-        "CBOD in mg/L",
+        {
+            param: "Total Soluble P in mg/L",
+            displayName: "Total Soluble P in mg/L",
+            longName: "Total Soluble P in mg/L",
+            unit: "mg/L",
+        },
+        {
+            param: "Total P in mg/L",
+            displayName: "Total P in mg/L",
+            longName: "Total P in mg/L",
+            unit: "mg/L",
+        },
+        {
+            param: "Total Ammonia as N in mg/L",
+            displayName: "Total Ammonia as N in mg/L",
+            longName: "Total Ammonia as N in mg/L",
+            unit: "mg/L",
+        },
+        {
+            param: "Total N in mg/L",
+            displayName: "Total N in mg/L",
+            longName: "Total N in mg/L",
+            unit: "mg/L",
+        },
+        {
+            param: "Organic Matter in mg/L",
+            displayName: "Organic Matter in mg/L",
+            longName: "Organic Matter in mg/L",
+            unit: "mg/L",
+        },
+        {
+            param: "Organic Carbon in mg/L",
+            displayName: "Organic Carbon in mg/L",
+            longName: "Organic Carbon in mg/L",
+            unit: "mg/L",
+        },
+        {
+            param: "CBOD in mg/L",
+            displayName: "CBOD in mg/L",
+            longName: "CBOD in mg/L",
+            unit: "mg/L",
+        },
     ];
 
     parameters: SegmentParameter[] = [];
@@ -150,6 +186,7 @@ export class ComidSelectInputComponent implements OnInit {
         }
     }
 
+    // invoked by apply settings button
     addSegmentLoadings(): void {
         const loadings = {
             remin: this.reminForm.value,
@@ -209,6 +246,7 @@ export class ComidSelectInputComponent implements OnInit {
         this.addingSource = true;
     }
 
+    // adds a parameter to the list to be added when apply button is pressed
     insertParameter() {
         const origin = "";
         const type = "Parameter";
@@ -220,13 +258,17 @@ export class ComidSelectInputComponent implements OnInit {
         this.cancelAdd();
     }
 
+    // adds a source to the list to be added when apply button is pressed
     insertSource() {
         const loadingChoice = this.sourceForm.get("useConstLoadings").value;
 
         const origin = this.sourceForm.get("sourceOrigin").value;
-        const type = this.sourceForm.get("sourceType").value;
-        const sim$type = this.sourceForm.get("");
+        const sourceType = this.sourceForm.get("sourceType").value;
+        const sim$type = this.sourceTypes.find((field) => {
+            if (field.displayName == sourceType) return field;
+        }).param;
 
+        let source: SegmentParameter = null;
         if (
             loadingChoice == "Constant" &&
             this.sourceForm.get("constLoadingValue").value !== null &&
@@ -234,15 +276,28 @@ export class ComidSelectInputComponent implements OnInit {
         ) {
             const dataType = "Constant";
             const data = this.sourceForm.get("constLoadingValue").value;
-
-            this.sources.push(new SegmentParameter(origin, type, sim$type, dataType, data));
-            this.cancelAdd();
+            source = new SegmentParameter(origin, sourceType, sim$type, dataType, data);
         } else if (loadingChoice == "Time-series" && this.timeSeries !== null) {
             const dataType = "Time-series";
             const data = this.timeSeries;
-            this.sources.push(new SegmentParameter(origin, type, sim$type, dataType, data));
+            source = new SegmentParameter(origin, sourceType, sim$type, dataType, data);
+        }
+
+        // only one entry per sim$type
+        const foundSources = this.sources.filter((source) => {
+            if (source.sim$type === sim$type) return source;
+        });
+        if (foundSources.length < 1) {
+            this.sources.push(source);
             this.cancelAdd();
         }
+    }
+
+    removeSource(sourceToRemove): void {
+        console.log("remove ", sourceToRemove);
+        this.sources = this.sources.filter((source) => {
+            if (source.sim$type !== sourceToRemove.sim$type) return source;
+        });
     }
 
     cancelAdd(): void {

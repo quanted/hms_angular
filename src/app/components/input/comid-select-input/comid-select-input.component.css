@@ -11,3 +11,8 @@ table {
     background-color: lightgray;
     color: gray;
 }
+
+.loading-button {
+    display: grid;
+    grid-template-columns: 15fr 1fr;
+}

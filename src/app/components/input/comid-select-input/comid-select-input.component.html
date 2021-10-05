@@ -53,7 +53,10 @@
     <div><strong>Loadings</strong></div>
     <div class="scroll-pane list-short section-item" *ngIf="sources.length">
       <div *ngFor="let source of sources" class="button">
-          <div class="vertical-center">{{ source.origin }} {{ source.dataType }}: {{ source.type }}</div><!--<mat-icon title="Remove Source">delete</mat-icon>-->
+          <div class="loading-button">
+            <div class="vertical-center">{{ source.origin }} {{ source.dataType }}: {{ source.type }}</div>
+            <mat-icon title="Remove Source" (click)="removeSource(source)">delete</mat-icon>
+          </div>
       </div>
     </div>
     <div *ngIf="!sources.length" class="centered">
@@ -125,7 +128,7 @@
         <div class="form-row">
             <div>Loading Type</div>
             <select formControlName="sourceType">
-                <option *ngFor="let type of sourceTypes">{{ type }}</option> 
+                <option *ngFor="let type of sourceTypes">{{ type.displayName }}</option> 
             </select>
         </div>
         <div class="form-row">

@@ -416,6 +416,7 @@ export class SimulationService {
                         executeFails++;
                         if (executeFails >= MaxExecuteAttmepts) {
                             console.log(`Max execution retries of ${executeFails} reached`);
+                            this.updateSimData("waiting", false);
                             return;
                         }
                         // There is a potential here for the dependency posts haven't been saved in the db
@@ -435,9 +436,9 @@ export class SimulationService {
                         this.submitCatchmentDependencies(comids);
                     } else {
                         this.updateSimData("sim_executing", true);
+                        this.updateSimData("waiting", false);
                         this.startStatusCheck();
                     }
-                    this.updateSimData("waiting", false);
                 });
             }
         });
