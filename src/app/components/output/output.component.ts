@@ -28,7 +28,8 @@ export class OutputComponent implements OnInit {
     // List of catchments
     catchments: {
         catchment: string,
-        selected: boolean
+        selected: boolean,
+        hovered: boolean
     }[] = [];
     //
     pourPoint: string = "";
@@ -77,12 +78,14 @@ export class OutputComponent implements OnInit {
                     if (Object.keys(this.catchment_data)[i] == this.comid) {
                         this.catchments.push({
                             catchment: Object.keys(this.catchment_data)[i],
-                            selected: true
+                            selected: true,
+                            hovered: false
                         });
                     } else {
                         this.catchments.push({
                             catchment: Object.keys(this.catchment_data)[i],
-                            selected: false
+                            selected: false,
+                            hovered: false
                         });
                     }
                 }
@@ -205,6 +208,17 @@ export class OutputComponent implements OnInit {
         this.outputService.dropListDataSubject.next(this.dropListData);
     }
 
+    catchmentMouseOn(catchment: any) {
+        this.mapInit && this.miniMap.selectSegment({
+            catchment: catchment.catchment,
+            selected: catchment.selected ? false : true
+        });
+    }
+
+    catchmentMouseOut(catchment: any) {
+        this.mapInit && this.miniMap.selectSegment(catchment);
+    }
+
     toggleAll() {
         this.toggleAllCatchments = !this.toggleAllCatchments;
         if (this.toggleAllCatchments) {
@@ -231,7 +245,6 @@ export class OutputComponent implements OnInit {
         this.catchments.forEach(catchment => {
             this.miniMap.selectSegment(catchment);
         });
-        // this.miniMap.selectSegments(this.catchments);
         this.outputService.dropListDataSubject.next(this.dropListData);
     }
 }
