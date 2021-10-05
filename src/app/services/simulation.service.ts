@@ -365,11 +365,11 @@ export class SimulationService {
             }
             // add parameters
             if (loadings.parameters?.length) {
-                console.log(comid, " parameters: ", loadings.parameters);
+                console.log(comid, " add parameters: ", loadings.parameters);
             }
             // add sources
             if (loadings.sources?.length) {
-                console.log(comid, " sources: ", loadings.sources);
+                console.log(comid, " add sources: ", loadings.sources);
             }
         }
 
@@ -475,11 +475,8 @@ export class SimulationService {
                         this.updateSimData("sim_status", simStatus);
                         this.layerService.updateStreamLayer(simStatus.catchments);
                     }
-                    if (
-                        simStatus.status !== "COMPLETED" &&
-                        simStatus.status !== "FAILED" &&
-                        simStatus.status !== "INCOMPLETE"
-                    ) {
+
+                    if (simStatus.status === "PENDING" || simStatus.status === "IN-PROGRESS") {
                         this.updateSimData("sim_completed", false);
                         this.updateSimData("sim_executing", true);
                     } else {
