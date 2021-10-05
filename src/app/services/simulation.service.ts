@@ -311,26 +311,7 @@ export class SimulationService {
                     this.updateSimData("simId", response["_id"]);
                     this.updateState("simId", response["_id"]);
 
-                    this.addCatchmentDependencies().subscribe((response) => {
-                        if (response.error) {
-                            // TODO: HANDLE ERROR
-                            console.log("error>>> ", response.error);
-                            this.updateSimData("waiting", false);
-                        } else {
-                            this.hms.executeAquatoxSimulation(this.simData["simId"]).subscribe((response) => {
-                                if (response.error) {
-                                    // TODO: HANDLE ERROR
-                                    console.log("error>>> ", response.error);
-                                    // re-submit the execution request n times
-                                    // this.resubmitExecutionRequest();
-                                } else {
-                                    this.updateSimData("sim_executing", true);
-                                    this.startStatusCheck();
-                                }
-                                this.updateSimData("waiting", false);
-                            });
-                        }
-                    });
+                    this.submitCatchmentDependencies(Object.keys(this.simData.network.sources));
                 }
             });
         }
@@ -353,9 +334,9 @@ export class SimulationService {
         return this.hms.addAquatoxSimData(initData);
     }
 
-    addCatchmentDependencies(): Observable<any> {
+    addCatchmentDependencies(comids): Observable<any> {
         const dependencyRequests = [];
-        for (let comid of Object.keys(this.simData.network.sources)) {
+        for (let comid of comids) {
             dependencyRequests.push(this.initializeSegmentSimulation(comid));
         }
         return forkJoin(dependencyRequests);
@@ -418,6 +399,48 @@ export class SimulationService {
             ],
         };
         return this.hms.addAquatoxSimData(segmentData);
+    }
+
+    submitCatchmentDependencies(comids): void {
+        const MaxExecuteAttmepts = 5;
+        let executeFails = 0;
+        this.addCatchmentDependencies(comids).subscribe((response) => {
+            if (response.error) {
+                // TODO: HANDLE ERROR
+                console.log("error>>> ", response.error);
+                this.updateSimData("waiting", false);
+            } else {
+                this.hms.executeAquatoxSimulation(this.simData["simId"]).subscribe((response) => {
+                    if (response.error) {
+                        console.log("error>>> ", response.error);
+                        executeFails++;
+                        if (executeFails >= MaxExecuteAttmepts) {
+                            console.log(`Max execution retries of ${executeFails} reached`);
+                            return;
+                        }
+                        // There is a potential here for the dependency posts haven't been saved in the db
+                        // even though the posts have all returned successfully
+                        // when this happens the back end returns an error with the comis that are not ready yet
+                        // just to be sure those comids will be resubmitted here and a new request to execute the
+                        // will be sent, repeat until done.
+                        let comids = response.error.split(":")[1];
+                        comids = comids
+                            .trim()
+                            .split(",")
+                            .map((comid) => {
+                                return parseInt(comid);
+                            });
+                        console.log("comids: ", comids);
+                        // re-submit the catchment dependencies that the backend failed to save in time
+                        this.submitCatchmentDependencies(comids);
+                    } else {
+                        this.updateSimData("sim_executing", true);
+                        this.startStatusCheck();
+                    }
+                    this.updateSimData("waiting", false);
+                });
+            }
+        });
     }
 
     cancelAquatoxSimulationExecution(): void {
