@@ -178,7 +178,7 @@ export class SimulationService {
     }
 
     getDefaultTimeStep(): string {
-        return "hour";
+        return "day";
     }
 
     getPourPoint(): string {

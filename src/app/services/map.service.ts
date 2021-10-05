@@ -18,14 +18,21 @@ export class MapService {
             center: [38.5, -96], // US geographical center
             zoom: 10,
             minZoom: 5,
+            zoomSnap: 0.125,
+            zoomDelta: 0.125,
             zoomControl: false,
+            wheelPxPerZoomLevel: 125,
         });
         this.map.on("click", (mapClickEvent) => {
             this.handleClick(mapClickEvent);
         });
         this.layerService.setupLayers(this.map);
 
-        // move this to css
+        // this.map.on("zoom", (zoom) => {
+        //     console.log("zoom: ", this.map.getZoom());
+        // });
+
+        // move this to css, can't because it gets created after the page?
         document.getElementById("map").style.cursor = "crosshair";
     }
 
