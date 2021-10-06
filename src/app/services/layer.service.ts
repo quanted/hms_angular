@@ -294,6 +294,15 @@ export class LayerService {
                 this.toggleLayer("basemap", layer.name);
             }
         }
+        for (let layer of this.simLayers) {
+            console.log("simLayer: ", layer);
+            if (layer.show) {
+                this.map.addLayer(layer.layer);
+            }
+            if (layer.name == "HUC") {
+                this.map.fitBounds(layer.layer.getBounds());
+            }
+        }
     }
 
     addFeature(id, feature) {
@@ -508,9 +517,6 @@ export class LayerService {
         simLayer.on("click", (e) => {
             this.selectSegment(segmentData.comid);
         });
-        simLayer.on("hover", (e) => {
-            console.log("hover: ", e);
-        });
         simLayer.bindTooltip(`comID: ${segmentData.comid}`, {
             sticky: true,
         });
@@ -660,12 +666,12 @@ export class LayerService {
         for (let layer of this.basemapLayers) {
             if (layer.show) this.toggleLayer(layer.type, layer.name);
         }
-        for (let layer of this.overlayLayers) {
-            if (layer.show) this.toggleLayer(layer.type, layer.name);
-        }
-        for (let layer of this.simLayers) {
-            if (layer.show) this.toggleLayer(layer.type, layer.name);
-        }
+        // for (let layer of this.overlayLayers) {
+        //     if (layer.show) this.toggleLayer(layer.type, layer.name);
+        // }
+        // for (let layer of this.simLayers) {
+        //     if (layer.show) this.toggleLayer(layer.type, layer.name);
+        // }
         return {
             basemaps: this.basemapLayers,
             overlays: this.overlayLayers,

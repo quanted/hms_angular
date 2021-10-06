@@ -431,7 +431,7 @@ export class SimulationService {
                             .map((comid) => {
                                 return parseInt(comid);
                             });
-                        console.log("comids: ", comids);
+                        console.log("resubmitting comids: ", comids);
                         // re-submit the catchment dependencies that the backend failed to save in time
                         this.submitCatchmentDependencies(comids);
                     } else {
