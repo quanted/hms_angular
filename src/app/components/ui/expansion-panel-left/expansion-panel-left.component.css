@@ -1,8 +1,15 @@
 .panel-left {
+    display: flex;
+    min-height: 0;
+    max-height: 100%;
+    background-color: var(--main-background);
+}
+
+.panel-left-container {
     display: grid;
     grid-template-rows: auto 1fr;
-    margin: .25rem;
-    background-color: var(--main-background);
+    min-height: 0;
+    max-height: 100%;
 }
 
 .panel-left-open,
@@ -24,4 +31,6 @@
 
 app-input, app-output-panel-left {
     background-color: var(--main-transparent);
+    min-height: 0;
+    box-sizing: border-box;
 }
