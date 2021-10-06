@@ -27,7 +27,6 @@ html {
 }
 
 body { 
-    all: revert;
     margin: 0px;
     height: 100vh;
     font-family: Roboto, "Helvetica Neue", sans-serif;
