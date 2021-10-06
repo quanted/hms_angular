@@ -66,7 +66,7 @@
       <div class="button disabled" (click)="addParameter()">Add Parameter</div>
       <div class="button" (click)="addSource()">Add Loading</div>
     </div>
-    <div *ngIf="!addingSource && !addingParameter" class="button" (click)="addSegmentLoadings()">Apply Settings</div>
+    <div *ngIf="!addingSource && !addingParameter" class="button" (click)="addSegmentLoadings()">Apply Segment Settings</div>
 
     <div *ngIf="addingParameter" class="segment-form" [formGroup]="parameterForm" >
       <strong>New Parameter</strong>
