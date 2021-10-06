@@ -16,6 +16,10 @@
     padding-top: .5rem;
 }
 
+.control {
+    margin-bottom: 0.25rem;
+}
+
 table, td {
     border: 1px solid var(--main-border);
 }

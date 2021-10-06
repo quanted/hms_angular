@@ -1,224 +1,224 @@
 
-<div>
-    <div class="button" (click)="close()">Go to Aquatox Workflow</div>
-<div class="container-input-page" id="about">
-    <h3>Overview</h3>
-    <p>AQUATOX workflow is a web application to simulate fate and transport of nutrients and organic matter in user selected NHD stream network 
-        within the contiguous United States (CONUS).  The application is an adaptation of desktop AQUATOX model available at <a href="https://www.epa.gov/ceam/aquatox">https://www.epa.gov/ceam/aquatox</a>.   
-        Unlike the desktop version the web application lets the user edit values of only a limited number of input parameters at the stream 
-        segment network and individual segment levels.  The list of editable parameters in the application includes parameters which are most 
-        edited by the user from our experience with the AQUATOX desktop version.  Values of non-editable parameters are held constant and are 
-        included in the downloadable simulation input files for user inspection and analysis.  The web application automatically downloads stream 
-        flow and velocity time-series data from NOAA’s National Water Model (NWM) version 2.0 data archive <a href="https://docs.opendata.aws/nwm-archive/readme.html">https://docs.opendata.aws/nwm-archive/readme.html</a>  
-        Technical documentation for the desktop version is available at <a href="https://www.epa.gov/sites/default/files/2018-09/documents/aquatox_tech_doc_3.2.pdf">https://www.epa.gov/sites/default/files/2018-09/documents/aquatox_tech_doc_3.2.pdf</a> 
-        and is applicable to the web application.  We recommend using the desktop version if the user needs to alter values of non-editable parameters 
-        in the web application.  Target users for the workflow are water quality modelers and researchers.</p>
+<div class="container-item">
+    <div class="button control" (click)="close()">Go to Aquatox Workflow</div>
+    <div class="container-input-page" id="about">
+        <h3>Overview</h3>
+        <p>AQUATOX workflow is a web application to simulate fate and transport of nutrients and organic matter in user selected NHD stream network 
+            within the contiguous United States (CONUS).  The application is an adaptation of desktop AQUATOX model available at <a href="https://www.epa.gov/ceam/aquatox">https://www.epa.gov/ceam/aquatox</a>.   
+            Unlike the desktop version the web application lets the user edit values of only a limited number of input parameters at the stream 
+            segment network and individual segment levels.  The list of editable parameters in the application includes parameters which are most 
+            edited by the user from our experience with the AQUATOX desktop version.  Values of non-editable parameters are held constant and are 
+            included in the downloadable simulation input files for user inspection and analysis.  The web application automatically downloads stream 
+            flow and velocity time-series data from NOAA’s National Water Model (NWM) version 2.0 data archive <a href="https://docs.opendata.aws/nwm-archive/readme.html">https://docs.opendata.aws/nwm-archive/readme.html</a>  
+            Technical documentation for the desktop version is available at <a href="https://www.epa.gov/sites/default/files/2018-09/documents/aquatox_tech_doc_3.2.pdf">https://www.epa.gov/sites/default/files/2018-09/documents/aquatox_tech_doc_3.2.pdf</a> 
+            and is applicable to the web application.  We recommend using the desktop version if the user needs to alter values of non-editable parameters 
+            in the web application.  Target users for the workflow are water quality modelers and researchers.</p>
 
-    <h4>Setting up and running simulation</h4>
-    <p>The first step is to select a study area.  A study area means an NHD stream segment network of interest.  
-        The user can select a study area either by entering NHDPlus version 2.1 COMID of the pour point segment 
-        in the left panel form or by selecting a HUC12 followed by selecting a pour point stream segment of interest on the map.  
-        The application makes several user-selectable map layers available for locating stream network of interest.  
-        The HUC12 selection can be reset if needed by clicking on the “Reset Area of Interest” button in the left panel.  
-        Similarly, the pour point stream segment selection can be reset by clicking on the “Reset Pour Point” button on the left panel.</p>
+        <h4>Setting up and running simulation</h4>
+        <p>The first step is to select a study area.  A study area means an NHD stream segment network of interest.  
+            The user can select a study area either by entering NHDPlus version 2.1 COMID of the pour point segment 
+            in the left panel form or by selecting a HUC12 followed by selecting a pour point stream segment of interest on the map.  
+            The application makes several user-selectable map layers available for locating stream network of interest.  
+            The HUC12 selection can be reset if needed by clicking on the “Reset Area of Interest” button in the left panel.  
+            Similarly, the pour point stream segment selection can be reset by clicking on the “Reset Pour Point” button on the left panel.</p>
 
-    <p>The next step is to delineate stream segment network.  The user delineates stream segment network of interest either 
-        by entering the maximum upstream navigation distance in the textbox labeled “Upstream Distance (Km)” or by providing 
-        COMID of the farthest upstream stream segment of the network.  Clicking on the “Get Stream Network” button delineates 
-        the network. The application limits extent of stream network either by the selected HUC12 boundary or the user specified 
-        upstream distance whichever is smaller.</p>
+        <p>The next step is to delineate stream segment network.  The user delineates stream segment network of interest either 
+            by entering the maximum upstream navigation distance in the textbox labeled “Upstream Distance (Km)” or by providing 
+            COMID of the farthest upstream stream segment of the network.  Clicking on the “Get Stream Network” button delineates 
+            the network. The application limits extent of stream network either by the selected HUC12 boundary or the user specified 
+            upstream distance whichever is smaller.</p>
 
-    <p>The next step is to select output state variables.  The user can select any combination of three state variables: nitrogen, phosphorus, and organic matter.  
-        The user then needs to click on “Setup Simulation” button to show form to input parameter values and show stream segments within the network. 
-        The application retrieves NHDPlus stream network data from EPA Waters web services <a href="https://www.epa.gov/waterdata/waters-web-services">https://www.epa.gov/waterdata/waters-web-services</a> 
-        and labels segments in the network as Boundary Condition, Headwater, in-Network, and Pour Point.  The selected network segments 
-        are also shown on the map with distinct colors for boundary condition, in-network, headwater, and pour point segments.  The user 
-        can optionally enter a simulation name.  The user also selects “Daily” or “Hourly” time step of the simulation outputs time-series. 
-        The user also enters dates for “First Day” and “Last Day” of simulation.  Since the web application uses flow and velocity data from 
-        NOAA’s National Water Model (NWM) the start and end simulation dates must be within the range of NWM data availability which may get 
-        updated occasionally. It is recommended that the user check data availability at <a href="https://docs.opendata.aws/nwm-archive/readme.html">https://docs.opendata.aws/nwm-archive/readme.html</a>. 
-        The user can also enter pertinent rates and initial conditions.  Clicking on the “Apply Settings” button would apply the values to 
-        all stream segments in the selected study area.  The user would have the option to edit values for individual stream segments in the network.  
-        The user can scroll down in the left panel and select a stream segment to edit its input parameter values and provide loadings of pertinent 
-        water quality constituents.  All stream segments in the network are shown below the “Apply Settings” button as buttons with COMIDs as their 
-        labels in the panel.  The user can select a stream segment either by clicking on its corresponding button or by entering its COMID in the 
-        textbox labeled “COMID” and then clicking on the button labeled “Select Segment” in the “Stream Segment Loadings” section on the panel.  
-        Then the user can scroll down to edit the form for the selected segment.  The form is displayed at the bottom of the stream segment button list.  
-        The user can edit rates and water quality constituent loadings.  To provide the loadings for the selected segment, the user needs to click on 
-        the button labeled “Add Loadings” which will display loading origin, loading types, and loading rates options.  All segments have a minimum of 
-        two loading origin options: “Point Source” and “Non-point Source”.  Boundary segments have an additional option as “Boundary” source.  A boundary 
-        segment is a segment in the selected study area that has one or more upstream segments which flow into it.  The “Boundary” source is the rate or 
-        time series of water quality constituents flowing into the boundary segment from its upstream connections.  “Loading Type” selection dropdown 
-        provides options depending upon simulation state variables selected by the user as described earlier.  The user has two options to provides 
-        loading rates: a constant rate or a time-series.  If the user selects “Constant Value” option, then the user must provide loading rate and 
-        multiplier values in the textboxes labeled “Constant Loading Value” and “Loading Multiplier”, respectively.   But if the user selects “Time-series” 
-        then the user must upload an ASCII text file containing time-series of loadings for the constituent selected in the “Loading Type” dropdown.  
-        The user can upload multiple loadings for a stream segment by selecting different combinations of “Loading Origin” and “Loading Type” combinations.  
-        Headwater segments are shown as dark blue, boundary segments as red, and all other segments as light blue on the map. All user edited segments 
-        change their color to yellow on the map.</p>
+        <p>The next step is to select output state variables.  The user can select any combination of three state variables: nitrogen, phosphorus, and organic matter.  
+            The user then needs to click on “Setup Simulation” button to show form to input parameter values and show stream segments within the network. 
+            The application retrieves NHDPlus stream network data from EPA Waters web services <a href="https://www.epa.gov/waterdata/waters-web-services">https://www.epa.gov/waterdata/waters-web-services</a> 
+            and labels segments in the network as Boundary Condition, Headwater, in-Network, and Pour Point.  The selected network segments 
+            are also shown on the map with distinct colors for boundary condition, in-network, headwater, and pour point segments.  The user 
+            can optionally enter a simulation name.  The user also selects “Daily” or “Hourly” time step of the simulation outputs time-series. 
+            The user also enters dates for “First Day” and “Last Day” of simulation.  Since the web application uses flow and velocity data from 
+            NOAA’s National Water Model (NWM) the start and end simulation dates must be within the range of NWM data availability which may get 
+            updated occasionally. It is recommended that the user check data availability at <a href="https://docs.opendata.aws/nwm-archive/readme.html">https://docs.opendata.aws/nwm-archive/readme.html</a>. 
+            The user can also enter pertinent rates and initial conditions.  Clicking on the “Apply Settings” button would apply the values to 
+            all stream segments in the selected study area.  The user would have the option to edit values for individual stream segments in the network.  
+            The user can scroll down in the left panel and select a stream segment to edit its input parameter values and provide loadings of pertinent 
+            water quality constituents.  All stream segments in the network are shown below the “Apply Settings” button as buttons with COMIDs as their 
+            labels in the panel.  The user can select a stream segment either by clicking on its corresponding button or by entering its COMID in the 
+            textbox labeled “COMID” and then clicking on the button labeled “Select Segment” in the “Stream Segment Loadings” section on the panel.  
+            Then the user can scroll down to edit the form for the selected segment.  The form is displayed at the bottom of the stream segment button list.  
+            The user can edit rates and water quality constituent loadings.  To provide the loadings for the selected segment, the user needs to click on 
+            the button labeled “Add Loadings” which will display loading origin, loading types, and loading rates options.  All segments have a minimum of 
+            two loading origin options: “Point Source” and “Non-point Source”.  Boundary segments have an additional option as “Boundary” source.  A boundary 
+            segment is a segment in the selected study area that has one or more upstream segments which flow into it.  The “Boundary” source is the rate or 
+            time series of water quality constituents flowing into the boundary segment from its upstream connections.  “Loading Type” selection dropdown 
+            provides options depending upon simulation state variables selected by the user as described earlier.  The user has two options to provides 
+            loading rates: a constant rate or a time-series.  If the user selects “Constant Value” option, then the user must provide loading rate and 
+            multiplier values in the textboxes labeled “Constant Loading Value” and “Loading Multiplier”, respectively.   But if the user selects “Time-series” 
+            then the user must upload an ASCII text file containing time-series of loadings for the constituent selected in the “Loading Type” dropdown.  
+            The user can upload multiple loadings for a stream segment by selecting different combinations of “Loading Origin” and “Loading Type” combinations.  
+            Headwater segments are shown as dark blue, boundary segments as red, and all other segments as light blue on the map. All user edited segments 
+            change their color to yellow on the map.</p>
 
-    <p>When all the inputs editing is complete the user can run the simulation by clicking on the button labeled as “Execute Simulation”.  
-        Stream segments in the study area get executed in a sequence determined by an algorithm.  In addition to the execution sequence the 
-        algorithm also determines which segments can be executed in parallel.  Status of segment execution is shown in the left panel as well 
-        on the map.  All executed segments change their color to green.</p>
+        <p>When all the inputs editing is complete the user can run the simulation by clicking on the button labeled as “Execute Simulation”.  
+            Stream segments in the study area get executed in a sequence determined by an algorithm.  In addition to the execution sequence the 
+            algorithm also determines which segments can be executed in parallel.  Status of segment execution is shown in the left panel as well 
+            on the map.  All executed segments change their color to green.</p>
 
-    <p>Clicking on the “Download Data” prepares and downloads a compressed file containing all simulation inputs and outputs.</p>
+        <p>Clicking on the “Download Data” prepares and downloads a compressed file containing all simulation inputs and outputs.</p>
 
-    <p>Clicking on the button labeled “Examine Output” shows results for the pour point segment.  The user can also view the simulation results 
-        of a segment by clicking on the segment in the panel.  The outputs viewing page lets the user display results as single or multiple stream 
-        segments, one or multiple state variables, and tables are plots.  The user can also add or remove a graph from the output page.  The user 
-        can also add or remove a stream segment or a state variable to a graph.  The outputs viewing page provides the functionality to download 
-        the graph, zoom in and out, pan, auto-scale, and reset axes.  Data displayed in table format can be downloaded as a comma separated values (CSV) file.</p>
-    
+        <p>Clicking on the button labeled “Examine Output” shows results for the pour point segment.  The user can also view the simulation results 
+            of a segment by clicking on the segment in the panel.  The outputs viewing page lets the user display results as single or multiple stream 
+            segments, one or multiple state variables, and tables are plots.  The user can also add or remove a graph from the output page.  The user 
+            can also add or remove a stream segment or a state variable to a graph.  The outputs viewing page provides the functionality to download 
+            the graph, zoom in and out, pan, auto-scale, and reset axes.  Data displayed in table format can be downloaded as a comma separated values (CSV) file.</p>
+        
 
-    <p>The application retrieves NHDPlus stream network data from EPA Waters web services <a href="https://www.epa.gov/waterdata/waters-web-services">https://www.epa.gov/waterdata/waters-web-services</a> 
-        and labels segments in the network to determine boundary conditions (BCs) and set order of segment simulation and identify which segments 
-        can be simulated in parallel at each node in the network.  A BC is a stream segments that is external to the selected stream network of 
-        interest but pours into a stream segment within the network.  The stream segments within the network and their BCs are shown on the map 
-        as well as the left panel. The user is then presented with a set of selection checkboxes for water quality (WQ) constituents aka model 
-        state variables (SV) of interest.  The user can select 0 or more SVs.  If the user doesn’t make any selection the application assumes 
-        that only Nitrogen is selected.  The user then clicks on “Get Base Simulation” button to retrieve an input file template per selected SVs.  
-        A limited number of input parameters’ default values from the template are presented to the user for editing.</p>
+        <p>The application retrieves NHDPlus stream network data from EPA Waters web services <a href="https://www.epa.gov/waterdata/waters-web-services">https://www.epa.gov/waterdata/waters-web-services</a> 
+            and labels segments in the network to determine boundary conditions (BCs) and set order of segment simulation and identify which segments 
+            can be simulated in parallel at each node in the network.  A BC is a stream segments that is external to the selected stream network of 
+            interest but pours into a stream segment within the network.  The stream segments within the network and their BCs are shown on the map 
+            as well as the left panel. The user is then presented with a set of selection checkboxes for water quality (WQ) constituents aka model 
+            state variables (SV) of interest.  The user can select 0 or more SVs.  If the user doesn’t make any selection the application assumes 
+            that only Nitrogen is selected.  The user then clicks on “Get Base Simulation” button to retrieve an input file template per selected SVs.  
+            A limited number of input parameters’ default values from the template are presented to the user for editing.</p>
 
-    <h4>Table 1.  Model inputs.</h4>
-    <table>
-        <thead>
-            <th>Parameter</th><th>Description</th><th>Notes</th>
-        </thead>
-        <tbody>
-            <tr>
-                <td>First Day</td>
-                <td>Simulation starting date</td>
-                <td>Must be within data availability range of NWM at <a href="https://docs.opendata.aws/nwm-archive/readme.html">https://docs.opendata.aws/nwm-archive/readme.html</a>. 
-                    Currently, data are available from 1993 through 2017. Date format is mm/dd/yyyy.</td>
-            </tr>
-            <tr>
-                <td>Last Day</td>
-                <td>Simulation last date</td>
-                <td>Must be within data availability range of NWM at <a href="https://docs.opendata.aws/nwm-archive/readme.html">https://docs.opendata.aws/nwm-archive/readme.html</a>. 
-                    Currently, data are available from 1993 through 2017.  Last day must be later than the first day. Date format is mm/dd/yyyy.</td>
-            </tr>
-            <tr>
-                <td>Simulation Output</td>
-                <td>Simulation time step for the output time-series.</td>
-                <td>Either hourly or daily.</td>
-            </tr>
-            <tr>
-                <td>Simulation Name</td>
-                <td>A user specified name for the simulation.</td>
-                <td>Optional.  Must be less than or equal to 25 characters.</td>
-            </tr>
-            <tr>
-                <td>Upstream End COMID</td>
-                <td>COMID of the segment in the study area which is at the farthest navigational distance from the pour point.</td>
-                <td>Not used when “upstream Distance (Km)” is provided.</td>
-            </tr>
-            <tr>
-                <td>Upstream Distance (Km)</td>
-                <td>Farthest navigational distance from the pour point in kilometers.</td>
-                <td>Must be greater than 0. Not required if “Upstream End COMID” is provided.</td>
-            </tr>
-            <tr>
-                <td>Max Degrdn Rate, labile</td>
-                <td>Maximum fractional degradation of labile detritus.</td>
-                <td>Units are grams of labile detritus that would be lost per gram of labile detritus per day (g/g.d).</td>
-            </tr>
-            <tr>
-                <td>Max Degrdn Rate, refrac</td>
-                <td>Maximum fractional degradation of rate refractory detritus.</td>
-                <td>Units are grams of refractory detritus that would be lost per gram of refractory detritus per day (g/g.d).</td>
-            </tr>
-            <tr>
-                <td>KNitri, Max Rate of Nitrific</td>
-                <td>Fractional nitrification rate.</td>
-                <td>Units are grams of ammonia lost to nitrification per gram of ammonia per day (1/day).</td>
-            </tr>
-            <tr>
-                <td>KDenitri</td>
-                <td>Maximum denitrification rate.</td>
-                <td>Units are grams of nitrate converted to free nitrogen per day (1/day).</td>
-            </tr>
-            <tr>
-                <td>Total Ammonia As N</td>
-                <td>Initial concentration of total ammonia as N. </td>
-                <td>Units are milligrams of ammonia as N per liter of water (mg/l).  Must be greater than or equal to zero.</td>
-            </tr>
-            <tr>
-                <td>Nitrate As N</td>
-                <td>Initial concentration of nitrate as N.</td>
-                <td>Units are milligrams of nitrate as N per liter of water (mg/l).  Must be greater than or equal to zero.</td>
-            </tr>
-            <tr>
-                <td>Carbondioxide</td>
-                <td>Initial concentration of carbondioxide.</td>
-                <td>Units are milligrams of carbondioxide per liter of water (mg/l).  Must be greater than or equal to zero.</td>
-            </tr>
-            <tr>
-                <td>Oxygen</td>
-                <td>Initial concentration of oxygen.</td>
-                <td>Units are milligrams of oxygen per liter of water (mg/l).  Must be greater than or equal to zero.</td>
-            </tr>
-            <tr>
-                <td>Loading Origin</td>
-                <td>Type of source of water quality constituent.</td>
-                <td>Origin can be point or non-point source.  Boundary stream segments have boundary source which is the upstream segment pouring into the boundary segment</td>
-            </tr>
-            <tr>
-                <td>Loading Type</td>
-                <td>Water quality constituent.</td>
-                <td>Options depend upon simulation state variables selected by the user.</td>
-            </tr>
-            <tr>
-                <td>Loading Rate</td>
-                <td>A way to specify whether water quality constituent loadings are a single-value constant or a time-series.</td>
-                <td>Options are constant loading rate or a time-series. Units are that of the selected Loading Type</td>
-            </tr>
-            <tr>
-                <td>Loading Multiplier</td>
-                <td>A positive decimal number to increase or decrease water quality constituent loading constant value or time-series at each time step.</td>
-                <td>Must be greater than zero. Unitless.</td>
-            </tr>
-        </tbody>
-    </table>
-    
-    <h4>Table 2.  Glossary.</h4>
-    <table>
-        <thead>
-            <th>Term</th><th>Description</th>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Study Area</td>
-                <td>A network of medium resolution NHD flowlines.  Is equal to or smaller than its encompassing HUC12.  Contains at least one flowline.</td>
-            </tr>
-            <tr>
-                <td>Pour Point</td>
-                <td>The most downstream segment of the study area.  Water from the whole study area flows through the pour point.</td>
-            </tr>
-            <tr>
-                <td>Boundary Condition Segment</td>
-                <td>A stream segment within the study area that has one or more out of study area upstream segments pouring directly into it.</td>
-            </tr>
-            <tr>
-                <td>Headwater Segment</td>
-                <td>A stream segment in the study area that has no upstream segment pouring into it.</td>
-            </tr>
-            <tr>
-                <td>In-Network Segment</td>
-                <td>A stream segment within the study area that has at least one upstream study area segment directly pouring 
-                    into it and it itself pours into at least one segment within the study area.</td>
-            </tr>
-            <tr>
-                <td>Pour Point Segment</td>
-                <td>A segment within the study area that directly pours into an out-of-study area segment.</td>
-            </tr>
-            <tr>
-                <td>COMID</td>
-                <td>Common identifier of an NHD flowline as described at <a href="https://www.fws.gov/r5gomp/gom/nhd-gom/NHDPLUS_UserGuide">
-                    https://www.fws.gov/r5gomp/gom/nhd-gom/NHDPLUS_UserGuide</a>. COMIDs in this web application must be from NHDPlus Version 2.1.</td>
-            </tr>
-        </tbody>
-    </table>
-    
-</div>
+        <h4>Table 1.  Model inputs.</h4>
+        <table>
+            <thead>
+                <th>Parameter</th><th>Description</th><th>Notes</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>First Day</td>
+                    <td>Simulation starting date</td>
+                    <td>Must be within data availability range of NWM at <a href="https://docs.opendata.aws/nwm-archive/readme.html">https://docs.opendata.aws/nwm-archive/readme.html</a>. 
+                        Currently, data are available from 1993 through 2017. Date format is mm/dd/yyyy.</td>
+                </tr>
+                <tr>
+                    <td>Last Day</td>
+                    <td>Simulation last date</td>
+                    <td>Must be within data availability range of NWM at <a href="https://docs.opendata.aws/nwm-archive/readme.html">https://docs.opendata.aws/nwm-archive/readme.html</a>. 
+                        Currently, data are available from 1993 through 2017.  Last day must be later than the first day. Date format is mm/dd/yyyy.</td>
+                </tr>
+                <tr>
+                    <td>Simulation Output</td>
+                    <td>Simulation time step for the output time-series.</td>
+                    <td>Either hourly or daily.</td>
+                </tr>
+                <tr>
+                    <td>Simulation Name</td>
+                    <td>A user specified name for the simulation.</td>
+                    <td>Optional.  Must be less than or equal to 25 characters.</td>
+                </tr>
+                <tr>
+                    <td>Upstream End COMID</td>
+                    <td>COMID of the segment in the study area which is at the farthest navigational distance from the pour point.</td>
+                    <td>Not used when “upstream Distance (Km)” is provided.</td>
+                </tr>
+                <tr>
+                    <td>Upstream Distance (Km)</td>
+                    <td>Farthest navigational distance from the pour point in kilometers.</td>
+                    <td>Must be greater than 0. Not required if “Upstream End COMID” is provided.</td>
+                </tr>
+                <tr>
+                    <td>Max Degrdn Rate, labile</td>
+                    <td>Maximum fractional degradation of labile detritus.</td>
+                    <td>Units are grams of labile detritus that would be lost per gram of labile detritus per day (g/g.d).</td>
+                </tr>
+                <tr>
+                    <td>Max Degrdn Rate, refrac</td>
+                    <td>Maximum fractional degradation of rate refractory detritus.</td>
+                    <td>Units are grams of refractory detritus that would be lost per gram of refractory detritus per day (g/g.d).</td>
+                </tr>
+                <tr>
+                    <td>KNitri, Max Rate of Nitrific</td>
+                    <td>Fractional nitrification rate.</td>
+                    <td>Units are grams of ammonia lost to nitrification per gram of ammonia per day (1/day).</td>
+                </tr>
+                <tr>
+                    <td>KDenitri</td>
+                    <td>Maximum denitrification rate.</td>
+                    <td>Units are grams of nitrate converted to free nitrogen per day (1/day).</td>
+                </tr>
+                <tr>
+                    <td>Total Ammonia As N</td>
+                    <td>Initial concentration of total ammonia as N. </td>
+                    <td>Units are milligrams of ammonia as N per liter of water (mg/l).  Must be greater than or equal to zero.</td>
+                </tr>
+                <tr>
+                    <td>Nitrate As N</td>
+                    <td>Initial concentration of nitrate as N.</td>
+                    <td>Units are milligrams of nitrate as N per liter of water (mg/l).  Must be greater than or equal to zero.</td>
+                </tr>
+                <tr>
+                    <td>Carbondioxide</td>
+                    <td>Initial concentration of carbondioxide.</td>
+                    <td>Units are milligrams of carbondioxide per liter of water (mg/l).  Must be greater than or equal to zero.</td>
+                </tr>
+                <tr>
+                    <td>Oxygen</td>
+                    <td>Initial concentration of oxygen.</td>
+                    <td>Units are milligrams of oxygen per liter of water (mg/l).  Must be greater than or equal to zero.</td>
+                </tr>
+                <tr>
+                    <td>Loading Origin</td>
+                    <td>Type of source of water quality constituent.</td>
+                    <td>Origin can be point or non-point source.  Boundary stream segments have boundary source which is the upstream segment pouring into the boundary segment</td>
+                </tr>
+                <tr>
+                    <td>Loading Type</td>
+                    <td>Water quality constituent.</td>
+                    <td>Options depend upon simulation state variables selected by the user.</td>
+                </tr>
+                <tr>
+                    <td>Loading Rate</td>
+                    <td>A way to specify whether water quality constituent loadings are a single-value constant or a time-series.</td>
+                    <td>Options are constant loading rate or a time-series. Units are that of the selected Loading Type</td>
+                </tr>
+                <tr>
+                    <td>Loading Multiplier</td>
+                    <td>A positive decimal number to increase or decrease water quality constituent loading constant value or time-series at each time step.</td>
+                    <td>Must be greater than zero. Unitless.</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h4>Table 2.  Glossary.</h4>
+        <table>
+            <thead>
+                <th>Term</th><th>Description</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Study Area</td>
+                    <td>A network of medium resolution NHD flowlines.  Is equal to or smaller than its encompassing HUC12.  Contains at least one flowline.</td>
+                </tr>
+                <tr>
+                    <td>Pour Point</td>
+                    <td>The most downstream segment of the study area.  Water from the whole study area flows through the pour point.</td>
+                </tr>
+                <tr>
+                    <td>Boundary Condition Segment</td>
+                    <td>A stream segment within the study area that has one or more out of study area upstream segments pouring directly into it.</td>
+                </tr>
+                <tr>
+                    <td>Headwater Segment</td>
+                    <td>A stream segment in the study area that has no upstream segment pouring into it.</td>
+                </tr>
+                <tr>
+                    <td>In-Network Segment</td>
+                    <td>A stream segment within the study area that has at least one upstream study area segment directly pouring 
+                        into it and it itself pours into at least one segment within the study area.</td>
+                </tr>
+                <tr>
+                    <td>Pour Point Segment</td>
+                    <td>A segment within the study area that directly pours into an out-of-study area segment.</td>
+                </tr>
+                <tr>
+                    <td>COMID</td>
+                    <td>Common identifier of an NHD flowline as described at <a href="https://www.fws.gov/r5gomp/gom/nhd-gom/NHDPLUS_UserGuide">
+                        https://www.fws.gov/r5gomp/gom/nhd-gom/NHDPLUS_UserGuide</a>. COMIDs in this web application must be from NHDPlus Version 2.1.</td>
+                </tr>
+            </tbody>
+        </table>
+        
+    </div>
 </div>
