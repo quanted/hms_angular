@@ -1,6 +1,6 @@
 <div class="input-container">
     <strong class="centered">Aquatox Workflow Alpha v0.1.0</strong>
-    <div *ngIf="!simExecuting && !simCompleted">
+    <div class="input-container-2" *ngIf="!simExecuting && !simCompleted">
         <div class="scroll-pane">
             <!-- AOI section -->
             <div class="container-item" [formGroup]="aoiForm">
@@ -8,7 +8,8 @@
                     <div id="this is just here as a spacer"></div>
                     <strong class="section-heading-center">Study Area</strong>
                     <div>
-                        <mat-icon class="icon-panel-toggle float-right" matTooltipPosition="right" matTooltip="Collapse section">expand_less</mat-icon>
+                        <mat-icon class="icon-panel-toggle float-right" matTooltipPosition="right"
+                            matTooltip="Collapse section">expand_less</mat-icon>
                     </div>
                 </div>
                 <div class="section-item" *ngIf="!huc">
@@ -16,7 +17,8 @@
                         <div class="vertical-center">
                             <div>Comid <input type="number" class="input-number" formControlName="pPointComid" /></div>
                         </div>
-                        <div class="button" (click)="getCatchment()" matTooltip="Get Pour Point">Get Pour Point by ComId</div>
+                        <div class="button" (click)="getCatchment()" matTooltip="Get Pour Point">Get Pour Point by ComId
+                        </div>
                     </div>
                     <div class="centered">- or -</div>
                     <div class="centered">
@@ -41,11 +43,14 @@
                     </div>
 
                     <div *ngIf="catchment && !network.network">
-                        <div class="form-row">Enter Upstream End Comid<input type="number" formControlName="endComid" /></div>
+                        <div class="form-row">Enter Upstream End Comid<input type="number" formControlName="endComid" />
+                        </div>
                         <div class="centered">- or -</div>
-                        <div class="form-row">Upstream Distance (Km)<input type="number" formControlName="distance" /></div>
+                        <div class="form-row">Upstream Distance (Km)<input type="number" formControlName="distance" />
+                        </div>
                     </div>
-                    <div class="button" *ngIf="huc && catchment && !network.network && !waiting" (click)="getStreamNetwork()">
+                    <div class="button" *ngIf="huc && catchment && !network.network && !waiting"
+                        (click)="getStreamNetwork()">
                         Get Stream Network
                     </div>
                 </div>
@@ -69,7 +74,8 @@
                             <div id="this is just here as a spacer"></div>
                             <strong class="section-heading-center">Simulation Setup</strong>
                             <div>
-                                <mat-icon class="icon-panel-toggle float-right" matTooltipPosition="right" matTooltip="Collapse section">expand_less</mat-icon>
+                                <mat-icon class="icon-panel-toggle float-right" matTooltipPosition="right"
+                                    matTooltip="Collapse section">expand_less</mat-icon>
                             </div>
                         </div>
                         <div class="form-row">
@@ -94,26 +100,34 @@
                             <div class="form-row">
                                 <div class="vertical-center">Simulation Output</div>
                                 <div class="form-row">
-                                    <div>Hourly <input type="radio" name="tStep" formControlName="tStep" value="hour"></div>
-                                    <div>Daily <input type="radio" name="tStep" formControlName="tStep" value="day"></div>
+                                    <div>Hourly <input type="radio" name="tStep" formControlName="tStep" value="hour">
+                                    </div>
+                                    <div>Daily <input type="radio" name="tStep" formControlName="tStep" value="day">
+                                    </div>
                                 </div>
                             </div>
                             <div class="form-row">
-                                Custom Solver Step Size <input type="checkbox" formControlName="useFixStepSize" (click)="toggleAltStep()" />
+                                Custom Solver Step Size <input type="checkbox" formControlName="useFixStepSize"
+                                    (click)="toggleAltStep()" />
                             </div>
                             <div class="form-row" *ngIf="useFixStepSize">
-                                Solver Step Size of (0.1-1.0)<div><input type="number" class="input-number" formControlName="fixStepSize" /> / day</div>
+                                Solver Step Size of (0.1-1.0)<div><input type="number" class="input-number"
+                                        formControlName="fixStepSize" /> / day</div>
                             </div>
                             <div class="advanced-settings-toggle">
-                                <div class="vertical-center">Advanced</div><mat-icon class="icon-panel-toggle" matTooltip="See Advanced Options NOT YET IMPLEMENTED" 
-                                (click)="toggleAdvanced('pSetup')">expand_more</mat-icon>
+                                <div class="vertical-center">Advanced</div>
+                                <mat-icon class="icon-panel-toggle"
+                                    matTooltip="See Advanced Options NOT YET IMPLEMENTED"
+                                    (click)="toggleAdvanced('pSetup')">expand_more</mat-icon>
                             </div>
                             <div class="section-item" *ngIf="showPSetupAdvanced && advancedFields.pSetup.length">
                                 <div class="form-row" *ngFor="let pSetupField of advancedFields.pSetup">
                                     <div>{{ pSetupField.displayName }}</div>
                                     <div class="vertical-center">
                                         <div>
-                                            <input type="number" class="input-number" formControlName="{{ pSetupField.param }}" matTooltip="{{ pSetupField.param }}"/>
+                                            <input type="number" class="input-number"
+                                                formControlName="{{ pSetupField.param }}"
+                                                matTooltip="{{ pSetupField.param }}" />
                                         </div>
                                     </div>
                                 </div>
@@ -164,7 +178,9 @@
                                 <div>{{ reminField.displayName }}</div>
                                 <div class="vertical-center">
                                     <div>
-                                        <input type="number" class="input-number" formControlName="{{ reminField.param }}" matTooltip="{{ reminField.longName }}"/> 
+                                        <input type="number" class="input-number"
+                                            formControlName="{{ reminField.param }}"
+                                            matTooltip="{{ reminField.longName }}" />
                                         {{ reminField.unit }}
                                     </div>
                                 </div>
@@ -173,14 +189,16 @@
                         <div class="advanced-settings-toggle">
                             <div class="vertical-center">Advanced</div>
                             <mat-icon class="icon-panel-toggle" matTooltip="See Advanced Options NOT YET IMPLEMENTED"
-                            (click)="toggleAdvanced('remin')">expand_more</mat-icon>
+                                (click)="toggleAdvanced('remin')">expand_more</mat-icon>
                         </div>
                         <div class="section-item" *ngIf="showReminAdvanced">
                             <div class="form-row" *ngFor="let reminField of advancedFields.remin">
                                 <div>{{ reminField.displayName }}</div>
                                 <div class="vertical-center">
                                     <div>
-                                        <input type="number" class="input-number" formControlName="{{ reminField.param }}" matTooltip="{{ reminField.longName }}"/> 
+                                        <input type="number" class="input-number"
+                                            formControlName="{{ reminField.param }}"
+                                            matTooltip="{{ reminField.longName }}" />
                                         {{ reminField.unit }}
                                     </div>
                                 </div>
@@ -199,7 +217,8 @@
                                 <div>{{ svField.displayName }}</div>
                                 <div class="vertical-center">
                                     <div>
-                                        <input type="number" class="input-number" formControlName="{{ svField.param }}" matTooltip="{{ svField.longName }}"/>
+                                        <input type="number" class="input-number" formControlName="{{ svField.param }}"
+                                            matTooltip="{{ svField.longName }}" />
                                         {{ svField.unit }}
                                     </div>
                                 </div>
@@ -208,14 +227,15 @@
                         <div class="advanced-settings-toggle">
                             <div class="vertical-center">Advanced</div>
                             <mat-icon class="icon-panel-toggle" matTooltip="See Advanced Options NOT YET IMPLEMENTED"
-                            (click)="toggleAdvanced('sv')">expand_more</mat-icon>
+                                (click)="toggleAdvanced('sv')">expand_more</mat-icon>
                         </div>
                         <div class="section-item" *ngIf="showSVAdvanced">
                             <div class="form-row" *ngFor="let svField of advancedFields.sv">
                                 <div>{{ svField.displayName }}</div>
                                 <div class="vertical-center">
                                     <div>
-                                        <input type="number" class="input-number" formControlName="{{ svField.param }}" matTooltip="{{ svField.longName }}"/> 
+                                        <input type="number" class="input-number" formControlName="{{ svField.param }}"
+                                            matTooltip="{{ svField.longName }}" />
                                         {{ svField.unit }}
                                     </div>
                                 </div>
@@ -234,7 +254,8 @@
                     <div id="this is just here as a spacer"></div>
                     <strong class="section-heading-center">Stream Segment Loadings</strong>
                     <div>
-                        <mat-icon class="icon-panel-toggle float-right" matTooltipPosition="right" matTooltip="Collapse section">expand_less</mat-icon>
+                        <mat-icon class="icon-panel-toggle float-right" matTooltipPosition="right"
+                            matTooltip="Collapse section">expand_less</mat-icon>
                     </div>
                 </div>
                 <app-comid-select-input></app-comid-select-input>
@@ -249,7 +270,7 @@
         </div>
     </div>
 
-    <div *ngIf="simExecuting || simCompleted">
+    <div class="input-container-2" *ngIf="simExecuting || simCompleted">
         <app-execution-panel></app-execution-panel>
         <div class="button" (click)="resetSimulation()">Reset Simulation</div>
     </div>

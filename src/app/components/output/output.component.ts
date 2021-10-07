@@ -150,16 +150,6 @@ export class OutputComponent implements OnInit {
             },
             {
                 selectedCatchments: [this.comid],
-                selectedSV: 2,
-                selectedChart: "scatter",
-            },
-            {
-                selectedCatchments: [this.comid],
-                selectedSV: 3,
-                selectedChart: "scatter",
-            },
-            {
-                selectedCatchments: [this.comid],
                 selectedSV: 0,
                 selectedChart: "table",
             }
@@ -209,14 +199,17 @@ export class OutputComponent implements OnInit {
     }
 
     catchmentMouseOn(catchment: any) {
-        this.mapInit && this.miniMap.selectSegment({
-            catchment: catchment.catchment,
-            selected: catchment.selected ? false : true
-        });
+        if (this.mapInit && this.miniMap.segmentLayers && this.miniMap.segmentLayers.length > 0) {
+            this.miniMap.selectSegment({
+                catchment: catchment.catchment,
+                selected: catchment.selected ? false : true
+            });
+        }
     }
 
     catchmentMouseOut(catchment: any) {
-        this.mapInit && this.miniMap.selectSegment(catchment);
+        if (this.mapInit && this.miniMap.segmentLayers && this.miniMap.segmentLayers.length > 0)
+            this.miniMap.selectSegment(catchment);
     }
 
     toggleAll() {

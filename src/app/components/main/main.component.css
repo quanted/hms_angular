@@ -12,6 +12,9 @@ body {
 .panel-left {
     top: inherit;
     left: 0;
+    height: 100%;
+    padding: 0.25em;
+    box-sizing: border-box;
 }
 
 .panel-right {

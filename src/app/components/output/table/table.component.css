@@ -1,16 +1,16 @@
 .container {
-   display: grid;
-   grid-template-rows: 30px 1fr auto;
-    position: absolute;
-    top: 0px; bottom: 0; left: 0; right: 0;
-    z-index: 0;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  position: absolute;
+  top: 0px; bottom: 0; left: 0; right: 0;
+  z-index: 0;
 }
 
 .table-container {
-    height: 100%;
-    width: 100%;
-    overflow: auto;
-    z-index: 0;
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  z-index: 0;
 }
 
 ::-webkit-scrollbar {
@@ -19,53 +19,26 @@
 }
 
 table {
-    width: 100%;
-    table-layout: fixed;
-    text-align: center !important;
-  }
-  
-  th, td {
-    overflow: hidden;
-    width: 100px;
-    text-overflow: ellipsis;
-    white-space: normal;
-    text-align: center !important;
-    vertical-align: middle !important;
-  }
-
-:host ::ng-deep .mat-sort-header-container{
-    justify-content: center;
+  width: 100%;
+  table-layout: fixed;
+  text-align: center !important;
+  border-collapse: collapse;
 }
 
-:host ::ng-deep .mat-sort-header-content {
-  font-size: 11px;
+.header {
+  position: sticky;
+  top: 0;
+  background: white;
 }
 
-tr.mat-header-row {
-  height: auto;
-}
-
-
-.mat-header-cell {
-    padding-left: 20px;
-    text-align: center !important;
-}
-
-.mat-header-cell:first-of-type {
-  padding-left: 30px !important;
-}
-
-.title {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "Open Sans", verdana, arial, sans-serif;
-  font-size: 14px;
-  fill: rgb(68, 68, 68);
-  opacity: 1;
-  font-weight: normal;
-  white-space: pre;
-  padding: 5px;
+th, td {
+  overflow: hidden;
+  width: 100px;
+  text-overflow: ellipsis;
+  white-space: normal;
+  text-align: center !important;
+  vertical-align: middle !important;
+  border: 1px solid #ddd;
 }
 
 .export{
@@ -77,9 +50,16 @@ tr.mat-header-row {
 .export:hover {
   opacity: 0.5;
 }
-.mat-cell, .mat-footer-cell {
-  font-size: 11px;
+
+:host ::ng-deep .mat-paginator-outer-container {
+  height: 40px !important;
+  margin: -10px 0 10px 0;
 }
-tr.mat-row, tr.mat-footer-row {
-  height: auto;
+
+:host ::ng-deep .mat-paginator-range-label {
+  margin: 0;
+}
+
+:host ::ng-deep .mat-icon-button {
+  width: 30px;
 }

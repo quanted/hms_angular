@@ -1,8 +1,17 @@
 .input-container {
+    min-height: 0;
+    max-height: 100%;
     width: 425px;
     display: grid;
+    grid-template-rows: auto 1fr;
     row-gap: var(--row-gap);
     background: var(--main-background);
+}
+
+.input-container-2 {
+    display: grid;
+    height: 100%;
+    min-height: 0;
 }
 
 .section-heading {

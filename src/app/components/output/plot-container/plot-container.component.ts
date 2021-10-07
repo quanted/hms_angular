@@ -74,7 +74,9 @@ export class PlotContainerComponent implements OnChanges {
                 this.tableColumnNames = this.tableColumnNames.concat(this.stateVariablesList);
                 // Set dates
                 this.dates = [];
-                this.catchment_data[firstComid].dates.forEach((d) => this.dates.push(new Date(d)));
+                this.catchment_data[firstComid].dates.forEach((d) => this.dates.push(
+                    new Date(d)
+                ));
 
                 this.selectedSV = this.stateVariablesList[this.dropListData.selectedSV];
                 this.chart = this.dropListData.selectedChart;
@@ -178,5 +180,24 @@ export class PlotContainerComponent implements OnChanges {
     toggleCSS() {
         this.showLegend = !this.showLegend;
         window.dispatchEvent(new Event("resize"));
+    }
+
+    /**
+   * Creates a csv file from the table data and downloads it.
+   */
+    download() {
+        let names = [];
+        for (let i = 0; i < this.tableColumnNames.length; i++) {
+            names.push(this.tableColumnNames[i].replace(/,/g, ""));
+        }
+        let csv = names.join(",") + "\n";
+        this.tableColumnData.forEach((row) => {
+            csv += Object.values(row).join(",") + "\r\n";
+        });
+        let hiddenElement = document.createElement("a");
+        hiddenElement.href = "data:text/csv;charset=utf-8," + encodeURI(csv);
+        hiddenElement.target = "_blank";
+        hiddenElement.download = "table.csv";
+        hiddenElement.click();
     }
 }
