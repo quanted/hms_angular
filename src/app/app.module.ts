@@ -8,6 +8,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 import { AppRoutingModule } from "./app-routing.module";
 
+import { CdkTableModule } from '@angular/cdk/table';
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { MatInputModule } from "@angular/material/input";
@@ -83,6 +84,7 @@ import { AboutOutputComponent } from './components/output/about-output/about-out
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    CdkTableModule,
     HttpClientModule,
     AppRoutingModule,
     MatInputModule,

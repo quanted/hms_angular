@@ -150,16 +150,6 @@ export class OutputComponent implements OnInit {
             },
             {
                 selectedCatchments: [this.comid],
-                selectedSV: 2,
-                selectedChart: "scatter",
-            },
-            {
-                selectedCatchments: [this.comid],
-                selectedSV: 3,
-                selectedChart: "scatter",
-            },
-            {
-                selectedCatchments: [this.comid],
                 selectedSV: 0,
                 selectedChart: "table",
             }

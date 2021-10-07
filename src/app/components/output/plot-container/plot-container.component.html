@@ -19,7 +19,9 @@
                     <mat-option value="table">Table</mat-option>
                 </mat-select>
             </mat-form-field>
-            <button class="menu-field remove-button" mat-flat-button (click)="remove($event)" mat-flat-button
+            <button *ngIf="chart === 'table'" class="menu-field remove-button" mat-flat-button (click)="download()"
+                matTooltip="Export the table data to a csv." matTooltipPosition="after">Export (.csv)</button>
+            <button class="menu-field remove-button" mat-flat-button (click)="remove($event)"
                 matTooltip="Remove this container from the view." matTooltipPosition="after">Remove</button>
         </mat-menu>
     </div>
