@@ -637,24 +637,28 @@ export class SimulationService {
             headwater: [],
             inNetwork: [],
             outOfNetwork: [],
-            outOfNetworkBoundarySource: [],
+            outOfNetworkSources: [],
             eventsEncountered: data.output.events_encountered,
         };
 
         // sorting out the segment geometries
         for (let segment of flowlines) {
             if (segment.comid === pourPointComid) {
+                // if it's the pour point
                 segments.pourPoint = segment;
-                // if it's in network and
-                // if it doesn't have any sources it's a headwater
             } else if (segment.wbd_huc12 == selectedHuc && !info.sources[segment.comid].length) {
+                // else if it's in the selected huc and
+                // if it doesn't have any sources it's a headwater
                 segments.headwater.push(segment);
-                // else if it's in the aoi huc
             } else if (segment.wbd_huc12 == selectedHuc) {
-                // if it has an out-of-network source it's a boundary segment
+                // else if it's in the selected huc but not a headwater
+                // it might be a boundary segment
                 let isBoundary = false;
+                // so compare to the info
                 for (let outOfNetworkSegment of info.boundary["out-of-network"]) {
                     if (info.sources[segment.comid].includes(outOfNetworkSegment)) {
+                        // if it has an out-of-network source it's a boundary segment
+                        // make sure it's only added once
                         if (!segments.boundary.includes(segment)) {
                             segments.boundary.push(segment);
                         }
@@ -662,12 +666,15 @@ export class SimulationService {
                     }
                 }
                 if (!isBoundary) {
+                    // otherwise it's an in network segment
                     segments.inNetwork.push(segment);
                 }
             } else {
                 segments.outOfNetwork.push(segment);
             }
         }
+
+        // TODO: get out of network sources to in boundary segments and display on map
 
         this.simData.network.segments = {
             pourPoint: segments.pourPoint,
@@ -709,6 +716,11 @@ export class SimulationService {
         this.updateState("pour_point_comid", null);
         this.updateState("upstream_distance", null);
         this.layerService.removeCatchment();
+    }
+
+    clearCatchmentLoadings(): void {
+        this.simData.network.catchment_loadings = {};
+        this.updateSimData();
     }
 
     updateSimData(key?, data?): void {

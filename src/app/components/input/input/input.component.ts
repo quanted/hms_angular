@@ -166,6 +166,7 @@ export class InputComponent implements OnInit {
 
     clearBaseJson(): void {
         this.simulation.updateSimData("base_json", null);
+        this.simulation.clearCatchmentLoadings();
     }
 
     applyGlobalSettings(): void {
