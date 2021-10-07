@@ -1,11 +1,10 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { SimulationService } from "../../../services/simulation.service";
 import { FormBuilder, FormGroup } from "@angular/forms";
 
 import { MatPaginator } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { LayerService } from "src/app/services/layer.service";
-import { registerLocaleData } from "@angular/common";
 
 @Component({
     selector: "app-comid-select-input",
@@ -13,6 +12,8 @@ import { registerLocaleData } from "@angular/common";
     styleUrls: ["./comid-select-input.component.css"],
 })
 export class ComidSelectInputComponent implements OnInit {
+    @ViewChild("loadingsList") private loadingsList: ElementRef;
+
     selectedComId = null;
     isBoundary = false;
 
@@ -38,43 +39,43 @@ export class ComidSelectInputComponent implements OnInit {
     sourceTypes = [
         {
             param: "Total Soluble P in mg/L",
-            displayName: "Total Soluble P in mg/L",
+            displayName: "Total Soluble P",
             longName: "Total Soluble P in mg/L",
             unit: "mg/L",
         },
         {
             param: "Total P in mg/L",
-            displayName: "Total P in mg/L",
+            displayName: "Total P",
             longName: "Total P in mg/L",
             unit: "mg/L",
         },
         {
             param: "Total Ammonia as N in mg/L",
-            displayName: "Total Ammonia as N in mg/L",
+            displayName: "Total Ammonia as N",
             longName: "Total Ammonia as N in mg/L",
             unit: "mg/L",
         },
         {
             param: "Total N in mg/L",
-            displayName: "Total N in mg/L",
+            displayName: "Total N",
             longName: "Total N in mg/L",
             unit: "mg/L",
         },
         {
             param: "Organic Matter in mg/L",
-            displayName: "Organic Matter in mg/L",
+            displayName: "Organic Matter",
             longName: "Organic Matter in mg/L",
             unit: "mg/L",
         },
         {
             param: "Organic Carbon in mg/L",
-            displayName: "Organic Carbon in mg/L",
+            displayName: "Organic Carbon",
             longName: "Organic Carbon in mg/L",
             unit: "mg/L",
         },
         {
             param: "CBOD in mg/L",
-            displayName: "CBOD in mg/L",
+            displayName: "CBOD",
             longName: "CBOD in mg/L",
             unit: "mg/L",
         },
@@ -127,8 +128,8 @@ export class ComidSelectInputComponent implements OnInit {
         });
 
         this.sourceForm = this.fb.group({
-            sourceOrigin: ["Point Source"],
-            sourceType: ["Total Soluble P in mg/L"],
+            sourceOrigin: ["Point Source in g/day"],
+            sourceType: ["Total Soluble P"],
             useConstLoadings: ["Constant"],
             constLoadingValue: [1],
             constLoadingMulti: [1],
@@ -148,11 +149,11 @@ export class ComidSelectInputComponent implements OnInit {
             for (let seg of simData.network.segments.boundary) {
                 if (this.selectedComId == seg.comid) {
                     this.isBoundary = true;
-                    this.sourceForm.get("sourceOrigin").setValue("Boundary");
+                    this.sourceForm.get("sourceOrigin").setValue("Boundary in mg/L");
                     break;
                 } else {
                     this.isBoundary = false;
-                    this.sourceForm.get("sourceOrigin").setValue("Point Source");
+                    this.sourceForm.get("sourceOrigin").setValue("Point Source in g/day");
                 }
             }
             this.selectForm.get("comid").setValue(simData.selectedComId);
@@ -260,10 +261,13 @@ export class ComidSelectInputComponent implements OnInit {
 
     // adds a source to the list to be added when apply button is pressed
     insertSource() {
-        const loadingChoice = this.sourceForm.get("useConstLoadings").value;
-
         const origin = this.sourceForm.get("sourceOrigin").value;
         const sourceType = this.sourceForm.get("sourceType").value;
+        const loadingChoice = this.sourceForm.get("useConstLoadings").value;
+
+        console.log("insert: origin: ", origin, ", sourceType: ", sourceType, ", ", loadingChoice);
+        console.log("sourceTypes: ", this.sourceTypes);
+
         const sim$type = this.sourceTypes.find((field) => {
             if (field.displayName == sourceType) return field;
         }).param;
@@ -285,17 +289,18 @@ export class ComidSelectInputComponent implements OnInit {
 
         // only one entry per sim$type
         const foundSources = this.sources.filter((source) => {
-            if (source.sim$type === sim$type) return source;
+            if (source.sim$type === sim$type && source.origin === origin) return source;
         });
         if (foundSources.length < 1) {
             this.sources.push(source);
             this.cancelAdd();
+            this.scrollToBottom();
         }
     }
 
     removeSource(sourceToRemove): void {
         this.sources = this.sources.filter((source) => {
-            if (source.sim$type !== sourceToRemove.sim$type) return source;
+            if (source.sim$type !== sourceToRemove.sim$type || source.origin !== sourceToRemove.origin) return source;
         });
     }
 
@@ -309,6 +314,14 @@ export class ComidSelectInputComponent implements OnInit {
 
         this.columnData = [];
         this.columnNames = [];
+    }
+
+    scrollToBottom(): void {
+        this.loadingsList.nativeElement.scroll({
+            top: this.loadingsList.nativeElement.scrollHeight,
+            left: 0,
+            behavior: "smooth",
+        });
     }
 }
 

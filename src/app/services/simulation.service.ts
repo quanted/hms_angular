@@ -902,7 +902,7 @@ export class SimulationService {
         } else state = {};
 
         state[param] = value;
-        this.cookieService.set("sim_setup", JSON.stringify(state));
+        this.cookieService.set("sim_setup", JSON.stringify(state), { expires: 7 });
     }
 
     resetSimulation(): void {
