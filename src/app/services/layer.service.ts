@@ -295,7 +295,6 @@ export class LayerService {
             }
         }
         for (let layer of this.simLayers) {
-            console.log("simLayer: ", layer);
             if (layer.show) {
                 this.map.addLayer(layer.layer);
             }
