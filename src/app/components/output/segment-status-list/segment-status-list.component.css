@@ -1,6 +1,6 @@
-.scroll {
-    overflow-y: auto;
-    max-height: 60vh;
+:host {
+    min-height: 0;
+    max-height: 100%;
 }
 
 .items {
@@ -11,4 +11,13 @@
 .item {
 	flex: 0 0 50%;
     box-sizing: border-box;
+}
+
+.section-item {
+    height: 100%;
+    overflow: hidden;
+}
+
+.scroll {
+    overflow-y: auto;
 }

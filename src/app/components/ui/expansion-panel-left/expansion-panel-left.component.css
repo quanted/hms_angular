@@ -1,4 +1,5 @@
 .panel-left {
+    pointer-events: auto;
     display: flex;
     min-height: 0;
     max-height: 100%;

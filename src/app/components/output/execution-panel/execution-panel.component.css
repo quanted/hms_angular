@@ -1,4 +1,10 @@
 :host {
     min-height: 0;
-    overflow-y: auto;
+}
+
+.execution-container {
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    min-height: 0;
+    max-height: 100%;
 }
