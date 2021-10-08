@@ -51,8 +51,8 @@
     </div> -->
 
     <div><strong>Loadings</strong></div>
-    <div class="scroll-pane list-short section-item" #loadingsList>
-      <div *ngFor="let source of sources" class="button">
+    <div class="scroll-pane list-short section-item" id="loadingsList">
+      <div *ngFor="let source of sources" class="button" (changes)="autoScrollUp()">
           <div class="loading-button">
             <div class="vertical-center">{{ source.origin }} - {{ source.dataType }}: {{ source.type }}</div>
             <mat-icon title="Remove Source" (click)="removeSource(source)">delete</mat-icon>

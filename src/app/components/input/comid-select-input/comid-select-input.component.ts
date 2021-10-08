@@ -12,7 +12,7 @@ import { LayerService } from "src/app/services/layer.service";
     styleUrls: ["./comid-select-input.component.css"],
 })
 export class ComidSelectInputComponent implements OnInit {
-    @ViewChild("loadingsList") private loadingsList: ElementRef;
+    container: HTMLElement;
 
     selectedComId = null;
     isBoundary = false;
@@ -294,7 +294,7 @@ export class ComidSelectInputComponent implements OnInit {
         if (foundSources.length < 1) {
             this.sources.push(source);
             this.cancelAdd();
-            this.scrollToBottom();
+            this.autoScrollUp();
         }
     }
 
@@ -316,12 +316,11 @@ export class ComidSelectInputComponent implements OnInit {
         this.columnNames = [];
     }
 
-    scrollToBottom(): void {
-        this.loadingsList.nativeElement.scroll({
-            top: this.loadingsList.nativeElement.scrollHeight,
-            left: 0,
-            behavior: "smooth",
-        });
+    autoScrollUp() {
+        console.log("autoscroll!");
+        this.container = document.getElementById("loadingsList");
+        console.log("container: ", this.container);
+        this.container.scrollTop = this.container.scrollHeight;
     }
 }
 

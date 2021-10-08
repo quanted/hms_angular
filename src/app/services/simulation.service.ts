@@ -641,8 +641,11 @@ export class SimulationService {
             eventsEncountered: data.output.events_encountered,
         };
 
+        console.log("info: ", info);
         // sorting out the segment geometries
         for (let segment of flowlines) {
+            console.log("segment.comid: ", segment.comid);
+            console.log("info.sources[segment.comid]: ", info.sources[segment.comid]);
             if (segment.comid === pourPointComid) {
                 // if it's the pour point
                 segments.pourPoint = segment;
@@ -700,18 +703,35 @@ export class SimulationService {
     }
 
     clearCatchment(): void {
-        this.simData.network.segments.boundary = [];
-        this.simData.network.segments.headwater = [];
-        this.simData.network.segments.inNetwork = [];
-        this.simData.network.segments.pourPoint = null;
-        this.simData.network.segments.totalNumSegments = null;
-        this.simData.network.sources = null;
-        this.simData.network.order = null;
-        this.simData.network.network = null;
-        this.simData.network.catchment_data = {};
-        this.simData.network.catchment_loadings = {};
+        this.simData.network = {
+            pour_point_comid: null,
+            upstream_distance: null,
+            segments: {
+                boundary: [],
+                headwater: [],
+                inNetwork: [],
+                pourPoint: null,
+                totalNumSegments: null,
+            },
+            sources: null,
+            order: null,
+            network: null,
+            catchment_data: {},
+            catchment_loadings: {},
+        };
+        // this.simData.network.segments.boundary = [];
+        // this.simData.network.segments.headwater = [];
+        // this.simData.network.segments.inNetwork = [];
+        // this.simData.network.segments.pourPoint = null;
+        // this.simData.network.segments.totalNumSegments = null;
+        // this.simData.network.sources = null;
+        // this.simData.network.order = null;
+        // this.simData.network.network = null;
+        // this.simData.network.catchment_data = {};
+        // this.simData.network.catchment_loadings = {};
         this.simData.selectedComId = null;
         this.simData.base_json = null;
+        this.simData.waiting = false;
         this.updateSimData("selectedCatchment", null);
         this.updateState("pour_point_comid", null);
         this.updateState("upstream_distance", null);
