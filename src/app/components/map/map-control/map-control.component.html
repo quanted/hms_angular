@@ -3,17 +3,18 @@
     <div class="scroll-pane-right">
         <div class="container-item">
             <div>Basemaps</div>
-            <div *ngFor="let map of basemaps" class="button" [class.active]=map.show (click)="toggleBasemap(map)" matTooltip="Select Basemap">
+            <div *ngFor="let map of basemaps" class="button" [class.active]=map.show (click)="toggleBasemap(map)"
+                matTooltip="Select Basemap">
                 {{ map.name }}
-            </div>      
+            </div>
         </div>
-        
+
         <div class="container-item">
             <div>Overlays</div>
             <app-layer-control *ngFor="let overlay of overlays" [feature]="overlay"></app-layer-control>
         </div>
-    
-        <div class="container-item" *ngIf="simFeatures.length" >
+
+        <div class="container-item" *ngIf="simFeatures.length">
             <div class="form-row">
                 <div class="vertical-center">Study Area</div>
                 <div class="segment-status" (click)="centerOnAOI()">Center Map</div>

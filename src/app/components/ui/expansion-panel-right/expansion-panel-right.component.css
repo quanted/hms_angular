@@ -1,8 +1,9 @@
 .panel-right {
     display: grid;
     grid-template-rows: auto 1fr;
-    margin: .25rem;
-    background-color: var(--main-background);
+    height: 100%;
+    box-sizing: border-box;
+    padding: .25em;
 }
 
 .collapse-icon-right {
@@ -15,6 +16,7 @@
 .panel-right-open {
     display: grid;
     grid-template-columns: auto 1fr;
+    min-height: 0;
 }
 
 app-map-control {

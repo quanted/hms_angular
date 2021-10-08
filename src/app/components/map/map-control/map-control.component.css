@@ -1,6 +1,15 @@
+:host {
+    min-height: 0;
+}
+
 .grid-container {
     width: 180px;
-    max-height: var(--main-max-panel-height);
     display: grid;
+    grid-template-rows: auto 1fr;
     row-gap: var(--row-gap);
+    max-height: 100%;
+}
+
+.container-item {
+    overflow-y: auto;
 }
