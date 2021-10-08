@@ -544,6 +544,9 @@ export class SimulationService {
                     };
                     this.getHuc(coords);
                     this.getCatchment(coords);
+                } else {
+                    console.log("error>>>: ", data);
+                    this.updateSimData("waiting", false);
                 }
             },
             (error) => {
