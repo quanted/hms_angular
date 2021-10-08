@@ -13,6 +13,7 @@ import { SimulationService } from "src/app/services/simulation.service";
 export class InputComponent implements OnInit {
     aoiForm: FormGroup;
     moduleForm: FormGroup;
+    variableForm: FormGroup;
     pSetUpForm: FormGroup;
     pSetupAdvancedForm: FormGroup;
     localeForm: FormGroup;
@@ -31,6 +32,8 @@ export class InputComponent implements OnInit {
 
     jsonFlags = [];
     baseJson = false;
+    AQTModule = "none";
+    separateNitrogen = false;
 
     useFixStepSize = false;
 
@@ -68,6 +71,14 @@ export class InputComponent implements OnInit {
                 }
             }
             this.moduleForm = this.fb.group(moduleFormFields);
+        });
+
+        this.variableForm = this.fb.group({
+            nType: ["total"],
+            ammonia: [true],
+            nitrate: [],
+            pType: ["total"],
+            orgType: ["matter"],
         });
 
         this.pSetUpForm = this.fb.group({
@@ -131,6 +142,7 @@ export class InputComponent implements OnInit {
                 }
             }
             this.moduleForm = this.fb.group(moduleFormFields);
+            this.setAvailableSVs();
         }
         this.baseJson = simData.base_json;
         this.simExecuting = simData.sim_executing;
@@ -161,10 +173,32 @@ export class InputComponent implements OnInit {
     }
 
     getBaseJSONByFlags(): void {
-        this.simulation.getBaseJsonByFlags(this.moduleForm.value);
+        if (this.AQTModule !== "none") {
+            this.simulation.getBaseJsonByFlags(this.moduleForm.value);
+        }
+    }
+
+    setAvailableSVs(): void {
+        let form = this.moduleForm.value;
+        const n = form["Nitrogen"];
+        const p = form["Phosphorus"];
+        const o = form["Organic Matter"];
+
+        if (n && !p && !o) this.AQTModule = "nitrogen";
+        if (!n && p && !o) this.AQTModule = "phosphorus";
+        if (n && p && !o) this.AQTModule = "nutrients";
+        if (p && o) this.AQTModule = "organic";
+        if (!p && o) this.AQTModule = "organic-nop";
+
+        if (!n && !p && !o) this.AQTModule = "none";
+
+        let nType = this.variableForm.get("nType").value;
+        nType == "separate" ? (this.separateNitrogen = true) : (this.separateNitrogen = false);
     }
 
     clearBaseJson(): void {
+        this.simulation.updateSimData("json_flags", []);
+        this.simulation.updateState("json_flags", null);
         this.simulation.updateSimData("base_json", null);
         this.simulation.clearCatchmentLoadings();
     }

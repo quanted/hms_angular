@@ -58,10 +58,38 @@
 
             <!-- Aquatox section -->
             <div class="container-item" *ngIf="network.network">
-                <div class="section-item" *ngIf="jsonFlags && !baseJson" [formGroup]="moduleForm">
-                    <div class="centered"><strong>Select Simulation</strong></div>
-                    <div>Simulation Selection Options</div>
-                    <div *ngFor='let flag of jsonFlags'><input formControlName="{{flag}}" type="checkbox" /> {{ flag }}
+                <!-- base_json and variable initialization -->
+                <div *ngIf="jsonFlags && !baseJson" (change)="setAvailableSVs()">
+                    <div class="section-item" [formGroup]="moduleForm">
+                        <div class="centered"><strong>Simulation Selection Options</strong></div>
+                        <div *ngFor='let flag of jsonFlags'>
+                            <input formControlName="{{flag}}" type="checkbox" /> {{ flag }}
+                        </div>
+                    </div>
+
+                    <!-- setup SVs available to segments -->
+                    <div class="section-item" [formGroup]="variableForm">
+                        <div class="centered"><strong>Variable Selection</strong></div>
+                        <div id="nitrogen" *ngIf="AQTModule == 'nitrogen' || AQTModule == 'nutrients' || AQTModule == 'organic' || AQTModule == 'organic-nop'">
+                            <div><strong>Nitrogen</strong></div>
+                            <div>Total N <input type="radio" name="nType" formControlName="nType" value="total" /></div>
+                            <div>Separate Nitrogen Components <input type="radio" name="nType" formControlName="nType" value="separate" /></div>
+                            <div *ngIf="separateNitrogen">
+                                <div>Total Ammonia as N <input type="checkbox" formControlName="ammonia" /></div>
+                                <div>Nitrate as N <input type="checkbox" formControlName="nitrate" /></div>
+                            </div>
+                        </div>
+                        <div id="phosphorus" *ngIf="AQTModule == 'phosphorus' || AQTModule == 'nutrients' || AQTModule == 'organic'">
+                            <div><strong>Phosphorus</strong></div>
+                            <div>Total P <input type="radio" name="pType" formControlName="pType" value="total" /></div>
+                            <div>Total Soluble P <input type="radio" name="pType" formControlName="pType" value="soluable" /></div>
+                        </div>
+                        <div id="organic" *ngIf="AQTModule == 'organic' || AQTModule == 'organic-nop'">
+                            <div><strong>Organic Matter</strong></div>
+                            <div>Organic Matter <input type="radio" name="orgType" formControlName="orgType" value="matter" /></div>
+                            <div>Organic Carbon <input type="radio" name="orgType" formControlName="orgType" value="carbon" /></div>
+                            <div>CBOD <input type="radio" name="orgType" formControlName="orgType" value="cbod" /></div>
+                        </div>
                     </div>
                     <div class="button" (click)="getBaseJSONByFlags()">Setup Simulation</div>
                 </div>
