@@ -21,6 +21,8 @@ export class SimulationService {
     STATUS_CHECK_INTERVAL = 1000; // 1000 = 1 second interval
     statusCheck: ReturnType<typeof setInterval>; // interval that checks with backend and updates sim status
 
+    MAX_SEARCH_DISTANCE = 100;
+
     basicPSetupFields = [
         {
             param: "FirstDay",
@@ -594,6 +596,16 @@ export class SimulationService {
     }
 
     buildStreamNetwork(comid: string, distance: string): void {
+        try {
+            let d = parseInt(distance);
+            if (d > this.MAX_SEARCH_DISTANCE) {
+                d = this.MAX_SEARCH_DISTANCE;
+                distance = d.toString();
+            }
+        } catch {
+            console.log("unable to parse distance");
+        }
+        console.log("distance: ", distance);
         this.updateSimData("waiting", true);
         forkJoin([this.waters.getNetworkGeometry(comid, distance), this.hms.getNetworkInfo(comid, distance)]).subscribe(
             (networkData) => {
@@ -634,51 +646,96 @@ export class SimulationService {
         const pourPointComid = data.output.resolved_starts[0].comid;
         const flowlines = data.output.flowlines_traversed;
 
+        const networkComids = Object.keys(info.sources);
+
         const segments = {
             pourPoint: null,
             boundary: [],
             headwater: [],
             inNetwork: [],
-            outOfNetwork: [],
-            outOfNetworkSources: [],
+            outOfHUC: [],
+            outOfHUCSources: [],
             eventsEncountered: data.output.events_encountered,
         };
 
         console.log("info: ", info);
+        console.log("fl: ", flowlines);
+        console.log("networkIDs: ", networkComids);
+
+        let geoSegment = null;
         // sorting out the segment geometries
-        for (let segment of flowlines) {
-            console.log("segment.comid: ", segment.comid);
-            console.log("info.sources[segment.comid]: ", info.sources[segment.comid]);
-            if (segment.comid === pourPointComid) {
-                // if it's the pour point
-                segments.pourPoint = segment;
-            } else if (segment.wbd_huc12 == selectedHuc && !info.sources[segment.comid].length) {
-                // else if it's in the selected huc and
-                // if it doesn't have any sources it's a headwater
-                segments.headwater.push(segment);
-            } else if (segment.wbd_huc12 == selectedHuc) {
-                // else if it's in the selected huc but not a headwater
-                // it might be a boundary segment
-                let isBoundary = false;
-                // so compare to the info
-                for (let outOfNetworkSegment of info.boundary["out-of-network"]) {
-                    if (info.sources[segment.comid].includes(outOfNetworkSegment)) {
-                        // if it has an out-of-network source it's a boundary segment
-                        // make sure it's only added once
-                        if (!segments.boundary.includes(segment)) {
-                            segments.boundary.push(segment);
+        for (let comid of networkComids) {
+            // find the corresponding geoJson object
+            geoSegment = flowlines.find((fl) => {
+                return fl.comid.toString() === comid;
+            });
+
+            if (geoSegment) {
+                if (comid === pourPointComid) {
+                    // if it's the pour point
+                    segments.pourPoint = geoSegment;
+                } else if (geoSegment.wbd_huc12 == selectedHuc && !info.sources[comid].length) {
+                    // else if it's in the selected huc and
+                    // if it doesn't have any sources it's a headwater
+                    segments.headwater.push(geoSegment);
+                } else if (geoSegment.wbd_huc12 == selectedHuc) {
+                    // else if it's in the selected huc but not a headwater
+                    // it might be a boundary segment
+                    let isBoundary = false;
+                    // so compare to the info
+                    for (let outOfNetworkSegment of info.boundary["out-of-network"]) {
+                        if (info.sources[comid].includes(outOfNetworkSegment)) {
+                            // if it has an out-of-network source it's a boundary segment
+                            // make sure it's only added once
+                            if (!segments.boundary.includes(geoSegment)) {
+                                segments.boundary.push(geoSegment);
+                            }
+                            isBoundary = true;
                         }
-                        isBoundary = true;
                     }
+                    if (!isBoundary) {
+                        // otherwise it's an in network segment
+                        segments.inNetwork.push(geoSegment);
+                    }
+                } else {
+                    segments.outOfHUC.push(geoSegment);
                 }
-                if (!isBoundary) {
-                    // otherwise it's an in network segment
-                    segments.inNetwork.push(segment);
-                }
-            } else {
-                segments.outOfNetwork.push(segment);
             }
         }
+
+        // for (let segment of flowlines) {
+        //     console.log("segment.comid: ", segment.comid);
+        //     console.log("info.sources[segment.comid]: ", info.sources[segment.comid]);
+        //     if (segment.comid === pourPointComid) {
+        //         // if it's the pour point
+        //         segments.pourPoint = segment;
+        //     } else if (segment.wbd_huc12 == selectedHuc && !info.sources[segment.comid].length) {
+        //         // else if it's in the selected huc and
+        //         // if it doesn't have any sources it's a headwater
+        //         segments.headwater.push(segment);
+        //     } else if (segment.wbd_huc12 == selectedHuc) {
+        //         // else if it's in the selected huc but not a headwater
+        //         // it might be a boundary segment
+        //         let isBoundary = false;
+        //         // so compare to the info
+        //         for (let outOfNetworkSegment of info.boundary["out-of-network"]) {
+        //             if (info.sources[segment.comid].includes(outOfNetworkSegment)) {
+        //                 // if it has an out-of-network source it's a boundary segment
+        //                 // make sure it's only added once
+        //                 if (!segments.boundary.includes(segment)) {
+        //                     segments.boundary.push(segment);
+        //                 }
+        //                 isBoundary = true;
+        //             }
+        //         }
+        //         if (!isBoundary) {
+        //             // otherwise it's an in network segment
+        //             segments.inNetwork.push(segment);
+        //         }
+        //     } else {
+        //         segments.outOfNetwork.push(segment);
+        //     }
+        // }
 
         // TODO: get out of network sources to in boundary segments and display on map
 
