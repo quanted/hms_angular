@@ -4,20 +4,16 @@
     inset: 0;
     width: 500px;
     height: var(--main-max-panel-height);
-    padding-left: 1rem;
-    padding-right: 1rem;
-    padding-bottom: 1rem;
+    padding-left: .25rem;
+    padding-right: .25rem;
+    padding-bottom: .25rem;
+    margin-right: .25rem;
     overflow-y: scroll;
     background-color: var(--main-color);
 }
 
-.container > h2 {
-    margin: 0;
-    padding-top: .5rem;
-}
-
 .control {
-    margin-bottom: 0.25rem;
+    padding: .25rem;
 }
 
 table, td {
