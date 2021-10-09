@@ -5,6 +5,7 @@ import { BehaviorSubject, forkJoin, Observable } from "rxjs";
 
 import { CookieService } from "ngx-cookie-service";
 
+import { environment } from "src/environments/environment";
 import { HmsService } from "./hms.service";
 import { WatersService } from "./waters.service";
 
@@ -228,6 +229,35 @@ export class SimulationService {
             }
         });
     }
+
+    // Available loadings are as follows:
+
+    // Phosphorus:   MS_Phosphorus.json   (phosphorus button is the only one selected)
+    // Total Soluble P in mg/L or  (as Non-Point-Source load, use Alt_Loadings[2]) or
+    // Total P in mg/L   (set "TP_NPS" to true)
+
+    // Nitrogen: MS_Nitrogen.json   (nitrogen button is the only one selected)
+    // Total Ammonia as N in mg/L (Alt_Loadings[2] for NPS) and Nitrate as N in mg/L (Alt_Loadings[2] for NPS)  or
+    // Total N in mg/L (set "TN_NPS" in "TNO3Obj" to true)
+
+    // Nutrients:  MS_Nutrients.json  (nitrogen and phosphorus buttons selected)
+    // Both the phosphorus and nitrogen options above.
+
+    // OM:  MS_OM.json  (organic matter and phosphorus buttons selected, state of the nitrogen button is not relevant)
+    // Both the phosphorus and nitrogen options above.
+    // Also:  in "TDissRefrDetr" "DetritalInputRecordType":
+    // Organic Matter in mg/L ("DataType" = 2) or
+    // Organic Carbon in mg/L ("DataType" = 1) or
+    // CBOD in mg/L ("DataType" = 0)
+    // Optional:  Percent_Part -- particulate vs. dissolved breakdown
+    // Optional: Percent_Refr -- refractory (slow reacting) vs. labile (fast reacting) breakdown
+
+    // Important Note:  any loadings in the four organic matter types will be disregarded in favor of this somewhat unique input record ("DetritalInputRecordType")
+    // MS_OM_NoP.json  (organic matter is selected, phosphorus button is not selected, state of the nitrogen button is not relevant)
+    // Same as OM, no phosphorus data
+    // An organic matter simulation requires nitrogen to be modeled.
+
+    getAvailableVariables(): any {}
 
     getBasicFields(): any {
         return {
@@ -579,9 +609,15 @@ export class SimulationService {
         this.waters.getCatchmentData(coords.lat, coords.lng).subscribe(
             (data) => {
                 if (data) {
-                    this.layerService.addFeature("Catchment", data);
-                    this.updateSimData("selectedCatchment", data);
-                    this.updateState("pour_point_comid", data.features[0].properties.FEATUREID);
+                    if (this.simData.selectedHuc.properties.HUC_12 == data.features[0].properties.WBD_HUC12) {
+                        this.layerService.addFeature("Catchment", data);
+                        this.updateSimData("selectedCatchment", data);
+                        this.updateState("pour_point_comid", data.features[0].properties.FEATUREID);
+                    } else {
+                        console.log(
+                            `error>>> selected catchment is not contained within huc ${data.features[0].properties.WBD_HUC12}`
+                        );
+                    }
                 }
                 this.updateSimData("waiting", false);
             },
@@ -605,7 +641,6 @@ export class SimulationService {
         } catch {
             console.log("unable to parse distance");
         }
-        console.log("distance: ", distance);
         this.updateSimData("waiting", true);
         forkJoin([this.waters.getNetworkGeometry(comid, distance), this.hms.getNetworkInfo(comid, distance)]).subscribe(
             (networkData) => {
@@ -620,6 +655,10 @@ export class SimulationService {
                         if (data.networkInfo) info = data.networkInfo;
                         if (data.networkGeometry) geom = data.networkGeometry;
                     }
+                    // console.log("pour-point: ", this.simData.network.pour_point_comid);
+                    // console.log("huc: ", this.simData.selectedHuc.properties.HUC_12);
+                    // console.log("up/down: ", geom);
+                    // console.log("info: ", info);
                     if (!info.sources) {
                         this.updateSimData("waiting", false);
                         return;
@@ -643,9 +682,8 @@ export class SimulationService {
 
     prepareNetworkGeometry(data, info): void {
         const selectedHuc = this.simData.selectedHuc.properties.HUC_12;
-        const pourPointComid = data.output.resolved_starts[0].comid;
+        const pourPointComid = this.simData.network.pour_point_comid.toString();
         const flowlines = data.output.flowlines_traversed;
-
         const networkComids = Object.keys(info.sources);
 
         const segments = {
@@ -658,27 +696,38 @@ export class SimulationService {
             eventsEncountered: data.output.events_encountered,
         };
 
-        console.log("info: ", info);
-        console.log("fl: ", flowlines);
-        console.log("networkIDs: ", networkComids);
-
-        let geoSegment = null;
         // sorting out the segment geometries
         for (let comid of networkComids) {
             // find the corresponding geoJson object
-            geoSegment = flowlines.find((fl) => {
+            let geoSegment = flowlines.find((fl) => {
                 return fl.comid.toString() === comid;
             });
+            // find it's entry in info.network array
+            let segmentInfo = info.network.find((segment) => {
+                // the first element is the comid
+                return geoSegment.comid.toString() === segment[0];
+            });
+            if (geoSegment && segmentInfo) {
+                // the last element is the parent huc
+                let geoSegmentHuc = segmentInfo[segmentInfo.length - 1];
+                if (geoSegment.wbd_huc12.toString() !== geoSegmentHuc) {
+                    console.log(`ERROR>>> PARENT HUC MISMATCH for Comid ${comid}!`);
+                    console.log("aoi huc: ", selectedHuc);
+                    console.log(`hms/networkInfo ${environment.apiURL}/api/info/streamnetwork: `, geoSegmentHuc);
+                    console.log(
+                        `waters/up-down ${environment.watersUrl}UpstreamDownstream.Service: `,
+                        geoSegment.wbd_huc12
+                    );
+                }
 
-            if (geoSegment) {
                 if (comid === pourPointComid) {
                     // if it's the pour point
                     segments.pourPoint = geoSegment;
-                } else if (geoSegment.wbd_huc12 == selectedHuc && !info.sources[comid].length) {
+                } else if (geoSegmentHuc == selectedHuc && !info.sources[comid].length) {
                     // else if it's in the selected huc and
                     // if it doesn't have any sources it's a headwater
                     segments.headwater.push(geoSegment);
-                } else if (geoSegment.wbd_huc12 == selectedHuc) {
+                } else if (geoSegmentHuc == selectedHuc) {
                     // else if it's in the selected huc but not a headwater
                     // it might be a boundary segment
                     let isBoundary = false;
@@ -702,40 +751,6 @@ export class SimulationService {
                 }
             }
         }
-
-        // for (let segment of flowlines) {
-        //     console.log("segment.comid: ", segment.comid);
-        //     console.log("info.sources[segment.comid]: ", info.sources[segment.comid]);
-        //     if (segment.comid === pourPointComid) {
-        //         // if it's the pour point
-        //         segments.pourPoint = segment;
-        //     } else if (segment.wbd_huc12 == selectedHuc && !info.sources[segment.comid].length) {
-        //         // else if it's in the selected huc and
-        //         // if it doesn't have any sources it's a headwater
-        //         segments.headwater.push(segment);
-        //     } else if (segment.wbd_huc12 == selectedHuc) {
-        //         // else if it's in the selected huc but not a headwater
-        //         // it might be a boundary segment
-        //         let isBoundary = false;
-        //         // so compare to the info
-        //         for (let outOfNetworkSegment of info.boundary["out-of-network"]) {
-        //             if (info.sources[segment.comid].includes(outOfNetworkSegment)) {
-        //                 // if it has an out-of-network source it's a boundary segment
-        //                 // make sure it's only added once
-        //                 if (!segments.boundary.includes(segment)) {
-        //                     segments.boundary.push(segment);
-        //                 }
-        //                 isBoundary = true;
-        //             }
-        //         }
-        //         if (!isBoundary) {
-        //             // otherwise it's an in network segment
-        //             segments.inNetwork.push(segment);
-        //         }
-        //     } else {
-        //         segments.outOfNetwork.push(segment);
-        //     }
-        // }
 
         // TODO: get out of network sources to in boundary segments and display on map
 
