@@ -34,6 +34,9 @@ export class InputComponent implements OnInit {
     baseJson = false;
     AQTModule = "none";
     separateNitrogen = false;
+    variableFormValid = false;
+
+    userAvailableVars = [];
 
     useFixStepSize = false;
 
@@ -74,11 +77,11 @@ export class InputComponent implements OnInit {
         });
 
         this.variableForm = this.fb.group({
-            nType: ["total"],
-            ammonia: [true],
-            nitrate: [],
-            pType: ["total"],
-            orgType: ["matter"],
+            nType: ["Total N"],
+            "Total Ammonia as N": [true],
+            "Nitrate as N": [true],
+            pType: ["Total P"],
+            orgType: ["Organic Matter"],
         });
 
         this.pSetUpForm = this.fb.group({
@@ -173,12 +176,16 @@ export class InputComponent implements OnInit {
     }
 
     getBaseJSONByFlags(): void {
-        if (this.AQTModule !== "none") {
+        if (this.variableFormValid) {
+            this.simulation.updateSimData("userAvailableVars", this.userAvailableVars);
             this.simulation.getBaseJsonByFlags(this.moduleForm.value);
+        } else {
+            console.log("error>>> at least one simulation option must be selected");
         }
     }
 
     setAvailableSVs(): void {
+        this.variableFormValid = true;
         let form = this.moduleForm.value;
         const n = form["Nitrogen"];
         const p = form["Phosphorus"];
@@ -194,6 +201,28 @@ export class InputComponent implements OnInit {
 
         let nType = this.variableForm.get("nType").value;
         nType == "separate" ? (this.separateNitrogen = true) : (this.separateNitrogen = false);
+
+        const varForm = this.variableForm.value;
+        const availVars = [];
+        if (this.AQTModule !== "none") {
+            if (nType == "Total N") {
+                availVars.push("Total N");
+            } else {
+                if (varForm["Total Ammonia as N"]) availVars.push("Total Ammonia as N");
+                if (varForm["Nitrate as N"]) availVars.push("Nitrate as N");
+            }
+            if (this.AQTModule == "phosphorus" || this.AQTModule == "nutrients" || this.AQTModule == "organic") {
+                availVars.push(varForm.pType);
+            }
+            if (this.AQTModule == "organic" || this.AQTModule == "organic-nop") {
+                availVars.push(varForm.orgType);
+            }
+        }
+        this.userAvailableVars = availVars;
+
+        if (this.AQTModule == "none") this.variableFormValid = false;
+        if (nType == "separate" && !varForm["Total Ammonia as N"] && !varForm["Nitrate as N"])
+            this.variableFormValid = false;
     }
 
     clearBaseJson(): void {

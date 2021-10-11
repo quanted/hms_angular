@@ -136,6 +136,8 @@ export class SimulationService {
     // for future use
     SiteTypes = ["Pond", "Stream", "Reservr1D", "Lake", "Enclosure", "Estuary", "TribInput", "Marine"];
 
+    userAvailableVars = [];
+
     constructor(
         private hms: HmsService,
         private waters: WatersService,
@@ -256,8 +258,6 @@ export class SimulationService {
     // MS_OM_NoP.json  (organic matter is selected, phosphorus button is not selected, state of the nitrogen button is not relevant)
     // Same as OM, no phosphorus data
     // An organic matter simulation requires nitrogen to be modeled.
-
-    getAvailableVariables(): any {}
 
     getBasicFields(): any {
         return {
@@ -615,7 +615,7 @@ export class SimulationService {
                         this.updateState("pour_point_comid", data.features[0].properties.FEATUREID);
                     } else {
                         console.log(
-                            `error>>> selected catchment is not contained within huc ${data.features[0].properties.WBD_HUC12}`
+                            `error>>> selected catchment is not contained within huc ${this.simData.selectedHuc.properties.HUC_12}`
                         );
                     }
                 }
@@ -794,16 +794,7 @@ export class SimulationService {
             catchment_data: {},
             catchment_loadings: {},
         };
-        // this.simData.network.segments.boundary = [];
-        // this.simData.network.segments.headwater = [];
-        // this.simData.network.segments.inNetwork = [];
-        // this.simData.network.segments.pourPoint = null;
-        // this.simData.network.segments.totalNumSegments = null;
-        // this.simData.network.sources = null;
-        // this.simData.network.order = null;
-        // this.simData.network.network = null;
-        // this.simData.network.catchment_data = {};
-        // this.simData.network.catchment_loadings = {};
+
         this.simData.selectedComId = null;
         this.simData.base_json = null;
         this.simData.waiting = false;
@@ -848,6 +839,8 @@ export class SimulationService {
                 this.simData.Location.Locale = data.AQTSeg.Location.Locale;
                 this.simData.Location.Remin = data.AQTSeg.Location.Remin;
                 this.simData.base_json = data;
+            } else if (key == "userAvailableVars") {
+                this.simData[key] = data;
             } else if (key == "sv") {
                 this.simData[key] = data;
             } else if (typeof data === "string" || typeof data === "number" || typeof data === "boolean") {

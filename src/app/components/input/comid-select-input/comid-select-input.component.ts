@@ -36,7 +36,15 @@ export class ComidSelectInputComponent implements OnInit {
     // Optional:  Percent_Part -- particulate vs. dissolved breakdown
     // Optional: Percent_Refr -- refractory (slow reacting) vs. labile (fast reacting) breakdown
 
-    sourceTypes = [
+    userAvailableVars = null;
+
+    defaultSourceTypes = [
+        {
+            param: "Total P in mg/L",
+            displayName: "Total P",
+            longName: "Total P in mg/L",
+            unit: "mg/L",
+        },
         {
             param: "Total Soluble P in mg/L",
             displayName: "Total Soluble P",
@@ -44,9 +52,9 @@ export class ComidSelectInputComponent implements OnInit {
             unit: "mg/L",
         },
         {
-            param: "Total P in mg/L",
-            displayName: "Total P",
-            longName: "Total P in mg/L",
+            param: "Total N in mg/L",
+            displayName: "Total N",
+            longName: "Total N in mg/L",
             unit: "mg/L",
         },
         {
@@ -56,9 +64,9 @@ export class ComidSelectInputComponent implements OnInit {
             unit: "mg/L",
         },
         {
-            param: "Total N in mg/L",
-            displayName: "Total N",
-            longName: "Total N in mg/L",
+            param: "Nitrate as N in mg/L",
+            displayName: "Nitrate as N",
+            longName: "Nitrate as N in mg/L",
             unit: "mg/L",
         },
         {
@@ -80,6 +88,8 @@ export class ComidSelectInputComponent implements OnInit {
             unit: "mg/L",
         },
     ];
+
+    sourceTypes = [];
 
     parameters: SegmentParameter[] = [];
     sources: SegmentParameter[] = [];
@@ -144,6 +154,16 @@ export class ComidSelectInputComponent implements OnInit {
         if (this.selectedComId !== simData.selectedComId) {
             this.cancelAdd();
         }
+
+        this.userAvailableVars = simData.userAvailableVars;
+        this.sourceTypes = [];
+        for (let i = 0; i < this.userAvailableVars.length; i++) {
+            const foundVar = this.defaultSourceTypes.find((sourceType) => {
+                return sourceType.displayName == this.userAvailableVars[i];
+            });
+            if (foundVar) this.sourceTypes.push(foundVar);
+        }
+
         this.selectedComId = simData.selectedComId;
         if (this.selectedComId) {
             for (let seg of simData.network.segments.boundary) {
