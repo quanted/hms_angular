@@ -130,7 +130,6 @@ export class PlotContainerComponent implements OnChanges {
     setTableData() {
         // Reset tables values
         this.tableColumnData = [];
-
         if (Object.keys(this.catchment_data).length > 0) {
             // Loop over each catchment 
             for (let i = 0; i < this.dates.length; i++) {
@@ -142,7 +141,7 @@ export class PlotContainerComponent implements OnChanges {
                         obj[this.tableColumnNames[0]] = this.dates[i].toString().split("GMT")[0];
                         obj[this.tableColumnNames[1]] = this.dropListData.selectedCatchments[j];
                         obj[this.tableColumnNames[k]] =
-                            this.catchment_data[this.dropListData.selectedCatchments[j]]?.data[this.tableColumnNames[k]][j];
+                            this.catchment_data[this.dropListData.selectedCatchments[j]]?.data[this.tableColumnNames[k]][i];
                     }
                     // Push to table data
                     this.tableColumnData.push(obj);

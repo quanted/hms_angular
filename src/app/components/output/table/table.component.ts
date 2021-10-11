@@ -35,18 +35,5 @@ export class TableComponent implements OnChanges {
     this.dataSource = new MatTableDataSource();
     this.dataSource.data = this.columnData;
     this.dataSource.paginator = this.paginator;
-    this.customSort();
-  }
-
-  customSort() {
-    // Tell sorter Date column is a date else sort regularly
-    this.dataSource.sortingDataAccessor = (item, property) => {
-      switch (property) {
-        case "Date":
-          return new Date(item["Date"]);
-        default:
-          return item[property];
-      }
-    };
   }
 }
