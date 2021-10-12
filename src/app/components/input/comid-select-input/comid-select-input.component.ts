@@ -44,27 +44,27 @@ export class ComidSelectInputComponent implements OnInit {
             unit: "mg/L",
         },
         {
-            param: "TPO4Obj",
+            param: "TPO4Obj", // set "TP_NPS" in "TPO4Obj" to false
             displayName: "Total Soluble P",
             longName: "Total Soluble P in mg/L",
             unit: "mg/L",
         },
         {
-            param: "TNO3Obj",
-            displayName: "Total N", // set "TN_NPS" in "TNO3Obj" to true
+            param: "TNO3Obj", // set "TN_NPS" in "TNO3Obj" to true
+            displayName: "Total N",
             longName: "Total N in mg/L",
+            unit: "mg/L",
+        },
+        {
+            param: "TNO3Obj", // set "TN_NPS" in "TNO3Obj" to false
+            displayName: "Nitrate as N",
+            longName: "Nitrate as N in mg/L",
             unit: "mg/L",
         },
         {
             param: "TNH4Obj",
             displayName: "Total Ammonia as N",
             longName: "Total Ammonia as N in mg/L",
-            unit: "mg/L",
-        },
-        {
-            param: "TNO3Obj",
-            displayName: "Nitrate as N",
-            longName: "Nitrate as N in mg/L",
             unit: "mg/L",
         },
         {
