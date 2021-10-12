@@ -72,23 +72,12 @@ export class OutputComponent implements OnInit {
                     Object.keys(simData.network.catchment_data).length > Object.keys(this.catchment_data).length)) {
                 // Deep copy new object to catchment_data to fire change detection 
                 this.catchment_data = { ...simData.network.catchment_data };
-                this.pourPoint = simData.network.pour_point_comid;
-                this.catchments = [];
-                for (let i = 0; i < Object.keys(this.catchment_data).length; i++) {
-                    if (Object.keys(this.catchment_data)[i] == this.comid) {
-                        this.catchments.push({
-                            catchment: Object.keys(this.catchment_data)[i],
-                            selected: true,
-                            hovered: false
-                        });
-                    } else {
-                        this.catchments.push({
-                            catchment: Object.keys(this.catchment_data)[i],
-                            selected: false,
-                            hovered: false
-                        });
-                    }
+                // Sort catchment_data by descending network order
+                if (simData.network.order) {
+                    this.outputService.setOrderedCatchments({ ...simData.network.order });
+                    this.setCatchments();
                 }
+                this.pourPoint = simData.network.pour_point_comid;
             }
         });
     }
@@ -97,7 +86,7 @@ export class OutputComponent implements OnInit {
         // Swap indexes and items
         this.dropListData[event.previousContainer.data.index] = event.container.data.item;
         this.dropListData[event.container.data.index] = event.previousContainer.data.item;
-        // Droplist changed, update cookie
+        // Droplist changed, update containers
         this.outputService.dropListDataSubject.next(this.dropListData);
         // Trigger resize event to make plotly redraw
         window.dispatchEvent(new Event("resize"));
@@ -128,7 +117,7 @@ export class OutputComponent implements OnInit {
         }
         // Delete last item
         this.dropListData.pop();
-        // Droplist changed, update cookie
+        // Droplist changed, update containers
         this.outputService.dropListDataSubject.next(this.dropListData);
         // Trigger resize event to make plotly redraw
         window.dispatchEvent(new Event("resize"));
@@ -239,5 +228,16 @@ export class OutputComponent implements OnInit {
             this.miniMap.selectSegment(catchment);
         });
         this.outputService.dropListDataSubject.next(this.dropListData);
+    }
+
+    setCatchments() {
+        this.catchments = [];
+        for (let i = 0; i < this.outputService.orderedCatchments.length; i++) {
+            this.catchments.push({
+                catchment: this.outputService.orderedCatchments[i],
+                selected: this.outputService.orderedCatchments[i] == this.comid ? true : false,
+                hovered: false
+            });
+        }
     }
 }

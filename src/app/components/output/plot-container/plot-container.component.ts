@@ -102,18 +102,19 @@ export class PlotContainerComponent implements OnChanges {
      */
     setPlotData() {
         this.plotData = [];
-        // Iterate over map and set plot data
-        for (let [comid, data] of Object.entries(this.catchment_data)) {
+        // Insert by network order into plot data
+        for (let catchment of this.outputService.orderedCatchments) {
             // Get values for the selected state variable
             const values = [];
-            data["data"][this.selectedSV].forEach((d) => values.push(d));
+            const data = this.catchment_data[catchment].data;
+            data[this.selectedSV].forEach((d) => values.push(d));
             this.plotData.push({
                 x: this.dates,
                 y: values,
                 mode: this.chart,
                 type: this.chart,
-                name: comid,
-                visible: this.dropListData.selectedCatchments.includes(comid) ? "true" : "legendonly",
+                name: catchment,
+                visible: this.dropListData.selectedCatchments.includes(catchment) ? "true" : "legendonly",
                 marker: {
                     size: 4,
                 },
