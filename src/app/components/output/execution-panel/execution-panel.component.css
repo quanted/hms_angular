@@ -1,4 +1,5 @@
 :host {
+    display: grid;
     min-height: 0;
 }
 

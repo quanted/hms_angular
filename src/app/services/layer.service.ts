@@ -273,6 +273,19 @@ export class LayerService {
     }
 
     addToolTip(feature, layer): void {
+        // Add comid tooltip to flowlines overlay
+        if (feature.properties.COMID) {
+            layer.bindTooltip(`comID: ${feature.properties.COMID}`, {
+                sticky: true,
+            });
+        }
+        // Add catchment tooltip to catchment overlay
+        if (feature.properties.FEATUREID) {
+            layer.bindTooltip(`Catchment: ${feature.properties.FEATUREID}`, {
+                sticky: true,
+            });
+        }
+        // Add huc tooltip to hucs overlay
         const hucLayerNames = ["HU_12_NAME", "HU_10_NAME", "HU_8_NAME", "HU_6_NAME", "HU_4_NAME", "HU_2_NAME"];
         for (let name of hucLayerNames) {
             if (feature.properties[name]) {
