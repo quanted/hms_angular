@@ -851,7 +851,7 @@ export class SimulationService {
             this.simData[key] = null;
         }
         this.simDataSubject.next(this.simData);
-        console.log("simData: ", this.simData);
+        // console.log("simData: ", this.simData);
     }
 
     getDefaultCatchmentDependencies() {
@@ -883,7 +883,7 @@ export class SimulationService {
          *  }
          */
         const lastState = this.getState();
-        console.log("lastState: ", lastState);
+        // console.log("lastState: ", lastState);
         if (lastState) {
             if (lastState.upstream_distance) {
                 this.simData.network.upstream_distance = lastState.upstream_distance;
