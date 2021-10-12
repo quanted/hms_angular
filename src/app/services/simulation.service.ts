@@ -400,6 +400,7 @@ export class SimulationService {
             // add sources
             if (loadings.sources?.length) {
                 console.log(comid, " add sources: ", loadings.sources);
+                // this.insertLoadingsIntoJson(segment_json, loadings.sources);
             }
         }
 
@@ -605,19 +606,30 @@ export class SimulationService {
     getCatchment(coords): void {
         this.updateSimData("waiting", true);
         this.waters.getCatchmentData(coords.lat, coords.lng).subscribe(
-            (data) => {
-                if (data) {
-                    if (this.simData.selectedHuc.properties.HUC_12 == data.features[0].properties.WBD_HUC12) {
-                        this.layerService.addFeature("Catchment", data);
-                        this.updateSimData("selectedCatchment", data);
-                        this.updateState("pour_point_comid", data.features[0].properties.FEATUREID);
-                    } else {
-                        console.log(
-                            `error>>> selected catchment is not contained within huc ${this.simData.selectedHuc.properties.HUC_12}`
-                        );
-                    }
+            (catchmentData) => {
+                if (catchmentData) {
+                    console.log("waters-catchment: ", catchmentData);
+                    let comid = catchmentData.features[0].properties.FEATUREID;
+                    this.hms.getCatchmentInfo(comid).subscribe((catchmentInfo) => {
+                        console.log("hms-catchment: ", catchmentInfo);
+
+                        // TODO: validate waters huc is same as hms huc, report if different
+
+                        if (this.simData.selectedHuc.properties.HUC_12 == catchmentInfo.metadata.HUC12) {
+                            this.layerService.addFeature("Catchment", catchmentData);
+                            this.updateSimData("selectedCatchment", catchmentData);
+                            this.updateState("pour_point_comid", comid);
+                        } else {
+                            console.log(
+                                `error>>> selected catchment is not contained within huc ${this.simData.selectedHuc.properties.HUC_12}`
+                            );
+                        }
+                        this.updateSimData("waiting", false);
+                    });
+                } else {
+                    this.updateSimData("waiting", false);
+                    console.log("error>>> no data returned");
                 }
-                this.updateSimData("waiting", false);
             },
             (error) => {
                 console.log("error getting catchment data: ", error);
@@ -662,6 +674,8 @@ export class SimulationService {
                         return;
                     }
                     if (geom && info) {
+                        console.log("geom: ", geom);
+                        console.log("info: ", info);
                         this.updateState("upstream_distance", distance);
                         this.prepareNetworkGeometry(geom, info);
                     }
