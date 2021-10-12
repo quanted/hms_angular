@@ -136,8 +136,6 @@ export class SimulationService {
     // for future use
     SiteTypes = ["Pond", "Stream", "Reservr1D", "Lake", "Enclosure", "Estuary", "TribInput", "Marine"];
 
-    userAvailableVars = [];
-
     constructor(
         private hms: HmsService,
         private waters: WatersService,
@@ -841,6 +839,7 @@ export class SimulationService {
                 this.simData.base_json = data;
             } else if (key == "userAvailableVars") {
                 this.simData[key] = data;
+                this.updateState("userAvailableVars", data);
             } else if (key == "sv") {
                 this.simData[key] = data;
             } else if (typeof data === "string" || typeof data === "number" || typeof data === "boolean") {
@@ -852,7 +851,7 @@ export class SimulationService {
             this.simData[key] = null;
         }
         this.simDataSubject.next(this.simData);
-        // console.log("simData: ", this.simData);
+        console.log("simData: ", this.simData);
     }
 
     getDefaultCatchmentDependencies() {
@@ -884,7 +883,7 @@ export class SimulationService {
          *  }
          */
         const lastState = this.getState();
-        // console.log("lastState: ", lastState);
+        console.log("lastState: ", lastState);
         if (lastState) {
             if (lastState.upstream_distance) {
                 this.simData.network.upstream_distance = lastState.upstream_distance;
@@ -898,6 +897,9 @@ export class SimulationService {
             if (lastState.json_flags) {
                 this.simData.json_flags = lastState.json_flags;
                 this.getBaseJsonByFlags(lastState.json_flags);
+            }
+            if (lastState.userAvailableVars) {
+                this.simData.userAvailableVars = lastState.userAvailableVars;
             }
             if (lastState.simId) {
                 this.simData.network.pour_point_comid = lastState.pour_point_comid;

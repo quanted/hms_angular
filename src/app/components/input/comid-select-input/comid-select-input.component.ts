@@ -36,53 +36,51 @@ export class ComidSelectInputComponent implements OnInit {
     // Optional:  Percent_Part -- particulate vs. dissolved breakdown
     // Optional: Percent_Refr -- refractory (slow reacting) vs. labile (fast reacting) breakdown
 
-    userAvailableVars = null;
-
     defaultSourceTypes = [
         {
-            param: "Total P in mg/L",
+            param: "TPO4Obj", // set "TP_NPS" in "TPO4Obj" to true
             displayName: "Total P",
             longName: "Total P in mg/L",
             unit: "mg/L",
         },
         {
-            param: "Total Soluble P in mg/L",
+            param: "TPO4Obj",
             displayName: "Total Soluble P",
             longName: "Total Soluble P in mg/L",
             unit: "mg/L",
         },
         {
-            param: "Total N in mg/L",
-            displayName: "Total N",
+            param: "TNO3Obj",
+            displayName: "Total N", // set "TN_NPS" in "TNO3Obj" to true
             longName: "Total N in mg/L",
             unit: "mg/L",
         },
         {
-            param: "Total Ammonia as N in mg/L",
+            param: "TNH4Obj",
             displayName: "Total Ammonia as N",
             longName: "Total Ammonia as N in mg/L",
             unit: "mg/L",
         },
         {
-            param: "Nitrate as N in mg/L",
+            param: "TNO3Obj",
             displayName: "Nitrate as N",
             longName: "Nitrate as N in mg/L",
             unit: "mg/L",
         },
         {
-            param: "Organic Matter in mg/L",
+            param: "TDissRefrDetr", // "DataType" = 2
             displayName: "Organic Matter",
             longName: "Organic Matter in mg/L",
             unit: "mg/L",
         },
         {
-            param: "Organic Carbon in mg/L",
+            param: "TDissRefrDetr", // "DataType" = 1
             displayName: "Organic Carbon",
             longName: "Organic Carbon in mg/L",
             unit: "mg/L",
         },
         {
-            param: "CBOD in mg/L",
+            param: "TDissRefrDetr", // "DataType" = 0
             displayName: "CBOD",
             longName: "CBOD in mg/L",
             unit: "mg/L",
@@ -139,7 +137,7 @@ export class ComidSelectInputComponent implements OnInit {
 
         this.sourceForm = this.fb.group({
             sourceOrigin: ["Point Source in g/day"],
-            sourceType: ["Total Soluble P"],
+            sourceType: [""],
             useConstLoadings: ["Constant"],
             constLoadingValue: [1],
             constLoadingMulti: [1],
@@ -155,13 +153,15 @@ export class ComidSelectInputComponent implements OnInit {
             this.cancelAdd();
         }
 
-        this.userAvailableVars = simData.userAvailableVars;
         this.sourceTypes = [];
-        for (let i = 0; i < this.userAvailableVars.length; i++) {
+        for (let i = 0; i < simData.userAvailableVars.length; i++) {
             const foundVar = this.defaultSourceTypes.find((sourceType) => {
-                return sourceType.displayName == this.userAvailableVars[i];
+                return sourceType.displayName == simData.userAvailableVars[i];
             });
             if (foundVar) this.sourceTypes.push(foundVar);
+        }
+        if (this.sourceTypes.length) {
+            this.sourceForm.get("sourceType").setValue(this.sourceTypes[0].displayName);
         }
 
         this.selectedComId = simData.selectedComId;
@@ -285,8 +285,8 @@ export class ComidSelectInputComponent implements OnInit {
         const sourceType = this.sourceForm.get("sourceType").value;
         const loadingChoice = this.sourceForm.get("useConstLoadings").value;
 
-        console.log("insert: origin: ", origin, ", sourceType: ", sourceType, ", ", loadingChoice);
-        console.log("sourceTypes: ", this.sourceTypes);
+        // console.log("insert: origin: ", origin, ", sourceType: ", sourceType, ", ", loadingChoice);
+        // console.log("sourceTypes: ", this.sourceTypes);
 
         const sim$type = this.sourceTypes.find((field) => {
             if (field.displayName == sourceType) return field;
@@ -314,8 +314,8 @@ export class ComidSelectInputComponent implements OnInit {
         if (foundSources.length < 1) {
             this.sources.push(source);
             this.cancelAdd();
-            this.autoScrollUp();
         }
+        this.sourceForm.get("sourceType").setValue(this.sourceTypes[0].displayName);
     }
 
     removeSource(sourceToRemove): void {
@@ -334,13 +334,6 @@ export class ComidSelectInputComponent implements OnInit {
 
         this.columnData = [];
         this.columnNames = [];
-    }
-
-    autoScrollUp() {
-        console.log("autoscroll!");
-        this.container = document.getElementById("loadingsList");
-        console.log("container: ", this.container);
-        this.container.scrollTop = this.container.scrollHeight;
     }
 }
 
