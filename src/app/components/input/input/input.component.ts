@@ -136,15 +136,6 @@ export class InputComponent implements OnInit {
         }
         this.network = simData.network;
         if (simData.json_flags) {
-            const moduleFormFields = {};
-            for (let flag of this.jsonFlags) {
-                moduleFormFields[flag] = [false];
-                // select the first checkbox by default
-                if (flag == this.jsonFlags[0]) {
-                    moduleFormFields[flag] = [true];
-                }
-            }
-            this.moduleForm = this.fb.group(moduleFormFields);
             this.setAvailableSVs();
         }
         this.baseJson = simData.base_json;
@@ -177,8 +168,8 @@ export class InputComponent implements OnInit {
 
     getBaseJSONByFlags(): void {
         if (this.variableFormValid) {
-            this.simulation.updateSimData("userAvailableVars", this.userAvailableVars);
             this.simulation.getBaseJsonByFlags(this.moduleForm.value);
+            this.simulation.updateSimData("userAvailableVars", this.userAvailableVars);
         } else {
             console.log("error>>> at least one simulation option must be selected");
         }

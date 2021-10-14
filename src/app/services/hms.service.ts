@@ -63,6 +63,13 @@ export class HmsService {
         return this.http.post(`${environment.apiURL}/api/v2/hms/workflow/compute/`, JSON.stringify(simulation));
     }
 
+    insertSVLoadings(loadings): Observable<any> {
+        return this.http.post(
+            `${environment.apiURL}/api/aquatox/input-builder/loadings/insert/`,
+            JSON.stringify(loadings)
+        );
+    }
+
     executeAquatoxSimulation(simId): Observable<any> {
         return this.http.get(`${environment.apiURL}/api/v2/hms/workflow/compute/?sim_id=${simId}`);
     }

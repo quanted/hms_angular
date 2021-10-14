@@ -87,10 +87,56 @@ export class ComidSelectInputComponent implements OnInit {
         },
     ];
 
+    loadingOrigins = {
+        "Inflow Load": -1,
+        "Point-source": 0,
+        "Direct Precipitation": 1, // not currently used in simulation - @alpha v0.1.0
+        "Nonpoint-source": 2,
+    };
+
+    // example of loadings sent with json flags
+    // SV block with laodings inserted is returned
+    loadings = [
+        {
+            param: "TPO4Obj",
+            loadingType: -1, // inflow Load
+            useConstant: false,
+            timeSeries: {
+                "2019-01-01T00:00:00": 0.1,
+            },
+            multiplier: 1.0,
+            metadata: {
+                TP_NPS: true, // Total P
+            },
+        },
+        {
+            param: "TNO3Obj",
+            loadingType: 0, // Point-Source
+            useConstant: true,
+            constant: 0.5,
+            multiplier: 1.0,
+            metadata: {
+                TN_NPS: true, // Total N
+            },
+        },
+        {
+            param: "TDissRefrDetr",
+            loadingType: 2, // Nonpoint-Source
+            useConstant: false,
+            timeSeries: {
+                "2019-01-01T00:00:00": 0.1,
+            },
+            multiplier: 1.0,
+            metadata: {
+                DataType: 2, // Organic Matter
+            },
+        },
+    ];
+
     sourceTypes = [];
 
     parameters: SegmentParameter[] = [];
-    sources: SegmentParameter[] = [];
+    sources: SegmentLoading[] = [];
 
     addingParameter = false;
     addingSource = false;
@@ -253,7 +299,6 @@ export class ComidSelectInputComponent implements OnInit {
     }
 
     selectRate(): void {
-        console.log("sForm: ", this.sourceForm.get("useConstLoadings").value);
         this.loadingRate = this.sourceForm.get("useConstLoadings").value;
     }
 
@@ -274,8 +319,9 @@ export class ComidSelectInputComponent implements OnInit {
         const sim$type = null;
         const dataType = "Time-series";
         const data = this.timeSeries;
+        const multiplier = null;
 
-        this.parameters.push(new SegmentParameter(origin, type, sim$type, dataType, data));
+        this.parameters.push(new SegmentParameter(origin, type, sim$type, dataType, data, multiplier));
         this.cancelAdd();
     }
 
@@ -292,7 +338,7 @@ export class ComidSelectInputComponent implements OnInit {
             if (field.displayName == sourceType) return field;
         }).param;
 
-        let source: SegmentParameter = null;
+        let source: SegmentLoading = null;
         if (
             loadingChoice == "Constant" &&
             this.sourceForm.get("constLoadingValue").value !== null &&
@@ -300,11 +346,13 @@ export class ComidSelectInputComponent implements OnInit {
         ) {
             const dataType = "Constant";
             const data = this.sourceForm.get("constLoadingValue").value;
-            source = new SegmentParameter(origin, sourceType, sim$type, dataType, data);
+            const multiplier = this.sourceForm.get("constLoadingMulti").value;
+            source = new SegmentLoading(origin, sourceType, sim$type, dataType, data, multiplier);
         } else if (loadingChoice == "Time-series" && this.timeSeries !== null) {
             const dataType = "Time-series";
             const data = this.timeSeries;
-            source = new SegmentParameter(origin, sourceType, sim$type, dataType, data);
+            const multiplier = this.sourceForm.get("constLoadingMulti").value;
+            source = new SegmentLoading(origin, sourceType, sim$type, dataType, data, multiplier);
         }
 
         // only one entry per sim$type
@@ -343,12 +391,32 @@ class SegmentParameter {
     sim$type: string;
     dataType: string;
     data: any;
+    multiplier: string;
 
-    constructor(origin, type, sim$type, dataType, data) {
+    constructor(origin, type, sim$type, dataType, data, multiplier) {
         this.origin = origin;
         this.type = type;
         this.sim$type = sim$type;
         this.dataType = dataType;
         this.data = data;
+        this.multiplier = multiplier;
+    }
+}
+
+class SegmentLoading {
+    origin: string;
+    type: string;
+    sim$type: string;
+    dataType: string;
+    data: any;
+    multiplier: string;
+
+    constructor(origin, type, sim$type, dataType, data, multiplier) {
+        this.origin = origin;
+        this.type = type;
+        this.sim$type = sim$type;
+        this.dataType = dataType;
+        this.data = data;
+        this.multiplier = multiplier;
     }
 }

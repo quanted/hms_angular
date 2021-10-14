@@ -1,7 +1,8 @@
 import { Injectable } from "@angular/core";
 import { formatDate } from "@angular/common";
 
-import { BehaviorSubject, forkJoin, Observable } from "rxjs";
+import { BehaviorSubject, forkJoin, Observable, of } from "rxjs";
+import { mergeMap } from "rxjs/operators";
 
 import { CookieService } from "ngx-cookie-service";
 
@@ -324,7 +325,6 @@ export class SimulationService {
     // initializeSegmentSimulation is invoked
     addSegmentLoadings(comid, loadings): void {
         this.simData.network.catchment_loadings[comid] = loadings;
-        console.log("loadings: ", this.simData.network.catchment_loadings);
     }
 
     // errors will return a json dict {"error": error_message}
@@ -377,7 +377,84 @@ export class SimulationService {
         let segment_json = JSON.parse(JSON.stringify(this.simData.base_json));
         const loadings = this.simData.network.catchment_loadings[comid];
 
+        let hmsReadyLoadings = [];
         if (loadings) {
+            // add parameters
+            if (loadings.parameters?.length) {
+                console.log(comid, " add parameters: ", loadings.parameters);
+            }
+            // add sources
+            if (loadings.sources?.length) {
+                hmsReadyLoadings = this.convertLoadingsToHMSInputFormat(loadings.sources);
+                console.log("flags: ", this.simData.json_flags);
+                console.log("loadings: ", loadings.sources);
+                console.log("hmsReady: ", hmsReadyLoadings);
+                return this.hms.insertSVLoadings({ flags: this.simData.json_flags, loadings: hmsReadyLoadings }).pipe(
+                    mergeMap((svBlock) => {
+                        // if there is a metadata property the sv block wasn't returned
+                        if (svBlock.metadata) {
+                            console.log("error>>> ", svBlock.metadata?.ERROR);
+                            this.updateSimData("waiting", false);
+                            return of({ error: `error inserting loadings ${svBlock.metadata}` });
+                        }
+                        if (svBlock) {
+                            console.log("segment_json: ", segment_json);
+                            console.log("insertedLoadings: ", svBlock);
+                            segment_json.SV = svBlock;
+                            // add segment remin
+                            for (let param of Object.keys(loadings.remin)) {
+                                if (segment_json.AQTSeg.Location.Remin[param]) {
+                                    segment_json.AQTSeg.Location.Remin[param].Val = loadings.remin[param];
+                                }
+                            }
+                            // add segment sv
+                            for (let param of Object.keys(loadings.sv)) {
+                                for (let base_param of segment_json.AQTSeg.SV) {
+                                    if (base_param.$type == param) {
+                                        base_param.InitialCond = loadings.sv[param];
+                                        break;
+                                    }
+                                }
+                            }
+
+                            const segmentData = {
+                                sim_id: this.simData["simId"],
+                                comid_input: {
+                                    comid: comid.toString(),
+                                    input: segment_json,
+                                },
+                                catchment_dependencies: [
+                                    {
+                                        name: "streamflow",
+                                        url: "api/hydrology/streamflow/",
+                                        input: {
+                                            source: "nwm",
+                                            dateTimeSpan: {
+                                                startDate: formatDate(
+                                                    this.simData.PSetup.firstDay,
+                                                    "yyyy-MM-ddTHH:mm:ss",
+                                                    "en"
+                                                ),
+                                                endDate: formatDate(
+                                                    this.simData.PSetup.lastDay,
+                                                    "yyyy-MM-ddTHH:mm:ss",
+                                                    "en"
+                                                ),
+                                            },
+                                            geometry: {
+                                                comID: comid.toString(),
+                                            },
+                                            temporalResolution: "hourly",
+                                            timeLocalized: "false",
+                                        },
+                                    },
+                                ],
+                            };
+                            return this.hms.addAquatoxSimData(segmentData);
+                        }
+                    })
+                );
+            }
             // add segment remin
             for (let param of Object.keys(loadings.remin)) {
                 if (segment_json.AQTSeg.Location.Remin[param]) {
@@ -392,15 +469,6 @@ export class SimulationService {
                         break;
                     }
                 }
-            }
-            // add parameters
-            if (loadings.parameters?.length) {
-                console.log(comid, " add parameters: ", loadings.parameters);
-            }
-            // add sources
-            if (loadings.sources?.length) {
-                console.log(comid, " add sources: ", loadings.sources);
-                // this.insertLoadingsIntoJson(segment_json, loadings.sources);
             }
         }
 
@@ -608,10 +676,10 @@ export class SimulationService {
         this.waters.getCatchmentData(coords.lat, coords.lng).subscribe(
             (catchmentData) => {
                 if (catchmentData) {
-                    console.log("waters-catchment: ", catchmentData);
+                    // console.log("waters-catchment: ", catchmentData);
                     let comid = catchmentData.features[0].properties.FEATUREID;
                     this.hms.getCatchmentInfo(comid).subscribe((catchmentInfo) => {
-                        console.log("hms-catchment: ", catchmentInfo);
+                        // console.log("hms-catchment: ", catchmentInfo);
 
                         // TODO: validate waters huc is same as hms huc, report if different
 
@@ -674,8 +742,8 @@ export class SimulationService {
                         return;
                     }
                     if (geom && info) {
-                        console.log("geom: ", geom);
-                        console.log("info: ", info);
+                        // console.log("geom: ", geom);
+                        // console.log("info: ", info);
                         this.updateState("upstream_distance", distance);
                         this.prepareNetworkGeometry(geom, info);
                     }
@@ -1028,9 +1096,77 @@ export class SimulationService {
             if (i == 0) continue;
             const dataRow = csvDataRows[i].split(",");
             if (dataRow.length > 1) {
-                timeSeries[formatDate(dataRow[0], "yyyy-MM-ddTHH:mm:ss", "en")] = dataRow.slice(1, dataRow.length);
+                timeSeries[formatDate(dataRow[0], "yyyy-MM-ddTHH:mm:ss", "en")] = dataRow[1];
             }
         }
         return timeSeries;
+    }
+
+    // raw loading
+    // data: 1
+    // dataType: "Constant"
+    // origin: "Point Source in g/day"
+    // sim$type: "TNH4Obj"
+    // type: "Total Ammonia as N"
+
+    // what endpoint wants
+    // {
+    //     param: "TPO4Obj",
+    //     loadingType: -1, // inflow Load
+    //     useConstant: false,
+    //     timeSeries: {
+    //         "2019-01-01T00:00:00": 0.1,
+    //     },
+    //     multiplier: 1.0,
+    //     metadata: {
+    //         TP_NPS: true, // Total P
+    //     },
+    // },
+
+    convertLoadingsToHMSInputFormat(loadings): any[] {
+        const segmentLoadings = [];
+        for (let loading of loadings) {
+            const newLoading = {};
+            newLoading["param"] = loading.sim$type;
+            loading.origin.startsWith("Point")
+                ? (newLoading["loadingType"] = 0)
+                : loading.origin.startsWith("Non-Point")
+                ? (newLoading["loadingType"] = 2)
+                : (newLoading["loadingType"] = -1);
+            newLoading["useConstant"] = loading.dataType === "Constant" ? true : false;
+            newLoading["useConstant"]
+                ? (newLoading["constant"] = loading.data)
+                : (newLoading["timeSeries"] = loading.data);
+            newLoading["multiplier"] = loading.multiplier;
+            const metadata = {};
+            switch (loading.type) {
+                case "Total P":
+                    metadata["TP_NPS"] = true;
+                    break;
+                case "Total Soluble P":
+                    metadata["TP_NPS"] = false;
+                    break;
+                case "Total N":
+                    metadata["TN_NPS"] = true;
+                    break;
+                case "Nitrate as N":
+                    metadata["TP_NPS"] = false;
+                    break;
+                case "Organic Matter":
+                    metadata["DataType"] = 2;
+                    break;
+                case "Organic Carbon":
+                    metadata["DataType"] = 1;
+                    break;
+                case "CBOD":
+                    metadata["DataType"] = 0;
+                    break;
+                default:
+                    break;
+            }
+            newLoading["metadata"] = metadata;
+            segmentLoadings.push(newLoading);
+        }
+        return segmentLoadings;
     }
 }
