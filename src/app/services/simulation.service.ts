@@ -398,9 +398,8 @@ export class SimulationService {
                             return of({ error: `error inserting loadings ${svBlock.metadata}` });
                         }
                         if (svBlock) {
-                            console.log("segment_json: ", segment_json);
                             console.log("insertedLoadings: ", svBlock);
-                            segment_json.SV = svBlock;
+                            segment_json.AQTSeg.SV = svBlock;
                             // add segment remin
                             for (let param of Object.keys(loadings.remin)) {
                                 if (segment_json.AQTSeg.Location.Remin[param]) {
@@ -416,6 +415,8 @@ export class SimulationService {
                                     }
                                 }
                             }
+
+                            console.log("segment_json: ", segment_json);
 
                             const segmentData = {
                                 sim_id: this.simData["simId"],
