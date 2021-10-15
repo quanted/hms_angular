@@ -207,12 +207,14 @@ export class SimulationService {
 
     getBaseJsonByFlags(flags: any): void {
         this.updateSimData("waiting", true);
+        console.log("flags: ", flags);
         this.hms.getBaseJsonByFlags(flags).subscribe((json) => {
             if (json.error) {
                 // TODO: Handle error
                 console.log("error>>> ", json.error);
                 this.updateSimData("waiting", false);
             } else {
+                console.log("json: ", json);
                 this.simData.json_flags = flags;
                 this.simData.base_json = json;
                 this.simData.base_json.AQTSeg.PSetup.FirstDay.Val = formatDate(
@@ -321,6 +323,12 @@ export class SimulationService {
         }
     }
 
+    getSegmentInfo(comid): any[] {
+        return this.simData.network.network.find((segment) => {
+            return segment[0] === comid.toString();
+        });
+    }
+
     // adds a segments loadings to the simData object for retrieval when
     // initializeSegmentSimulation is invoked
     addSegmentLoadings(comid, loadings): void {
@@ -376,6 +384,15 @@ export class SimulationService {
         // deep copy the base_json to use for this segment
         let segment_json = JSON.parse(JSON.stringify(this.simData.base_json));
         const loadings = this.simData.network.catchment_loadings[comid];
+
+        // set locale vars
+        // SiteLength.Val
+        const segmentInfo = this.getSegmentInfo(comid);
+        if (segmentInfo) {
+            segment_json.AQTSeg.Location.Locale.SiteLength.Val = segmentInfo[4];
+        } else {
+            console.log("could not find comid in network: ", comid);
+        }
 
         let hmsReadyLoadings = [];
         if (loadings) {
@@ -455,21 +472,6 @@ export class SimulationService {
                         }
                     })
                 );
-            }
-            // add segment remin
-            for (let param of Object.keys(loadings.remin)) {
-                if (segment_json.AQTSeg.Location.Remin[param]) {
-                    segment_json.AQTSeg.Location.Remin[param].Val = loadings.remin[param];
-                }
-            }
-            // add segment sv
-            for (let param of Object.keys(loadings.sv)) {
-                for (let base_param of segment_json.AQTSeg.SV) {
-                    if (base_param.$type == param) {
-                        base_param.InitialCond = loadings.sv[param];
-                        break;
-                    }
-                }
             }
         }
 
@@ -743,8 +745,8 @@ export class SimulationService {
                         return;
                     }
                     if (geom && info) {
-                        // console.log("geom: ", geom);
-                        // console.log("info: ", info);
+                        console.log("geom: ", geom);
+                        console.log("info: ", info);
                         this.updateState("upstream_distance", distance);
                         this.prepareNetworkGeometry(geom, info);
                     }
@@ -1090,7 +1092,7 @@ export class SimulationService {
         this.clearHuc();
     }
 
-    generateTimeSeries(csvDataRows: string[]): any {
+    generateTimeSeriesFromCSV(csvDataRows: string[]): any {
         const timeSeries = {};
         for (let i = 0; i < csvDataRows.length; i++) {
             // skip the header row
