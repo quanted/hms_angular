@@ -1,3 +1,7 @@
+:host {
+    pointer-events: none;
+}
+
 .panel-right {
     display: grid;
     grid-template-rows: auto 1fr;
@@ -17,6 +21,7 @@
     display: grid;
     grid-template-columns: auto 1fr;
     min-height: 0;
+    pointer-events: auto;
 }
 
 app-map-control {

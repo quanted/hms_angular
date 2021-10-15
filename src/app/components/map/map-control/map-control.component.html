@@ -4,7 +4,7 @@
         <div class="container-item">
             <div>Basemaps</div>
             <div *ngFor="let map of basemaps" class="button" [class.active]=map.show (click)="toggleBasemap(map)"
-                matTooltip="Select Basemap">
+                matTooltip="Select Basemap" matTooltipPosition="before">
                 {{ map.name }}
             </div>
         </div>
