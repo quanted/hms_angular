@@ -1,21 +1,22 @@
 <div id="layer-control">
     <div id="layer-select">
-        <div class="button" [class.active]=feature.show (click)="toggleLayer()" matTooltip="Toggle Layer">
+        <div class="button" [class.active]=feature.show (click)="toggleLayer()" matTooltip="Toggle Layer"
+            matTooltipPosition="before">
             {{ feature.name }}
         </div>
         <div class="button map-options" (click)="toggleControl()" matTooltip="Layer Options">
             <mat-icon>settings</mat-icon>
         </div>
     </div>
-    
+
     <div id="editor" *ngIf="controlOpen">
         <form id="editor-form" *ngIf="feature" [formGroup]="styleForm">
             <div class="editor-row">
                 <div class="editor-item">
-                    <input type="color" formControlName="color" (change)="updateStyle(feature.type)"/>
+                    <input type="color" formControlName="color" (change)="updateStyle(feature.type)" />
                 </div>
                 <div class="editor-item">
-                    <mat-icon>line_weight</mat-icon> 
+                    <mat-icon>line_weight</mat-icon>
                 </div>
                 <div class="editor-item">
                     <select formControlName="weight" (change)="updateStyle(feature.type)">
@@ -34,10 +35,10 @@
             </div>
             <div class="editor-row" *ngIf="feature.type == 'simfeature' || feature.type == 'feature'">
                 <div class="editor-item">
-                    <input type="color" formControlName="fillColor" (change)="updateStyle(feature.type)"/>
+                    <input type="color" formControlName="fillColor" (change)="updateStyle(feature.type)" />
                 </div>
                 <div class="editor-item">
-                    <mat-icon>opacity</mat-icon> 
+                    <mat-icon>opacity</mat-icon>
                 </div>
                 <div class="editor-item">
                     <select formControlName="fillOpacity" (change)="updateStyle(feature.type)">
