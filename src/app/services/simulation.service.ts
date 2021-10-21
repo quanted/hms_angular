@@ -473,6 +473,21 @@ export class SimulationService {
                     })
                 );
             }
+            // add segment remin
+            for (let param of Object.keys(loadings.remin)) {
+                if (segment_json.AQTSeg.Location.Remin[param]) {
+                    segment_json.AQTSeg.Location.Remin[param].Val = loadings.remin[param];
+                }
+            }
+            // add segment sv
+            for (let param of Object.keys(loadings.sv)) {
+                for (let base_param of segment_json.AQTSeg.SV) {
+                    if (base_param.$type == param) {
+                        base_param.InitialCond = loadings.sv[param];
+                        break;
+                    }
+                }
+            }
         }
 
         const segmentData = {
