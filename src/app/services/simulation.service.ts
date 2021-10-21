@@ -1114,9 +1114,10 @@ export class SimulationService {
             if (i == 0) continue;
             const dataRow = csvDataRows[i].split(",");
             if (dataRow.length > 1) {
-                timeSeries[formatDate(dataRow[0], "yyyy-MM-ddTHH:mm:ss", "en")] = dataRow[1];
+                timeSeries[formatDate(dataRow[0], "yyyy-MM-ddTHH:mm:ss", "en")] = dataRow[1].trim();
             }
         }
+        console.log("timeSeries: ", timeSeries);
         return timeSeries;
     }
 
