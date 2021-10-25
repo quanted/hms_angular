@@ -77,10 +77,8 @@ export class InputComponent implements OnInit {
         });
 
         this.variableForm = this.fb.group({
-            nType: ["Total N"],
-            "Total Ammonia as N": [true],
-            "Nitrate as N": [true],
-            pType: ["Total P"],
+            nType: ["separate"],
+            pType: ["Total Soluble P"],
             orgType: ["Organic Matter"],
         });
 
@@ -177,10 +175,19 @@ export class InputComponent implements OnInit {
 
     setAvailableSVs(): void {
         this.variableFormValid = true;
+
+        let nType = this.variableForm.get("nType").value;
+        let pType = this.variableForm.get("pType").value;
+        if (nType === "Total N" || pType === "Total P") this.moduleForm.get("Organic Matter").setValue(true);
+
         let form = this.moduleForm.value;
+
+        // if Organic matter is selected nitrogen must be modeled
+        const o = form["Organic Matter"];
+        if (o) this.moduleForm.get("Nitrogen").setValue(true);
+
         const n = form["Nitrogen"];
         const p = form["Phosphorus"];
-        const o = form["Organic Matter"];
 
         if (n && !p && !o) this.AQTModule = "nitrogen";
         if (!n && p && !o) this.AQTModule = "phosphorus";
@@ -190,20 +197,17 @@ export class InputComponent implements OnInit {
 
         if (!n && !p && !o) this.AQTModule = "none";
 
-        let nType = this.variableForm.get("nType").value;
-        nType == "separate" ? (this.separateNitrogen = true) : (this.separateNitrogen = false);
-
         const varForm = this.variableForm.value;
         const availVars = [];
         if (this.AQTModule !== "none") {
             if (nType == "Total N") {
                 availVars.push("Total N");
             } else {
-                if (varForm["Total Ammonia as N"]) availVars.push("Total Ammonia as N");
-                if (varForm["Nitrate as N"]) availVars.push("Nitrate as N");
+                availVars.push("Total Ammonia as N");
+                availVars.push("Nitrate as N");
             }
             if (this.AQTModule == "phosphorus" || this.AQTModule == "nutrients" || this.AQTModule == "organic") {
-                availVars.push(varForm.pType);
+                availVars.push(pType);
             }
             if (this.AQTModule == "organic" || this.AQTModule == "organic-nop") {
                 availVars.push(varForm.orgType);
@@ -212,8 +216,6 @@ export class InputComponent implements OnInit {
         this.userAvailableVars = availVars;
 
         if (this.AQTModule == "none") this.variableFormValid = false;
-        if (nType == "separate" && !varForm["Total Ammonia as N"] && !varForm["Nitrate as N"])
-            this.variableFormValid = false;
     }
 
     clearBaseJson(): void {

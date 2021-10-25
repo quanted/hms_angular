@@ -72,17 +72,13 @@
                         <div class="centered"><strong>Variable Selection</strong></div>
                         <div id="nitrogen" *ngIf="AQTModule == 'nitrogen' || AQTModule == 'nutrients' || AQTModule == 'organic' || AQTModule == 'organic-nop'">
                             <div><strong>Nitrogen</strong></div>
+                            <div>Total Ammonia as N & Nitrate as N <input type="radio" name="nType" formControlName="nType" value="separate" /></div>
                             <div>Total N <input type="radio" name="nType" formControlName="nType" value="Total N" /></div>
-                            <div>Separate Nitrogen Components <input type="radio" name="nType" formControlName="nType" value="separate" /></div>
-                            <div *ngIf="separateNitrogen">
-                                <div>Total Ammonia as N <input type="checkbox" formControlName="Total Ammonia as N" /></div>
-                                <div>Nitrate as N <input type="checkbox" formControlName="Nitrate as N" /></div>
-                            </div>
                         </div>
                         <div id="phosphorus" *ngIf="AQTModule == 'phosphorus' || AQTModule == 'nutrients' || AQTModule == 'organic'">
                             <div><strong>Phosphorus</strong></div>
-                            <div>Total P <input type="radio" name="pType" formControlName="pType" value="Total P" /></div>
                             <div>Total Soluble P <input type="radio" name="pType" formControlName="pType" value="Total Soluble P" /></div>
+                            <div>Total P <input type="radio" name="pType" formControlName="pType" value="Total P" /></div>
                         </div>
                         <div id="organic" *ngIf="AQTModule == 'organic' || AQTModule == 'organic-nop'">
                             <div><strong>Organic Matter</strong></div>
