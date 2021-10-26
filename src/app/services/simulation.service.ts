@@ -4,14 +4,13 @@ import { formatDate } from "@angular/common";
 import { BehaviorSubject, forkJoin, Observable, of } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 
-import { CookieService } from "ngx-cookie-service";
-
 import { environment } from "src/environments/environment";
 import { HmsService } from "./hms.service";
 import { WatersService } from "./waters.service";
 
 import { DefaultSimData } from "../models/DefaultSimData";
 import { LayerService } from "./layer.service";
+import { StateManagerService } from "./state-manager.service";
 
 @Injectable({
     providedIn: "root",
@@ -180,7 +179,7 @@ export class SimulationService {
         private hms: HmsService,
         private waters: WatersService,
         private layerService: LayerService,
-        private cookieService: CookieService
+        private state: StateManagerService
     ) {
         this.simDataSubject = new BehaviorSubject(this.simData);
 
@@ -195,7 +194,7 @@ export class SimulationService {
             }
         });
 
-        if (this.cookieService.check("sim_setup")) {
+        if (this.state.isSavedState()) {
             this.rebuildSimData();
         }
     }
@@ -263,10 +262,18 @@ export class SimulationService {
                     "yyyy-MM-ddTHH:mm:ss",
                     "en"
                 );
-                this.updateState("json_flags", flags);
+                this.state.update("json_flags", flags);
                 this.updateSimData("waiting", false);
             }
         });
+    }
+
+    clearBaseJson(): void {
+        this.updateSimData("json_flags", []);
+        this.state.update("json_flags", null);
+        this.state.update("userAvailableVars", null);
+        this.updateSimData("base_json", null);
+        this.clearCatchmentLoadings();
     }
 
     getBasicFields(): any {
@@ -370,7 +377,7 @@ export class SimulationService {
                     this.updateSimData("waiting", false);
                 } else {
                     this.updateSimData("simId", response["_id"]);
-                    this.updateState("simId", response["_id"]);
+                    this.state.update("simId", response["_id"]);
 
                     this.submitCatchmentDependencies(Object.keys(this.simData.network.sources));
                 }
@@ -695,7 +702,7 @@ export class SimulationService {
             (data) => {
                 if (data.metadata) {
                     this.simData.network.pour_point_comid = comid;
-                    this.updateState("pour_point_comid", comid);
+                    this.state.update("pour_point_comid", comid);
                     // now get the huc by coods
                     const coords = {
                         lat: data.metadata.CentroidLatitude,
@@ -721,7 +728,7 @@ export class SimulationService {
                 if (data) {
                     this.layerService.addFeature("HUC", data);
                     this.updateSimData("selectedHuc", data);
-                    this.updateState("huc", coords);
+                    this.state.update("huc", coords);
                 }
                 this.updateSimData("waiting", false);
             },
@@ -746,7 +753,7 @@ export class SimulationService {
                         if (this.simData.selectedHuc.properties.HUC_12 == catchmentInfo.metadata.HUC12) {
                             this.layerService.addFeature("Catchment", catchmentData);
                             this.updateSimData("selectedCatchment", catchmentData);
-                            this.updateState("pour_point_comid", comid);
+                            this.state.update("pour_point_comid", comid);
                         } else {
                             console.log(
                                 `error>>> selected catchment is not contained within huc ${this.simData.selectedHuc.properties.HUC_12}`
@@ -804,7 +811,7 @@ export class SimulationService {
                     if (geom && info) {
                         // console.log("geom: ", geom);
                         // console.log("info: ", info);
-                        this.updateState("upstream_distance", distance);
+                        this.state.update("upstream_distance", distance);
                         this.prepareNetworkGeometry(geom, info);
                     }
                 }
@@ -912,7 +919,7 @@ export class SimulationService {
 
     clearHuc(): void {
         this.updateSimData("selectedHuc", null);
-        this.updateState("huc", null);
+        this.state.update("huc", null);
         this.clearCatchment();
         this.layerService.removeHuc();
     }
@@ -937,10 +944,11 @@ export class SimulationService {
 
         this.simData.selectedComId = null;
         this.simData.base_json = null;
+        this.simData.userAvailableVars = [];
         this.simData.waiting = false;
         this.updateSimData("selectedCatchment", null);
-        this.updateState("pour_point_comid", null);
-        this.updateState("upstream_distance", null);
+        this.state.update("pour_point_comid", null);
+        this.state.update("upstream_distance", null);
         this.layerService.removeCatchment();
     }
 
@@ -987,7 +995,7 @@ export class SimulationService {
                     });
                     if (newVariable) this.simData[key].push(newVariable);
                 }
-                this.updateState("userAvailableVars", data);
+                this.state.update("userAvailableVars", data);
             } else if (key == "sv") {
                 this.simData[key] = data;
             } else if (typeof data === "string" || typeof data === "number" || typeof data === "boolean") {
@@ -1030,7 +1038,7 @@ export class SimulationService {
          *      simId,
          *  }
          */
-        const lastState = this.getState();
+        const lastState = this.state.getState();
         // console.log("lastState: ", lastState);
         if (lastState) {
             if (lastState.upstream_distance) {
@@ -1044,6 +1052,7 @@ export class SimulationService {
             }
             if (lastState.json_flags) {
                 this.simData.json_flags = lastState.json_flags;
+                this.updateSimData("userAvailableVars", lastState.userAvailableVars);
                 this.getBaseJsonByFlags(lastState.json_flags);
             }
             if (lastState.userAvailableVars) {
@@ -1077,7 +1086,7 @@ export class SimulationService {
                                 if (!data.error) {
                                     this.layerService.addFeature("HUC", data);
                                     this.updateSimData("selectedHuc", data);
-                                    this.updateState("huc", coords);
+                                    this.state.update("huc", coords);
 
                                     this.waters.getCatchmentData(coords.lat, coords.lng).subscribe(
                                         (data) => {
@@ -1086,7 +1095,7 @@ export class SimulationService {
                                                 if (!data.error) {
                                                     this.layerService.addFeature("Catchment", data);
                                                     this.updateSimData("selectedCatchment", data);
-                                                    this.updateState(
+                                                    this.state.update(
                                                         "pour_point_comid",
                                                         data.features[0].properties.FEATUREID
                                                     );
@@ -1125,27 +1134,9 @@ export class SimulationService {
         );
     }
 
-    getState(): any {
-        const state = this.cookieService.get("sim_setup");
-        if (state) {
-            return JSON.parse(state);
-        }
-        return null;
-    }
-
-    updateState(param, value): void {
-        let state;
-        if (this.cookieService.get("sim_setup")) {
-            state = JSON.parse(this.cookieService.get("sim_setup"));
-        } else state = {};
-
-        state[param] = value;
-        this.cookieService.set("sim_setup", JSON.stringify(state), { expires: 7 });
-    }
-
     resetSimulation(): void {
         this.endStatusCheck();
-        this.cookieService.delete("sim_setup");
+        this.state.clearState();
         // deep copy default object
         this.simData = JSON.parse(JSON.stringify(DefaultSimData.defaultSimData));
         this.simDataSubject.next(this.simData);

@@ -240,10 +240,7 @@ export class InputComponent implements OnInit {
     setFormVariables(): void {}
 
     clearBaseJson(): void {
-        this.simulation.updateSimData("json_flags", []);
-        this.simulation.updateState("json_flags", null);
-        this.simulation.updateSimData("base_json", null);
-        this.simulation.clearCatchmentLoadings();
+        this.simulation.clearBaseJson();
     }
 
     applyGlobalSettings(): void {
