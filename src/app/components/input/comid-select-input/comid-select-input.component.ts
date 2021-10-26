@@ -21,8 +21,10 @@ export class ComidSelectInputComponent implements OnInit {
     reminForm: FormGroup;
     svForm: FormGroup;
     parameterForm: FormGroup;
+    defaultSourceTypes = null;
     sourceForm: FormGroup;
     basicFields = null;
+    userAvailableVars = [];
 
     // Total Soluble P in mg/L or  (as Non-Point-Source load, use Alt_Loadings[2]) or
     // Total P in mg/L   (set "TP_NPS" to true)
@@ -36,102 +38,12 @@ export class ComidSelectInputComponent implements OnInit {
     // Optional:  Percent_Part -- particulate vs. dissolved breakdown
     // Optional: Percent_Refr -- refractory (slow reacting) vs. labile (fast reacting) breakdown
 
-    defaultSourceTypes = [
-        {
-            param: "TPO4Obj", // set "TP_NPS" in "TPO4Obj" to true
-            displayName: "Total P",
-            longName: "Total P in mg/L",
-            unit: "mg/L",
-        },
-        {
-            param: "TPO4Obj", // set "TP_NPS" in "TPO4Obj" to false
-            displayName: "Total Soluble P",
-            longName: "Total Soluble P in mg/L",
-            unit: "mg/L",
-        },
-        {
-            param: "TNO3Obj", // set "TN_NPS" in "TNO3Obj" to true
-            displayName: "Total N",
-            longName: "Total N in mg/L",
-            unit: "mg/L",
-        },
-        {
-            param: "TNO3Obj", // set "TN_NPS" in "TNO3Obj" to false
-            displayName: "Nitrate as N",
-            longName: "Nitrate as N in mg/L",
-            unit: "mg/L",
-        },
-        {
-            param: "TNH4Obj",
-            displayName: "Total Ammonia as N",
-            longName: "Total Ammonia as N in mg/L",
-            unit: "mg/L",
-        },
-        {
-            param: "TDissRefrDetr", // "DataType" = 2
-            displayName: "Organic Matter",
-            longName: "Organic Matter in mg/L",
-            unit: "mg/L",
-        },
-        {
-            param: "TDissRefrDetr", // "DataType" = 1
-            displayName: "Organic Carbon",
-            longName: "Organic Carbon in mg/L",
-            unit: "mg/L",
-        },
-        {
-            param: "TDissRefrDetr", // "DataType" = 0
-            displayName: "CBOD",
-            longName: "CBOD in mg/L",
-            unit: "mg/L",
-        },
-    ];
-
     loadingOrigins = {
         "Inflow Load": -1,
         "Point-source": 0,
         "Direct Precipitation": 1, // not currently used in simulation - @alpha v0.1.0
         "Nonpoint-source": 2,
     };
-
-    // example of loadings sent with json flags
-    // SV block with laodings inserted is returned
-    loadings = [
-        {
-            param: "TPO4Obj",
-            loadingType: -1, // inflow Load
-            useConstant: false,
-            timeSeries: {
-                "2019-01-01T00:00:00": 0.1,
-            },
-            multiplier: 1.0,
-            metadata: {
-                TP_NPS: true, // Total P
-            },
-        },
-        {
-            param: "TNO3Obj",
-            loadingType: 0, // Point-Source
-            useConstant: true,
-            constant: 0.5,
-            multiplier: 1.0,
-            metadata: {
-                TN_NPS: true, // Total N
-            },
-        },
-        {
-            param: "TDissRefrDetr",
-            loadingType: 2, // Nonpoint-Source
-            useConstant: false,
-            timeSeries: {
-                "2019-01-01T00:00:00": 0.1,
-            },
-            multiplier: 1.0,
-            metadata: {
-                DataType: 2, // Organic Matter
-            },
-        },
-    ];
 
     sourceTypes = [];
 
@@ -143,6 +55,8 @@ export class ComidSelectInputComponent implements OnInit {
 
     useConstLoadings = true;
     loadingRate = "Constant";
+    DEFAULT_CONSTANT_LOADING = 1;
+    DEFAULT_CONSTANT_MULTIPLIER = 1;
 
     uploadedTimeSeries = false;
     timeSeries = null;
@@ -156,6 +70,7 @@ export class ComidSelectInputComponent implements OnInit {
 
     constructor(private fb: FormBuilder, private simulation: SimulationService, private layerService: LayerService) {
         this.basicFields = this.simulation.getBasicFields();
+        this.defaultSourceTypes = this.simulation.getSourceTypes();
     }
 
     ngOnInit(): void {
@@ -185,8 +100,8 @@ export class ComidSelectInputComponent implements OnInit {
             sourceOrigin: ["Point Source in g/day"],
             sourceType: [""],
             useConstLoadings: ["Constant"],
-            constLoadingValue: [1],
-            constLoadingMulti: [1],
+            constLoadingValue: [this.DEFAULT_CONSTANT_LOADING],
+            constLoadingMulti: [this.DEFAULT_CONSTANT_MULTIPLIER],
         });
 
         this.simulation.interfaceData().subscribe((data) => {
@@ -198,6 +113,8 @@ export class ComidSelectInputComponent implements OnInit {
         if (this.selectedComId !== simData.selectedComId) {
             this.cancelAdd();
         }
+
+        this.userAvailableVars = simData.userAvailableVars;
 
         this.sourceTypes = [];
         for (let i = 0; i < simData.userAvailableVars.length; i++) {
@@ -289,7 +206,8 @@ export class ComidSelectInputComponent implements OnInit {
             this.dataSource.paginator = this.paginator;
 
             // build and store time-series
-            this.timeSeries = this.simulation.generateTimeSeries(columnData);
+            const newTimeSeries = this.simulation.generateTimeSeriesFromCSV(columnData);
+            this.timeSeries = this.simulation.generateTimeSeriesFromCSV(columnData);
         };
     }
 
@@ -355,7 +273,7 @@ export class ComidSelectInputComponent implements OnInit {
             source = new SegmentLoading(origin, sourceType, sim$type, dataType, data, multiplier);
         }
 
-        // only one entry per sim$type
+        // only one entry per origin+sim$type
         const foundSources = this.sources.filter((source) => {
             if (source.sim$type === sim$type && source.origin === origin) return source;
         });

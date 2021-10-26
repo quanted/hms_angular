@@ -37,6 +37,7 @@ export class InputComponent implements OnInit {
     variableFormValid = false;
 
     userAvailableVars = [];
+    userSelectedVars = [];
 
     useFixStepSize = false;
 
@@ -119,6 +120,7 @@ export class InputComponent implements OnInit {
         this.waiting = simData.waiting;
         this.huc = simData.selectedHuc;
         this.catchment = simData.selectedCatchment;
+        this.userSelectedVars = simData.userAvailableVars;
         if (simData.base_json) {
             const remin = simData.base_json.AQTSeg.Location.Remin;
             for (let variable of this.basicFields.remin) {
@@ -166,6 +168,7 @@ export class InputComponent implements OnInit {
 
     getBaseJSONByFlags(): void {
         if (this.variableFormValid) {
+            this.setFormVariables();
             this.simulation.getBaseJsonByFlags(this.moduleForm.value);
             this.simulation.updateSimData("userAvailableVars", this.userAvailableVars);
         } else {
@@ -200,11 +203,13 @@ export class InputComponent implements OnInit {
         const varForm = this.variableForm.value;
         const availVars = [];
         if (this.AQTModule !== "none") {
-            if (nType == "Total N") {
-                availVars.push("Total N");
-            } else {
-                availVars.push("Total Ammonia as N");
-                availVars.push("Nitrate as N");
+            if (n) {
+                if (nType == "Total N") {
+                    availVars.push("Total N");
+                } else {
+                    availVars.push("Total Ammonia as N");
+                    availVars.push("Nitrate as N");
+                }
             }
             if (this.AQTModule == "phosphorus" || this.AQTModule == "nutrients" || this.AQTModule == "organic") {
                 availVars.push(pType);
@@ -217,6 +222,8 @@ export class InputComponent implements OnInit {
 
         if (this.AQTModule == "none") this.variableFormValid = false;
     }
+
+    setFormVariables(): void {}
 
     clearBaseJson(): void {
         this.simulation.updateSimData("json_flags", []);

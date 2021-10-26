@@ -23,7 +23,7 @@ export class SimulationService {
     STATUS_CHECK_INTERVAL = 1000; // 1000 = 1 second interval
     statusCheck: ReturnType<typeof setInterval>; // interval that checks with backend and updates sim status
 
-    MAX_SEARCH_DISTANCE = 100;
+    MAX_SEARCH_DISTANCE = 100; // maximum upstream search in km
 
     basicPSetupFields = [
         {
@@ -107,18 +107,6 @@ export class SimulationService {
 
     basicSVFields = [
         {
-            param: "TNH4Obj",
-            displayName: "Total Ammonia as N",
-            longName: "Total Ammonia as N",
-            unit: "mg/L",
-        },
-        {
-            param: "TNO3Obj",
-            displayName: "Nitrate as N",
-            longName: "Nitrate as N",
-            unit: "mg/L",
-        },
-        {
             param: "TCO2Obj",
             displayName: "Carbon dioxide",
             longName: "Carbon dioxide",
@@ -133,6 +121,57 @@ export class SimulationService {
     ];
 
     advancedSVFields = [];
+
+    sourceTypes = [
+        {
+            param: "TPO4Obj", // set "TP_NPS" in "TPO4Obj" to true
+            displayName: "Total P",
+            longName: "Total P in mg/L",
+            unit: "mg/L",
+        },
+        {
+            param: "TPO4Obj", // set "TP_NPS" in "TPO4Obj" to false
+            displayName: "Total Soluble P",
+            longName: "Total Soluble P in mg/L",
+            unit: "mg/L",
+        },
+        {
+            param: "TNO3Obj", // set "TN_NPS" in "TNO3Obj" to true
+            displayName: "Total N",
+            longName: "Total N in mg/L",
+            unit: "mg/L",
+        },
+        {
+            param: "TNO3Obj", // set "TN_NPS" in "TNO3Obj" to false
+            displayName: "Nitrate as N",
+            longName: "Nitrate as N in mg/L",
+            unit: "mg/L",
+        },
+        {
+            param: "TNH4Obj",
+            displayName: "Total Ammonia as N",
+            longName: "Total Ammonia as N in mg/L",
+            unit: "mg/L",
+        },
+        {
+            param: "TDissRefrDetr", // "DataType" = 2
+            displayName: "Organic Matter",
+            longName: "Organic Matter in mg/L",
+            unit: "mg/L",
+        },
+        {
+            param: "TDissRefrDetr", // "DataType" = 1
+            displayName: "Organic Carbon",
+            longName: "Organic Carbon in mg/L",
+            unit: "mg/L",
+        },
+        {
+            param: "TDissRefrDetr", // "DataType" = 0
+            displayName: "CBOD",
+            longName: "CBOD in mg/L",
+            unit: "mg/L",
+        },
+    ];
 
     // for future use
     SiteTypes = ["Pond", "Stream", "Reservr1D", "Lake", "Enclosure", "Estuary", "TribInput", "Marine"];
@@ -155,9 +194,6 @@ export class SimulationService {
                 this.resetSimulation();
             }
         });
-
-        // console.log("allCookies: ", this.cookieService.getAll());
-        // this.cookieService.deleteAll();
 
         if (this.cookieService.check("sim_setup")) {
             this.rebuildSimData();
@@ -207,14 +243,14 @@ export class SimulationService {
 
     getBaseJsonByFlags(flags: any): void {
         this.updateSimData("waiting", true);
-        console.log("flags: ", flags);
+        // console.log("flags: ", flags);
         this.hms.getBaseJsonByFlags(flags).subscribe((json) => {
             if (json.error) {
                 // TODO: Handle error
                 console.log("error>>> ", json.error);
                 this.updateSimData("waiting", false);
             } else {
-                console.log("json: ", json);
+                // console.log("json: ", json);
                 this.simData.json_flags = flags;
                 this.simData.base_json = json;
                 this.simData.base_json.AQTSeg.PSetup.FirstDay.Val = formatDate(
@@ -233,33 +269,6 @@ export class SimulationService {
         });
     }
 
-    // Available loadings are as follows:
-
-    // Phosphorus:   MS_Phosphorus.json   (phosphorus button is the only one selected)
-    // Total Soluble P in mg/L or  (as Non-Point-Source load, use Alt_Loadings[2]) or
-    // Total P in mg/L   (set "TP_NPS" to true)
-
-    // Nitrogen: MS_Nitrogen.json   (nitrogen button is the only one selected)
-    // Total Ammonia as N in mg/L (Alt_Loadings[2] for NPS) and Nitrate as N in mg/L (Alt_Loadings[2] for NPS)  or
-    // Total N in mg/L (set "TN_NPS" in "TNO3Obj" to true)
-
-    // Nutrients:  MS_Nutrients.json  (nitrogen and phosphorus buttons selected)
-    // Both the phosphorus and nitrogen options above.
-
-    // OM:  MS_OM.json  (organic matter and phosphorus buttons selected, state of the nitrogen button is not relevant)
-    // Both the phosphorus and nitrogen options above.
-    // Also:  in "TDissRefrDetr" "DetritalInputRecordType":
-    // Organic Matter in mg/L ("DataType" = 2) or
-    // Organic Carbon in mg/L ("DataType" = 1) or
-    // CBOD in mg/L ("DataType" = 0)
-    // Optional:  Percent_Part -- particulate vs. dissolved breakdown
-    // Optional: Percent_Refr -- refractory (slow reacting) vs. labile (fast reacting) breakdown
-
-    // Important Note:  any loadings in the four organic matter types will be disregarded in favor of this somewhat unique input record ("DetritalInputRecordType")
-    // MS_OM_NoP.json  (organic matter is selected, phosphorus button is not selected, state of the nitrogen button is not relevant)
-    // Same as OM, no phosphorus data
-    // An organic matter simulation requires nitrogen to be modeled.
-
     getBasicFields(): any {
         return {
             pSetup: this.basicPSetupFields,
@@ -276,6 +285,10 @@ export class SimulationService {
             remin: this.advancedReminFields,
             sv: this.advancedSVFields,
         };
+    }
+
+    getSourceTypes(): any {
+        return this.sourceTypes;
     }
 
     applyGlobalSettings(settings): void {
@@ -760,8 +773,8 @@ export class SimulationService {
                         return;
                     }
                     if (geom && info) {
-                        console.log("geom: ", geom);
-                        console.log("info: ", info);
+                        // console.log("geom: ", geom);
+                        // console.log("info: ", info);
                         this.updateState("upstream_distance", distance);
                         this.prepareNetworkGeometry(geom, info);
                     }
@@ -904,6 +917,7 @@ export class SimulationService {
 
     clearCatchmentLoadings(): void {
         this.simData.network.catchment_loadings = {};
+        this.simData.userAvailableVars = [];
         this.updateSimData();
     }
 
@@ -938,7 +952,12 @@ export class SimulationService {
                 this.simData.Location.Remin = data.AQTSeg.Location.Remin;
                 this.simData.base_json = data;
             } else if (key == "userAvailableVars") {
-                this.simData[key] = data;
+                for (let variable of data) {
+                    let newVariable = this.sourceTypes.find((source) => {
+                        return variable === source.displayName;
+                    });
+                    if (newVariable) this.simData[key].push(newVariable);
+                }
                 this.updateState("userAvailableVars", data);
             } else if (key == "sv") {
                 this.simData[key] = data;
