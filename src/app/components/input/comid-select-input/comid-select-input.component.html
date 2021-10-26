@@ -25,17 +25,21 @@
         </div>
     </div>
 
-    <div [formGroup]="svForm" class="section-item">
-        <div><strong>Segment State Variable Initial Values</strong></div>
+    
+    <div><strong>Segment State Variable Initial Values</strong></div>
+    <div [formGroup]="uVarsForm" class="section-item">
         <div class="form-row" *ngFor="let variable of userAvailableVars">
             <div>{{ variable.displayName }}</div>
             <div class="vertical-center">
                 <div>
-                    <input type="number" class="input-number" matTooltip="{{ variable.longName }}"/> 
+                    <input type="number" class="input-number" formControlName="{{ variable.param }}" matTooltip="{{ variable.longName }}"/> 
                     {{ variable.unit }}
                 </div>
             </div>
         </div>
+    </div>
+
+    <div [formGroup]="svForm" class="section-item">
         <div class="form-row" *ngFor="let svField of basicFields.sv">
             <div>{{ svField.displayName }}</div>
             <div class="vertical-center">

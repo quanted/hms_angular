@@ -19,6 +19,7 @@ export class ComidSelectInputComponent implements OnInit {
 
     selectForm: FormGroup;
     reminForm: FormGroup;
+    uVarsForm: FormGroup;
     svForm: FormGroup;
     parameterForm: FormGroup;
     defaultSourceTypes = null;
@@ -115,11 +116,16 @@ export class ComidSelectInputComponent implements OnInit {
         }
 
         this.userAvailableVars = simData.userAvailableVars;
+        const uVarsFormFields = {};
+        for (let field of this.userAvailableVars) {
+            uVarsFormFields[field.param] = [];
+        }
+        this.uVarsForm = this.fb.group(uVarsFormFields);
 
         this.sourceTypes = [];
         for (let i = 0; i < simData.userAvailableVars.length; i++) {
             const foundVar = this.defaultSourceTypes.find((sourceType) => {
-                return sourceType.displayName == simData.userAvailableVars[i];
+                return sourceType.displayName == simData.userAvailableVars[i].displayName;
             });
             if (foundVar) this.sourceTypes.push(foundVar);
         }
@@ -145,6 +151,7 @@ export class ComidSelectInputComponent implements OnInit {
                 if (segmentLoadings) {
                     // load stored remin and sv values
                     this.reminForm.setValue(segmentLoadings.remin);
+                    this.uVarsForm.setValue(segmentLoadings.uVars);
                     this.svForm.setValue(segmentLoadings.sv);
                     // load parameters and sources
                     this.parameters = segmentLoadings.parameters == null ? [] : segmentLoadings.parameters;
@@ -157,6 +164,13 @@ export class ComidSelectInputComponent implements OnInit {
                     const remin = simData.base_json.AQTSeg.Location.Remin;
                     for (let variable of this.basicFields.remin) {
                         this.reminForm.get(variable.param).setValue(remin[variable.param].Val);
+                    }
+                    for (let variable of this.userAvailableVars) {
+                        for (let defaultParam of simData.base_json.AQTSeg.SV) {
+                            if (variable.param == defaultParam.$type) {
+                                this.uVarsForm.get(variable.param).setValue(defaultParam.InitialCond);
+                            }
+                        }
                     }
                     for (let variable of this.basicFields.sv) {
                         for (let defaultParam of simData.base_json.AQTSeg.SV) {
@@ -174,6 +188,7 @@ export class ComidSelectInputComponent implements OnInit {
     addSegmentLoadings(): void {
         const loadings = {
             remin: this.reminForm.value,
+            uVars: this.uVarsForm.value,
             sv: this.svForm.value,
             properties: this.parameters,
             sources: this.sources,

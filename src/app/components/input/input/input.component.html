@@ -87,7 +87,7 @@
                             <div>CBOD <input type="radio" name="orgType" formControlName="orgType" value="CBOD" /></div>
                         </div>
                     </div>
-                    <div class="button" (click)="getBaseJSONByFlags()">Setup Simulation</div>
+                    <div class="button" *ngIf="!waiting" (click)="getBaseJSONByFlags()">Setup Simulation</div>
                 </div>
 
                 <!-- Global Setup -->
@@ -173,24 +173,25 @@
                     </div>
 
                     <!-- S.V. Section -->
-                    <div [formGroup]="svForm" class="section-item">
+                    <div class="section-item">
                         <div><strong>State Variable Initial Values</strong></div>
-                        <div class="form-row" *ngFor="let variable of userSelectedVars">
-                            <div>{{ variable.displayName }}</div>
-                            <div class="vertical-center">
-                                <div>
-                                    <input type="number" class="input-number" matTooltip="{{ variable.longName }}"/> 
-                                    {{ variable.unit }}
+                        <div [formGroup]="uVarForm" class="section-item">
+                            <div class="form-row" *ngFor="let variable of userSelectedVars">
+                                <div>{{ variable.displayName }}</div>
+                                <div class="vertical-center">
+                                    <div>
+                                        <input type="number" class="input-number" formControlName="{{ variable.param }}" matTooltip="{{ variable.longName }}" /> 
+                                        {{ variable.unit }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="section-item">
+                        <div [formGroup]="svForm" class="section-item">
                             <div class="form-row" *ngFor="let svField of basicFields.sv">
                                 <div>{{ svField.displayName }}</div>
                                 <div class="vertical-center">
                                     <div>
-                                        <input type="number" class="input-number" formControlName="{{ svField.param }}"
-                                            matTooltip="{{ svField.longName }}" />
+                                        <input type="number" class="input-number" formControlName="{{ svField.param }}" matTooltip="{{ svField.longName }}" />
                                         {{ svField.unit }}
                                     </div>
                                 </div>

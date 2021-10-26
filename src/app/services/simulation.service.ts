@@ -325,6 +325,16 @@ export class SimulationService {
             }
         }
 
+        // set user variable globals
+        for (let param of Object.keys(settings.uVars)) {
+            for (let base_param of this.simData.base_json.AQTSeg.SV) {
+                if (base_param.$type == param) {
+                    base_param.InitialCond = settings.uVars[param];
+                    break;
+                }
+            }
+        }
+
         // set sv globals
         for (let param of Object.keys(settings.sv)) {
             for (let base_param of this.simData.base_json.AQTSeg.SV) {
@@ -436,6 +446,15 @@ export class SimulationService {
                                     segment_json.AQTSeg.Location.Remin[param].Val = loadings.remin[param];
                                 }
                             }
+                            // add segment uVars
+                            for (let param of Object.keys(loadings.uVars)) {
+                                for (let base_param of segment_json.AQTSeg.SV) {
+                                    if (base_param.$type == param) {
+                                        base_param.InitialCond = loadings.uVars[param];
+                                        break;
+                                    }
+                                }
+                            }
                             // add segment sv
                             for (let param of Object.keys(loadings.sv)) {
                                 for (let base_param of segment_json.AQTSeg.SV) {
@@ -492,6 +511,15 @@ export class SimulationService {
                     segment_json.AQTSeg.Location.Remin[param].Val = loadings.remin[param];
                 }
             }
+            // add segment uVars
+            for (let param of Object.keys(loadings.uVars)) {
+                for (let base_param of segment_json.AQTSeg.SV) {
+                    if (base_param.$type == param) {
+                        base_param.InitialCond = loadings.uVars[param];
+                        break;
+                    }
+                }
+            }
             // add segment sv
             for (let param of Object.keys(loadings.sv)) {
                 for (let base_param of segment_json.AQTSeg.SV) {
@@ -528,6 +556,7 @@ export class SimulationService {
                 },
             ],
         };
+        console.log("segmentData-no loadings: ", segmentData);
         return this.hms.addAquatoxSimData(segmentData);
     }
 

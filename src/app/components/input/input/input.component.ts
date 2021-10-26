@@ -20,6 +20,7 @@ export class InputComponent implements OnInit {
     localeAdvancedForm: FormGroup;
     reminForm: FormGroup;
     reminAdvancedForm: FormGroup;
+    uVarForm: FormGroup;
     svForm: FormGroup;
 
     waiting = false;
@@ -121,6 +122,12 @@ export class InputComponent implements OnInit {
         this.huc = simData.selectedHuc;
         this.catchment = simData.selectedCatchment;
         this.userSelectedVars = simData.userAvailableVars;
+        const uVarFormFields = {};
+        for (let field of this.userSelectedVars) {
+            uVarFormFields[field.param] = [];
+        }
+        this.uVarForm = this.fb.group(uVarFormFields);
+
         if (simData.base_json) {
             const remin = simData.base_json.AQTSeg.Location.Remin;
             for (let variable of this.basicFields.remin) {
@@ -130,6 +137,13 @@ export class InputComponent implements OnInit {
                 for (let defaultParam of simData.base_json.AQTSeg.SV) {
                     if (variable.param == defaultParam.$type) {
                         this.svForm.get(variable.param).setValue(defaultParam.InitialCond);
+                    }
+                }
+            }
+            for (let variable of this.userSelectedVars) {
+                for (let defaultParam of simData.base_json.AQTSeg.SV) {
+                    if (variable.param == defaultParam.$type) {
+                        this.uVarForm.get(variable.param).setValue(defaultParam.InitialCond);
                     }
                 }
             }
@@ -237,6 +251,7 @@ export class InputComponent implements OnInit {
             this.simulation.applyGlobalSettings({
                 pSetup: this.pSetUpForm.value,
                 remin: this.reminForm.value,
+                uVars: this.uVarForm.value,
                 sv: this.svForm.value,
             });
         }
