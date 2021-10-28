@@ -2,7 +2,7 @@
     <app-header></app-header>
     <div class="task-bar">
         <div class="row-left">
-            <mat-icon class="segment-status back" (click)="back()">chevron_left</mat-icon>
+            <mat-icon class="segment-status back" (click)="back()" matTooltip="Go back to map.">chevron_left</mat-icon>
             <div class="segment-status" (click)="aboutAQT()">About</div>
         </div>
         <div class="row-right">
@@ -34,7 +34,7 @@
                 </div>
             </div>
         </div>
-        <mat-icon matTooltip="Show/Hide panel." matTooltipPosition="after" class="toggle-button"
+        <mat-icon matTooltip="Show/Hide left panel." matTooltipPosition="after" class="toggle-button"
             (click)="togglePanel($event)" class="chevron">
             {{showPanel ? "chevron_left" : "chevron_right"}}
         </mat-icon>

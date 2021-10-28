@@ -153,14 +153,6 @@ export class OutputComponent implements OnInit {
         this.showAbout = !this.showAbout;
     }
 
-    closeAbout(): void {
-        this.showAbout = false;
-    }
-
-    openHelp(): void {
-        console.log("open Aquatox help");
-    }
-
     togglePanel(event) {
         this.showPanel = !this.showPanel;
         window.dispatchEvent(new Event("resize"));
