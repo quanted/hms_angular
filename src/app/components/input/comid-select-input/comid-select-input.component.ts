@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { SimulationService } from "../../../services/simulation.service";
 import { FormBuilder, FormGroup } from "@angular/forms";
 
@@ -26,18 +26,6 @@ export class ComidSelectInputComponent implements OnInit {
     sourceForm: FormGroup;
     basicFields = null;
     userAvailableVars = [];
-
-    // Total Soluble P in mg/L or  (as Non-Point-Source load, use Alt_Loadings[2]) or
-    // Total P in mg/L   (set "TP_NPS" to true)
-
-    // Total Ammonia as N in mg/L (Alt_Loadings[2] for NPS) and Nitrate as N in mg/L (Alt_Loadings[2] for NPS)  or
-    // Total N in mg/L (set "TN_NPS" in "TNO3Obj" to true)
-
-    // Organic Matter in mg/L ("DataType" = 2) or
-    // Organic Carbon in mg/L ("DataType" = 1) or
-    // CBOD in mg/L ("DataType" = 0)
-    // Optional:  Percent_Part -- particulate vs. dissolved breakdown
-    // Optional: Percent_Refr -- refractory (slow reacting) vs. labile (fast reacting) breakdown
 
     loadingOrigins = {
         "Inflow Load": -1,
@@ -263,9 +251,6 @@ export class ComidSelectInputComponent implements OnInit {
         const origin = this.sourceForm.get("sourceOrigin").value;
         const sourceType = this.sourceForm.get("sourceType").value;
         const loadingChoice = this.sourceForm.get("useConstLoadings").value;
-
-        // console.log("insert: origin: ", origin, ", sourceType: ", sourceType, ", ", loadingChoice);
-        // console.log("sourceTypes: ", this.sourceTypes);
 
         const sim$type = this.sourceTypes.find((field) => {
             if (field.displayName == sourceType) return field;

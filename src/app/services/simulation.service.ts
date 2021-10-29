@@ -22,7 +22,11 @@ export class SimulationService {
     STATUS_CHECK_INTERVAL = 1000; // 1000 = 1 second interval
     statusCheck: ReturnType<typeof setInterval>; // interval that checks with backend and updates sim status
 
+    DEFAULT_UPSTREAM_DISTANCE = "20"; // upstream search in km
     MAX_SEARCH_DISTANCE = 100; // maximum upstream search in km
+
+    DEFAULT_OUTPUT_STEP_SIZE = "hour";
+    DEFAULT_SOLVER_STEP_SIZE = "0.1"; // of a day
 
     basicPSetupFields = [
         {
@@ -213,11 +217,15 @@ export class SimulationService {
     }
 
     getDefaultUpstreamDistance(): string {
-        return "20";
+        return this.DEFAULT_UPSTREAM_DISTANCE;
     }
 
     getDefaultTimeStep(): string {
-        return "day";
+        return this.DEFAULT_OUTPUT_STEP_SIZE;
+    }
+
+    getDefaultSolverStep(): string {
+        return this.DEFAULT_SOLVER_STEP_SIZE;
     }
 
     getPourPoint(): string {
@@ -299,6 +307,7 @@ export class SimulationService {
     }
 
     applyGlobalSettings(settings): void {
+        console.log("settings: ", settings);
         // sim_name is only for the frontend to use to track the simulation id
         // it is NOT used in the simulation.
         if (settings.pSetup.simulationName) {
@@ -320,9 +329,10 @@ export class SimulationService {
             "en"
         );
         this.simData.base_json.AQTSeg.PSetup.StepSizeInDays.Val = settings.pSetup.tStep == "day" ? true : false;
-        if (settings.pSetup.fixStepSize) {
-            this.simData.base_json.AQTSeg.PSetup.FixStepSize = settings.pSetup.fixStepSize;
+        if (settings.pSetup.useFixStepSize) {
+            console.log("type: ", typeof settings.pSetup.fixStepSize);
             this.simData.base_json.AQTSeg.PSetup.UseFixStepSize = true;
+            this.simData.base_json.AQTSeg.PSetup.FixStepSize = settings.pSetup.fixStepSize;
         }
 
         // set remin globals
@@ -415,7 +425,6 @@ export class SimulationService {
         let segment_json = JSON.parse(JSON.stringify(this.simData.base_json));
         const loadings = this.simData.network.catchment_loadings[comid];
 
-        // set locale vars
         // SiteLength.Val
         const segmentInfo = this.getSegmentInfo(comid);
         if (segmentInfo) {
@@ -433,7 +442,6 @@ export class SimulationService {
             // add sources
             if (loadings.sources?.length) {
                 hmsReadyLoadings = this.convertLoadingsToHMSInputFormat(loadings.sources);
-                console.log("flags: ", this.simData.json_flags);
                 console.log("loadings: ", loadings.sources);
                 console.log("hmsReady: ", hmsReadyLoadings);
                 return this.hms.insertSVLoadings({ flags: this.simData.json_flags, loadings: hmsReadyLoadings }).pipe(
@@ -445,7 +453,7 @@ export class SimulationService {
                             return of({ error: `error inserting loadings ${svBlock.metadata}` });
                         }
                         if (svBlock) {
-                            console.log("insertedLoadings: ", svBlock);
+                            // console.log("insertedLoadings: ", svBlock);
                             segment_json.AQTSeg.SV = svBlock;
                             // add segment remin
                             for (let param of Object.keys(loadings.remin)) {
@@ -471,8 +479,6 @@ export class SimulationService {
                                     }
                                 }
                             }
-
-                            console.log("segment_json: ", segment_json);
 
                             const segmentData = {
                                 sim_id: this.simData["simId"],
@@ -507,6 +513,7 @@ export class SimulationService {
                                     },
                                 ],
                             };
+                            console.log("segment-with loadings: ", segmentData);
                             return this.hms.addAquatoxSimData(segmentData);
                         }
                     })

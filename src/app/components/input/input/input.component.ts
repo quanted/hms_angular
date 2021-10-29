@@ -94,7 +94,7 @@ export class InputComponent implements OnInit {
             lastDay: [this.simulation.getDefaultLastDay(), Validators.required],
             tStep: [this.simulation.getDefaultTimeStep(), Validators.required],
             useFixStepSize: [this.useFixStepSize],
-            fixStepSize: [null],
+            fixStepSize: [this.simulation.getDefaultSolverStep(), Validators.required],
         });
 
         // not being used
