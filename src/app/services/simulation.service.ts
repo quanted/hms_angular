@@ -307,6 +307,7 @@ export class SimulationService {
     }
 
     applyGlobalSettings(settings): void {
+        console.log("psetup: ", this.simData.base_json.AQTSeg.PSetup);
         console.log("settings: ", settings);
         // sim_name is only for the frontend to use to track the simulation id
         // it is NOT used in the simulation.
@@ -330,9 +331,10 @@ export class SimulationService {
         );
         this.simData.base_json.AQTSeg.PSetup.StepSizeInDays.Val = settings.pSetup.tStep == "day" ? true : false;
         if (settings.pSetup.useFixStepSize) {
-            console.log("type: ", typeof settings.pSetup.fixStepSize);
-            this.simData.base_json.AQTSeg.PSetup.UseFixStepSize = true;
-            this.simData.base_json.AQTSeg.PSetup.FixStepSize = settings.pSetup.fixStepSize;
+            this.simData.base_json.AQTSeg.PSetup.UseFixStepSize.Val = true;
+            this.simData.base_json.AQTSeg.PSetup.FixStepSize.Val = settings.pSetup.fixStepSize;
+        } else {
+            this.simData.base_json.AQTSeg.PSetup.UseFixStepSize.Val = false;
         }
 
         // set remin globals
