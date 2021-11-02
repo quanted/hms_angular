@@ -143,7 +143,11 @@ export class InputComponent implements OnInit {
             for (let variable of this.userSelectedVars) {
                 for (let defaultParam of simData.base_json.AQTSeg.SV) {
                     if (variable.param == defaultParam.$type) {
-                        this.uVarForm.get(variable.param).setValue(defaultParam.InitialCond);
+                        if (defaultParam.InputRecord) {
+                            this.uVarForm.get(variable.param).setValue(defaultParam.InputRecord.InitCond);
+                        } else {
+                            this.uVarForm.get(variable.param).setValue(defaultParam.InitialCond);
+                        }
                     }
                 }
             }

@@ -589,45 +589,38 @@ export class LayerService {
 
     selectSegment(comid): void {
         let found = false;
+
         for (let layer of this.segmentLayers) {
-            if (layer.comid === this.selectedComId) {
-                switch (layer.name) {
-                    case "inNetwork":
-                        layer.layer.setStyle({
-                            color: layer.inSim ? this.selectedColor : this.inNetworkColor,
-                            weight: this.segmentLineSize,
-                        });
-                        break;
-                    case "boundary":
-                        layer.layer.setStyle({
-                            color: layer.inSim ? this.selectedColor : this.boundaryColor,
-                            weight: this.segmentLineSize,
-                        });
-                        break;
-                    case "headwater":
-                        layer.layer.setStyle({
-                            color: layer.inSim ? this.selectedColor : this.headwaterColor,
-                            weight: this.segmentLineSize,
-                        });
-                        break;
-                    case "pourPoint":
-                        layer.layer.setStyle({
-                            color: layer.inSim ? this.selectedColor : this.pourPointColor,
-                            weight: this.segmentLineSize,
-                        });
-                        break;
-                    default:
-                        console.log(`ERROR: selectSegment.UNKNOWN_LAYER_NAME ${layer.name}`);
-                }
+            let style = {
+                color: this.inNetworkColor,
+                weight: this.segmentLineSize,
+            };
+
+            switch (layer.name) {
+                case "inNetwork":
+                    style.color = this.inNetworkColor;
+                    break;
+                case "boundary":
+                    style.color = this.boundaryColor;
+                    break;
+                case "headwater":
+                    style.color = this.headwaterColor;
+                    break;
+                case "pourPoint":
+                    style.color = this.pourPointColor;
+                    break;
+                default:
+                    console.log(`ERROR: selectSegment.UNKNOWN_LAYER_NAME ${layer.name}`);
             }
+
             if (layer.comid == comid) {
-                layer.inSim = true;
-                layer.layer.setStyle({
+                style = {
                     color: this.selectedColor,
                     weight: this.selectedSegmentSize,
-                });
+                };
                 found = true;
             }
+            layer.layer.setStyle(style);
         }
         if (found) {
             this.clickListenerSubject.next(comid);

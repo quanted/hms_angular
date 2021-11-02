@@ -156,7 +156,11 @@ export class ComidSelectInputComponent implements OnInit {
                     for (let variable of this.userAvailableVars) {
                         for (let defaultParam of simData.base_json.AQTSeg.SV) {
                             if (variable.param == defaultParam.$type) {
-                                this.uVarsForm.get(variable.param).setValue(defaultParam.InitialCond);
+                                if (defaultParam.InputRecord) {
+                                    this.uVarsForm.get(variable.param).setValue(defaultParam.InputRecord.InitCond);
+                                } else {
+                                    this.uVarsForm.get(variable.param).setValue(defaultParam.InitialCond);
+                                }
                             }
                         }
                     }

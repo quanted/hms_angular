@@ -257,7 +257,7 @@ export class SimulationService {
                 console.log("error>>> ", json.error);
                 this.updateSimData("waiting", false);
             } else {
-                // console.log("json: ", json);
+                console.log("json: ", json);
                 this.simData.json_flags = flags;
                 this.simData.base_json = json;
                 this.simData.base_json.AQTSeg.PSetup.FirstDay.Val = formatDate(
@@ -307,8 +307,6 @@ export class SimulationService {
     }
 
     applyGlobalSettings(settings): void {
-        console.log("psetup: ", this.simData.base_json.AQTSeg.PSetup);
-        console.log("settings: ", settings);
         // sim_name is only for the frontend to use to track the simulation id
         // it is NOT used in the simulation.
         if (settings.pSetup.simulationName) {
@@ -348,7 +346,11 @@ export class SimulationService {
         for (let param of Object.keys(settings.uVars)) {
             for (let base_param of this.simData.base_json.AQTSeg.SV) {
                 if (base_param.$type == param) {
-                    base_param.InitialCond = settings.uVars[param];
+                    if (base_param.InputRecord) {
+                        base_param.InputRecord.InitCond = settings.uVars[param];
+                    } else {
+                        base_param.InitialCond = settings.uVars[param];
+                    }
                     break;
                 }
             }
@@ -467,7 +469,11 @@ export class SimulationService {
                             for (let param of Object.keys(loadings.uVars)) {
                                 for (let base_param of segment_json.AQTSeg.SV) {
                                     if (base_param.$type == param) {
-                                        base_param.InitialCond = loadings.uVars[param];
+                                        if (base_param.InputRecord) {
+                                            base_param.InputRecord.InitCond = loadings.uVars[param];
+                                        } else {
+                                            base_param.InitialCond = loadings.uVars[param];
+                                        }
                                         break;
                                     }
                                 }
@@ -531,7 +537,11 @@ export class SimulationService {
             for (let param of Object.keys(loadings.uVars)) {
                 for (let base_param of segment_json.AQTSeg.SV) {
                     if (base_param.$type == param) {
-                        base_param.InitialCond = loadings.uVars[param];
+                        if (base_param.InputRecord) {
+                            base_param.InputRecord.InitCond = loadings.uVars[param];
+                        } else {
+                            base_param.InitialCond = loadings.uVars[param];
+                        }
                         break;
                     }
                 }
