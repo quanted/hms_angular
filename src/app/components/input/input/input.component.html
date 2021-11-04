@@ -175,7 +175,7 @@
                     <!-- S.V. Section -->
                     <div class="section-item">
                         <div><strong>State Variable Initial Values</strong></div>
-                        <div [formGroup]="uVarForm" class="section-item">
+                        <div [formGroup]="uVarForm" class="section-item" *ngIf="userSelectedVars.length">
                             <div class="form-row" *ngFor="let variable of userSelectedVars">
                                 <div>{{ variable.displayName }}</div>
                                 <div class="vertical-center">
@@ -248,6 +248,9 @@
 
     <div class="input-container-2" *ngIf="simExecuting || simCompleted">
         <app-execution-panel></app-execution-panel>
-        <div class="button" (click)="resetSimulation()">Reset Simulation</div>
+        <div class="section-item" *ngIf="simCompleted">
+            <div class="button" (click)="returnToSetup()">Return to Simulation Setup</div>
+            <div class="button" (click)="resetSimulation()">Reset Simulation</div>
+        </div>
     </div>
 </div>

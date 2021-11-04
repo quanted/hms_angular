@@ -112,6 +112,12 @@ export class InputComponent implements OnInit {
         }
         this.svForm = this.fb.group(svFields);
 
+        const uVarFormFields = {};
+        for (let field of this.userSelectedVars) {
+            uVarFormFields[field.param] = [];
+        }
+        this.uVarForm = this.fb.group(uVarFormFields);
+
         this.simulation.interfaceData().subscribe((simData) => {
             this.updateInterface(simData);
         });
@@ -286,6 +292,10 @@ export class InputComponent implements OnInit {
         if (!this.simExecuting) {
             this.simulation.executeSimulation();
         }
+    }
+
+    returnToSetup(): void {
+        this.simulation.returnToSetup();
     }
 
     resetSimulation(): void {

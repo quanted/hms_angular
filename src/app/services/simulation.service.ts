@@ -257,7 +257,7 @@ export class SimulationService {
                 console.log("error>>> ", json.error);
                 this.updateSimData("waiting", false);
             } else {
-                console.log("json: ", json);
+                //console.log("json: ", json);
                 this.simData.json_flags = flags;
                 this.simData.base_json = json;
                 this.simData.base_json.AQTSeg.PSetup.FirstDay.Val = formatDate(
@@ -1008,11 +1008,16 @@ export class SimulationService {
                 this.simData.Location.Remin = data.AQTSeg.Location.Remin;
                 this.simData.base_json = data;
             } else if (key == "userAvailableVars") {
+                //console.log(key, " - data: ", data);
+                this.simData.userAvailableVars = [];
                 for (let variable of data) {
+                    //console.log("variable: ", variable);
                     let newVariable = this.sourceTypes.find((source) => {
-                        return variable === source.displayName;
+                        //console.log("source: ", source);
+                        return variable == source.displayName;
                     });
-                    if (newVariable) this.simData[key].push(newVariable);
+                    //console.log("found: ", newVariable);
+                    if (newVariable) this.simData.userAvailableVars.push(newVariable);
                 }
                 this.state.update("userAvailableVars", data);
             } else if (key == "sv") {
@@ -1070,6 +1075,7 @@ export class SimulationService {
                 this.getHuc(lastState.huc);
             }
             if (lastState.json_flags) {
+                //console.log("last_state: ", lastState);
                 this.simData.json_flags = lastState.json_flags;
                 this.updateSimData("userAvailableVars", lastState.userAvailableVars);
                 this.getBaseJsonByFlags(lastState.json_flags);
@@ -1151,6 +1157,11 @@ export class SimulationService {
                 this.resetSimulation();
             }
         );
+    }
+
+    returnToSetup(): void {
+        this.simData.sim_completed = false;
+        this.updateSimData();
     }
 
     resetSimulation(): void {
