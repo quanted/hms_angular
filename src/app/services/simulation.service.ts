@@ -351,8 +351,6 @@ export class SimulationService {
             for (let base_param of this.simData.base_json.AQTSeg.SV) {
                 if (base_param.$type == param) {
                     if (base_param.InputRecord) {
-                        console.log("settings.param: ", settings.uVars[param]);
-                        console.log("baseParam: ", base_param);
                         base_param.InputRecord.InitCond = settings.uVars[param];
                     } else {
                         base_param.InitialCond = settings.uVars[param];
@@ -1020,7 +1018,30 @@ export class SimulationService {
                     let newVariable = this.sourceTypes.find((source) => {
                         return variable == source.displayName;
                     });
-                    if (newVariable) this.simData.userAvailableVars.push(newVariable);
+                    if (newVariable) {
+                        if (newVariable.param == "TDissRefrDetr") {
+                            let omType = newVariable.displayName;
+                            let dataType = 0;
+                            switch (omType) {
+                                case "Organic Matter":
+                                    dataType = 2;
+                                    break;
+                                case "Organic Carbon":
+                                    dataType = 1;
+                                    break;
+                                case "CBOD":
+                                    dataType = 0;
+                                    break;
+                            }
+                            for (let base_param of this.simData.base_json.AQTSeg.SV) {
+                                if (base_param.$type == "TDissRefrDetr") {
+                                    base_param.InputRecord.DataType = dataType;
+                                    break;
+                                }
+                            }
+                        }
+                        this.simData.userAvailableVars.push(newVariable);
+                    }
                 }
                 this.state.update("userAvailableVars", data);
             } else if (key == "sv") {
