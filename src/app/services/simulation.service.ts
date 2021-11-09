@@ -22,6 +22,9 @@ export class SimulationService {
     STATUS_CHECK_INTERVAL = 1000; // 1000 = 1 second interval
     statusCheck: ReturnType<typeof setInterval>; // interval that checks with backend and updates sim status
 
+    MaxExecuteAttmepts = 5;
+    executeFails = 0;
+
     DEFAULT_UPSTREAM_DISTANCE = "20"; // upstream search in km
     MAX_SEARCH_DISTANCE = 100; // maximum upstream search in km
 
@@ -248,14 +251,13 @@ export class SimulationService {
         return this.simData.sim_rebuilding;
     }
 
-    getBaseJsonByFlags(flags: any): void {
+    getBaseJsonByFlags(flags: any, uVars): void {
         this.updateSimData("waiting", true);
         // console.log("flags: ", flags);
         this.hms.getBaseJsonByFlags(flags).subscribe((json) => {
             if (json.error) {
                 // TODO: Handle error
                 console.log("error>>> ", json.error);
-                this.updateSimData("waiting", false);
             } else {
                 //console.log("json: ", json);
                 this.simData.json_flags = flags;
@@ -270,9 +272,11 @@ export class SimulationService {
                     "yyyy-MM-ddTHH:mm:ss",
                     "en"
                 );
+                this.updateSimData("userAvailableVars", uVars);
+                this.state.update("userAvailableVars", uVars);
                 this.state.update("json_flags", flags);
-                this.updateSimData("waiting", false);
             }
+            this.updateSimData("waiting", false);
         });
     }
 
@@ -347,6 +351,8 @@ export class SimulationService {
             for (let base_param of this.simData.base_json.AQTSeg.SV) {
                 if (base_param.$type == param) {
                     if (base_param.InputRecord) {
+                        console.log("settings.param: ", settings.uVars[param]);
+                        console.log("baseParam: ", base_param);
                         base_param.InputRecord.InitCond = settings.uVars[param];
                     } else {
                         base_param.InitialCond = settings.uVars[param];
@@ -377,6 +383,7 @@ export class SimulationService {
     // initializeSegmentSimulation is invoked
     addSegmentLoadings(comid, loadings): void {
         this.simData.network.catchment_loadings[comid] = loadings;
+        // this.layerService.updateSegmentsWithLoadingsList(Object.keys(this.simData.network.catchment_loadings));
     }
 
     // errors will return a json dict {"error": error_message}
@@ -384,6 +391,7 @@ export class SimulationService {
     executeSimulation(): void {
         if (!this.simData.sim_executing) {
             this.updateSimData("waiting", true);
+            this.executeFails = 0;
             this.initializeAquatoxSimulation().subscribe((response) => {
                 if (response.error) {
                     // TODO: HANDLE ERROR
@@ -587,28 +595,27 @@ export class SimulationService {
     }
 
     submitCatchmentDependencies(comids): void {
-        const MaxExecuteAttmepts = 5;
-        let executeFails = 0;
         this.addCatchmentDependencies(comids).subscribe((response) => {
             if (response.error) {
                 // TODO: HANDLE ERROR
                 console.log("error>>> ", response.error);
                 this.updateSimData("waiting", false);
             } else {
+                if (this.executeFails >= this.MaxExecuteAttmepts) {
+                    console.log(`Max execution retries of ${this.executeFails} reached`);
+                    this.updateSimData("waiting", false);
+                    return;
+                }
                 this.hms.executeAquatoxSimulation(this.simData["simId"]).subscribe((response) => {
                     if (response.error) {
-                        console.log("error>>> ", response.error);
-                        executeFails++;
-                        if (executeFails >= MaxExecuteAttmepts) {
-                            console.log(`Max execution retries of ${executeFails} reached`);
-                            this.updateSimData("waiting", false);
-                            return;
-                        }
                         // There is a potential here for the dependency posts haven't been saved in the db
                         // even though the posts have all returned successfully
                         // when this happens the back end returns an error with the comis that are not ready yet
                         // just to be sure those comids will be resubmitted here and a new request to execute the
                         // will be sent, repeat until done.
+                        this.executeFails++;
+                        console.log("error>>> ", response.error);
+
                         let comids = response.error.split(":")[1];
                         comids = comids
                             .trim()
@@ -1008,15 +1015,11 @@ export class SimulationService {
                 this.simData.Location.Remin = data.AQTSeg.Location.Remin;
                 this.simData.base_json = data;
             } else if (key == "userAvailableVars") {
-                //console.log(key, " - data: ", data);
                 this.simData.userAvailableVars = [];
                 for (let variable of data) {
-                    //console.log("variable: ", variable);
                     let newVariable = this.sourceTypes.find((source) => {
-                        //console.log("source: ", source);
                         return variable == source.displayName;
                     });
-                    //console.log("found: ", newVariable);
                     if (newVariable) this.simData.userAvailableVars.push(newVariable);
                 }
                 this.state.update("userAvailableVars", data);
@@ -1054,14 +1057,6 @@ export class SimulationService {
     }
 
     rebuildSimData(): void {
-        /** stuff needed to rebuild sim state
-         *  simState: {
-         *      pour_point_comid,
-         *      upstream_distance,
-         *      json_flags,
-         *      simId,
-         *  }
-         */
         const lastState = this.state.getState();
         // console.log("lastState: ", lastState);
         if (lastState) {
@@ -1077,8 +1072,7 @@ export class SimulationService {
             if (lastState.json_flags) {
                 //console.log("last_state: ", lastState);
                 this.simData.json_flags = lastState.json_flags;
-                this.updateSimData("userAvailableVars", lastState.userAvailableVars);
-                this.getBaseJsonByFlags(lastState.json_flags);
+                this.getBaseJsonByFlags(lastState.json_flags, lastState.userAvailableVars);
             }
             if (lastState.userAvailableVars) {
                 this.simData.userAvailableVars = lastState.userAvailableVars;
@@ -1161,6 +1155,8 @@ export class SimulationService {
 
     returnToSetup(): void {
         this.simData.sim_completed = false;
+        this.simData.simId = null;
+        this.state.update("simId", null);
         this.updateSimData();
     }
 
@@ -1189,27 +1185,6 @@ export class SimulationService {
         console.log("timeSeries: ", timeSeries);
         return timeSeries;
     }
-
-    // raw loading
-    // data: 1
-    // dataType: "Constant"
-    // origin: "Point Source in g/day"
-    // sim$type: "TNH4Obj"
-    // type: "Total Ammonia as N"
-
-    // what endpoint wants
-    // {
-    //     param: "TPO4Obj",
-    //     loadingType: -1, // inflow Load
-    //     useConstant: false,
-    //     timeSeries: {
-    //         "2019-01-01T00:00:00": 0.1,
-    //     },
-    //     multiplier: 1.0,
-    //     metadata: {
-    //         TP_NPS: true, // Total P
-    //     },
-    // },
 
     convertLoadingsToHMSInputFormat(loadings): any[] {
         const segmentLoadings = [];
