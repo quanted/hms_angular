@@ -45,12 +45,7 @@ export class InputComponent implements OnInit {
     basicFields = null;
     advancedFields = null;
 
-    showPSetupAdvanced = false;
-    showLocaleAdvanced = false;
-    showReminAdvanced = false;
-    showSVAdvanced = false;
-
-    sVariables;
+    showAdvanced = false;
 
     constructor(private fb: FormBuilder, private hms: HmsService, private simulation: SimulationService) {
         this.basicFields = this.simulation.getBasicFields();
@@ -192,9 +187,7 @@ export class InputComponent implements OnInit {
 
     getBaseJSONByFlags(): void {
         if (this.variableFormValid) {
-            this.setFormVariables();
-            this.simulation.getBaseJsonByFlags(this.moduleForm.value);
-            this.simulation.updateSimData("userAvailableVars", this.userAvailableVars);
+            this.simulation.getBaseJsonByFlags(this.moduleForm.value, this.userAvailableVars);
         } else {
             console.log("error>>> at least one simulation option must be selected");
         }
@@ -247,8 +240,6 @@ export class InputComponent implements OnInit {
         if (this.AQTModule == "none") this.variableFormValid = false;
     }
 
-    setFormVariables(): void {}
-
     clearBaseJson(): void {
         this.simulation.clearBaseJson();
     }
@@ -269,23 +260,8 @@ export class InputComponent implements OnInit {
         this.pSetUpForm.get("useFixStepSize").value ? (this.useFixStepSize = false) : (this.useFixStepSize = true);
     }
 
-    toggleAdvanced(section): void {
-        switch (section) {
-            case "pSetup":
-                this.showPSetupAdvanced = !this.showPSetupAdvanced;
-                break;
-            case "locale":
-                this.showLocaleAdvanced = !this.showLocaleAdvanced;
-                break;
-            case "remin":
-                this.showReminAdvanced = !this.showReminAdvanced;
-                break;
-            case "sv":
-                this.showSVAdvanced = !this.showSVAdvanced;
-                break;
-            default:
-                return;
-        }
+    toggleAdvanced(): void {
+        this.showAdvanced = !this.showAdvanced;
     }
 
     executeSimulation(): void {

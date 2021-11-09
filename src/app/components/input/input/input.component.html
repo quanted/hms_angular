@@ -203,9 +203,9 @@
                     <div class="advanced-settings-toggle">
                         <div class="vertical-center"><strong>Advanced Setup </strong></div>
                         <mat-icon class="icon-panel-toggle" matTooltip="Advanced Setup NOT YET IMPLEMENTED"
-                            (click)="toggleAdvanced('sv')">expand_more</mat-icon>
+                            (click)="toggleAdvanced()">expand_more</mat-icon>
                     </div>
-                    <div class="section-item" *ngIf="showSVAdvanced">
+                    <div class="section-item" *ngIf="showAdvanced">
                         <div class="form-row" *ngFor="let svField of advancedFields.sv">
                             <div>{{ svField.displayName }}</div>
                             <div class="vertical-center">
