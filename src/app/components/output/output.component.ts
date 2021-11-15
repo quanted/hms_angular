@@ -48,6 +48,10 @@ export class OutputComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+        // Subscribe to mini map hover event
+        this.miniMap.comidHoverSubject.subscribe((comid: string) => {
+            this.miniMap.selectSegment(this.catchments.find(catchment => catchment.catchment == comid));
+        });
         // Subscribe to mini map click event
         this.miniMap.comidClickSubject.subscribe((comid: string) => {
             const catchment = this.catchments.find(c => c.catchment == comid);
@@ -181,10 +185,7 @@ export class OutputComponent implements OnInit {
 
     catchmentMouseOn(catchment: any) {
         if (this.mapInit && this.miniMap.segmentLayers && this.miniMap.segmentLayers.length > 0) {
-            this.miniMap.selectSegment({
-                catchment: catchment.catchment,
-                selected: catchment.selected ? false : true
-            });
+            this.miniMap.hoverSegment(catchment.catchment);
         }
     }
 
