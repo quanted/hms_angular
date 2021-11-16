@@ -15,6 +15,7 @@ export class MiniMapService {
   simData: any;
   segmentLayers: any[];
   comidClickSubject = new Subject<string>();
+  comidHoverSubject = new Subject<string>();
   comid: string;
 
   constructor(
@@ -196,6 +197,12 @@ export class MiniMapService {
     simLayer.on("click", (e) => {
       this.comidClickSubject.next(segmentData.comid);
     });
+    simLayer.on("mouseover", (e) => {
+      this.hoverSegment(segmentData.comid);
+    });
+    simLayer.on("mouseout", (e) => {
+      this.comidHoverSubject.next(segmentData.comid);
+    });
     simLayer.bindTooltip(`comID: ${segmentData.comid}`, {
       sticky: true,
     });
@@ -232,5 +239,13 @@ export class MiniMapService {
       default:
         console.log(`ERROR: selectSegment.UNKNOWN_LAYER_NAME ${layer.name}`);
     }
+  }
+
+  hoverSegment(catchment: string): void {
+    const layer = this.segmentLayers.find(layer => layer.comid == catchment);
+    layer.layer.setStyle({
+      color: "#ffb01f",
+      weight: this.layerService.segmentLineSize,
+    });
   }
 }
