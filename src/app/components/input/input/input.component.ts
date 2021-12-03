@@ -122,6 +122,8 @@ export class InputComponent implements OnInit {
         this.waiting = simData.waiting;
         this.huc = simData.selectedHuc;
         this.catchment = simData.selectedCatchment;
+        this.pSetUpForm.get("firstDay").setValue(this.simulation.getSimFirstDay());
+        this.pSetUpForm.get("lastDay").setValue(this.simulation.getSimLastDay());
         this.userSelectedVars = simData.userAvailableVars;
         const uVarFormFields = {};
         for (let field of this.userSelectedVars) {

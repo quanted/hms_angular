@@ -189,6 +189,8 @@ export class SimulationService {
         private state: StateManagerService
     ) {
         this.simDataSubject = new BehaviorSubject(this.simData);
+        this.simData.PSetup.firstDay = DefaultSimData.defaultSimData.PSetup.firstDay;
+        this.simData.PSetup.lastDay = DefaultSimData.defaultSimData.PSetup.lastDay;
 
         this.layerService.clickListener().subscribe((comid) => {
             this.updateSimData("selectedComId", comid);
@@ -212,11 +214,19 @@ export class SimulationService {
     }
 
     getDefaultFirstDay(): string {
-        return formatDate(new Date(DefaultSimData.defaultSimData.PSetup.firstDay), "yyy-MM-dd", "en");
+        return formatDate(new Date(DefaultSimData.defaultSimData.PSetup.firstDay), "yyy-MM-dd", "en", "+0000");
     }
 
     getDefaultLastDay(): string {
-        return formatDate(new Date(DefaultSimData.defaultSimData.PSetup.lastDay), "yyy-MM-dd", "en");
+        return formatDate(new Date(DefaultSimData.defaultSimData.PSetup.lastDay), "yyy-MM-dd", "en", "+0000");
+    }
+
+    getSimFirstDay(): string {
+        return formatDate(new Date(this.simData.PSetup.firstDay), "yyy-MM-dd", "en", "+0000");
+    }
+
+    getSimLastDay(): string {
+        return formatDate(new Date(this.simData.PSetup.lastDay), "yyy-MM-dd", "en", "+0000");
     }
 
     getDefaultUpstreamDistance(): string {
@@ -262,16 +272,8 @@ export class SimulationService {
                 //console.log("json: ", json);
                 this.simData.json_flags = flags;
                 this.simData.base_json = json;
-                this.simData.base_json.AQTSeg.PSetup.FirstDay.Val = formatDate(
-                    this.simData.PSetup.firstDay,
-                    "yyyy-MM-ddTHH:mm:ss",
-                    "en"
-                );
-                this.simData.base_json.AQTSeg.PSetup.LastDay.Val = formatDate(
-                    this.simData.PSetup.lastDay,
-                    "yyyy-MM-ddTHH:mm:ss",
-                    "en"
-                );
+                this.simData.base_json.AQTSeg.PSetup.FirstDay.Val = this.simData.PSetup.firstDay;
+                this.simData.base_json.AQTSeg.PSetup.LastDay.Val = this.simData.PSetup.lastDay;
                 this.updateSimData("userAvailableVars", uVars);
                 this.state.update("userAvailableVars", uVars);
                 this.state.update("json_flags", flags);
@@ -319,18 +321,12 @@ export class SimulationService {
         // these are in a format the datepickers in the forms like
         this.simData.PSetup.firstDay = settings.pSetup.firstDay;
         this.simData.PSetup.lastDay = settings.pSetup.lastDay;
+        this.state.update("firstDay", settings.pSetup.firstDay);
+        this.state.update("lastDay", settings.pSetup.lastDay);
 
         // values below are for the simulation
-        this.simData.base_json.AQTSeg.PSetup.FirstDay.Val = formatDate(
-            settings.pSetup.firstDay,
-            "yyyy-MM-ddTHH:mm:ss",
-            "en"
-        );
-        this.simData.base_json.AQTSeg.PSetup.LastDay.Val = formatDate(
-            settings.pSetup.lastDay,
-            "yyyy-MM-ddTHH:mm:ss",
-            "en"
-        );
+        this.simData.base_json.AQTSeg.PSetup.FirstDay.Val = settings.pSetup.firstDay;
+        this.simData.base_json.AQTSeg.PSetup.LastDay.Val = settings.pSetup.lastDay;
         this.simData.base_json.AQTSeg.PSetup.StepSizeInDays.Val = settings.pSetup.tStep == "day" ? true : false;
         if (settings.pSetup.useFixStepSize) {
             this.simData.base_json.AQTSeg.PSetup.UseFixStepSize.Val = true;
@@ -588,7 +584,7 @@ export class SimulationService {
                 },
             ],
         };
-        console.log("segmentData-no loadings: ", segmentData);
+        console.log("segment-json: ", segmentData);
         return this.hms.addAquatoxSimData(segmentData);
     }
 
@@ -1039,6 +1035,21 @@ export class SimulationService {
                                     break;
                                 }
                             }
+                        } else {
+                            // switch (newVariable.param) {
+                            //     case "Total P":
+                            //         metadata["TP_NPS"] = true;
+                            //         break;
+                            //     case "Total Soluble P":
+                            //         metadata["TP_NPS"] = false;
+                            //         break;
+                            //     case "Total N":
+                            //         metadata["TN_NPS"] = true;
+                            //         break;
+                            //     case "Nitrate as N":
+                            //         metadata["TP_NPS"] = false;
+                            //         break;
+                            // }
                         }
                         this.simData.userAvailableVars.push(newVariable);
                     }
@@ -1058,25 +1069,6 @@ export class SimulationService {
         // console.log("simData: ", this.simData);
     }
 
-    getDefaultCatchmentDependencies() {
-        return {
-            name: "streamflow",
-            url: "api/hydrology/streamflow/",
-            input: {
-                source: "nwm",
-                dateTimeSpan: {
-                    startDate: "2000-01-01T00:00:00",
-                    endDate: "2000-12-31T00:00:00",
-                },
-                geometry: {
-                    comID: this.simData.network.pour_point_comid.toString(),
-                },
-                temporalResolution: "hourly",
-                timeLocalized: "false",
-            },
-        };
-    }
-
     rebuildSimData(): void {
         const lastState = this.state.getState();
         // console.log("lastState: ", lastState);
@@ -1094,6 +1086,10 @@ export class SimulationService {
                 //console.log("last_state: ", lastState);
                 this.simData.json_flags = lastState.json_flags;
                 this.getBaseJsonByFlags(lastState.json_flags, lastState.userAvailableVars);
+            }
+            if (lastState.firstDay) {
+                this.simData.PSetup.firstDay = lastState.firstDay;
+                this.simData.PSetup.lastDay = lastState.lastDay;
             }
             if (lastState.userAvailableVars) {
                 this.simData.userAvailableVars = lastState.userAvailableVars;
