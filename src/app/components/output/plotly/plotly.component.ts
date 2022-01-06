@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import * as Plotly from 'plotly.js/dist/plotly.js';
 
 @Component({
@@ -69,7 +69,6 @@ export class PlotlyComponent implements OnChanges {
         },
         autosize: true,
         showlegend: this.showLegend,
-
       },
       config: {
         responsive: true,

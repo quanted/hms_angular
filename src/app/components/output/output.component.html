@@ -10,7 +10,7 @@
                 matTooltipPosition="after">add_box</mat-icon>
         </div>
     </div>
-    <app-about-output *ngIf="showAbout" (closeMe)="closeAbout()"></app-about-output>
+    <app-about-output *ngIf="showAbout" (closeMe)="aboutAQT()"></app-about-output>
     <div [ngClass]="showAbout ? 'hide' : 'dashboard-container'">
         <div [ngClass]="showPanel ? 'left-panel' : 'hide'">
             <div class="left-panel-container">
