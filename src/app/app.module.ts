@@ -55,6 +55,7 @@ import { ExecutionPanelComponent } from './components/output/execution-panel/exe
 import { SegmentStatusListComponent } from './components/output/segment-status-list/segment-status-list.component';
 import { MiniMapComponent } from './components/mini-map/mini-map.component';
 import { AboutOutputComponent } from './components/output/about-output/about-output.component';
+import { KeepScrollOnBottomDirective } from './directives/keep-scroll-on-bottom.directive';
 
 @NgModule({
   declarations: [
@@ -79,7 +80,8 @@ import { AboutOutputComponent } from './components/output/about-output/about-out
     ExecutionPanelComponent,
     SegmentStatusListComponent,
     MiniMapComponent,
-    AboutOutputComponent
+    AboutOutputComponent,
+    KeepScrollOnBottomDirective
   ],
   imports: [
     BrowserModule,
