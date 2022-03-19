@@ -8,7 +8,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 import { AppRoutingModule } from "./app-routing.module";
 
-import { CdkTableModule } from '@angular/cdk/table';
+import { CdkTableModule } from "@angular/cdk/table";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { MatInputModule } from "@angular/material/input";
@@ -25,10 +25,10 @@ import { MatSortModule } from "@angular/material/sort";
 import { MatIconModule } from "@angular/material/icon";
 import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatMenuModule } from '@angular/material/menu';
+import { MatMenuModule } from "@angular/material/menu";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ScrollingModule } from "@angular/cdk/scrolling";
-import { DragDropModule } from '@angular/cdk/drag-drop';
+import { DragDropModule } from "@angular/cdk/drag-drop";
 
 import { AppComponent } from "./app.component";
 import { MapComponent } from "./components/map/map.component";
@@ -36,7 +36,6 @@ import { HeaderComponent } from "./components/header/header.component";
 import { FooterComponent } from "./components/footer/footer.component";
 import { InputComponent } from "./components/input/input/input.component";
 
-import { CookieService } from "ngx-cookie-service";
 import { MainComponent } from "./components/main/main.component";
 import { MapControlComponent } from "./components/map/map-control/map-control.component";
 import { AboutComponent } from "./components/about/about.component";
@@ -51,79 +50,88 @@ import { SegmentListComponent } from "./components/input/segment-list/segment-li
 import { OutputComponent } from "./components/output/output.component";
 import { PlotlyComponent } from "./components/output/plotly/plotly.component";
 import { PlotContainerComponent } from "./components/output/plot-container/plot-container.component";
-import { ExecutionPanelComponent } from './components/output/execution-panel/execution-panel.component';
-import { SegmentStatusListComponent } from './components/output/segment-status-list/segment-status-list.component';
-import { MiniMapComponent } from './components/mini-map/mini-map.component';
-import { AboutOutputComponent } from './components/output/about-output/about-output.component';
-import { KeepScrollOnBottomDirective } from './directives/keep-scroll-on-bottom.directive';
+import { ExecutionPanelComponent } from "./components/output/execution-panel/execution-panel.component";
+import { SegmentStatusListComponent } from "./components/output/segment-status-list/segment-status-list.component";
+import { MiniMapComponent } from "./components/mini-map/mini-map.component";
+import { AboutOutputComponent } from "./components/output/about-output/about-output.component";
+import { OutputPanelComponent } from "./components/output/output-panel/output-panel.component";
+
+import { KeepScrollOnBottomDirective } from "./directives/keep-scroll-on-bottom.directive";
+import { TableContainerComponent } from './components/output/table-container/table-container.component';
+import { MapContainerComponent } from './components/output/map-container/map-container.component';
+import { ListContainerComponent } from './components/output/list-container/list-container.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    MapComponent,
-    HeaderComponent,
-    FooterComponent,
-    MainComponent,
-    MapControlComponent,
-    AboutComponent,
-    ExpansionPanelLeftComponent,
-    InputComponent,
-    ExpansionPanelRightComponent,
-    LayerControlComponent,
-    TableComponent,
-    LandingComponent,
-    ComidSelectInputComponent,
-    SegmentListComponent,
-    OutputComponent,
-    PlotlyComponent,
-    PlotContainerComponent,
-    ExecutionPanelComponent,
-    SegmentStatusListComponent,
-    MiniMapComponent,
-    AboutOutputComponent,
-    KeepScrollOnBottomDirective
-  ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    CdkTableModule,
-    HttpClientModule,
-    AppRoutingModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    MatDatepickerModule,
-    MatGridListModule,
-    MatMenuModule,
-    MatNativeDateModule,
-    MatSnackBarModule,
-    MatPaginatorModule,
-    MatProgressBarModule,
-    MatProgressSpinnerModule,
-    MatSortModule,
-    MatIconModule,
-    MatTableModule,
-    MatTooltipModule,
-    FormsModule,
-    ReactiveFormsModule,
-    ScrollingModule,
-    DragDropModule
-  ],
-  providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: HttpErrorInterceptor,
-      multi: true,
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: HttpHeadersInterceptor,
-      multi: true,
-    },
-    TableComponent,
-  ],
-  bootstrap: [AppComponent],
+    declarations: [
+        AppComponent,
+        MapComponent,
+        HeaderComponent,
+        FooterComponent,
+        MainComponent,
+        MapControlComponent,
+        AboutComponent,
+        ExpansionPanelLeftComponent,
+        InputComponent,
+        ExpansionPanelRightComponent,
+        LayerControlComponent,
+        TableComponent,
+        LandingComponent,
+        ComidSelectInputComponent,
+        SegmentListComponent,
+        OutputComponent,
+        PlotlyComponent,
+        PlotContainerComponent,
+        ExecutionPanelComponent,
+        SegmentStatusListComponent,
+        MiniMapComponent,
+        AboutOutputComponent,
+        KeepScrollOnBottomDirective,
+        OutputPanelComponent,
+        TableContainerComponent,
+        MapContainerComponent,
+        ListContainerComponent,
+    ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        CdkTableModule,
+        HttpClientModule,
+        AppRoutingModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatButtonModule,
+        MatCheckboxModule,
+        MatDatepickerModule,
+        MatGridListModule,
+        MatMenuModule,
+        MatNativeDateModule,
+        MatSnackBarModule,
+        MatPaginatorModule,
+        MatProgressBarModule,
+        MatProgressSpinnerModule,
+        MatSortModule,
+        MatIconModule,
+        MatTableModule,
+        MatTooltipModule,
+        FormsModule,
+        ReactiveFormsModule,
+        ScrollingModule,
+        DragDropModule,
+    ],
+    providers: [
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: HttpErrorInterceptor,
+            multi: true,
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: HttpHeadersInterceptor,
+            multi: true,
+        },
+        TableComponent,
+    ],
+    bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

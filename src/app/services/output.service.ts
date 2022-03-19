@@ -1,24 +1,32 @@
-import { Injectable, OnInit } from "@angular/core";
-import { CookieService } from "ngx-cookie-service";
-import { BehaviorSubject, Subject } from "rxjs";
-import { HmsService } from "./hms.service";
+import { Injectable } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
+
 import { SimulationService } from "./simulation.service";
+import { HmsService } from "./hms.service";
 
 @Injectable({
     providedIn: "root",
 })
 export class OutputService {
-    // Share drop list updates with output components
-    dropListDataSubject: BehaviorSubject<any> = new BehaviorSubject(null);
-    // List of catchments sorted in network order
-    orderedCatchments: string[] = [];
+    outputDataSubject: BehaviorSubject<any>;
+    outputData: any = {};
 
-    setOrderedCatchments(order: any) {
-        this.orderedCatchments = [];
-        for (let i = Object.keys(order).length - 1; i >= 0; i--) {
-            for (let j = 0; j < order[i].length; j++) {
-                this.orderedCatchments.push(order[i][j]);
-            }
+    constructor(private simulationService: SimulationService, private hms: HmsService) {
+        this.outputDataSubject = new BehaviorSubject(null);
+    }
+
+    outputDashboardData(): BehaviorSubject<any> {
+        return this.outputDataSubject;
+    }
+
+    getSegmentSimResults(comid): void {
+        if (!this.outputData[comid]) {
+            let taskid = this.simulationService.getTaskId(comid);
+            this.hms.getCatchmentArchiveResults(taskid).subscribe((catchmentData) => {
+                // need to do some error/fail handling stuff here or in hmsService
+                this.outputData[comid] = catchmentData;
+                this.outputDataSubject.next(this.outputData);
+            });
         }
     }
 }

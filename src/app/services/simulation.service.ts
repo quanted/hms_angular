@@ -381,16 +381,17 @@ export class SimulationService {
     }
 
     // errors will return a json dict {"error": error_message}
-    // this whole thing needs to be flatMapped
     executeSimulation(): void {
         if (!this.simData.sim_executing) {
             this.updateSimData("waiting", true);
             this.executeFails = 0;
+            console.log("initializing simulation...");
             this.initializeAquatoxSimulation().subscribe((response) => {
+                this.updateSimData("waiting", false);
                 if (response.error) {
                     // TODO: HANDLE ERROR
+                    console.log("failed to initialze simulation!");
                     console.log("error>>> ", response.error);
-                    this.updateSimData("waiting", false);
                 } else {
                     this.updateSimData("simId", response["_id"]);
                     this.state.update("simId", response["_id"]);
@@ -645,11 +646,6 @@ export class SimulationService {
             this.statusCheck = setInterval(() => {
                 this.hms.getAquatoxSimStatus(this.simData.simId).subscribe((simStatus) => {
                     if (simStatus.catchments) {
-                        for (let comid of Object.keys(simStatus.catchments)) {
-                            if (simStatus.catchments[comid].status == "COMPLETED") {
-                                this.addSimResults(comid, simStatus.catchments[comid].task_id);
-                            }
-                        }
                         const segmentStatusList = [];
                         for (let segment of Object.keys(simStatus.catchments)) {
                             segmentStatusList.push({
@@ -677,15 +673,6 @@ export class SimulationService {
         }
     }
 
-    addSimResults(comid, taskId): void {
-        if (!this.simData.network.catchment_data[comid]) {
-            this.hms.getCatchmentData(taskId).subscribe((catchmentData) => {
-                this.simData.network.catchment_data[comid] = catchmentData;
-                this.updateSimData();
-            });
-        }
-    }
-
     endStatusCheck(): void {
         clearInterval(this.statusCheck);
     }
@@ -695,6 +682,19 @@ export class SimulationService {
             let status = response.status;
             if (!status) status = response.error;
         });
+    }
+
+    getTaskId(comid): string {
+        const catchment = this.simData.sim_status.catchments.find((catchment) => {
+            if (comid == catchment.comid) {
+                return catchment;
+            }
+        });
+        if (catchment) {
+            const task_id = catchment.task_id;
+            return task_id;
+        }
+        return `can't fing simData.sim_staus.catchments.comid.${comid}`;
     }
 
     downloadSimResults(): void {
@@ -762,7 +762,7 @@ export class SimulationService {
         this.updateSimData("waiting", true);
         this.waters.getCatchmentData(coords.lat, coords.lng).subscribe(
             (catchmentData) => {
-                if (catchmentData) {
+                if (catchmentData.features) {
                     // console.log("waters-catchment: ", catchmentData);
                     let comid = catchmentData.features[0].properties.FEATUREID;
                     this.hms.getCatchmentInfo(comid).subscribe((catchmentInfo) => {
@@ -783,7 +783,7 @@ export class SimulationService {
                     });
                 } else {
                     this.updateSimData("waiting", false);
-                    console.log("error>>> no data returned");
+                    console.log("error>>> ", catchmentData.error);
                 }
             },
             (error) => {
@@ -792,11 +792,7 @@ export class SimulationService {
         );
     }
 
-    buildNetworkWithEndComid(startComid, endComid) {
-        console.log("not yet implemented!");
-    }
-
-    buildStreamNetwork(comid: string, distance: string): void {
+    buildStreamNetwork(comid: string, distance: string, endComid?: string): void {
         try {
             let d = parseInt(distance);
             if (d > this.MAX_SEARCH_DISTANCE) {
@@ -838,11 +834,13 @@ export class SimulationService {
                 if (this.simData.sim_rebuilding) {
                     this.simData.sim_rebuilding = false;
                 }
-                this.updateSimData("waiting", false);
             },
             (error) => {
                 console.log("forkJoin error: ", error);
-                this.resetSimulation();
+                // this.resetSimulation();
+            },
+            () => {
+                this.updateSimData("waiting", false);
             }
         );
     }

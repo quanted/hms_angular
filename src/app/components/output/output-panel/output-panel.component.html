@@ -1,0 +1,11 @@
+<body>
+    <div class="output-panel-controls" [formGroup]="panelForm">
+        <select (change)="selectPanelType($event)" formControlName="panelSelect">
+            <option *ngFor="let panelType of panelTypes" value="{{ panelType }}">{{ panelType }}</option>
+        </select>
+    </div>
+    <app-plot-container *ngIf="panelType == 'Plot'"></app-plot-container>
+    <app-table-container *ngIf="panelType == 'Table'"></app-table-container>
+    <app-map-container *ngIf="panelType == 'Map'"></app-map-container>
+    <app-list-container *ngIf="panelType == 'Segment List'"></app-list-container>
+</body>

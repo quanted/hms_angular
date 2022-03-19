@@ -1,65 +1,63 @@
 .container {
-  display: grid;
-  grid-template-rows: 1fr auto;
-  position: absolute;
-  top: 0px; bottom: 0; left: 0; right: 0;
-  z-index: 0;
+    display: grid;
+    grid-template-rows: auto 1fr;
 }
 
 .table-container {
-  height: 100%;
-  width: 100%;
-  overflow: auto;
-  z-index: 0;
+    max-height: 100%;
+    width: 100%;
+    overflow: auto;
 }
 
-::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+.table-header {
+    position: sticky;
+    top: -1px;
+    background-color: yellow;
 }
 
 table {
-  width: 100%;
-  table-layout: fixed;
-  text-align: center !important;
-  border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed;
+    text-align: center;
+    border-collapse: collapse;
 }
 
-.header {
-  position: sticky;
-  top: 0;
-  background: white;
+th,
+td {
+    overflow: hidden;
+    width: 100px;
+    text-overflow: ellipsis;
+    white-space: normal;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #ddd;
 }
 
-th, td {
-  overflow: hidden;
-  width: 100px;
-  text-overflow: ellipsis;
-  white-space: normal;
-  text-align: center !important;
-  vertical-align: middle !important;
-  border: 1px solid #ddd;
+.table-controls {
+    display: grid;
+    grid-template-columns: auto 9fr;
 }
 
-.export{
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
+.export-button {
+    padding: 0.25rem;
+    width: 100px;
+    text-overflow: hidden;
 }
 
-.export:hover {
-  opacity: 0.5;
+::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
 }
 
 :host ::ng-deep .mat-paginator-outer-container {
-  height: 40px !important;
-  margin: -10px 0 10px 0;
+    height: 40px !important;
+    margin: -10px 0 10px 0;
 }
 
 :host ::ng-deep .mat-paginator-range-label {
-  margin: 0;
+    margin: 0;
 }
 
 :host ::ng-deep .mat-icon-button {
-  width: 30px;
+    width: 30px;
 }

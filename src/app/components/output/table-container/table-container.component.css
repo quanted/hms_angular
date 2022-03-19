@@ -1,0 +1,4 @@
+.table-container {
+    background-color: lightgreen;
+    border: 1px solid var(--main-border);
+}

@@ -170,8 +170,9 @@ export class InputComponent implements OnInit {
 
     getStreamNetwork(): void {
         if (this.aoiForm.get("endComid").value) {
-            this.simulation.buildNetworkWithEndComid(
+            this.simulation.buildStreamNetwork(
                 this.simulation.getPourPoint(),
+                this.aoiForm.get("distance").value,
                 this.aoiForm.get("endComid").value
             );
         } else {

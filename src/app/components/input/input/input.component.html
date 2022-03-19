@@ -8,8 +8,12 @@
                     <div id="this is just here as a spacer"></div>
                     <strong class="section-heading-center">Study Area</strong>
                     <div>
-                        <mat-icon class="icon-panel-toggle float-right" matTooltipPosition="right"
-                            matTooltip="Collapse section">expand_less</mat-icon>
+                        <mat-icon
+                            class="icon-panel-toggle float-right"
+                            matTooltipPosition="right"
+                            matTooltip="Collapse section"
+                            >expand_less</mat-icon
+                        >
                     </div>
                 </div>
                 <div class="section-item" *ngIf="!huc">
@@ -17,7 +21,8 @@
                         <div class="vertical-center">
                             <div>Comid <input type="number" class="input-number" formControlName="pPointComid" /></div>
                         </div>
-                        <div class="button" (click)="getCatchment()" matTooltip="Get Pour Point">Get Pour Point by ComId
+                        <div class="button" (click)="getCatchment()" matTooltip="Get Pour Point">
+                            Get Pour Point by ComId
                         </div>
                     </div>
                     <div class="centered">- or -</div>
@@ -43,14 +48,19 @@
                     </div>
 
                     <div *ngIf="catchment && !network.network">
-                        <div class="form-row">Enter Upstream End Comid<input type="number" formControlName="endComid" />
+                        <div class="form-row">
+                            Enter Upstream End Comid<input type="number" formControlName="endComid" />
                         </div>
                         <div class="centered">- or -</div>
-                        <div class="form-row">Upstream Distance (Km)<input type="number" formControlName="distance" />
+                        <div class="form-row">
+                            Upstream Distance (Km)<input type="number" formControlName="distance" />
                         </div>
                     </div>
-                    <div class="button" *ngIf="huc && catchment && !network.network && !waiting"
-                        (click)="getStreamNetwork()">
+                    <div
+                        class="button"
+                        *ngIf="huc && catchment && !network.network && !waiting"
+                        (click)="getStreamNetwork()"
+                    >
                         Get Stream Network
                     </div>
                 </div>
@@ -62,28 +72,55 @@
                 <div *ngIf="jsonFlags && !baseJson" (change)="setAvailableSVs()">
                     <div class="section-item" [formGroup]="moduleForm">
                         <div class="centered"><strong>Simulation Selection Options</strong></div>
-                        <div *ngFor='let flag of jsonFlags'>
-                            <input formControlName="{{flag}}" type="checkbox" /> {{ flag }}
+                        <div *ngFor="let flag of jsonFlags">
+                            <input formControlName="{{ flag }}" type="checkbox" /> {{ flag }}
                         </div>
                     </div>
 
                     <!-- setup SVs available to segments -->
                     <div class="section-item" [formGroup]="variableForm">
                         <div class="centered"><strong>Variable Selection</strong></div>
-                        <div id="nitrogen" *ngIf="AQTModule == 'nitrogen' || AQTModule == 'nutrients' || AQTModule == 'organic' || AQTModule == 'organic-nop'">
+                        <div
+                            id="nitrogen"
+                            *ngIf="
+                                AQTModule == 'nitrogen' ||
+                                AQTModule == 'nutrients' ||
+                                AQTModule == 'organic' ||
+                                AQTModule == 'organic-nop'
+                            "
+                        >
                             <div><strong>Nitrogen</strong></div>
-                            <div>Total Ammonia as N & Nitrate as N <input type="radio" name="nType" formControlName="nType" value="separate" /></div>
-                            <div>Total N <input type="radio" name="nType" formControlName="nType" value="Total N" /></div>
+                            <div>
+                                Total Ammonia as N & Nitrate as N
+                                <input type="radio" name="nType" formControlName="nType" value="separate" />
+                            </div>
+                            <div>
+                                Total N <input type="radio" name="nType" formControlName="nType" value="Total N" />
+                            </div>
                         </div>
-                        <div id="phosphorus" *ngIf="AQTModule == 'phosphorus' || AQTModule == 'nutrients' || AQTModule == 'organic'">
+                        <div
+                            id="phosphorus"
+                            *ngIf="AQTModule == 'phosphorus' || AQTModule == 'nutrients' || AQTModule == 'organic'"
+                        >
                             <div><strong>Phosphorus</strong></div>
-                            <div>Total Soluble P <input type="radio" name="pType" formControlName="pType" value="Total Soluble P" /></div>
-                            <div>Total P <input type="radio" name="pType" formControlName="pType" value="Total P" /></div>
+                            <div>
+                                Total Soluble P
+                                <input type="radio" name="pType" formControlName="pType" value="Total Soluble P" />
+                            </div>
+                            <div>
+                                Total P <input type="radio" name="pType" formControlName="pType" value="Total P" />
+                            </div>
                         </div>
                         <div id="organic" *ngIf="AQTModule == 'organic' || AQTModule == 'organic-nop'">
                             <div><strong>Organic Matter</strong></div>
-                            <div>Organic Matter <input type="radio" name="orgType" formControlName="orgType" value="Organic Matter" /></div>
-                            <div>Organic Carbon <input type="radio" name="orgType" formControlName="orgType" value="Organic Carbon" /></div>
+                            <div>
+                                Organic Matter
+                                <input type="radio" name="orgType" formControlName="orgType" value="Organic Matter" />
+                            </div>
+                            <div>
+                                Organic Carbon
+                                <input type="radio" name="orgType" formControlName="orgType" value="Organic Carbon" />
+                            </div>
                             <div>CBOD <input type="radio" name="orgType" formControlName="orgType" value="CBOD" /></div>
                         </div>
                     </div>
@@ -98,45 +135,51 @@
                             <div id="this is just here as a spacer"></div>
                             <strong class="section-heading-center">Simulation Setup</strong>
                             <div>
-                                <mat-icon class="icon-panel-toggle float-right" matTooltipPosition="right"
-                                    matTooltip="Collapse section">expand_less</mat-icon>
+                                <mat-icon
+                                    class="icon-panel-toggle float-right"
+                                    matTooltipPosition="right"
+                                    matTooltip="Collapse section"
+                                    >expand_less</mat-icon
+                                >
                             </div>
                         </div>
                         <div class="form-row">
+                            <div>Simulation Name</div>
                             <div>
-                                Simulation Name
-                            </div>
-                            <div>
-                                <input type="text" formControlName="simulationName">
+                                <input type="text" formControlName="simulationName" />
                             </div>
                         </div>
                         <div class="section-item">
                             <div class="form-row">
                                 <div>
                                     Start Date (UTC)
-                                    <input type="date" formControlName="firstDay">
+                                    <input type="date" formControlName="firstDay" />
                                 </div>
                                 <div>
                                     End Date (UTC)
-                                    <input type="date" formControlName="lastDay">
+                                    <input type="date" formControlName="lastDay" />
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="vertical-center">Simulation Output</div>
                                 <div class="form-row">
-                                    <div>Hourly <input type="radio" name="tStep" formControlName="tStep" value="hour">
+                                    <div>
+                                        Hourly <input type="radio" name="tStep" formControlName="tStep" value="hour" />
                                     </div>
-                                    <div>Daily <input type="radio" name="tStep" formControlName="tStep" value="day">
+                                    <div>
+                                        Daily <input type="radio" name="tStep" formControlName="tStep" value="day" />
                                     </div>
                                 </div>
                             </div>
                             <div class="form-row">
-                                Custom Solver Step Size <input type="checkbox" formControlName="useFixStepSize"
-                                    (click)="toggleAltStep()" />
+                                Custom Solver Step Size
+                                <input type="checkbox" formControlName="useFixStepSize" (click)="toggleAltStep()" />
                             </div>
                             <div class="form-row" *ngIf="useFixStepSize">
-                                Step Size of (0.01-0.1)<div><input type="number" class="input-number"
-                                        formControlName="fixStepSize" /> / day</div>
+                                Step Size of (0.01-0.1)
+                                <div>
+                                    <input type="number" class="input-number" formControlName="fixStepSize" /> / day
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -162,9 +205,12 @@
                                 <div>{{ reminField.displayName }}</div>
                                 <div class="vertical-center">
                                     <div>
-                                        <input type="number" class="input-number"
+                                        <input
+                                            type="number"
+                                            class="input-number"
                                             formControlName="{{ reminField.param }}"
-                                            matTooltip="{{ reminField.longName }}" />
+                                            matTooltip="{{ reminField.longName }}"
+                                        />
                                         {{ reminField.unit }}
                                     </div>
                                 </div>
@@ -180,7 +226,12 @@
                                 <div>{{ variable.displayName }}</div>
                                 <div class="vertical-center">
                                     <div>
-                                        <input type="number" class="input-number" formControlName="{{ variable.param }}" matTooltip="{{ variable.longName }}" /> 
+                                        <input
+                                            type="number"
+                                            class="input-number"
+                                            formControlName="{{ variable.param }}"
+                                            matTooltip="{{ variable.longName }}"
+                                        />
                                         {{ variable.unit }}
                                     </div>
                                 </div>
@@ -191,7 +242,12 @@
                                 <div>{{ svField.displayName }}</div>
                                 <div class="vertical-center">
                                     <div>
-                                        <input type="number" class="input-number" formControlName="{{ svField.param }}" matTooltip="{{ svField.longName }}" />
+                                        <input
+                                            type="number"
+                                            class="input-number"
+                                            formControlName="{{ svField.param }}"
+                                            matTooltip="{{ svField.longName }}"
+                                        />
                                         {{ svField.unit }}
                                     </div>
                                 </div>
@@ -202,16 +258,24 @@
                     <!-- Advanced Setup Section -->
                     <div class="advanced-settings-toggle">
                         <div class="vertical-center"><strong>Advanced Setup </strong></div>
-                        <mat-icon class="icon-panel-toggle" matTooltip="Advanced Setup NOT YET IMPLEMENTED"
-                            (click)="toggleAdvanced()">expand_more</mat-icon>
+                        <mat-icon
+                            class="icon-panel-toggle"
+                            matTooltip="Advanced Setup NOT YET IMPLEMENTED"
+                            (click)="toggleAdvanced()"
+                            >expand_more</mat-icon
+                        >
                     </div>
                     <div class="section-item" *ngIf="showAdvanced">
                         <div class="form-row" *ngFor="let svField of advancedFields.sv">
                             <div>{{ svField.displayName }}</div>
                             <div class="vertical-center">
                                 <div>
-                                    <input type="number" class="input-number" formControlName="{{ svField.param }}"
-                                        matTooltip="{{ svField.longName }}" />
+                                    <input
+                                        type="number"
+                                        class="input-number"
+                                        formControlName="{{ svField.param }}"
+                                        matTooltip="{{ svField.longName }}"
+                                    />
                                     {{ svField.unit }}
                                 </div>
                             </div>
@@ -230,8 +294,12 @@
                     <div id="this is just here as a spacer"></div>
                     <strong class="section-heading-center">Stream Segment Loadings</strong>
                     <div>
-                        <mat-icon class="icon-panel-toggle float-right" matTooltipPosition="right"
-                            matTooltip="Collapse section">expand_less</mat-icon>
+                        <mat-icon
+                            class="icon-panel-toggle float-right"
+                            matTooltipPosition="right"
+                            matTooltip="Collapse section"
+                            >expand_less</mat-icon
+                        >
                     </div>
                 </div>
                 <app-comid-select-input></app-comid-select-input>

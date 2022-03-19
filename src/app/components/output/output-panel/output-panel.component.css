@@ -1,0 +1,15 @@
+body {
+    display: grid;
+    background-color: lightgreen;
+    height: 50%;
+}
+
+.output-panel-controls {
+    height: 24px;
+    display: grid;
+    background-color: var(--main-background);
+}
+
+select {
+    width: 140px;
+}

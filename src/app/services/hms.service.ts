@@ -30,7 +30,7 @@ export class HmsService {
             timeout(this.REQUEST_TIMEOUT),
             catchError((error) => {
                 if (error instanceof TimeoutError) {
-                    return of({ error: "Request to getCatchmentInfo timed out", message: error.message });
+                    return of({ error: "Request to HMS getCatchmentInfo timed out", message: error.message });
                 } else {
                     return of({ message: error.message, error });
                 }
@@ -51,7 +51,7 @@ export class HmsService {
                 timeout(this.REQUEST_TIMEOUT),
                 catchError((error) => {
                     if (error instanceof TimeoutError) {
-                        return of({ error: "Request to getNetworkInfo timed out", message: error.message });
+                        return of({ error: "Request to HMS getNetworkInfo timed out", message: error.message });
                     } else {
                         return of({ message: error.message, error });
                     }
@@ -60,6 +60,7 @@ export class HmsService {
     }
 
     addAquatoxSimData(simulation): Observable<any> {
+        console.log("add segment: ", simulation);
         return this.http.post(`${environment.apiURL}/api/v2/hms/workflow/compute/`, JSON.stringify(simulation));
     }
 
@@ -71,6 +72,7 @@ export class HmsService {
     }
 
     executeAquatoxSimulation(simId): Observable<any> {
+        console.log("execute simid=", simId);
         return this.http.get(`${environment.apiURL}/api/v2/hms/workflow/compute/?sim_id=${simId}`);
     }
 
@@ -82,6 +84,7 @@ export class HmsService {
         return this.http.get(`${environment.apiURL}/api/v2/hms/workflow/status/?task_id=${simId}`);
     }
 
+    // NOT USED
     // input and output flags add simulation data to the response
     getAquatoxSimResults(simId, input?, output?): Observable<any> {
         return this.http.get(
@@ -93,7 +96,7 @@ export class HmsService {
      * Given a catchments taskid, returns the summarized data from its
      * simulation run.
      */
-    getCatchmentData(taskId: string): Observable<any> {
+    getCatchmentArchiveResults(taskId: string): Observable<any> {
         return this.http.get(`${environment.apiURL}/api/aquatox/workflow/archive-results/?task_id=${taskId}`);
     }
 

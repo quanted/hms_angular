@@ -6,26 +6,47 @@
             <div class="segment-status" (click)="aboutAQT()">About</div>
         </div>
         <div class="row-right">
-            <mat-icon class="add" (click)="add()" matTooltip="Add a new container to the dashboard."
-                matTooltipPosition="after">add_box</mat-icon>
+            <mat-icon
+                class="add"
+                (click)="addContainer()"
+                matTooltip="Add a new container to the dashboard."
+                matTooltipPosition="after"
+                >add_box</mat-icon
+            >
         </div>
     </div>
     <app-about-output *ngIf="showAbout" (closeMe)="aboutAQT()"></app-about-output>
-    <div [ngClass]="showAbout ? 'hide' : 'dashboard-container'">
-        <div [ngClass]="showPanel ? 'left-panel' : 'hide'">
+    <!-- <div [ngClass]="showLeftPanel ? 'left-panel' : 'hide'">
             <div class="left-panel-container">
                 <div>
                     <label>Select All</label>
-                    <input ng-model="toggleAllCatchments" type="checkbox" id="show-all" (change)="toggleAll()">
+                    <input ng-model="toggleAllCatchments" type="checkbox" id="show-all" (change)="toggleAll()" />
+                    <mat-icon
+                        matTooltip="Close Catchment Panel."
+                        matTooltipPosition="after"
+                        class="toggle-button"
+                        (click)="togglePanel()"
+                        class="chevron"
+                    >
+                        chevron_left
+                    </mat-icon>
                 </div>
                 <div class="list-container">
                     <ul>
                         <li *ngFor="let catchment of catchments">
-                            <button [ngClass]="catchment.selected ? 'active' : ''" (click)="catchmentClick(catchment)"
-                                (mouseover)="catchmentMouseOn(catchment)" (mouseout)="catchmentMouseOut(catchment)">
-                                {{catchment.catchment == pourPoint ?
-                                catchment.catchment + " (Pour
-                                Point)" : catchment.catchment}}</button>
+                            <button
+                                [ngClass]="catchment.selected ? 'active' : ''"
+                                (click)="catchmentClick(catchment)"
+                                (mouseover)="catchmentMouseOn(catchment)"
+                                (mouseout)="catchmentMouseOut(catchment)"
+                            >
+                                {{
+                                    catchment.catchment == pourPoint
+                                        ? catchment.catchment + " (Pour
+                                Point)"
+                                        : catchment.catchment
+                                }}
+                            </button>
                         </li>
                     </ul>
                 </div>
@@ -33,32 +54,44 @@
                     <app-mini-map></app-mini-map>
                 </div>
             </div>
-        </div>
-        <mat-icon matTooltip="Show/Hide left panel." matTooltipPosition="after" class="toggle-button"
-            (click)="togglePanel($event)" class="chevron">
-            {{showPanel ? "chevron_left" : "chevron_right"}}
-        </mat-icon>
-        <div class="cdkDropListGroup" cdkDropListGroup>
-            <ng-container *ngFor="let item of dropListData; let i=index">
-                <div #cdk class="cdkDropList" cdkDropList cdkDropListOrientation="horizontal"
-                    [cdkDropListData]="{item:item,index:i}" (cdkDropListDropped)="drop($event)">
-                    <div #drag class="cdkDrag" cdkDrag>
-                        <div class="cdkDragPlaceholder" *cdkDragPlaceholder></div>
-                        <div class="cdkDragHandle" cdkDragHandle matTooltip="Click and hold to drag container."
-                            matTooltipPosition="before">
-                            <svg width="24px" fill="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z">
-                                </path>
-                                <path d="M0 0h24v24H0z" fill="none"></path>
-                            </svg>
-                        </div>
-                        <app-plot-container (deleteItem)="delete($event)" [dropListData]="dropListData[i]" [index]="i"
-                            [catchment_data]="catchment_data">
-                        </app-plot-container>
-                    </div>
+        </div> -->
+    <!-- <mat-icon
+            *ngIf="!showLeftPanel"
+            matTooltip="Open Catchment Panel."
+            matTooltipPosition="after"
+            class="toggle-button"
+            (click)="togglePanel()"
+            class="chevron"
+        >
+            chevron_right
+        </mat-icon> -->
+    <div
+        class="output-panels"
+        cdkDropList
+        cdkDropListOrientation="horizontal"
+        [cdkDropListData]="outputPanels"
+        (cdkDropListDropped)="dropContainer($event)"
+    >
+        <div #drag class="output-panel" *ngFor="let outputPanel of outputPanels; let i = index" cdkDrag>
+            <div class="output-panel-controls">
+                <div
+                    class="output-panel-remove"
+                    (click)="removeContainer(i)"
+                    matTooltip="Click to remove container."
+                    matTooltipPosition="after"
+                >
+                    <mat-icon>clear</mat-icon>
                 </div>
-            </ng-container>
+                <div
+                    class="output-panel-drag-handle"
+                    cdkDragHandle
+                    matTooltip="Click and hold to drag container."
+                    matTooltipPosition="before"
+                >
+                    <mat-icon>open_with</mat-icon>
+                </div>
+            </div>
+            <app-output-panel [panelType]="outputPanel.type"></app-output-panel>
         </div>
     </div>
     <app-footer></app-footer>

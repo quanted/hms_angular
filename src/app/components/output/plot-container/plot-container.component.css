@@ -1,28 +1,22 @@
-:host {
-    height: 100%;
-    font-size: 11px;
-}
-
-.upper-c {
-    height: 100%;
-    width: 100%;
+.container {
     display: grid;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: 1fr auto;
+    border: 1px solid var(--main-border);
+    background-color: lightpink;
 }
 
-.container, .container-legend {
-    box-sizing: border-box;
-    height: 100%; 
-    width: 100%; 
-    overflow: hidden;
+.plot-menu {
+    position: absolute;
+    top: 24px;
+    left: 0;
+    z-index: 10;
 }
 
-.container-legend {
-    padding-right: 20px;
+.plot-menu-field {
 }
 
 .mat-form-field-ripple {
-    background-color: var(--main-epa) !important;
+    background-color: var(--main-epa);
 }
 
 ::ng-deep .menu {
@@ -31,23 +25,4 @@
     padding: 10px;
     box-sizing: border-box;
     font-size: 13px;
-}
-
-.menu-icon {
-    position: absolute;
-    top: 5px;
-    left: 7px;
-    z-index: 10;
-}
-
-.menu-field {
-    width: 100%;
-}
-
-.remove-button {
-    color: var(--main-epa);
-}
-
-.remove-button:hover, .download-button:hover {
-    opacity: 0.5;
 }

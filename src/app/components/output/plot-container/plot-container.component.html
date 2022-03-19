@@ -1,34 +1,35 @@
-<div class="upper-c">
-    <div>
-        <mat-icon class="menu-icon" [matMenuTriggerFor]="menu" matTooltip="Open container menu."
-            matTooltipPosition="after">menu</mat-icon>
-        <mat-menu #menu="matMenu" class="menu">
-            <mat-form-field class="menu-field" *ngIf="stateVariablesList && chart !== 'table'"
-                (click)="$event.stopPropagation()">
+<div class="container">
+    <div class="plot-menu">
+        <mat-icon
+            class="plot-menu-icon"
+            [matMenuTriggerFor]="menu"
+            matTooltip="Open plot menu."
+            matTooltipPosition="after"
+            >menu</mat-icon
+        >
+        <mat-menu #menu="matMenu">
+            <mat-form-field class="menu-field" *ngIf="stateVariablesList">
                 <mat-label>State Variables</mat-label>
                 <mat-select [(ngModel)]="selectedSV" (selectionChange)="svChange($event)">
-                    <mat-option *ngFor="let sv of stateVariablesList" [value]="sv">{{sv}}</mat-option>
+                    <mat-option *ngFor="let sv of stateVariablesList" [value]="sv">{{ sv }}</mat-option>
                 </mat-select>
             </mat-form-field>
-            <mat-form-field class="menu-field" (click)="$event.stopPropagation()">
+            <mat-form-field class="plot-menu-field">
                 <mat-label>Chart Type</mat-label>
-                <mat-select [(ngModel)]="chart" (selectionChange)="chartChange($event)">
+                <mat-select [(ngModel)]="plotType" (selectionChange)="chartChange($event)">
+                    <mat-option value="bar">Bar</mat-option>
                     <mat-option value="scatter">Line</mat-option>
                     <mat-option value="markers">Scatter</mat-option>
                     <mat-option value="lines+markers">Line + Scatter</mat-option>
-                    <mat-option value="table">Table</mat-option>
                 </mat-select>
             </mat-form-field>
-            <button *ngIf="chart === 'table'" class="menu-field remove-button" mat-flat-button (click)="download()"
-                matTooltip="Export the table data to a csv." matTooltipPosition="after">Export (.csv)</button>
-            <button class="menu-field remove-button" mat-flat-button (click)="remove($event)"
-                matTooltip="Remove this container from the view." matTooltipPosition="after">Remove</button>
         </mat-menu>
     </div>
-    <div [ngClass]="showLegend ? 'container-legend' : 'container'">
-        <app-plotly (toggleCSS)="toggleCSS()" (toggleCatchment)="addOrRemoveSelectedCatchment($event)"
-            *ngIf="plotData && chart !== 'table'" [data]="plotData" [plotTitle]="plotTitle"></app-plotly>
-        <app-table *ngIf="chart === 'table'" [columnNames]="tableColumnNames" [columnData]="tableColumnData">
-        </app-table>
-    </div>
+    <app-plotly
+        (toggleCSS)="toggleCSS()"
+        (toggleCatchment)="addOrRemoveSelectedCatchment($event)"
+        *ngIf="plotData"
+        [data]="plotData"
+        [plotTitle]="plotTitle"
+    ></app-plotly>
 </div>

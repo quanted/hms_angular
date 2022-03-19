@@ -10,7 +10,7 @@ import { environment } from "../../environments/environment";
     providedIn: "root",
 })
 export class WatersService {
-    REQUEST_TIMEOUT = 20000; // 1000 = 1 second
+    REQUEST_TIMEOUT = 60000; // 1000 = 1 second
 
     constructor(private http: HttpClient) {}
 
@@ -107,7 +107,7 @@ export class WatersService {
             timeout(this.REQUEST_TIMEOUT),
             catchError((error) => {
                 if (error instanceof TimeoutError) {
-                    return of({ error: "Request to getHucData timed out", message: error.message });
+                    return of({ error: "Request to Waters getHucData timed out", message: error.message });
                 } else {
                     return of({ message: error.message, error });
                 }
@@ -126,7 +126,7 @@ export class WatersService {
             timeout(this.REQUEST_TIMEOUT),
             catchError((error) => {
                 if (error instanceof TimeoutError) {
-                    return of({ error: "Request to getCatchmentData timed out", message: error.message });
+                    return of({ error: "Request to Waters getCatchmentData timed out", message: error.message });
                 } else {
                     return of({ message: error.message, error });
                 }
@@ -161,7 +161,7 @@ export class WatersService {
             timeout(this.REQUEST_TIMEOUT),
             catchError((error) => {
                 if (error instanceof TimeoutError) {
-                    return of({ error: "Request to getNetworkGeometry timed out", message: error.message });
+                    return of({ error: "Request to Waters getNetworkGeometry timed out", message: error.message });
                 } else {
                     return of({ message: error.message, error });
                 }

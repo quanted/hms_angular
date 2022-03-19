@@ -1,11 +1,4 @@
-import {
-    Component,
-    EventEmitter,
-    Input,
-    OnChanges,
-    Output,
-    SimpleChanges,
-} from "@angular/core";
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
 import { OutputService } from "src/app/services/output.service";
 
 @Component({
@@ -14,190 +7,100 @@ import { OutputService } from "src/app/services/output.service";
     styleUrls: ["./plot-container.component.css"],
 })
 export class PlotContainerComponent implements OnChanges {
-    // Index of drop list so we can delete it later
-    @Input() index: number;
-    // Specific data for setting this container
-    @Input() dropListData: {
-        selectedCatchments: string[];
-        selectedSV: number;
-        selectedChart: string;
-    };
-    // Data input from output component
-    @Input() catchment_data: any;
-    // Output emitter to tell parent to delete
-    @Output() deleteItem = new EventEmitter<any>();
+    // current plot type
+    plotType: string;
+    // Plot title set by State Variable selected
+    plotTitle: string;
     // Parsed data for the plot
     plotData: any;
-    // Parsed state variables from this.data
-    stateVariablesList: string[] = [];
-    // Parsed catchments
-    catchmentList: string[] = [];
-    // Selected State Variable set by sv selection
-    selectedSV: string;
-    // Plot title set by State Variables selection
-    plotTitle: string;
-    // Chart types set by chart type selection
-    chart: string;
-    // Table column setup variables
-    tableColumnNames: string[] = [];
-    tableColumnData: any[] = [];
-    // Dates for the plot and table
-    dates: Date[] = [];
+    stateVariablesList = [];
+
     // Sets plot css based on showing legend or not
     showLegend: boolean = false;
 
     constructor(public outputService: OutputService) {
-        this.outputService.dropListDataSubject.subscribe((data) => {
-            if (data && typeof data === "object" && this.catchment_data) {
-                this.setData();
-            }
-            if (this.catchment_data
-                && Object.keys(this.catchment_data).length > 0) {
-                this.setData();
-            }
+        this.outputService.outputDashboardData().subscribe((data) => {
+            this.createPlotyData(data);
         });
     }
 
     ngOnChanges(changes: SimpleChanges) {
         // Check that the catchment_data has changed and that catchment_data not undefined
-        if (changes.hasOwnProperty("catchment_data") && this.catchment_data) {
-            // Check that
-            if (this.dropListData && Object.keys(this.catchment_data).length > 0) {
-                this.catchmentList = Object.keys(this.catchment_data);
-                const firstComid = this.catchmentList[0];
-                this.stateVariablesList = Object.keys(this.catchment_data[firstComid].data);
-
-                // Set table column names
-                this.tableColumnNames = [];
-                this.tableColumnNames.push("Date");
-                this.tableColumnNames.push("Catchment");
-                this.tableColumnNames = this.tableColumnNames.concat(this.stateVariablesList);
-                // Set dates
-                this.dates = [];
-                this.catchment_data[firstComid].dates.forEach((d) => this.dates.push(
-                    new Date(d)
-                ));
-
-                this.selectedSV = this.stateVariablesList[this.dropListData.selectedSV];
-                this.chart = this.dropListData.selectedChart;
-                this.setData();
-            }
-        }
+        // if (changes.hasOwnProperty("catchment_data") && this.catchment_data) {
+        //     // Check that
+        //     if (this.dropListData && Object.keys(this.catchment_data).length > 0) {
+        //         this.catchmentList = Object.keys(this.catchment_data);
+        //         const firstComid = this.catchmentList[0];
+        //         this.stateVariablesList = Object.keys(this.catchment_data[firstComid].data);
+        //         // Set table column names
+        //         this.tableColumnNames = [];
+        //         this.tableColumnNames.push("Date");
+        //         this.tableColumnNames.push("Catchment");
+        //         this.tableColumnNames = this.tableColumnNames.concat(this.stateVariablesList);
+        //         // Set dates
+        //         this.dates = [];
+        //         this.catchment_data[firstComid].dates.forEach((d) => this.dates.push(new Date(d)));
+        //         this.selectedSV = this.stateVariablesList[this.dropListData.selectedSV];
+        //         this.chart = this.dropListData.selectedChart;
+        //         this.setData();
+        //     }
+        // }
     }
 
     /**
-     * Set plot or table data based on the selected chart type.
+     * transforms simData stored sim results into plotly data structures
      */
-    setData() {
-        if (this.chart === "table") {
-            this.setTableData();
-        } else {
-            this.setPlotData();
-        }
-    }
+    createPlotyData(rawData) {
+        this.plotTitle = "test plotly plot";
+        this.plotData = [
+            {
+                x: ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"],
+                y: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                type: "bar",
+            },
+        ];
 
-    /**
-     * Parses the data received from the HmsService and sets the plot data
-     * which updates the @Input() data in the plotly component.
-     */
-    setPlotData() {
-        this.plotData = [];
-        // Insert by network order into plot data
-        for (let catchment of this.outputService.orderedCatchments) {
-            // Get values for the selected state variable
-            const values = [];
-            const data = this.catchment_data[catchment].data;
-            data[this.selectedSV].forEach((d) => values.push(d));
-            this.plotData.push({
-                x: this.dates,
-                y: values,
-                mode: this.chart,
-                type: this.chart,
-                name: catchment,
-                visible: this.dropListData.selectedCatchments.includes(catchment) ? "true" : "legendonly",
-                marker: {
-                    size: 4,
-                },
-            });
-        }
-        this.plotTitle = this.selectedSV;
+        // // Insert by network order into plot data
+        // for (let catchment of this.outputData) {
+        //     // Get values for the selected state variable
+        //     const values = [];
+        //     const data = this.catchment_data[catchment].data;
+        //     data[this.selectedSV].forEach((d) => values.push(d));
+        //     this.plotData.push({
+        //         x: this.dates,
+        //         y: values,
+        //         mode: this.chart,
+        //         type: this.chart,
+        //         name: catchment,
+        //         visible: this.dropListData.selectedCatchments.includes(catchment) ? "true" : "legendonly",
+        //         marker: {
+        //             size: 4,
+        //         },
+        //     });
+        // }
+        // this.plotTitle = this.selectedSV;
     }
-
-    /**
-     * Parses the data received from the HmsService and sets the table data
-     * which updates the @Input() data in the table component. Places the
-     * data in the correct format for the table component.
-     */
-    setTableData() {
-        // Reset tables values
-        this.tableColumnData = [];
-        if (Object.keys(this.catchment_data).length > 0) {
-            // Loop over each catchment 
-            for (let i = 0; i < this.dates.length; i++) {
-                // Loop over length of data
-                for (let j = 0; j < this.dropListData.selectedCatchments.length; j++) {
-                    let obj: any = {};
-                    // Loop over state variables
-                    for (let k = 2; k < this.tableColumnNames.length; k++) {
-                        obj[this.tableColumnNames[0]] = this.dates[i].toString().split("GMT")[0];
-                        obj[this.tableColumnNames[1]] = this.dropListData.selectedCatchments[j];
-                        obj[this.tableColumnNames[k]] =
-                            this.catchment_data[this.dropListData.selectedCatchments[j]]?.data[this.tableColumnNames[k]][i];
-                    }
-                    // Push to table data
-                    this.tableColumnData.push(obj);
-                }
-            }
-        }
-    }
-
     // Update on change of state variables
     svChange(event) {
-        this.dropListData.selectedSV = this.stateVariablesList.indexOf(this.selectedSV);
-        this.outputService.dropListDataSubject.next(this.dropListData);
+        // this.dropListData.selectedSV = this.stateVariablesList.indexOf(this.selectedSV);
+        // this.outputService.dropListDataSubject.next(this.dropListData);
     }
 
     // Update on change of chart type
     chartChange(event) {
-        this.dropListData.selectedChart = this.chart;
-        this.outputService.dropListDataSubject.next(this.dropListData);
-    }
-
-    // Delete the drop list item on click
-    remove(event) {
-        this.deleteItem.emit(this.index);
+        console.log("pre change: ", this.plotType);
     }
 
     addOrRemoveSelectedCatchment(catchment: string) {
-        if (this.dropListData.selectedCatchments.includes(catchment)) {
-            this.dropListData.selectedCatchments.splice(this.dropListData.selectedCatchments.indexOf(catchment), 1);
-        } else {
-            this.dropListData.selectedCatchments.push(catchment);
-        }
+        // if (this.dropListData.selectedCatchments.includes(catchment)) {
+        //     this.dropListData.selectedCatchments.splice(this.dropListData.selectedCatchments.indexOf(catchment), 1);
+        // } else {
+        //     this.dropListData.selectedCatchments.push(catchment);
+        // }
     }
 
     // Toggle plot css on click
     toggleCSS() {
         this.showLegend = !this.showLegend;
-        window.dispatchEvent(new Event("resize"));
-    }
-
-    /**
-   * Creates a csv file from the table data and downloads it.
-   */
-    download() {
-        let names = [];
-        for (let i = 0; i < this.tableColumnNames.length; i++) {
-            names.push(this.tableColumnNames[i].replace(/,/g, ""));
-        }
-        let csv = names.join(",") + "\n";
-        this.tableColumnData.forEach((row) => {
-            csv += Object.values(row).join(",") + "\r\n";
-        });
-        let hiddenElement = document.createElement("a");
-        hiddenElement.href = "data:text/csv;charset=utf-8," + encodeURI(csv);
-        hiddenElement.target = "_blank";
-        hiddenElement.download = "table.csv";
-        hiddenElement.click();
     }
 }

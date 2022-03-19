@@ -1,3 +1,16 @@
+.toggle-button {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    background-color: var(--main-transparent);
+}
+
+.toggle-button:hover {
+    background-color: var(--main-hover);
+}
+
 ::ng-deep .js-plotly-plot .plotly .modebar {
     position: absolute;
     left: 50%;
@@ -12,16 +25,4 @@
 
 ::ng-deep .js-plotly-plot .plotly .modebar-btn {
     background-color: unset;
-}
-
-.toggle-button {
-    position: absolute;
-    top: 50%;
-    right: 0;
-    -webkit-transform: translateY(-50%);
-    transform: translateY(-50%);
-    background-color: var(--main-transparent);
-}
-.toggle-button:hover {
-    background-color: var(--main-hover);
 }
