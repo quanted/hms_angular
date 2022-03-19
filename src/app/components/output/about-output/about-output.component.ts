@@ -1,14 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { AboutComponent } from '../../about/about.component';
+import { Component, OnInit } from "@angular/core";
+import { AboutComponent } from "../../main/about/about.component";
 
 @Component({
-  selector: 'app-about-output',
-  templateUrl: './about-output.component.html',
-  styleUrls: ['./about-output.component.css']
+    selector: "app-about-output",
+    templateUrl: "./about-output.component.html",
+    styleUrls: ["./about-output.component.css"],
 })
 export class AboutOutputComponent extends AboutComponent {
-
-  constructor() {
-    super();
-  }
+    constructor() {
+        super();
+    }
 }

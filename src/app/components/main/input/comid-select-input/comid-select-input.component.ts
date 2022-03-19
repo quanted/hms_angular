@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
-import { SimulationService } from "../../../services/simulation.service";
+import { SimulationService } from "../../../../services/simulation.service";
 import { FormBuilder, FormGroup } from "@angular/forms";
 
 import { MatPaginator } from "@angular/material/paginator";
