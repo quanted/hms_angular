@@ -6,7 +6,7 @@
                 <td cdk-cell *cdkCellDef="let row">{{ row[col] }}</td>
             </ng-container>
             <tr class="table-header" cdk-header-row *cdkHeaderRowDef="columnNames"></tr>
-            <tr class="table-body" cdk-row *cdkRowDef="let row; columns: columnNames"></tr>
+            <tr cdk-row *cdkRowDef="let row; columns: columnNames"></tr>
         </table>
     </div>
     <mat-paginator [pageSizeOptions]="[10, 20, 50, dataSource.data.length]" showFirstLastButtons></mat-paginator>

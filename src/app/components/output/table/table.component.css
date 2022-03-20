@@ -5,8 +5,7 @@
 }
 
 .table-scroll-panel {
-    overflow-y: scroll;
-    overflow-x: scroll;
+    overflow-y: auto;
     height: 100%;
 }
 
@@ -19,14 +18,14 @@
 table {
     text-align: center;
     border-collapse: collapse;
+    overflow-x: auto;
 }
 
 th,
 td {
-    overflow: hidden;
-    width: 200px;
-    text-overflow: ellipsis;
-    white-space: normal;
+    min-width: 100px;
+    padding: 0.25rem 0.5rem;
+    white-space: nowrap;
     text-align: center;
     vertical-align: middle;
     border: 1px solid #ddd;
@@ -43,20 +42,13 @@ td {
     width: 100px;
 }
 
-::-webkit-scrollbar {
-    width: 7px;
-    height: 7px;
+:host ::ng-deep .mat-paginator-container,
+:host ::ng-deep .mat-paginator-page-size,
+:host ::ng-deep .mat-paginator-range-actions {
+    min-height: 42px;
+    height: 42px;
 }
 
-:host ::ng-deep .mat-paginator-outer-container {
-    height: 40px !important;
-    margin: -10px 0 10px 0;
-}
-
-:host ::ng-deep .mat-paginator-range-label {
-    margin: 0;
-}
-
-:host ::ng-deep .mat-icon-button {
-    width: 30px;
+:host ::ng-deep .mat-paginator-page-size {
+    align-items: center;
 }
