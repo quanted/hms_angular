@@ -1,7 +1,8 @@
 .output-panel {
     display: grid;
     position: relative;
-    background-color: var(--main-background);
+    background-color: beige;
+    height: 100%;
 }
 
 .output-panel-controls {
@@ -9,6 +10,7 @@
     padding: 3px;
     display: flex;
     vertical-align: middle;
+    background-color: var(--main-epa);
 }
 
 select {
@@ -20,4 +22,8 @@ app-table-container,
 app-map-container,
 app-list-container {
     height: 300px;
+}
+
+app-table-container {
+    min-width: 50%;
 }

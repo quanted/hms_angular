@@ -5,9 +5,7 @@
 }
 
 .primary-content {
-    background: lightgoldenrodyellow;
+    background: var(--main-background);
     overflow-y: hidden;
-    display: flex;
-    padding-right: 0.25rem;
-    padding-left: 0.25rem;
+    padding: 0.25rem;
 }

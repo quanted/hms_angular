@@ -11,8 +11,8 @@
     --main-ready: rgb(0, 190, 19);
     --main-fail: rgb(255, 0, 0);
 
-    /* --main-border: rgb(150, 150, 150); */
-    --main-border: rgb(0, 0, 0);
+    --main-border: rgb(150, 150, 150);
+    /* --main-border: rgb(0, 0, 0); */
 
     --row-gap: 0.19rem;
     --column-gap: 0.125rem;
