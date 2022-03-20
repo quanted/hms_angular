@@ -1,12 +1,13 @@
-.container {
+.table-container {
+    height: 100%;
     display: grid;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: 1fr auto;
 }
 
-.table-container {
-    max-height: 100%;
-    width: 100%;
-    overflow: auto;
+.table-scroll-panel {
+    overflow-y: scroll;
+    overflow-x: scroll;
+    height: 100%;
 }
 
 .table-header {
@@ -16,8 +17,6 @@
 }
 
 table {
-    width: 100%;
-    table-layout: fixed;
     text-align: center;
     border-collapse: collapse;
 }
@@ -25,7 +24,7 @@ table {
 th,
 td {
     overflow: hidden;
-    width: 100px;
+    width: 200px;
     text-overflow: ellipsis;
     white-space: normal;
     text-align: center;
@@ -34,14 +33,14 @@ td {
 }
 
 .table-controls {
-    display: grid;
-    grid-template-columns: auto 9fr;
+    position: absolute;
+    left: 0.25rem;
+    bottom: 0.25rem;
 }
 
 .export-button {
     padding: 0.25rem;
     width: 100px;
-    text-overflow: hidden;
 }
 
 ::-webkit-scrollbar {

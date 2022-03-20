@@ -1,15 +1,23 @@
-body {
+.output-panel {
     display: grid;
-    background-color: lightgreen;
-    height: 50%;
+    position: relative;
+    background-color: var(--main-background);
 }
 
 .output-panel-controls {
     height: 24px;
-    display: grid;
-    background-color: var(--main-background);
+    padding: 3px;
+    display: flex;
+    vertical-align: middle;
 }
 
 select {
     width: 140px;
+}
+
+app-plot-container,
+app-table-container,
+app-map-container,
+app-list-container {
+    height: 300px;
 }

@@ -1,22 +1,27 @@
-<body>
-    <app-header></app-header>
-    <div class="task-bar">
-        <div class="row-left">
-            <mat-icon class="segment-status back" (click)="back()" matTooltip="Go back to map.">chevron_left</mat-icon>
-            <div class="segment-status" (click)="aboutAQT()">About</div>
+<div class="primary-content">
+    <div class="nav-bar">
+        <div class="button-flat" (click)="back()" matTooltip="Go back to simulation.">
+            <mat-icon>chevron_left</mat-icon>
         </div>
-        <div class="row-right">
-            <mat-icon
-                class="add"
-                (click)="addContainer()"
-                matTooltip="Add a new container to the dashboard."
-                matTooltipPosition="after"
-                >add_box</mat-icon
-            >
+        <div
+            class="button-flat"
+            (click)="aboutAQT()"
+            matTooltip="About the Simulation Output Dashboard"
+            matTooltipPosition="after"
+        >
+            About
+        </div>
+        <div
+            class="button-flat"
+            (click)="addContainer()"
+            matTooltip="Add a new container to the dashboard."
+            matTooltipPosition="after"
+        >
+            <mat-icon>add</mat-icon>
         </div>
     </div>
-    <app-about-output *ngIf="showAbout" (closeMe)="aboutAQT()"></app-about-output>
-    <!-- <div [ngClass]="showLeftPanel ? 'left-panel' : 'hide'">
+    <!-- <app-about-output *ngIf="showAbout" (closeMe)="aboutAQT()"></app-about-output> -->
+    <!--<div [ngClass]="showLeftPanel ? 'left-panel' : 'hide'">
             <div class="left-panel-container">
                 <div>
                     <label>Select All</label>
@@ -54,8 +59,8 @@
                     <app-mini-map></app-mini-map>
                 </div>
             </div>
-        </div> -->
-    <!-- <mat-icon
+        </div>
+     <mat-icon
             *ngIf="!showLeftPanel"
             matTooltip="Open Catchment Panel."
             matTooltipPosition="after"
@@ -94,5 +99,4 @@
             <app-output-panel [panelType]="outputPanel.type"></app-output-panel>
         </div>
     </div>
-    <app-footer></app-footer>
-</body>
+</div>

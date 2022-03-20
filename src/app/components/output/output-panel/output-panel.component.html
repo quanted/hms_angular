@@ -1,4 +1,4 @@
-<body>
+<div class="output-panel">
     <div class="output-panel-controls" [formGroup]="panelForm">
         <select (change)="selectPanelType($event)" formControlName="panelSelect">
             <option *ngFor="let panelType of panelTypes" value="{{ panelType }}">{{ panelType }}</option>
@@ -8,4 +8,4 @@
     <app-table-container *ngIf="panelType == 'Table'"></app-table-container>
     <app-map-container *ngIf="panelType == 'Map'"></app-map-container>
     <app-list-container *ngIf="panelType == 'Segment List'"></app-list-container>
-</body>
+</div>

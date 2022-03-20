@@ -1,3 +1,4 @@
-.container {
-    border: 1px solid var(--main-border);
+.list-container {
+    display: relative;
+    height: 100%;
 }

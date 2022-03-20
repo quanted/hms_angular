@@ -4,12 +4,12 @@
 }
 
 .items {
-	display: flex;
-	flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .item {
-	flex: 0 0 50%;
+    flex: 0 0 50%;
     box-sizing: border-box;
 }
 
@@ -20,4 +20,5 @@
 
 .scroll {
     overflow-y: auto;
+    height: 100%;
 }

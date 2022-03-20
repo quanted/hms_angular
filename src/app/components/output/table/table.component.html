@@ -1,25 +1,24 @@
-<div class="container">
-    <div class="table-container">
-        <table cdk-table [dataSource]="dataSource" style="height: 100%; width: 100%" cdkSort>
+<div class="table-container">
+    <div class="table-scroll-panel">
+        <table cdk-table [dataSource]="dataSource" cdkSort>
             <ng-container *ngFor="let col of columnNames" [cdkColumnDef]="col">
                 <th cdk-header-cell *cdkHeaderCellDef cdk-sort-header>{{ col }}</th>
                 <td cdk-cell *cdkCellDef="let row">{{ row[col] }}</td>
             </ng-container>
             <tr class="table-header" cdk-header-row *cdkHeaderRowDef="columnNames"></tr>
-            <tr cdk-row *cdkRowDef="let row; columns: columnNames"></tr>
+            <tr class="table-body" cdk-row *cdkRowDef="let row; columns: columnNames"></tr>
         </table>
     </div>
-    <div class="table-controls">
-        <div
-            class="segment-status export-button"
-            mat-flat-button
-            (click)="download()"
-            matTooltip="Export the table data to a csv."
-            matTooltipPosition="after"
-        >
-            Save table as .csv
-        </div>
-
-        <mat-paginator [pageSizeOptions]="[10, 20, 50, dataSource.data.length]" showFirstLastButtons></mat-paginator>
+    <mat-paginator [pageSizeOptions]="[10, 20, 50, dataSource.data.length]" showFirstLastButtons></mat-paginator>
+</div>
+<div class="table-controls">
+    <div
+        class="button-flat export-button"
+        mat-flat-button
+        (click)="download()"
+        matTooltip="Export the table data to a csv."
+        matTooltipPosition="after"
+    >
+        Save table as .csv
     </div>
 </div>

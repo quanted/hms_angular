@@ -12,7 +12,7 @@
     --main-fail: rgb(255, 0, 0);
 
     /* --main-border: rgb(150, 150, 150); */
-    --main-border: rgb(240, 6, 6);
+    --main-border: rgb(0, 0, 0);
 
     --row-gap: 0.19rem;
     --column-gap: 0.125rem;
@@ -22,19 +22,14 @@
     --main-list-short-height: 12vh;
 }
 
-html {
-    all: revert;
-    scroll-behavior: smooth;
-}
-
+html,
 body {
     margin: 0px;
-    height: 100vh;
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
 .button,
-.segment-status {
+.button-flat {
     font-size: 0.75rem;
     display: grid;
     place-items: center;
@@ -43,6 +38,7 @@ body {
     border-radius: 5px;
     border: 1px solid rgb(150, 150, 150);
     background-color: var(--main-button);
+    cursor: pointer;
 }
 
 .button {
@@ -63,7 +59,7 @@ body {
 }
 
 .button:hover,
-.segment-status:hover,
+.button-flat:hover,
 mat-icon:hover {
     background-color: var(--main-hover);
 }
@@ -154,6 +150,7 @@ mat-icon:hover {
 }
 
 .button,
+.button-flat,
 mat-icon:hover,
 .segment-status,
 select,

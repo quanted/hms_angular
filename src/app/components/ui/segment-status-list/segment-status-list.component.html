@@ -1,11 +1,16 @@
-<div class="section-item">
-    <div class="centered"><strong>Segment Status</strong></div>
-    <div class="scroll">
-        <div class="items">
-            <div class="segment-status item" *ngFor="let segment of segmentList" (click)="gotoData(segment.comid)"
-            [ngClass]="{ 'progress' : segment.status == 'IN-PROGRESS', 'ready' : segment.status == 'COMPLETED', 'fail' : segment.status == 'FAILED' }">
-                {{ segment.comid }} {{ segment.status }}
-            </div>
+<div class="scroll">
+    <div class="items">
+        <div
+            class="button-flat item"
+            *ngFor="let segment of segmentList"
+            (click)="gotoData(segment.comid)"
+            [ngClass]="{
+                progress: segment.status == 'IN-PROGRESS',
+                ready: segment.status == 'COMPLETED',
+                fail: segment.status == 'FAILED'
+            }"
+        >
+            {{ segment.comid }} {{ segment.status }}
         </div>
     </div>
 </div>
