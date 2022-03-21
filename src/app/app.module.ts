@@ -3,6 +3,7 @@ import { NgModule } from "@angular/core";
 
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { HttpErrorInterceptor } from "./interceptors/http-error.interceptor";
+import { HttpHeadersInterceptor } from "./interceptors/http-headers.interceptor";
 
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
@@ -41,7 +42,6 @@ import { MapControlComponent } from "./components/main/map/map-control/map-contr
 import { AboutComponent } from "./components/main/about/about.component";
 import { ExpansionPanelRightComponent } from "./components/ui/expansion-panel-right/expansion-panel-right.component";
 import { ExpansionPanelLeftComponent } from "./components/ui/expansion-panel-left/expansion-panel-left.component";
-import { HttpHeadersInterceptor } from "./interceptors/http-headers.interceptor";
 import { LayerControlComponent } from "./components/main/map/layer-control/layer-control.component";
 import { TableComponent } from "./components/output/table/table.component";
 import { ComidSelectInputComponent } from "./components/main/input/comid-select-input/comid-select-input.component";

@@ -1,10 +1,7 @@
-.toggle-button {
+.plot-legend-icon {
     position: absolute;
-    top: 50%;
-    right: 0;
-    -webkit-transform: translateY(-50%);
-    transform: translateY(-50%);
-    background-color: var(--main-transparent);
+    top: 0.25rem;
+    right: 0.25rem;
 }
 
 .toggle-button:hover {

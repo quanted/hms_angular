@@ -1,22 +1,59 @@
 .primary-content {
+    padding: 0.5rem;
+}
+
+.output-panel {
     display: grid;
     grid-template-rows: auto 1fr;
     border: 1px solid var(--main-border);
 }
 
 .nav-bar {
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
     background-color: var(--main-epa);
     padding: 0.25rem;
+}
+
+.nav-controls-left,
+.nav-controls-right {
+    display: grid;
+    align-items: center;
+    column-gap: 0.25rem;
+}
+
+.nav-controls-left {
+    grid-template-columns: auto auto 1fr;
+}
+
+.nav-controls-center {
+    display: grid;
+    place-items: center;
+}
+
+.nav-controls-right {
+    grid-template-columns: 1fr auto;
+}
+
+.comid-menu,
+.comid-menu-button {
+    width: 160px;
+}
+
+.comid-menu {
+    position: absolute;
+    top: 24;
+    z-index: 99;
+    background-color: var(--main-background);
+    border: 1px solid var(--main-border);
 }
 
 .output-panels {
     display: flex;
     flex-wrap: wrap;
-    padding: 0.25rem;
-    row-gap: 0.25rem;
-    column-gap: 0.25rem;
+    padding: 0.5rem;
+    row-gap: 0.5rem;
+    column-gap: 0.5rem;
 }
 
 .output-panel {
@@ -44,35 +81,4 @@
 
 .cdk-drag-animating {
     transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-}
-
-/* still need to put this stuff back on the dashboard I guess*/
-.left-panel {
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    width: 200px;
-    padding: 5px 0;
-}
-
-.left-panel-container {
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    padding: 5px;
-    background-color: var(--main-color);
-}
-
-.left-panel button {
-    width: 100%;
-}
-
-.chevron {
-    margin-top: 5px;
-    margin-left: 1px;
-    background-color: var(--main-transparent);
-}
-
-.chevron:hover {
-    background-color: var(--main-hover);
 }

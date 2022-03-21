@@ -213,6 +213,10 @@ export class SimulationService {
         return this.simDataSubject;
     }
 
+    getSimulationName(): string {
+        return this.simData.sim_name;
+    }
+
     getDefaultFirstDay(): string {
         return formatDate(new Date(DefaultSimData.defaultSimData.PSetup.firstDay), "yyy-MM-dd", "en", "+0000");
     }

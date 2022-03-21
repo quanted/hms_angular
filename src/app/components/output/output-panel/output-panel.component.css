@@ -7,7 +7,7 @@
 
 .output-panel-controls {
     height: 24px;
-    padding: 3px;
+    padding: 0.25rem;
     display: flex;
     vertical-align: middle;
     background-color: var(--main-epa);

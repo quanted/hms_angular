@@ -9,10 +9,15 @@ import { HmsService } from "./hms.service";
 })
 export class OutputService {
     outputDataSubject: BehaviorSubject<any>;
-    outputData: any = {};
+    outputData: any = {
+        simName: "",
+        segmentsSelected: [],
+        segmentsData: {},
+    };
 
     constructor(private simulationService: SimulationService, private hms: HmsService) {
-        this.outputDataSubject = new BehaviorSubject(null);
+        this.outputData.simName = this.simulationService.getSimulationName();
+        this.outputDataSubject = new BehaviorSubject(this.outputData);
     }
 
     outputDashboardData(): BehaviorSubject<any> {
@@ -28,5 +33,9 @@ export class OutputService {
                 this.outputDataSubject.next(this.outputData);
             });
         }
+    }
+
+    selectSegment(selection: string): void {
+        this.outputData.selectedSegments.push(selection);
     }
 }
