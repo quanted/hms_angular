@@ -1,7 +1,6 @@
-body {
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    background-color: var(--main-epa);
+.primary-content {
+    position: relative;
+    height: 100%;
 }
 
 .float {
@@ -11,7 +10,7 @@ body {
 
 .panel-left {
     pointer-events: none;
-    top: inherit;
+    top: 0;
     left: 0;
     height: 100%;
     padding: 0.25em;
@@ -19,7 +18,7 @@ body {
 }
 
 .panel-right {
-    top: inherit;
+    top: 0;
     right: 0;
     min-height: 0;
     height: 100%;

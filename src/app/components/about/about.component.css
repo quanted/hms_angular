@@ -1,0 +1,27 @@
+.container-input-page {
+    /* position: absolute; */
+    z-index: 999;
+    inset: 0;
+    width: 500px;
+    height: var(--main-max-panel-height);
+    padding-left: .25rem;
+    padding-right: .25rem;
+    padding-bottom: .25rem;
+    margin-right: .25rem;
+    overflow-y: scroll;
+    background-color: var(--main-color);
+}
+
+.control {
+    padding: .25rem;
+}
+
+table, td {
+    border: 1px solid var(--main-border);
+}
+
+.container-item { 
+    min-height: 0;
+    height: 100%;
+    padding: 0;
+}

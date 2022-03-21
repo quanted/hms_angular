@@ -1,7 +1,6 @@
 .panel-left {
     pointer-events: auto;
     display: flex;
-    min-height: 0;
     max-height: 100%;
     background-color: var(--main-background);
 }
@@ -9,7 +8,6 @@
 .panel-left-container {
     display: grid;
     grid-template-rows: auto 1fr;
-    min-height: 0;
     max-height: 100%;
 }
 
@@ -27,11 +25,12 @@
     position: absolute;
     top: 0;
     right: -1.5rem;
-    margin-top: .25rem;
+    margin-top: 0.25rem;
 }
 
-app-input, app-output-panel-left {
-    background-color: var(--main-transparent);
+app-input,
+app-output-panel-left {
+    /* background-color: var(--main-transparent); */
     min-height: 0;
     box-sizing: border-box;
 }

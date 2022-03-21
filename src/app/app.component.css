@@ -7,5 +7,4 @@
 .primary-content {
     background: var(--main-background);
     overflow-y: hidden;
-    padding: 0.25rem;
 }
