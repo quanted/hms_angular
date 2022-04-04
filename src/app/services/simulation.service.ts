@@ -773,15 +773,18 @@ export class SimulationService {
                         // console.log("hms-catchment: ", catchmentInfo);
 
                         // TODO: validate waters huc is same as hms huc, report if different
-
-                        if (this.simData.selectedHuc.properties.HUC_12 == catchmentInfo.metadata.HUC12) {
-                            this.layerService.addFeature("Catchment", catchmentData);
-                            this.updateSimData("selectedCatchment", catchmentData);
-                            this.state.update("pour_point_comid", comid);
+                        if (!catchmentInfo.error) {
+                            if (this.simData.selectedHuc.properties.HUC_12 == catchmentInfo.metadata.HUC12) {
+                                this.layerService.addFeature("Catchment", catchmentData);
+                                this.updateSimData("selectedCatchment", catchmentData);
+                                this.state.update("pour_point_comid", comid);
+                            } else {
+                                console.log(
+                                    `error>>> selected catchment is not contained within huc ${this.simData.selectedHuc.properties.HUC_12}`
+                                );
+                            }
                         } else {
-                            console.log(
-                                `error>>> selected catchment is not contained within huc ${this.simData.selectedHuc.properties.HUC_12}`
-                            );
+                            console.log("catchmentInfo.error: ", catchmentInfo);
                         }
                         this.updateSimData("waiting", false);
                     });
