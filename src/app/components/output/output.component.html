@@ -52,6 +52,7 @@
             cdkDropListOrientation="horizontal"
             [cdkDropListData]="outputPanels"
             (cdkDropListDropped)="dropContainer($event)"
+            [hidden]="!aboutHidden"
         >
             <div #drag class="output-panel" *ngFor="let outputPanel of outputPanels; let i = index" cdkDrag>
                 <div class="output-panel-controls">

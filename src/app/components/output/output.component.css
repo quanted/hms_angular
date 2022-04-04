@@ -49,6 +49,7 @@
 }
 
 .output-panels {
+    position: relative;
     display: flex;
     flex-wrap: wrap;
     padding: 0.5rem;
