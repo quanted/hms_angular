@@ -124,6 +124,13 @@
                             <div>CBOD <input type="radio" name="orgType" formControlName="orgType" value="CBOD" /></div>
                         </div>
                     </div>
+                    <div class="section-item" *ngIf="simErrorMessage.length > 0">
+                        <div class="centered">Server Error</div>
+                        <div class="centered">
+                            <strong>{{ simErrorMessage }}</strong>
+                        </div>
+                        <div class="centered">Please try again later.</div>
+                    </div>
                     <div class="button" *ngIf="!waiting" (click)="getBaseJSONByFlags()">Setup Simulation</div>
                 </div>
 

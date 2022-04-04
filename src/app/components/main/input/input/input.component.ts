@@ -24,6 +24,7 @@ export class InputComponent implements OnInit {
     svForm: FormGroup;
 
     waiting = false;
+    simErrorMessage = "";
     simExecuting = false;
     simCompleted = false;
 
@@ -120,6 +121,7 @@ export class InputComponent implements OnInit {
 
     updateInterface(simData): void {
         this.waiting = simData.waiting;
+        this.simErrorMessage = simData.error_message;
         this.huc = simData.selectedHuc;
         this.catchment = simData.selectedCatchment;
         this.pSetUpForm.get("firstDay").setValue(this.simulation.getSimFirstDay());

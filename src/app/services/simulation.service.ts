@@ -269,9 +269,10 @@ export class SimulationService {
         this.updateSimData("waiting", true);
         // console.log("flags: ", flags);
         this.hms.getBaseJsonByFlags(flags).subscribe((json) => {
-            if (json.error) {
+            if (json.Error) {
                 // TODO: Handle error
                 console.log("error>>> ", json.error);
+                this.simData.error_message = json.Error;
             } else {
                 //console.log("json: ", json);
                 this.simData.json_flags = flags;
@@ -1063,6 +1064,7 @@ export class SimulationService {
             } else if (key == "sv") {
                 this.simData[key] = data;
             } else if (typeof data === "string" || typeof data === "number" || typeof data === "boolean") {
+                if (key == "waiting" && data == true) this.simData.error_message = "";
                 this.simData[key] = data;
             } else {
                 this.simData[key] = { ...this.simData[key], ...data };

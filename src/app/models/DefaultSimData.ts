@@ -9,6 +9,7 @@ export class DefaultSimData {
         simId: null,
         status: "Starting...",
         status_message: "Initializing...",
+        error_message: "",
         sim_status: {
             status: "",
             message: "",
