@@ -21,7 +21,7 @@ app-plot-container,
 app-table-container,
 app-map-container,
 app-list-container {
-    height: 331px;
+    height: 100%;
 }
 
 app-table-container {
