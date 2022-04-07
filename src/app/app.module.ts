@@ -55,10 +55,12 @@ import { MiniMapComponent } from "./components/output/mini-map/mini-map.componen
 import { AboutOutputComponent } from "./components/output/about-output/about-output.component";
 import { OutputPanelComponent } from "./components/output/output-panel/output-panel.component";
 
-import { KeepScrollOnBottomDirective } from "./directives/keep-scroll-on-bottom.directive";
 import { TableContainerComponent } from "./components/output/table-container/table-container.component";
 import { MapContainerComponent } from "./components/output/map-container/map-container.component";
 import { ListContainerComponent } from "./components/output/list-container/list-container.component";
+
+import { KeepScrollOnBottomDirective } from "./directives/keep-scroll-on-bottom.directive";
+import { FluidHeightDirective } from "./directives/fluid-height.directive";
 
 @NgModule({
     declarations: [
@@ -83,11 +85,12 @@ import { ListContainerComponent } from "./components/output/list-container/list-
         SegmentStatusListComponent,
         MiniMapComponent,
         AboutOutputComponent,
-        KeepScrollOnBottomDirective,
         OutputPanelComponent,
         TableContainerComponent,
         MapContainerComponent,
         ListContainerComponent,
+        KeepScrollOnBottomDirective,
+        FluidHeightDirective,
     ],
     imports: [
         BrowserModule,
