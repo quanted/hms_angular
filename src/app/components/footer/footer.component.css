@@ -61,8 +61,8 @@
     display: flex;
     height: 75px;
 }
-.footer-block {
-    display: flex;
+.footer-block-logo {
+    display: grid;
     justify-content: center;
     align-content: center;
     height: 100%;
