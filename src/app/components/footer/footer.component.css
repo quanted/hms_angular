@@ -2,7 +2,7 @@
     .footer-banner {
         padding: 0 10%;
     }
-    .footer-block {
+    .footer-block-logo {
         padding-left: 5%;
         width: 10%;
     }
@@ -21,7 +21,7 @@
     .footer-banner {
         padding: 0 10%;
     }
-    .footer-block {
+    .footer-block-logo {
         padding-left: 5%;
         margin-right: 5%;
         width: 15%;
@@ -41,7 +41,7 @@
     .footer-banner {
         padding: 0;
     }
-    .footer-block {
+    .footer-block-logo {
         padding-left: 0;
         margin-right: 5%;
         width: 15%;
