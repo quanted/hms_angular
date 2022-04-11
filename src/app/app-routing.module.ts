@@ -5,10 +5,10 @@ import { MainComponent } from "./components/main/main.component";
 import { OutputComponent } from "./components/output/output.component";
 
 const routes: Routes = [
-    { path: "", component: MainComponent },
     { path: "home", component: MainComponent },
     { path: "output", component: OutputComponent },
     { path: "output/:comid", component: OutputComponent },
+    { path: "**", component: MainComponent },
 ];
 
 @NgModule({
